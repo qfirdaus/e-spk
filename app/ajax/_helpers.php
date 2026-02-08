@@ -1,0 +1,122 @@
+<?php
+// ajax/_helpers.php
+// Shared helpers untuk AJAX endpoints: rate limiting, permission checks, caching
+
+/**
+ * Simple rate limiting (per session)
+ * @param string $key Unique key untuk rate limit
+ * @param int $maxRequests Maximum requests dalam window
+ * @param int $windowSeconds Time window dalam seconds
+ * @return bool True jika allowed, false jika rate limited
+ */
+function checkRateLimit(string $key, int $maxRequests = 30, int $windowSeconds = 60): bool {
+    $now = time();
+    $rateKey = 'rate_limit_' . $key;
+    
+    if (!isset($_SESSION[$rateKey])) {
+        $_SESSION[$rateKey] = ['count' => 0, 'reset' => $now + $windowSeconds];
+    }
+    
+    $rate = &$_SESSION[$rateKey];
+    
+    // Reset if window expired
+    if ($now >= $rate['reset']) {
+        $rate = ['count' => 0, 'reset' => $now + $windowSeconds];
+    }
+    
+    // Check limit
+    if ($rate['count'] >= $maxRequests) {
+        return false;
+    }
+    
+    $rate['count']++;
+    return true;
+}
+
+/**
+ * Check if user has permission to manage groups
+ * SECURITY CRITICAL – DO NOT MODIFY: UI gating helper for group management
+ * @param PDO $pdo Database connection
+ * @return bool True jika user ada permission
+ */
+function hasGroupManagePermission(PDO $pdo): bool {
+    require_once __DIR__ . '/../setting/constants/prestasi_constants.php';
+    if (empty($_SESSION['f_stafID'])) {
+        return false;
+    }
+    
+    try {
+        // Prefer active role in session (role switch aware)
+        $activeRoleId = (int)($_SESSION['group_active_id'] ?? 0);
+        if ($activeRoleId > 0 && $activeRoleId === PRESTASI_ROLE_ID_ADM_SA) {
+            return true;
+        }
+
+        require_once __DIR__ . '/../classes/User.php';
+        $userModel = new User($pdo);
+        $profile = $userModel->getProfile($_SESSION['f_stafID']);
+        
+        if (!$profile) {
+            return false;
+        }
+        
+        // Check if user is super admin or has group management permission
+        $groupId = (int)($profile['f_groupID'] ?? 0);
+        
+        // Super Admin boleh manage semua kumpulan
+        if ($groupId === PRESTASI_ROLE_ID_ADM_SA) {
+            return true;
+        }
+        
+        // Boleh tambah group lain yang ada permission di sini
+        // Contoh: Admin HR boleh manage kumpulan HR sahaja
+        
+        return false;
+    } catch (Throwable $e) {
+        error_log('[hasGroupManagePermission] Error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Cache helper untuk group/module/menu data (session-based cache dengan TTL)
+ */
+final class GroupDataCache {
+    private static string $namespace = 'groupdata_cache';
+    
+    public static function get(string $key, int $ttl): mixed {
+        $now = time();
+        $c = $_SESSION[self::$namespace][$key] ?? null;
+        if (!$c) return null;
+        if (($c['ts'] + $ttl) < $now) {
+            unset($_SESSION[self::$namespace][$key]);
+            return null;
+        }
+        return $c['val'];
+    }
+    
+    public static function set(string $key, mixed $val): void {
+        if (!isset($_SESSION[self::$namespace])) {
+            $_SESSION[self::$namespace] = [];
+        }
+        $_SESSION[self::$namespace][$key] = ['ts' => time(), 'val' => $val];
+    }
+    
+    public static function clear(?string $prefix = null): void {
+        if (!isset($_SESSION[self::$namespace])) return;
+        if ($prefix === null) {
+            unset($_SESSION[self::$namespace]);
+            return;
+        }
+        foreach (array_keys($_SESSION[self::$namespace]) as $k) {
+            if (str_starts_with($k, $prefix)) {
+                unset($_SESSION[self::$namespace][$k]);
+            }
+        }
+    }
+}
+
+
+
+
+

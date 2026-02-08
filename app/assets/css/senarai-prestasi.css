@@ -1,0 +1,910 @@
+/* =========================================================
+   Senarai Prestasi CSS
+   Independent CSS for senarai-prestasi.php
+   Based on senarai-apc-admin.css for consistency
+   ========================================================= */
+
+/* ============== Global kecil untuk page ini ============== */
+body {
+  font-size: .9rem;
+}
+
+/* MATIKAN LOADER/PRELOADER UNTUK PAGE INI SAHAJA */
+#preloader,
+#status,
+.pace,
+.pace-progress {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ============== Filter bar (seragam senarai-apc-admin) ============== */
+.filter-row .col-year {
+  flex: 0 0 auto;
+  width: 160px; /* ✅ Besarkan dari 110px ke 160px */
+}
+.filter-row .col-jab {
+  flex: 1 1 280px;
+  min-width: 220px;
+}
+
+/* ✅ Select2 Styling untuk Filter Dropdowns (sama seperti senarai-apc-admin.php) */
+.filter-row .select2-container--default {
+  font-size: 1rem !important;
+  width: 100% !important;
+}
+
+.filter-row .select2-container--default .select2-selection--single {
+  height: 50px !important; /* Lebih besar */
+  border: 2px solid #e9ecef !important;
+  border-radius: 0.5rem !important;
+  padding: 0.875rem 1rem !important;
+  font-size: 1rem !important;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.filter-row .select2-container--default .select2-selection--single:hover {
+  border-color: #ced4da !important;
+}
+
+.filter-row .select2-container--default.select2-container--focus .select2-selection--single {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.filter-row .select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 1.5;
+  padding-left: 0.5rem !important;
+  padding-right: 30px !important;
+  font-size: 1rem !important;
+  color: #212529;
+  font-weight: 500;
+}
+
+.filter-row .select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 48px !important;
+  right: 10px !important;
+  width: 30px !important;
+}
+
+.filter-row .select2-container--default .select2-selection--single .select2-selection__arrow b {
+  border-color: #6c757d transparent transparent transparent;
+  border-width: 6px 5px 0 5px;
+  margin-top: -3px;
+}
+
+.filter-row .select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #6c757d;
+  font-size: 1rem !important;
+}
+
+/* Select2 dropdown - lebih besar */
+.filter-row .select2-dropdown {
+  font-size: 1rem !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.filter-row .select2-results__option {
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.filter-row .select2-results__option--highlighted {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+.filter-row .select2-results__option[aria-selected="true"] {
+  background-color: #e7f1ff !important;
+  color: #0d6efd !important;
+}
+
+/* Disabled state */
+.filter-row .select2-container--default.select2-container--disabled .select2-selection--single {
+  background-color: #e9ecef !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+/* ============== Header Strip (Same as senarai-apc-admin.php) ============== */
+.prestasi-header-strip {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #475569;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  position: relative;
+}
+
+.prestasi-header-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.prestasi-header-sub {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.prestasi-header-sub strong {
+  color: #334155;
+  font-weight: 600;
+}
+
+.prestasi-header-year {
+  text-align: right;
+  position: relative;
+  z-index: 1;
+}
+
+.prestasi-header-year-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.prestasi-year-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #475569;
+  line-height: 1;
+}
+
+.prestasi-year-icon {
+  font-size: 1.25rem;
+  color: #64748b;
+}
+
+.prestasi-header-year .small.text-muted {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.prestasi-header-year .small.text-muted strong {
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Dark theme support */
+html[data-bs-theme="dark"] .prestasi-header-strip {
+  background: #1e293b;
+  border-color: rgba(148, 163, 184, 0.2);
+  border-left-color: #64748b;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-title {
+  color: #f1f5f9;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-sub {
+  color: #94a3b8;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-sub strong {
+  color: #cbd5e1;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-year-label {
+  color: #94a3b8;
+}
+
+html[data-bs-theme="dark"] .prestasi-year-value {
+  color: #cbd5e1;
+}
+
+html[data-bs-theme="dark"] .prestasi-year-icon {
+  color: #94a3b8;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-year .small.text-muted {
+  color: #94a3b8;
+}
+
+html[data-bs-theme="dark"] .prestasi-header-year .small.text-muted strong {
+  color: #cbd5e1;
+}
+
+/* ============== Table & UI ============== */
+.icon-tip {
+  cursor: help;
+  display: inline-block;
+  margin-left: .25rem;
+  font-size: 0.875rem;
+}
+
+.tooltip.tt-nowrap .tooltip-inner {
+  white-space: nowrap;
+  max-width: none;
+}
+
+#prestasiTable {
+  font-size: .85rem !important;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* Remove stripline */
+#prestasiTable.table-striped > tbody > tr:nth-of-type(odd) > td,
+#prestasiTable.table-striped > tbody > tr:nth-of-type(odd) > th,
+#prestasiTable.dataTable.stripe tbody tr.odd,
+#prestasiTable.dataTable.display tbody tr.odd {
+  background-color: transparent !important;
+}
+
+#prestasiTable.table-striped > tbody > tr:nth-of-type(even) > td,
+#prestasiTable.table-striped > tbody > tr:nth-of-type(even) > th,
+#prestasiTable.dataTable.stripe tbody tr.even,
+#prestasiTable.dataTable.display tbody tr.even {
+  background-color: transparent !important;
+}
+
+#prestasiTable thead {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+  color: #ffffff;
+}
+
+#prestasiTable thead th {
+  vertical-align: middle !important;
+  padding: 0.75rem 0.5rem !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  color: #ffffff;
+}
+
+#prestasiTable tbody tr {
+  transition: all 0.2s ease;
+  height: 32px !important;
+  max-height: 32px !important;
+  min-height: 32px !important;
+  line-height: 1.2 !important;
+}
+
+#prestasiTable tbody tr:hover {
+  background: #f8fafc;
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+#prestasiTable tbody td {
+  vertical-align: middle !important;
+  padding: 0.3rem 0.5rem !important;
+  white-space: normal;
+  word-break: break-word;
+  height: 32px !important;
+  max-height: 32px !important;
+  min-height: 32px !important;
+  line-height: 1.2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  font-size: 0.85rem !important;
+  border-color: #f1f5f9;
+}
+
+#prestasiTable.dataTable tbody tr {
+  height: 32px !important;
+  max-height: 32px !important;
+  min-height: 32px !important;
+  line-height: 1.2 !important;
+}
+
+#prestasiTable.dataTable tbody tr td {
+  height: 32px !important;
+  max-height: 32px !important;
+  min-height: 32px !important;
+  overflow: hidden !important;
+  padding: 0.3rem 0.5rem !important;
+  line-height: 1.2 !important;
+}
+
+#prestasiTable tbody tr .badge {
+  font-size: 0.7rem !important;
+  padding: 0.2rem 0.4rem !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+}
+
+/* ✅ Badge "Tiada" styling (same as senarai-apc-admin.php) */
+#prestasiTable .badge.bg-info-subtle {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: 500;
+}
+
+#prestasiTable tbody tr .btn-icon {
+  padding: 0.25rem 0.35rem !important;
+  font-size: 0.8rem !important;
+  line-height: 1 !important;
+  min-height: auto !important;
+  height: auto !important;
+}
+
+#prestasiTable tbody tr .action-gap {
+  gap: 0.25rem !important;
+}
+
+.row-highlight {
+  background-color: #d1f7d6 !important;
+  transition: background-color 0.3s ease;
+}
+
+.row-highlight td {
+  background-color: #d1f7d6 !important;
+}
+
+.btn-icon {
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  padding: .35rem .45rem;
+  line-height: 1;
+  border-radius: .5rem;
+}
+
+.btn-icon:hover {
+  background-color: var(--bs-secondary-bg);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-gap {
+  display: flex;
+  gap: .35rem;
+  justify-content: center;
+}
+
+.row-incomplete {
+  background-color: var(--bs-warning-bg-subtle) !important;
+}
+
+/* Pastikan highlight menang walaupun row juga 'row-incomplete' atau striped */
+#prestasiTable tbody tr.row-highlight {
+  background-color: #d1f7d6 !important;
+}
+
+#prestasiTable tbody tr.row-incomplete.row-highlight {
+  background-color: #d1f7d6 !important;
+}
+
+#prestasiTable.dataTable,
+#prestasiTable.dataTable th,
+#prestasiTable.dataTable td {
+  font-size: 0.875rem;
+}
+
+.table-responsive {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
+}
+
+/* Dark theme support untuk table */
+html[data-bs-theme="dark"] #prestasiTable thead {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+html[data-bs-theme="dark"] #prestasiTable tbody tr:hover {
+  background: #334155;
+}
+
+/* ============== Loader overlay untuk kad jadual ============== */
+.card-loading {
+  position: relative;
+}
+
+.card-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .55);
+  backdrop-filter: blur(1px);
+  z-index: 10;
+  display: none;
+}
+
+.card-loading.loading::after {
+  display: block;
+}
+
+.card-loading .spinner-wrap {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+}
+
+.card-loading.loading .spinner-wrap {
+  display: flex;
+}
+
+/* ============== Modal Professional Styling (Compact) ============== */
+#markahModal .modal-dialog {
+  max-width: 750px;
+}
+
+#markahModal .modal-content {
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+#markahModal .modal-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+#markahModal .modal-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+}
+
+#markahModal .modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#markahModal .modal-title i {
+  font-size: 1.4rem;
+}
+
+#markahModal .modal-body {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+/* Staff Info Card */
+#markahModal .staff-info-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+#markahModal .staff-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  object-fit: cover;
+  background: #fff;
+}
+
+#markahModal .staff-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.15rem;
+  line-height: 1.3;
+}
+
+#markahModal .staff-id {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+#markahModal .staff-position {
+  font-size: 0.85rem;
+  color: #868e96;
+  margin-top: 0.25rem;
+}
+
+/* Notice Box */
+#markahModal .notice-box {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+  border: 1px solid #ffc107;
+  border-left: 3px solid #ffc107;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+}
+
+#markahModal .notice-box i {
+  color: #856404;
+  font-size: 1.1rem;
+}
+
+#markahModal .notice-box .small {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Input Sections */
+#markahModal .input-section {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+#markahModal .input-section:hover {
+  border-color: #ced4da;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+#markahModal .input-section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#markahModal .input-section-label i {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+#markahModal .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+#markahModal .form-control {
+  border: 1.5px solid #e9ecef;
+  border-radius: 0.4rem;
+  padding: 0.6rem 0.875rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+#markahModal .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
+#markahModal .form-control[readonly] {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+#markahModal .input-group-icon {
+  position: relative;
+}
+
+#markahModal .input-group-icon i {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  z-index: 5;
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+#markahModal .input-group-icon .form-control {
+  padding-left: 2.5rem;
+}
+
+#markahModal .form-control.disabled-field {
+  background-color: #e9ecef !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 0.6 !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+#markahModal .form-control.disabled-field:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Average Section */
+#markahModal .avg-section {
+  background: linear-gradient(135deg, #e7f5ff 0%, #d0ebff 100%);
+  border: 1.5px solid #74c0fc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+#markahModal .avg-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1971c2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#markahModal .avg-label i {
+  font-size: 1.1rem;
+}
+
+#markahModal #m_purata {
+  background: #fff;
+  border: 1.5px solid #74c0fc;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1971c2;
+}
+
+#markahModal .avg-section small {
+  font-size: 0.8rem;
+}
+
+/* Buttons */
+#markahModal .modal-footer {
+  border-top: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 0 0 1rem 1rem;
+}
+
+#markahModal .btn {
+  padding: 0.6rem 1.25rem;
+  font-weight: 600;
+  border-radius: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+#markahModal .btn-success {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%);
+  border: none;
+  box-shadow: 0 3px 10px rgba(25, 135, 84, 0.25);
+}
+
+#markahModal .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.35);
+}
+
+#markahModal .btn-light {
+  border: 1.5px solid #dee2e6;
+  background: #fff;
+}
+
+#markahModal .btn-light:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #markahModal .modal-dialog {
+    max-width: 95%;
+    margin: 0.5rem auto;
+  }
+
+  #markahModal .modal-body {
+    padding: 1rem;
+    max-height: calc(100vh - 150px);
+  }
+
+  #markahModal .modal-header {
+    padding: 0.875rem 1rem;
+  }
+
+  #markahModal .modal-footer {
+    padding: 0.875rem 1rem;
+  }
+
+  #markahModal .staff-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  #markahModal .staff-info-card {
+    padding: 0.875rem;
+  }
+
+  #markahModal .input-section {
+    padding: 0.875rem;
+  }
+
+  #markahModal .avg-section {
+    padding: 0.875rem;
+  }
+}
+
+/* ============== Professional Reminder Modal (SweetAlert2) ============== */
+.reminder-modal-popup {
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+  padding: 0 !important;
+  max-width: 600px !important;
+}
+
+.reminder-modal-title {
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+  padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+  border-bottom: 2px solid #e9ecef !important;
+  margin: 0 !important;
+}
+
+.reminder-modal-title i {
+  font-size: 1.5rem;
+  color: #0d6efd;
+}
+
+.reminder-modal-content {
+  padding: 1.5rem !important;
+  text-align: left !important;
+}
+
+.reminder-modal-confirm {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.reminder-modal-confirm:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(13, 110, 253, 0.4) !important;
+}
+
+.reminder-modal-cancel {
+  border: 2px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600 !important;
+  background: #fff !important;
+  color: #6c757d !important;
+  transition: all 0.3s ease !important;
+}
+
+.reminder-modal-cancel:hover {
+  background: #f8f9fa !important;
+  border-color: #adb5bd !important;
+  color: #495057 !important;
+}
+
+.swal2-actions {
+  gap: 0.75rem !important;
+  padding: 1rem 1.5rem 1.5rem 1.5rem !important;
+  margin: 0 !important;
+}
+
+/* ============== Professional Warning Modal Styling ============== */
+#tahunSebelumWarningModal .modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+#tahunSebelumWarningModal .modal-header {
+  position: relative;
+}
+
+#tahunSebelumWarningModal .modal-body {
+  background: #f8f9fa;
+}
+
+#tahunSebelumWarningModal .card {
+  transition: all 0.3s ease;
+}
+
+#tahunSebelumWarningModal .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .1) !important;
+}
+
+#tahunSebelumWarningModal .form-check-input:checked {
+  background-color: #f59e0b;
+  border-color: #d97706;
+  box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, .25);
+}
+
+#tahunSebelumWarningModal .form-check-input:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, .25);
+}
+
+#tahunSebelumWarningModal #warningModalOkBtn:not(:disabled) {
+  opacity: 1 !important;
+  cursor: pointer !important;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, .4) !important;
+}
+
+#tahunSebelumWarningModal #warningModalOkBtn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, .5) !important;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+}
+
+#tahunSebelumWarningModal .btn-light:hover {
+  background: #ffffff !important;
+  border-color: #adb5bd !important;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #tahunSebelumWarningModal .modal-dialog {
+    max-width: 95%;
+    margin: 0.5rem auto;
+  }
+
+  #tahunSebelumWarningModal .modal-header {
+    padding: 1rem !important;
+  }
+
+  #tahunSebelumWarningModal .modal-body {
+    padding: 1rem !important;
+  }
+
+  #tahunSebelumWarningModal .modal-footer {
+    padding: 0.75rem 1rem !important;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  #tahunSebelumWarningModal .modal-footer .btn {
+    width: 100%;
+  }
+
+  .filter-row .col-year {
+    width: 96px;
+  }
+}
+
+
+
+
+
+
