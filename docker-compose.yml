@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    container_name: ebase_web
+    container_name: ehepa_web
 
     ports:
       - "80:80"
@@ -11,13 +11,13 @@ services:
       # Source code
       - ./app:/var/www/html
 
-      # Apache vhost (HTTPS)
-      - ./docker/apache/ebase.dev.conf:/etc/apache2/sites-enabled/000-default.conf
+      # Apache vhosts (SEMUA conf)
+      - ./docker/apache:/etc/apache2/sites-enabled
 
-      # 🔧 GLOBAL ServerName (INI FIX UTAMA)
+      # GLOBAL ServerName
       - ./docker/apache/servername.conf:/etc/apache2/conf-enabled/servername.conf
 
-      # SSL cert
+      # SSL cert (Windows mkcert)
       - ./docker/ssl:/etc/apache2/ssl
 
       # Custom PHP config

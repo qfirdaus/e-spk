@@ -6,7 +6,7 @@ return [
     // ===================================================
     'mysql' => [
         'driver' => 'mysql',
-        'dsn'    => 'mysql:host=172.16.2.141;dbname=ebasedb;charset=utf8mb4',
+        'dsn'    => 'mysql:host=172.16.2.141;dbname=ehepadb;charset=utf8mb4',
         'user'   => 'sokongan', 
         'pass'   => '_Sok0ng@n@2025?',
     ],
