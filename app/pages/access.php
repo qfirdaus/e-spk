@@ -15,6 +15,9 @@ $roles   = $matrix['roles'] ?? [];
 $modules = $matrix['modules'] ?? [];
 $rows    = []; // legacy compatibility
 $version = (string)($_ENV['APP_ASSET_VER'] ?? date('ymdHis'));
+$rolesCount = count($roles ?? []);
+$dynamicRoleWidthPct = $rolesCount > 0 ? (65 / $rolesCount) : 0.0;
+$dynamicRoleWidthStr = number_format($dynamicRoleWidthPct, 4, '.', '');
 
 function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 
@@ -73,9 +76,9 @@ $csrf = $_SESSION['csrf_token'];
     .matrix-table .action-gap { display:flex; gap:0.35rem; }
 
     /* Column sizing tweaks matching kumpulan-pengguna layout */
-    .col-nama { width:40%; }
-    .col-path{ width:220px; max-width:220px; text-align:center; }
-    .col-akses{ width:120px; text-align:center; }
+    .col-nama { text-align:left; }
+    .col-path{ text-align:center; }
+    .col-akses{ text-align:center; }
     .col-path .truncate-1line { white-space:nowrap; font-size:0.95rem; }
     .group-col { white-space:normal; }
 
@@ -121,12 +124,19 @@ $csrf = $_SESSION['csrf_token'];
 
                 <div class="table-responsive position-relative">
                   <table id="userDT" class="table table-hover table-striped table-sm table-bordered w-100 matrix-table align-middle">
+                    <colgroup>
+                      <col style="width:5%">
+                      <col style="width:15%">
+                      <col style="width:15%">
+                      <?php foreach ($roles as $r): ?>
+                        <col style="width:<?= h($dynamicRoleWidthStr) ?>%">
+                      <?php endforeach; ?>
+                    </colgroup>
                     <thead>
                       <tr>
-                        <th class="col-bil text-center" style="width:56px"><?= __('access_col_no') ?? '#' ?></th>
-                        <th class="col-nama" style="width:40%"><?= __('access_menu') ?? 'Menu' ?></th>
+                        <th class="col-bil text-center"><?= __('access_col_no') ?? '#' ?></th>
+                        <th class="col-nama"><?= __('access_menu') ?? 'Menu' ?></th>
                         <th class="col-path text-center" style="white-space:nowrap"><?= __('access_path') ?? 'Path' ?></th>
-                        <?php $rolesCount = count($roles ?? []); ?>
                         <?php foreach ($roles as $r): ?>
                           <th class="text-center group-col" title="<?= h($r['nama'] ?? $r['kod'] ?? '') ?>"><?= h($r['nama'] ?: $r['kod'] ?: __('access_user_level')) ?></th>
                         <?php endforeach; ?>

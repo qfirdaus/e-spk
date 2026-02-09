@@ -19,7 +19,8 @@ $profile      = $controller->profile ?? [];
 $senaraiUser  = $controller->senaraiUser ?? [];
 
 // User model untuk getAvatarUrl
-$userModel = new User(Database::getInstance('mysql')->getConnection());
+$dbMySQL = Database::getInstance('mysql')->getConnection();
+$userModel = new User($dbMySQL);
 
 // CSRF
 if (empty($_SESSION['csrf_token'])) {
@@ -38,6 +39,28 @@ function format_stafid(?string $id): string {
     return substr($raw,0,4) . '-' . substr($raw,4,2);
   }
   return $id;
+}
+
+function normalize_group_color(?string $color): string {
+  $c = trim((string)$color);
+  if ($c === '') return '';
+  if ($c[0] !== '#') $c = '#' . $c;
+  if (!preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $c)) return '';
+  if (strlen($c) === 4) {
+    $c = '#' . $c[1] . $c[1] . $c[2] . $c[2] . $c[3] . $c[3];
+  }
+  return strtoupper($c);
+}
+
+function group_badge_style(?string $color): string {
+  $hex = normalize_group_color($color);
+  if ($hex === '') return '';
+  $r = hexdec(substr($hex, 1, 2));
+  $g = hexdec(substr($hex, 3, 2));
+  $b = hexdec(substr($hex, 5, 2));
+  $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+  $text = ($yiq >= 140) ? '#111111' : '#FFFFFF';
+  return "background-color:{$hex};color:{$text};border-color:{$hex};";
 }
 
 /**
@@ -83,8 +106,10 @@ $currentUserGroup = $profile['f_groupKod'] ?? '';
 $roleAdminSaId = defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0;
 $roleAdminHrId = defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0;
 $roleAdminKeId = defined('PRESTASI_ROLE_ID_ADM_KE') ? (int)PRESTASI_ROLE_ID_ADM_KE : 0;
-$currentUserGroupId = (int)($profile['f_groupID'] ?? 0);
-$isSuperAdmin = ($roleAdminSaId > 0 && $currentUserGroupId === $roleAdminSaId);
+$roleAdminSaKod = defined('PRESTASI_ROLE_KOD_ADM_SA') ? (string)PRESTASI_ROLE_KOD_ADM_SA : (defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA');
+$roleAdminHrKod = defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR';
+$roleAdminKeKod = defined('PRESTASI_ROLE_ADM_KE') ? (string)PRESTASI_ROLE_ADM_KE : 'ADM-KE';
+$isSuperAdmin = function_exists('is_user_super_admin') ? is_user_super_admin($profile, $dbMySQL) : ($roleAdminSaId > 0 && (int)($profile['f_groupID'] ?? 0) === $roleAdminSaId);
 
 // ======================= Load Group List dengan Caching (30 minit TTL) =======================
 $senaraiGroup = [];
@@ -98,8 +123,7 @@ if (is_array($cachedGroups)) {
 } else {
     // Cache miss - load from database
     try {
-        $dbMySQL = Database::getInstance('mysql')->getConnection();
-        $groupSql = "SELECT f_groupID, f_groupKod, f_groupName FROM tbl_m_group ORDER BY f_groupName ASC";
+        $groupSql = "SELECT f_groupID, f_groupKod, f_groupName, TRIM(COALESCE(f_color,'')) AS f_color FROM tbl_m_group ORDER BY f_groupName ASC";
         $groupStmt = $dbMySQL->query($groupSql);
         $senaraiGroup = $groupStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         // Store in cache
@@ -108,6 +132,15 @@ if (is_array($cachedGroups)) {
         error_log('[senarai-pengguna] Error loading groups: ' . $e->getMessage());
         $senaraiGroup = [];
     }
+}
+
+$groupColorById = [];
+foreach ($senaraiGroup as $g) {
+  $gid = (int)($g['f_groupID'] ?? 0);
+  $gcolor = normalize_group_color((string)($g['f_color'] ?? ''));
+  if ($gid > 0 && $gcolor !== '') {
+    $groupColorById[(string)$gid] = $gcolor;
+  }
 }
 
 // ======================= Staf List: Lazy Load via AJAX (removed from page load) =======================
@@ -1029,6 +1062,8 @@ try {
                           $gId     = (int)($u['f_groupID'] ?? 0);
                           $gKod    = (string)($u['f_groupKod'] ?? '');
                           $gName   = (string)($u['f_groupName'] ?? $gKod);
+                          $gColor  = normalize_group_color((string)($u['f_groupColor'] ?? ($groupColorById[(string)$gId] ?? '')));
+                          $gStyle  = group_badge_style($gColor);
                           $extraRoles = $u['extra_roles'] ?? [];
                           if (!is_array($extraRoles)) $extraRoles = [];
                           $extraCount = (int)($u['extra_roles_count'] ?? count($extraRoles));
@@ -1041,29 +1076,29 @@ try {
                         <?php
                           // Determine badge color based on group ID
                           $badgeClass = 'bg-secondary'; // default
-                          if ($roleAdminSaId > 0 && $gId === $roleAdminSaId) {
+                          if (($roleAdminSaId > 0 && $gId === $roleAdminSaId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminSaKod))) {
                             $badgeClass = 'bg-danger';
-                          } elseif ($roleAdminHrId > 0 && $gId === $roleAdminHrId) {
+                          } elseif (($roleAdminHrId > 0 && $gId === $roleAdminHrId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminHrKod))) {
                             $badgeClass = 'bg-warning';
-                          } elseif ($roleAdminKeId > 0 && $gId === $roleAdminKeId) {
+                          } elseif (($roleAdminKeId > 0 && $gId === $roleAdminKeId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminKeKod))) {
                             $badgeClass = 'bg-info';
                           }
                           
                           // Determine row class for highlighting
                           $rowClass = '';
-                          if ($roleAdminSaId > 0 && $gId === $roleAdminSaId) {
+                          if (($roleAdminSaId > 0 && $gId === $roleAdminSaId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminSaKod))) {
                             $rowClass = 'row-group-adm-sa';
-                          } elseif ($roleAdminHrId > 0 && $gId === $roleAdminHrId) {
+                          } elseif (($roleAdminHrId > 0 && $gId === $roleAdminHrId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminHrKod))) {
                             $rowClass = 'row-group-adm-hr';
                           }
                         ?>
-                        <tr data-user-id="<?= h((string)$userID) ?>" data-group-id="<?= h((string)$gId) ?>" data-group-kod="<?= h($gKod) ?>" data-flag="<?= h((string)$f_flag) ?>" data-extra-count="<?= h((string)$extraCount) ?>" data-extra-roles="<?= h(implode(', ', $extraRoles)) ?>" class="<?= h($rowClass) ?>">
+                        <tr data-user-id="<?= h((string)$userID) ?>" data-group-id="<?= h((string)$gId) ?>" data-group-kod="<?= h($gKod) ?>" data-group-color="<?= h($gColor) ?>" data-flag="<?= h((string)$f_flag) ?>" data-extra-count="<?= h((string)$extraCount) ?>" data-extra-roles="<?= h(implode(', ', $extraRoles)) ?>" class="<?= h($rowClass) ?>">
                           <td class="col-bil"></td>
                           <td class="col-nama"><span class="truncate-1line"><?= h($nama) ?> (<?= h($stafID) ?>)</span></td>
                           <td class="col-jabatan"><span class="truncate-1line"><?= h($jabatan) ?></span></td>
                           <td class="col-jawatan"><span class="truncate-1line"><?= h($jawatan) ?></span></td>
                           <td class="col-group">
-                            <span class="badge <?= h($badgeClass) ?>"><?= h($gName) ?></span>
+                            <span class="badge <?= h($badgeClass) ?>"<?= $gStyle !== '' ? ' style="' . h($gStyle) . '"' : '' ?>><?= h($gName) ?></span>
                             <i class="ri-information-line ms-1 text-muted extra-roles-info"
                                data-bs-toggle="tooltip"
                                data-bs-placement="top"
@@ -1413,6 +1448,12 @@ try {
       ADMIN_HR: <?= (int)$roleAdminHrId ?>,
       ADMIN_KE: <?= (int)$roleAdminKeId ?>
     },
+    GROUP_CODES: {
+      ADMIN_SA: '<?= h($roleAdminSaKod) ?>',
+      ADMIN_HR: '<?= h($roleAdminHrKod) ?>',
+      ADMIN_KE: '<?= h($roleAdminKeKod) ?>'
+    },
+    GROUP_COLORS: <?= json_encode($groupColorById, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
     COLORS: {
       GROUP_ADM_SA: '#ffe8e8',
       GROUP_ADM_HR: '#fffef0',
@@ -1576,19 +1617,57 @@ try {
   /**
    * Get badge class berdasarkan group ID
    */
-  function getBadgeClass(groupId) {
-    if (groupId === CONFIG.GROUP_IDS.ADMIN_SA) return 'bg-danger';
-    if (groupId === CONFIG.GROUP_IDS.ADMIN_HR) return 'bg-warning';
-    if (groupId === CONFIG.GROUP_IDS.ADMIN_KE) return 'bg-info';
+  function normalizeGroupCode(code) {
+    return String(code || '').toUpperCase().replace(/[^A-Z0-9]+/g, '');
+  }
+
+  function isGroupMatch(groupId, groupKod, targetId, targetKod) {
+    if (targetId > 0 && groupId === targetId) return true;
+    const codeA = normalizeGroupCode(groupKod);
+    const codeB = normalizeGroupCode(targetKod);
+    return codeA !== '' && codeA === codeB;
+  }
+
+  function normalizeHexColor(color) {
+    let c = String(color || '').trim();
+    if (!c) return '';
+    if (!c.startsWith('#')) c = '#' + c;
+    if (!/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/.test(c)) return '';
+    if (c.length === 4) c = '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
+    return c.toUpperCase();
+  }
+
+  function getGroupColor(groupId, groupColor = '') {
+    const provided = normalizeHexColor(groupColor);
+    if (provided) return provided;
+    const fromMap = CONFIG.GROUP_COLORS && CONFIG.GROUP_COLORS[String(groupId || '')];
+    return normalizeHexColor(fromMap);
+  }
+
+  function getGroupBadgeStyle(groupId, groupColor = '') {
+    const hex = getGroupColor(groupId, groupColor);
+    if (!hex) return null;
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    const text = yiq >= 140 ? '#111111' : '#FFFFFF';
+    return { backgroundColor: hex, borderColor: hex, color: text };
+  }
+
+  function getBadgeClass(groupId, groupKod = '') {
+    if (isGroupMatch(groupId, groupKod, CONFIG.GROUP_IDS.ADMIN_SA, CONFIG.GROUP_CODES.ADMIN_SA)) return 'bg-danger';
+    if (isGroupMatch(groupId, groupKod, CONFIG.GROUP_IDS.ADMIN_HR, CONFIG.GROUP_CODES.ADMIN_HR)) return 'bg-warning';
+    if (isGroupMatch(groupId, groupKod, CONFIG.GROUP_IDS.ADMIN_KE, CONFIG.GROUP_CODES.ADMIN_KE)) return 'bg-info';
     return 'bg-secondary';
   }
 
   /**
    * Get row class berdasarkan group ID
    */
-  function getRowClass(groupId) {
-    if (groupId === CONFIG.GROUP_IDS.ADMIN_SA) return 'row-group-adm-sa';
-    if (groupId === CONFIG.GROUP_IDS.ADMIN_HR) return 'row-group-adm-hr';
+  function getRowClass(groupId, groupKod = '') {
+    if (isGroupMatch(groupId, groupKod, CONFIG.GROUP_IDS.ADMIN_SA, CONFIG.GROUP_CODES.ADMIN_SA)) return 'row-group-adm-sa';
+    if (isGroupMatch(groupId, groupKod, CONFIG.GROUP_IDS.ADMIN_HR, CONFIG.GROUP_CODES.ADMIN_HR)) return 'row-group-adm-hr';
     return '';
   }
 
@@ -1652,10 +1731,17 @@ try {
     // Update row attributes
     if (newData.groupID) {
       $row.attr('data-group-id', newData.groupID);
-      $row.attr('class', getRowClass(newData.groupID));
+      const rowGroupKod = (newData.groupKod !== undefined) ? newData.groupKod : $row.attr('data-group-kod');
+      $row.attr('class', getRowClass(newData.groupID, rowGroupKod));
+      if (newData.groupColor === undefined) {
+        $row.attr('data-group-color', getGroupColor(newData.groupID, ''));
+      }
     }
     if (newData.groupKod) {
       $row.attr('data-group-kod', newData.groupKod);
+    }
+    if (newData.groupColor !== undefined) {
+      $row.attr('data-group-color', newData.groupColor || '');
     }
     if (Array.isArray(newData.extraRoles)) {
       const listText = newData.extraRoles.join(', ');
@@ -1672,10 +1758,17 @@ try {
     // Update group badge
     if (newData.groupID && newData.groupName) {
       const $badge = $row.find('.col-group .badge');
+      const badgeGroupColor = (newData.groupColor !== undefined) ? newData.groupColor : ($row.attr('data-group-color') || '');
       $badge
         .removeClass('bg-danger bg-warning bg-info bg-secondary')
-        .addClass(getBadgeClass(newData.groupID))
+        .addClass(getBadgeClass(newData.groupID, newData.groupKod || $row.attr('data-group-kod') || ''))
         .text(newData.groupName);
+      const badgeStyle = getGroupBadgeStyle(newData.groupID, badgeGroupColor);
+      if (badgeStyle) {
+        $badge.css(badgeStyle);
+      } else {
+        $badge.css({ backgroundColor: '', borderColor: '', color: '' });
+      }
     }
     
     // Update access badge
@@ -1743,6 +1836,7 @@ try {
     const gId  = parseInt(r.f_groupID || r.groupID || r.group_id || 0, 10);
     const gKod = String(r.f_groupKod || r.groupKod || r.group_kod || r.group || '');
     const gName = String(r.f_groupName || r.groupName || r.group_name || gKod);
+    const gColor = String(r.f_groupColor || r.groupColor || r.group_color || '');
     const extraRoles = Array.isArray(r.extra_roles) ? r.extra_roles : (Array.isArray(r.extraRoles) ? r.extraRoles : []);
     const flag = (typeof r.f_flag !== 'undefined') ? r.f_flag : (typeof r.flag !== 'undefined' ? r.flag : 0);
     const nopekerja = String(r.f_nopekerja || r.nopekerja || '');
@@ -1753,10 +1847,11 @@ try {
       .attr('data-user-id', userID)
       .attr('data-group-id', String(gId || ''))
       .attr('data-group-kod', gKod)
+      .attr('data-group-color', gColor)
       .attr('data-flag', String(flag))
       .attr('data-extra-count', String(extraRoles.length))
       .attr('data-extra-roles', extraRoles.join(', '))
-      .addClass(getRowClass(gId));
+      .addClass(getRowClass(gId, gKod));
 
     // Column: bil (filled by DataTable rowCallback)
     $tr.append($('<td>').addClass('col-bil'));
@@ -1773,7 +1868,9 @@ try {
 
     // Column: group badge
     const $groupTd = $('<td>').addClass('col-group');
-    const $badge = $('<span>').addClass('badge').addClass(getBadgeClass(gId)).text(gName);
+    const $badge = $('<span>').addClass('badge').addClass(getBadgeClass(gId, gKod)).text(gName);
+    const badgeStyle = getGroupBadgeStyle(gId, gColor);
+    if (badgeStyle) $badge.css(badgeStyle);
     const $info = $('<i>')
       .addClass('ri-information-line ms-1 text-muted extra-roles-info')
       .attr('data-bs-toggle', 'tooltip')
@@ -2487,7 +2584,9 @@ try {
         (j.groups || []).forEach(g => {
           const id = g.id || g.f_groupID || '';
           const name = g.nama || g.f_groupName || g.kod || g.f_groupKod || '';
+          const color = normalizeHexColor(g.color || g.f_color || g.f_groupColor || '');
           if (!id || !name) return;
+          if (color) CONFIG.GROUP_COLORS[String(id)] = color;
           $grp.append(new Option(name, String(id)));
         });
       } catch (e) { }
@@ -2607,9 +2706,14 @@ try {
           const id   = g.id || g.f_groupID || '';
           const kod  = g.kod || g.f_groupKod || '';
           const name = g.nama || g.f_groupName || kod;
+          const color = normalizeHexColor(g.color || g.f_color || g.f_groupColor || '');
           const opt = document.createElement('option');
           opt.value = id; opt.textContent = name;
           if (selectedId && String(selectedId) === String(id)) opt.selected = true;
+          if (color) {
+            opt.dataset.color = color;
+            CONFIG.GROUP_COLORS[String(id)] = color;
+          }
           sel.appendChild(opt);
         });
       }catch(e){ }
@@ -3022,10 +3126,12 @@ try {
           // Extract groupName from response - check both j.groupName and j.group.nama
           const groupIdResp = j.group && (j.group.id || j.group.f_groupID) ? (j.group.id || j.group.f_groupID) : parseInt(groupID, 10);
           const groupKodResp = j.group && (j.group.kod || j.group.f_groupKod) ? (j.group.kod || j.group.f_groupKod) : '';
+          const groupColorResp = j.group && (j.group.color || j.group.f_color || j.group.f_groupColor) ? (j.group.color || j.group.f_color || j.group.f_groupColor) : '';
           const groupName = j.groupName || (j.group && j.group.nama) || groupKodResp || groupID;
           updateUserRow(userID, {
             groupID: groupIdResp,
             groupKod: groupKodResp,
+            groupColor: groupColorResp,
             groupName: groupName,
             flag: flag
           });

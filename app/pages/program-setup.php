@@ -9,9 +9,14 @@ require_once __DIR__ . '/../includes/init.php';
 require_login();
 
 // 3. ✅ AUTHORIZATION - Check if user has admin rights
-$currentUserGroup = $profile['f_groupKod'] ?? '';
-$allowedRoles = ['ADM-SA', 'ADM-HR'];
-if (!in_array($currentUserGroup, $allowedRoles)) {
+$pdoAuth = Database::getInstance('mysql')->getConnection();
+$isProgramAdmin = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+    $profile,
+    $pdoAuth,
+    [defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0, defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0],
+    [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR']
+);
+if (!$isProgramAdmin) {
     redirect('pages/dashboard.php');
 }
 

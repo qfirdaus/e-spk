@@ -76,7 +76,8 @@ try {
     $currentStafID = $_SESSION['f_stafID'] ?? '';
     $currentProfile = $userModel->getProfile($currentStafID);
     
-    if (!$currentProfile || (int)($currentProfile['f_groupID'] ?? 0) !== PRESTASI_ROLE_ID_ADM_SA) {
+    $isSuperAdmin = $currentProfile && function_exists('is_user_super_admin') && is_user_super_admin($currentProfile, $pdo);
+    if (!$isSuperAdmin) {
         http_response_code(403);
         echo json_encode([
             'error' => true,

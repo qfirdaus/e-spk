@@ -85,16 +85,19 @@ try {
     $senaraiUser = $controller->senaraiUser ?? [];
     
     // User model untuk getAvatarUrl dan permission check
-    $userModel = new User(Database::getInstance('mysql')->getConnection());
+    $pdo = Database::getInstance('mysql')->getConnection();
+    $userModel = new User($pdo);
     
     // Get current user's group for permission control
     $currentStafID = $_SESSION['f_stafID'] ?? '';
     $currentProfile = $userModel->getProfile($currentStafID);
-    $currentUserGroupId = (int)($currentProfile['f_groupID'] ?? 0);
     $roleAdminSaId = defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0;
     $roleAdminHrId = defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0;
     $roleAdminKeId = defined('PRESTASI_ROLE_ID_ADM_KE') ? (int)PRESTASI_ROLE_ID_ADM_KE : 0;
-    $isADM_SA = ($roleAdminSaId > 0 && $currentUserGroupId === $roleAdminSaId);
+    $roleAdminSaKod = defined('PRESTASI_ROLE_KOD_ADM_SA') ? (string)PRESTASI_ROLE_KOD_ADM_SA : (defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA');
+    $roleAdminHrKod = defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR';
+    $roleAdminKeKod = defined('PRESTASI_ROLE_ADM_KE') ? (string)PRESTASI_ROLE_ADM_KE : 'ADM-KE';
+    $isADM_SA = $currentProfile && function_exists('is_user_super_admin') && is_user_super_admin($currentProfile, $pdo);
     
     // Helper function format_stafid (h() already exists in html_helper.php)
     if (!function_exists('format_stafid')) {
@@ -105,6 +108,30 @@ try {
                 return substr($raw,0,4) . '-' . substr($raw,4,2);
             }
             return $id;
+        }
+    }
+    if (!function_exists('normalize_group_color')) {
+        function normalize_group_color(?string $color): string {
+            $c = trim((string)$color);
+            if ($c === '') return '';
+            if ($c[0] !== '#') $c = '#' . $c;
+            if (!preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $c)) return '';
+            if (strlen($c) === 4) {
+                $c = '#' . $c[1] . $c[1] . $c[2] . $c[2] . $c[3] . $c[3];
+            }
+            return strtoupper($c);
+        }
+    }
+    if (!function_exists('group_badge_style')) {
+        function group_badge_style(?string $color): string {
+            $hex = normalize_group_color($color);
+            if ($hex === '') return '';
+            $r = hexdec(substr($hex, 1, 2));
+            $g = hexdec(substr($hex, 3, 2));
+            $b = hexdec(substr($hex, 5, 2));
+            $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+            $text = ($yiq >= 140) ? '#111111' : '#FFFFFF';
+            return 'background-color:' . $hex . ';color:' . $text . ';border-color:' . $hex . ';';
         }
     }
     
@@ -121,6 +148,8 @@ try {
             $gId     = (int)($u['f_groupID'] ?? 0);
             $gKod    = (string)($u['f_groupKod'] ?? '');
             $gName   = (string)($u['f_groupName'] ?? $gKod);
+            $gColor  = normalize_group_color((string)($u['f_groupColor'] ?? ''));
+            $gStyle  = group_badge_style($gColor);
             $extraRoles = $u['extra_roles'] ?? [];
             if (!is_array($extraRoles)) $extraRoles = [];
             $extraCount = (int)($u['extra_roles_count'] ?? count($extraRoles));
@@ -130,29 +159,29 @@ try {
             
             // Determine badge color
             $badgeClass = 'bg-secondary';
-            if ($roleAdminSaId > 0 && $gId === $roleAdminSaId) {
+            if (($roleAdminSaId > 0 && $gId === $roleAdminSaId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminSaKod))) {
                 $badgeClass = 'bg-danger';
-            } elseif ($roleAdminHrId > 0 && $gId === $roleAdminHrId) {
+            } elseif (($roleAdminHrId > 0 && $gId === $roleAdminHrId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminHrKod))) {
                 $badgeClass = 'bg-warning';
-            } elseif ($roleAdminKeId > 0 && $gId === $roleAdminKeId) {
+            } elseif (($roleAdminKeId > 0 && $gId === $roleAdminKeId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminKeKod))) {
                 $badgeClass = 'bg-info';
             }
             
             // Determine row class
             $rowClass = '';
-            if ($roleAdminSaId > 0 && $gId === $roleAdminSaId) {
+            if (($roleAdminSaId > 0 && $gId === $roleAdminSaId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminSaKod))) {
                 $rowClass = 'row-group-adm-sa';
-            } elseif ($roleAdminHrId > 0 && $gId === $roleAdminHrId) {
+            } elseif (($roleAdminHrId > 0 && $gId === $roleAdminHrId) || (function_exists('prestasi_group_code_equals') && prestasi_group_code_equals($gKod, $roleAdminHrKod))) {
                 $rowClass = 'row-group-adm-hr';
             }
             
-            $htmlRows .= '<tr data-user-id="' . h((string)$userID) . '" data-group-id="' . h((string)$gId) . '" data-group-kod="' . h($gKod) . '" data-flag="' . h((string)$f_flag) . '" data-extra-count="' . h((string)$extraCount) . '" data-extra-roles="' . h(implode(', ', $extraRoles)) . '" class="' . h($rowClass) . '">';
+            $htmlRows .= '<tr data-user-id="' . h((string)$userID) . '" data-group-id="' . h((string)$gId) . '" data-group-kod="' . h($gKod) . '" data-group-color="' . h($gColor) . '" data-flag="' . h((string)$f_flag) . '" data-extra-count="' . h((string)$extraCount) . '" data-extra-roles="' . h(implode(', ', $extraRoles)) . '" class="' . h($rowClass) . '">';
             $htmlRows .= '<td class="col-bil"></td>';
             $htmlRows .= '<td class="col-nama"><span class="truncate-1line">' . h($nama) . ' (' . h($stafID) . ')</span></td>';
             $htmlRows .= '<td class="col-jabatan"><span class="truncate-1line">' . h($jabatan) . '</span></td>';
             $htmlRows .= '<td class="col-jawatan"><span class="truncate-1line">' . h($jawatan) . '</span></td>';
             $htmlRows .= '<td class="col-group">';
-            $htmlRows .= '<span class="badge ' . h($badgeClass) . '">' . h($gName) . '</span>';
+            $htmlRows .= '<span class="badge ' . h($badgeClass) . '"' . ($gStyle !== '' ? ' style="' . h($gStyle) . '"' : '') . '>' . h($gName) . '</span>';
             $title = !empty($extraRoles) ? implode(', ', $extraRoles) : (__('userList_role_none') ?? 'Tiada peranan tambahan.');
             $htmlRows .= '<i class="ri-information-line ms-1 text-muted extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" title="' . h($title) . '"></i>';
             $htmlRows .= '</td>';
@@ -199,6 +228,7 @@ try {
                 'f_groupID' => $gId,
                 'f_groupKod' => $gKod,
                 'f_groupName' => $gName,
+                'f_groupColor' => $gColor,
                 'extra_roles' => $extraRoles,
                 'extra_roles_count' => $extraCount,
                 'f_flag' => $f_flag,

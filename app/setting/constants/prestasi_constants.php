@@ -116,6 +116,24 @@ define('PRESTASI_ROLE_ID_ADM_HR', (int)($_ENV['PRESTASI_ROLE_ID_ADM_HR'] ?? gete
 /** Role ID: Finance/Accounts (set via env if available) */
 define('PRESTASI_ROLE_ID_ADM_KE', (int)($_ENV['PRESTASI_ROLE_ID_ADM_KE'] ?? getenv('PRESTASI_ROLE_ID_ADM_KE') ?? 0));
 
+/**
+ * Super Admin role code used for access checks.
+ * Can be overridden with environment variable PRESTASI_ROLE_KOD_ADM_SA.
+ */
+if (!defined('PRESTASI_ROLE_ADM_SA')) {
+    define('PRESTASI_ROLE_ADM_SA', 'ADM-SA');
+}
+if (!defined('PRESTASI_ROLE_ADM_HR')) {
+    define('PRESTASI_ROLE_ADM_HR', 'ADM-HR');
+}
+if (!defined('PRESTASI_ROLE_ADM_KE')) {
+    define('PRESTASI_ROLE_ADM_KE', 'ADM-KE');
+}
+if (!defined('PRESTASI_ROLE_KOD_ADM_SA')) {
+    $roleKodSa = $_ENV['PRESTASI_ROLE_KOD_ADM_SA'] ?? getenv('PRESTASI_ROLE_KOD_ADM_SA');
+    define('PRESTASI_ROLE_KOD_ADM_SA', (string)(is_string($roleKodSa) && trim($roleKodSa) !== '' ? trim($roleKodSa) : PRESTASI_ROLE_ADM_SA));
+}
+
 
 
 // ============================================================================
@@ -185,7 +203,6 @@ define('PRESTASI_CACHE_KEY_DEPT', 'dept');
 
 /** Cache key component: lang */
 define('PRESTASI_CACHE_KEY_LANG', 'lang');
-
 
 
 

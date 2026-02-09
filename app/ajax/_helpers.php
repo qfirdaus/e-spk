@@ -46,12 +46,6 @@ function hasGroupManagePermission(PDO $pdo): bool {
     }
     
     try {
-        // Prefer active role in session (role switch aware)
-        $activeRoleId = (int)($_SESSION['group_active_id'] ?? 0);
-        if ($activeRoleId > 0 && $activeRoleId === PRESTASI_ROLE_ID_ADM_SA) {
-            return true;
-        }
-
         require_once __DIR__ . '/../classes/User.php';
         $userModel = new User($pdo);
         $profile = $userModel->getProfile($_SESSION['f_stafID']);
@@ -60,11 +54,8 @@ function hasGroupManagePermission(PDO $pdo): bool {
             return false;
         }
         
-        // Check if user is super admin or has group management permission
-        $groupId = (int)($profile['f_groupID'] ?? 0);
-        
-        // Super Admin boleh manage semua kumpulan
-        if ($groupId === PRESTASI_ROLE_ID_ADM_SA) {
+        // Super Admin (role aktif-aware + groupKod fallback) boleh manage semua kumpulan
+        if (function_exists('is_user_super_admin') && is_user_super_admin($profile, $pdo)) {
             return true;
         }
         
@@ -115,7 +106,6 @@ final class GroupDataCache {
         }
     }
 }
-
 
 
 

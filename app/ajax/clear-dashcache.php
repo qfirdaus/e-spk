@@ -12,8 +12,14 @@ try {
 
     // Only admin roles allowed to clear this cache
     $dash = new DashboardController();
-    $groupId = (int)($_SESSION['f_groupID'] ?? ($dash->profile['f_groupID'] ?? 0));
-    if (!in_array($groupId, [PRESTASI_ROLE_ID_ADM_SA, PRESTASI_ROLE_ID_ADM_KE], true)) {
+    $profile = $dash->profile ?? [];
+    $isAllowed = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+        $profile,
+        Database::getInstance('mysql')->getConnection(),
+        [PRESTASI_ROLE_ID_ADM_SA, PRESTASI_ROLE_ID_ADM_KE],
+        [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_KE') ? (string)PRESTASI_ROLE_ADM_KE : 'ADM-KE']
+    );
+    if (!$isAllowed) {
         http_response_code(403);
         echo json_encode(['ok' => false, 'msg' => 'Akses tidak dibenarkan']);
         exit;

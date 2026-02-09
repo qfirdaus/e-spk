@@ -163,6 +163,15 @@ try {
     $db = Database::getInstance('mysql')->getConnection();
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Permission guard: only Super Admin (active role aware)
+    require_once __DIR__ . '/../classes/User.php';
+    $userModel = new User($db);
+    $currentProfile = $userModel->getProfile($_SESSION['f_stafID'] ?? '');
+    $isSuperAdmin = $currentProfile && function_exists('is_user_super_admin') && is_user_super_admin($currentProfile, $db);
+    if (!$isSuperAdmin) {
+        json_fail('Anda tidak mempunyai kebenaran untuk mengemas kini pengguna.', 403);
+    }
+
     // ===== Helper: semak kolum wujud =====
     $colExists = function(PDO $db, string $table, string $col): bool {
         $q = $db->prepare("
@@ -218,10 +227,11 @@ try {
     $gid  = $oldID;
     $gkod = $oldKod;
     $gnam = $oldName;
+    $gcol = '';
     
     // Only query group if group is being updated
     if ($hasGroup) {
-        $stmt = $db->prepare("SELECT f_groupID, f_groupKod, f_groupName FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
+        $stmt = $db->prepare("SELECT f_groupID, f_groupKod, f_groupName, TRIM(COALESCE(f_color,'')) AS f_color FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
         $stmt->execute([':gid'=>$groupID]);
         $grp = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$grp) {
@@ -230,6 +240,7 @@ try {
         $gid  = (int)$grp['f_groupID'];
         $gkod = (string)$grp['f_groupKod'];
         $gnam = (string)$grp['f_groupName'];
+        $gcol = (string)($grp['f_color'] ?? '');
     }
 
     // ===== No-op? Check both group AND flag - only no-op if BOTH are same =====
@@ -299,8 +310,9 @@ try {
         
         json_ok([
             'message' => $noopMessage,
-            'group'   => $hasGroup ? ['id'=>$gid, 'kod'=>$gkod, 'nama'=>$gnam] : null,
+            'group'   => $hasGroup ? ['id'=>$gid, 'kod'=>$gkod, 'nama'=>$gnam, 'color'=>$gcol] : null,
             'groupName' => $hasGroup ? $gnam : null, // ✅ Add groupName at top level for easier access
+            'groupColor' => $hasGroup ? $gcol : null,
             'flag'    => $hasFlag ? $flag : null,
             'audit'   => ['event_id'=>$eventId, 'status'=>'noop']
         ]);
@@ -481,8 +493,9 @@ try {
 
     json_ok([
         'message' => 'Kumpulan dan akses berjaya dikemas kini.',
-        'group'   => ['id'=>$gid, 'kod'=>$gkod, 'nama'=>$gnam],
+        'group'   => ['id'=>$gid, 'kod'=>$gkod, 'nama'=>$gnam, 'color'=>$gcol],
         'groupName' => $gnam, // ✅ Add groupName at top level for easier access
+        'groupColor' => $gcol,
         'flag'    => $hasFlag ? $flag : null,
         'audit'   => ['event_id'=>$eventId, 'status'=>'updated']
     ]);

@@ -26,11 +26,16 @@ class ProjectReportingController {
 
     private function loadUserProjects(): void {
         $stafID = $_SESSION['f_stafID'] ?? '';
-        $groupKod = $this->profile['f_groupKod'] ?? '';
+        $isAdmin = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+            $this->profile,
+            $this->pdo,
+            [defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0, defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0],
+            [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR']
+        );
 
         // If Admin, show all. If Owner, show assigned.
         // Join teras and user to provide fields used by the view (f_kodTeras, ownerName)
-        if (in_array($groupKod, ['ADM-SA', 'ADM-HR'])) {
+        if ($isAdmin) {
             $sql = "SELECT p.f_projectID, p.f_projectName, p.f_ownerStafID, p.f_startDate, p.f_endDate, p.f_status, t.f_kodTeras, u.f_nama as ownerName
                     FROM tbl_monitoring_project p
                     JOIN tbl_monitoring_teras t ON p.f_terasID = t.f_terasID

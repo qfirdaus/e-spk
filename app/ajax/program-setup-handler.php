@@ -17,9 +17,16 @@ if (empty($csrf) || $csrf !== $_SESSION['csrf_token']) {
 }
 
 // Authorization check
-$currentUserGroupId = (int)($_SESSION['user']['f_groupID'] ?? $profile['f_groupID'] ?? $_SESSION['f_groupID'] ?? 0);
-$allowedRoleIds = [PRESTASI_ROLE_ID_ADM_SA, PRESTASI_ROLE_ID_ADM_HR];
-if (!in_array($currentUserGroupId, $allowedRoleIds, true)) {
+$pdoAuth = Database::getInstance('mysql')->getConnection();
+$userModelAuth = new User($pdoAuth);
+$profileAuth = $userModelAuth->getProfile($_SESSION['f_stafID'] ?? '');
+$isAllowed = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+    $profileAuth ?: [],
+    $pdoAuth,
+    [PRESTASI_ROLE_ID_ADM_SA, PRESTASI_ROLE_ID_ADM_HR],
+    [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR']
+);
+if (!$isAllowed) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit;
 }

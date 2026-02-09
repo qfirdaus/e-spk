@@ -41,9 +41,13 @@ class ProjectPlanningController {
     }
 
     private function loadProjects(): void {
-        $userGroupKod = $this->profile['f_groupKod'] ?? '';
         $userStafID = $_SESSION['f_stafID'] ?? '';
-        $isAdmin = in_array($userGroupKod, ['ADM-SA', 'ADM-HR']);
+        $isAdmin = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+            $this->profile,
+            $this->pdo,
+            [defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0, defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0],
+            [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR']
+        );
         
         $sql = "
             SELECT 
@@ -91,9 +95,13 @@ class ProjectPlanningController {
     public function saveProject(array $data): array {
         try {
             // Permission Check: Only admins and teras owners can save projects
-            $userGroupKod = $this->profile['f_groupKod'] ?? '';
             $userStafID = $_SESSION['f_stafID'] ?? '';
-            $isAdmin = in_array($userGroupKod, ['ADM-SA', 'ADM-HR']);
+            $isAdmin = function_exists('prestasi_user_active_role_in') && prestasi_user_active_role_in(
+                $this->profile,
+                $this->pdo,
+                [defined('PRESTASI_ROLE_ID_ADM_SA') ? (int)PRESTASI_ROLE_ID_ADM_SA : 0, defined('PRESTASI_ROLE_ID_ADM_HR') ? (int)PRESTASI_ROLE_ID_ADM_HR : 0],
+                [defined('PRESTASI_ROLE_ADM_SA') ? (string)PRESTASI_ROLE_ADM_SA : 'ADM-SA', defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR : 'ADM-HR']
+            );
             
             if (!$isAdmin) {
                 // Check if user owns the teras
