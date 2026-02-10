@@ -63,6 +63,10 @@ try {
   }
 
   $newId = (int)$db->lastInsertId();
+
+  // Invalidate group-related caches (group list/style maps/access summaries)
+  clearGroupUiCaches($newId);
+
   echo json_encode(['error'=>false,'group'=>['id'=>$newId,'kod'=>$kod,'nama'=>$nama]], JSON_UNESCAPED_UNICODE);
 
   // Audit: GROUP_CREATE (non-blocking)

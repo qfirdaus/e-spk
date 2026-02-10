@@ -107,6 +107,32 @@ final class GroupDataCache {
     }
 }
 
+/**
+ * Clear caches that can affect group UI/style resolution.
+ * - GroupDataCache (permissions/access)
+ * - User list session cache key used by pages/senarai-pengguna.php
+ *
+ * @param int|null $groupId Optional group ID for targeted invalidation.
+ */
+function clearGroupUiCaches(?int $groupId = null): void {
+    // Invalidate session cache used by senarai-pengguna.php (UserListCache::namespace = userlist_cache)
+    if (isset($_SESSION['userlist_cache']) && is_array($_SESSION['userlist_cache'])) {
+        foreach (array_keys($_SESSION['userlist_cache']) as $k) {
+            if ($k === 'group_list' || str_starts_with($k, 'group_list')) {
+                unset($_SESSION['userlist_cache'][$k]);
+            }
+        }
+    }
+
+    // Invalidate group permission/access caches used by AJAX endpoints
+    if ($groupId !== null && $groupId > 0) {
+        GroupDataCache::clear('group_perms_' . $groupId);
+        GroupDataCache::clear('group_access_' . $groupId);
+    } else {
+        GroupDataCache::clear('group_perms_');
+        GroupDataCache::clear('group_access_');
+    }
+}
 
 
 

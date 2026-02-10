@@ -109,9 +109,8 @@ try{
     error_log('[group-perms-save] Audit logging failed: ' . $e->getMessage());
   }
   
-  // Clear cache selepas save permissions
-  GroupDataCache::clear('group_perms_' . $gid);
-  GroupDataCache::clear('group_access_' . $gid);
+  // Clear cache selepas save permissions (including user list group cache/style map source)
+  clearGroupUiCaches($gid);
 
   echo json_encode(['error'=>false, 'ok'=>true], JSON_UNESCAPED_UNICODE);
 

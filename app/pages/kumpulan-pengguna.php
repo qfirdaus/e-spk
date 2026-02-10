@@ -33,6 +33,133 @@ if (empty($_SESSION['csrf_token'])) {
   $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf_token'];
+
+// Default order for new module: max(f_order) + 1
+$nextModuleOrder = 1;
+try {
+  $pdoOrder = Database::getInstance('mysql')->getConnection();
+  $nextStmt = $pdoOrder->query("SELECT COALESCE(MAX(f_order), 0) + 1 AS next_order FROM tbl_m_modul");
+  $nextVal = (int)($nextStmt->fetchColumn() ?: 1);
+  $nextModuleOrder = ($nextVal > 0) ? $nextVal : 1;
+} catch (Throwable $e) {
+  $nextModuleOrder = 1;
+}
+
+// Add Module (POST, non-AJAX)
+$moduleFormData = [
+  'modulNameMs' => '',
+  'modulNameEn' => '',
+  'icon' => '',
+  'order' => (string)$nextModuleOrder,
+];
+$moduleFormOpen = false;
+$moduleSwal = null;
+
+if (!empty($_SESSION['module_add_flash']) && is_array($_SESSION['module_add_flash'])) {
+  $flash = $_SESSION['module_add_flash'];
+  unset($_SESSION['module_add_flash']);
+  $moduleSwal = [
+    'icon' => (string)($flash['icon'] ?? 'success'),
+    'title' => (string)($flash['title'] ?? ''),
+    'text' => (string)($flash['text'] ?? ''),
+  ];
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') === 'add_module') {
+  $moduleFormOpen = true;
+  $moduleFormData['modulNameMs'] = trim((string)($_POST['modulNameMs'] ?? ''));
+  $moduleFormData['modulNameEn'] = trim((string)($_POST['modulNameEn'] ?? ''));
+  $moduleFormData['icon'] = trim((string)($_POST['icon'] ?? ''));
+  $moduleFormData['order'] = trim((string)($_POST['order'] ?? ''));
+
+  $postedCsrf = (string)($_POST['csrf_token'] ?? '');
+  if ($postedCsrf === '' || !hash_equals((string)($_SESSION['csrf_token'] ?? ''), $postedCsrf)) {
+    $moduleSwal = [
+      'icon' => 'error',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('userGroup_error_unknown'),
+    ];
+  } elseif (!$canManageGroups) {
+    $moduleSwal = [
+      'icon' => 'error',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('userList_err_no_permission'),
+    ];
+  } elseif ($moduleFormData['modulNameMs'] === '') {
+    $moduleSwal = [
+      'icon' => 'warning',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('modul_ralat_wajib'),
+    ];
+  } else {
+    try {
+      $pdo = Database::getInstance('mysql')->getConnection();
+      $nameMs = $moduleFormData['modulNameMs'];
+      $nameEn = $moduleFormData['modulNameEn'];
+
+      $dupSql = "
+        SELECT 1
+        FROM tbl_m_modul
+        WHERE LOWER(TRIM(f_modulName_ms)) = LOWER(TRIM(:name_ms_1))
+           OR LOWER(TRIM(f_modulName_en)) = LOWER(TRIM(:name_ms_2))
+      ";
+      $dupParams = [
+        ':name_ms_1' => $nameMs,
+        ':name_ms_2' => $nameMs,
+      ];
+      if ($nameEn !== '') {
+        $dupSql .= "
+           OR LOWER(TRIM(f_modulName_ms)) = LOWER(TRIM(:name_en_1))
+           OR LOWER(TRIM(f_modulName_en)) = LOWER(TRIM(:name_en_2))
+        ";
+        $dupParams[':name_en_1'] = $nameEn;
+        $dupParams[':name_en_2'] = $nameEn;
+      }
+      $dupSql .= " LIMIT 1";
+
+      $dupStmt = $pdo->prepare($dupSql);
+      $dupStmt->execute($dupParams);
+      $isDuplicate = (bool)$dupStmt->fetchColumn();
+
+      if ($isDuplicate) {
+        $moduleSwal = [
+          'icon' => 'error',
+          'title' => (string)__('modul_ralat_title'),
+          'text' => (string)__('modul_ralat_duplikat'),
+        ];
+      } else {
+        $orderRaw = $moduleFormData['order'];
+        $orderVal = ($orderRaw !== '' && is_numeric($orderRaw)) ? (int)$orderRaw : $nextModuleOrder;
+
+        $ins = $pdo->prepare("
+          INSERT INTO tbl_m_modul (f_modulName_ms, f_modulName_en, f_icon, f_order)
+          VALUES (:name_ms, :name_en, :icon, :f_order)
+        ");
+        $ins->execute([
+          ':name_ms' => $nameMs,
+          ':name_en' => ($nameEn !== '' ? $nameEn : null),
+          ':icon' => ($moduleFormData['icon'] !== '' ? $moduleFormData['icon'] : null),
+          ':f_order' => $orderVal,
+        ]);
+
+        $_SESSION['module_add_flash'] = [
+          'icon' => 'success',
+          'title' => (string)__('modul_berjaya_title'),
+          'text' => (string)__('modul_berjaya_msg'),
+        ];
+        header('Location: ' . base_url('pages/kumpulan-pengguna.php'));
+        exit;
+      }
+    } catch (Throwable $e) {
+      error_log('[kumpulan-pengguna:add-module] ' . $e->getMessage());
+      $moduleSwal = [
+        'icon' => 'error',
+        'title' => (string)__('modul_ralat_title'),
+        'text' => (string)__('userGroup_error_unknown'),
+      ];
+    }
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= h($lang) ?>" data-bs-theme="<?= h($_SESSION['theme.layout'] ?? 'light') ?>">
@@ -1103,6 +1230,46 @@ $csrf = $_SESSION['csrf_token'];
         </div>
       </div>
 
+      <!-- MODAL: Tambah Modul -->
+      <div class="modal fade modal-themed" id="moduleCreateModal" tabindex="-1" aria-hidden="true" aria-labelledby="moduleCreateTitle">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="moduleCreateTitle"><i class="ri-stack-line"></i> <span><?= h(__('modul_tambah_title')) ?></span></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= h(__('modul_batal')) ?>"></button>
+            </div>
+            <div class="modal-body">
+              <form id="moduleCreateForm" method="post" autocomplete="off">
+                <input type="hidden" name="action" value="add_module">
+                <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label"><?= h(__('modul_nama_ms')) ?></label>
+                    <input type="text" class="form-control" id="mc_modulNameMs" name="modulNameMs" value="<?= h($moduleFormData['modulNameMs']) ?>" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"><?= h(__('modul_nama_en')) ?></label>
+                    <input type="text" class="form-control" id="mc_modulNameEn" name="modulNameEn" value="<?= h($moduleFormData['modulNameEn']) ?>">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"><?= h(__('modul_icon')) ?></label>
+                    <input type="text" class="form-control" id="mc_icon" name="icon" value="<?= h($moduleFormData['icon']) ?>">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"><?= h(__('modul_susunan')) ?></label>
+                    <input type="number" class="form-control" id="mc_order" name="order" value="<?= h($moduleFormData['order']) ?>" data-default-order="<?= h((string)$nextModuleOrder) ?>">
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="ri-close-line me-1"></i> <?= h(__('modul_batal')) ?></button>
+              <button class="btn btn-primary" id="moduleCreateSaveBtn" <?= $permDisabledAttr ?>><i class="ri-save-3-line me-1"></i> <?= h(__('modul_simpan')) ?></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 <script>
 // ✅ Global utility function untuk check DataTables availability
 window.hasDT = function() {
@@ -1163,6 +1330,7 @@ window.hasDT = function() {
     move_up: <?= json_encode(__('userGroup_move_up')) ?>,
     move_down: <?= json_encode(__('userGroup_move_down')) ?>,
     btn_add_menu: <?= json_encode(__('userGroup_btn_add_menu')) ?>,
+    btn_add_module: <?= json_encode(__('modul_tambah')) ?>,
     col_status: <?= json_encode(__('userGroup_col_status')) ?>,
     col_actions: <?= json_encode(__('userGroup_col_actions')) ?>,
     status_on: <?= json_encode(__('userGroup_status_on')) ?>,
@@ -1409,15 +1577,17 @@ window.hasDT = function() {
         if ($right.length && canManageGroups) {
           // Add "Tambah Menu" (page-level) and "Tambah Kumpulan" buttons
           // Use full action labels for visible buttons
-          const fullMenuLabel = (typeof T !== 'undefined' && T.btn_add_menu) ? String(T.btn_add_menu) : 'Tambah Menu';
-          const fullGroupLabel = 'Tambah Kumpulan';
+          const fullMenuLabel = 'Menu';
+          const fullModuleLabel = 'Modul';
+          const fullGroupLabel = 'Kumpulan';
 
           // Visible text shows full labels; also include title/aria-label for accessibility
           const $btnMenu = jQuery('<button type="button" id="btnAddMenuPage" class="btn btn-sm btn-primary me-2" title="' + GroupUtils.esc(fullMenuLabel) + '" aria-label="' + GroupUtils.esc(fullMenuLabel) + '"><i class="ri-menu-2-line"></i> ' + GroupUtils.esc(fullMenuLabel) + '</button>');
-          const $btn = jQuery('<button type="button" id="btnAddGroup" class="btn btn-sm btn-primary" title="' + GroupUtils.esc(fullGroupLabel) + '" aria-label="' + GroupUtils.esc(fullGroupLabel) + '"><i class="ri-add-line"></i> ' + GroupUtils.esc(fullGroupLabel) + '</button>');
+          const $btnModule = jQuery('<button type="button" id="btnAddModule" class="btn btn-sm btn-primary me-2" title="' + GroupUtils.esc(fullModuleLabel) + '" aria-label="' + GroupUtils.esc(fullModuleLabel) + '"><i class="ri-stack-line"></i> ' + GroupUtils.esc(fullModuleLabel) + '</button>');
+          const $btn = jQuery('<button type="button" id="btnAddGroup" class="btn btn-sm btn-primary" title="' + GroupUtils.esc(fullGroupLabel) + '" aria-label="' + GroupUtils.esc(fullGroupLabel) + '"><i class="ri-group-line"></i> ' + GroupUtils.esc(fullGroupLabel) + '</button>');
 
-          // Append in order: Menu then Group
-          $right.append($btnMenu).append($btn);
+          // Append in order: Menu, Modul, Group
+          $right.append($btnMenu).append($btnModule).append($btn);
 
           // Page-level Add Menu handler: delegate to MenuAccess.handleAddMenu when available
           $btnMenu.off('click').on('click', function(){
@@ -1439,6 +1609,16 @@ window.hasDT = function() {
             } else {
               alert('Sila pilih kumpulan dahulu melalui butang Akses Menu.');
             }
+          });
+
+          $btnModule.off('click').on('click', function(){
+            const modal = new bootstrap.Modal(document.getElementById('moduleCreateModal'));
+            const form = document.getElementById('moduleCreateForm');
+            if (form && !form.dataset.keepValues) {
+              form.reset();
+            }
+            if (form) delete form.dataset.keepValues;
+            modal.show();
           });
 
           // Existing Add Group handler
@@ -1636,6 +1816,37 @@ window.hasDT = function() {
     setTimeout(initGroupTable, 100);
   }
 })();
+
+document.addEventListener('DOMContentLoaded', function(){
+  const saveBtn = document.getElementById('moduleCreateSaveBtn');
+  const form = document.getElementById('moduleCreateForm');
+  if (saveBtn && form) {
+    saveBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      form.submit();
+    });
+  }
+
+  <?php if (!empty($moduleSwal) && is_array($moduleSwal)): ?>
+  if (window.Swal && typeof Swal.fire === 'function') {
+    Swal.fire({
+      icon: <?= json_encode((string)($moduleSwal['icon'] ?? 'info')) ?>,
+      title: <?= json_encode((string)($moduleSwal['title'] ?? '')) ?>,
+      text: <?= json_encode((string)($moduleSwal['text'] ?? '')) ?>,
+      confirmButtonText: <?= json_encode((string)__('config_js_btn_ok')) ?>
+    });
+  }
+  <?php endif; ?>
+
+  <?php if ($moduleFormOpen): ?>
+  const modalEl = document.getElementById('moduleCreateModal');
+  if (modalEl && window.bootstrap && bootstrap.Modal) {
+    const formEl = document.getElementById('moduleCreateForm');
+    if (formEl) formEl.dataset.keepValues = '1';
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+  }
+  <?php endif; ?>
+});
 </script>
 
 
