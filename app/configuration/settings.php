@@ -2,7 +2,7 @@
 
 return [
     'site' => [
-        'title'   => 'Sistem Pengurusan Projek (UPNM30)',
+        'title'   => 'Sistem MyHEPA',
         'favicon' => 'assets/images/favicon.ico',
     ],
 
@@ -11,7 +11,7 @@ return [
     ],
 
     'system' => [
-        'name'    => 'UPNM30',
+        'name'    => 'MyHEPA',
         'version' => '2.0.0',
         'author'  => 'UPNM, Seksyen Aplikasi Digital, BTMK',
         'support' => 'personel_ict@upnm.edu.my',
