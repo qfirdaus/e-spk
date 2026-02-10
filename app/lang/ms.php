@@ -81,12 +81,12 @@ return [
 // Medan borang
 'login_staffid'            => 'ID Staf',
 'login_userid_placeholder' => 'Contoh: XXXX-XX',
-'login_password'           => 'Katalaluan',
+'login_password'           => 'Kata Laluan',
 'login_language'           => 'Bahasa',
 
 // Nota & tindakan
-'login_note'               => 'Untuk log masuk kali pertama, gunakan ID Staf anda sebagai katalaluan.',
-'login_forgot'             => 'Lupa katalaluan?',
+'login_note'               => 'Untuk log masuk kali pertama, gunakan ID Staf anda sebagai kata laluan.',
+'login_forgot'             => 'Lupa kata laluan?',
 'login_btnLogin'           => 'Log Masuk',
 
 // Status & mesej masa
