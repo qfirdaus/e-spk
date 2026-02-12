@@ -10,13 +10,21 @@ if (!function_exists('prestasi_group_ui_normalize_code')) {
     }
 }
 
+if (!function_exists('prestasi_group_ui_default_row_class')) {
+    function prestasi_group_ui_default_row_class(?string $groupKod): string {
+        $code = strtolower(preg_replace('/[^a-z0-9]+/', '-', (string)$groupKod) ?? '');
+        $code = trim($code, '-');
+        return $code !== '' ? 'row-group-' . $code : '';
+    }
+}
+
 if (!function_exists('prestasi_group_ui_load_maps')) {
     /**
      * Build group UI maps from either provided rows or DB table `tbl_m_group`.
      *
      * @param PDO $pdo
      * @param array<int, array<string, mixed>>|null $groupRows
-     * @return array{by_id: array<string, array{badgeClass: string, rowClass: string}>, by_code: array<string, array{badgeClass: string, rowClass: string}>}
+     * @return array{by_id: array<string, array{badgeClass: string, rowClass: string, rowColor: string}>, by_code: array<string, array{badgeClass: string, rowClass: string, rowColor: string}>}
      */
     function prestasi_group_ui_load_maps(PDO $pdo, ?array $groupRows = null): array {
         static $cache = [];
@@ -31,7 +39,7 @@ if (!function_exists('prestasi_group_ui_load_maps')) {
 
         if ($groupRows === null) {
             $groupRows = $pdo->query(
-                "SELECT f_groupID, f_groupKod, f_badge_class, f_row_class FROM tbl_m_group"
+                "SELECT f_groupID, f_groupKod, f_badge_class, f_row_class, f_color FROM tbl_m_group"
             )->fetchAll(PDO::FETCH_ASSOC) ?: [];
         }
 
@@ -42,9 +50,14 @@ if (!function_exists('prestasi_group_ui_load_maps')) {
             $groupKod = prestasi_group_ui_normalize_code((string)($g['f_groupKod'] ?? ''));
             $badgeClass = trim((string)($g['f_badge_class'] ?? ''));
             $rowClass = trim((string)($g['f_row_class'] ?? ''));
+            if ($rowClass === '') {
+                $rowClass = prestasi_group_ui_default_row_class((string)($g['f_groupKod'] ?? ''));
+            }
+            $rowColor = trim((string)($g['f_color'] ?? ''));
             $style = [
                 'badgeClass' => ($badgeClass !== '' ? $badgeClass : 'bg-secondary'),
                 'rowClass' => $rowClass,
+                'rowColor' => $rowColor,
             ];
 
             if ($groupId > 0) {
@@ -67,8 +80,8 @@ if (!function_exists('prestasi_group_ui_resolve')) {
     /**
      * Resolve final UI style by group ID first, then normalized group code.
      *
-     * @param array{by_id?: array<string, array{badgeClass?: string, rowClass?: string}>, by_code?: array<string, array{badgeClass?: string, rowClass?: string}>} $maps
-     * @return array{badgeClass: string, rowClass: string}
+     * @param array{by_id?: array<string, array{badgeClass?: string, rowClass?: string, rowColor?: string}>, by_code?: array<string, array{badgeClass?: string, rowClass?: string, rowColor?: string}>} $maps
+     * @return array{badgeClass: string, rowClass: string, rowColor: string}
      */
     function prestasi_group_ui_resolve(array $maps, int $groupId, ?string $groupKod = null): array {
         $idKey = (string)$groupId;
@@ -83,10 +96,14 @@ if (!function_exists('prestasi_group_ui_resolve')) {
 
         $badgeClass = trim((string)($style['badgeClass'] ?? ''));
         $rowClass = trim((string)($style['rowClass'] ?? ''));
+        if ($rowClass === '') {
+            $rowClass = prestasi_group_ui_default_row_class($groupKod);
+        }
+        $rowColor = trim((string)($style['rowColor'] ?? ''));
         return [
             'badgeClass' => ($badgeClass !== '' ? $badgeClass : 'bg-secondary'),
             'rowClass' => $rowClass,
+            'rowColor' => $rowColor,
         ];
     }
 }
-

@@ -150,8 +150,8 @@ class SidebarController
             $akses = $this->loadGroupAccess();
             
             // Extract access arrays
-            $modulAccess = array_map('intval', explode(',', $akses['f_modulAccess'] ?? ''));
-            $menuAccess = array_map('intval', explode(',', $akses['f_menuAccess'] ?? ''));
+            $modulAccess = $this->parseCsvIds((string)($akses['f_modulAccess'] ?? ''));
+            $menuAccess = $this->parseCsvIds((string)($akses['f_menuAccess'] ?? ''));
             
             // Load modules and menus (with caching)
             $this->loadModulesAndMenus($modulAccess, $menuAccess);
@@ -215,7 +215,29 @@ class SidebarController
             );
             $stmt->execute(['groupId' => $this->groupId]);
             $akses = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-            return is_array($akses) ? $akses : [];
+            if (is_array($akses) && !empty($akses)) {
+                return $akses;
+            }
+
+            // Fallback safety: if active role in session is stale/invalid, reset to user's default role.
+            $defaultGroupId = isset($this->profile['f_groupID']) ? (int)$this->profile['f_groupID'] : 0;
+            if ($defaultGroupId > 0 && $defaultGroupId !== $this->groupId) {
+                $stmtDefault = $this->pdoMysql->prepare(
+                    "SELECT f_modulAccess, f_menuAccess
+                     FROM tbl_m_group
+                     WHERE f_groupID = :groupId
+                     LIMIT 1"
+                );
+                $stmtDefault->execute(['groupId' => $defaultGroupId]);
+                $fallback = $stmtDefault->fetch(PDO::FETCH_ASSOC) ?: [];
+                if (is_array($fallback) && !empty($fallback)) {
+                    $_SESSION['group_active_id'] = $defaultGroupId;
+                    $this->groupId = $defaultGroupId;
+                    return $fallback;
+                }
+            }
+
+            return [];
         } catch (PDOException $e) {
             error_log("SidebarController: Failed to get group access for groupId={$this->groupId}: " . $e->getMessage());
             return [];
@@ -236,9 +258,15 @@ class SidebarController
         $cachedData = $this->getCache($cacheKey);
         
         if ($cachedData !== null && is_array($cachedData)) {
-            $this->senaraiModul = $cachedData['moduls'] ?? [];
-            $this->modulMenus = $cachedData['menus'] ?? [];
-            return;
+            $cachedModuls = $cachedData['moduls'] ?? [];
+            $cachedMenus = $cachedData['menus'] ?? [];
+
+            // Do not trust stale empty cache when access list is present.
+            if (!(empty($cachedModuls) && !empty($modulAccess))) {
+                $this->senaraiModul = $cachedModuls;
+                $this->modulMenus = is_array($cachedMenus) ? $cachedMenus : [];
+                return;
+            }
         }
 
         // Load from database
@@ -393,6 +421,33 @@ class SidebarController
     }
 
     /**
+     * Parse CSV IDs safely.
+     * - Empty string => []
+     * - Ignores non-numeric/zero values
+     * - Keeps unique positive integers
+     */
+    private function parseCsvIds(string $csv): array
+    {
+        $csv = trim($csv);
+        if ($csv === '') {
+            return [];
+        }
+
+        $out = [];
+        foreach (explode(',', $csv) as $part) {
+            $part = trim($part);
+            if ($part === '' || !ctype_digit($part)) {
+                continue;
+            }
+            $id = (int)$part;
+            if ($id > 0 && !in_array($id, $out, true)) {
+                $out[] = $id;
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Get notification count for dashboard badge
      * 
      * Currently returns null (no notification system implemented).
@@ -411,9 +466,6 @@ class SidebarController
         return null; // No notifications for now
     }
 }
-
-
-
 
 
 

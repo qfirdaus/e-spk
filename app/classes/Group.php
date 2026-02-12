@@ -12,7 +12,8 @@ class Group extends BaseModel
     /** ✅ Dapatkan semua rekod kumpulan */
     public function getAll(): array
     {
-        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess
+        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess,
+                       f_color, f_badge_class, f_row_class, f_priority, f_mod
                 FROM tbl_m_group
                 ORDER BY f_groupID ASC";
         return $this->fetchAll($sql);
@@ -21,7 +22,8 @@ class Group extends BaseModel
     /** ✅ Dapatkan kumpulan berdasarkan kod */
     public function findByKod(string $kod): ?array
     {
-        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess
+        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess,
+                       f_color, f_badge_class, f_row_class, f_priority, f_mod
                 FROM tbl_m_group
                 WHERE f_groupKod = :kod
                 LIMIT 1";
@@ -31,7 +33,8 @@ class Group extends BaseModel
     /** ✅ Dapatkan kumpulan berdasarkan ID */
     public function findById(int $id): ?array
     {
-        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess
+        $sql = "SELECT f_groupID, f_groupKod, f_groupName, f_modulAccess, f_menuAccess,
+                       f_color, f_badge_class, f_row_class, f_priority, f_mod
                 FROM tbl_m_group
                 WHERE f_groupID = :id
                 LIMIT 1";

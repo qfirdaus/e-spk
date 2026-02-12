@@ -287,8 +287,8 @@ class TetapanSistemController {
       exit;
     }
     
-    $isSuperAdmin = function_exists('is_user_super_admin') && is_user_super_admin($this->profile, $this->pdo);
-    if (!$isSuperAdmin) {
+    $userGroupId = (int)($this->profile['f_groupID'] ?? 0);
+    if ($userGroupId !== PRESTASI_ROLE_ID_ADM_SA) {
       set_alert([
         'title' => 'Akses Ditolak',
         'text' => 'Hanya Super Admin dibenarkan mengakses halaman Konfigurasi Sistem.',

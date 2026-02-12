@@ -125,8 +125,7 @@ class UserListController {
         u.f_flag,
         u.f_groupID,
         TRIM(u.f_groupKod) AS f_groupKod,
-        COALESCE(NULLIF(TRIM(g.f_groupName), ''), TRIM(u.f_groupKod)) AS f_groupName,
-        TRIM(COALESCE(g.f_color, '')) AS f_groupColor
+        COALESCE(NULLIF(TRIM(g.f_groupName), ''), TRIM(u.f_groupKod)) AS f_groupName
       FROM tbl_m_user u
       LEFT JOIN tbl_m_group g
         ON g.f_groupID = u.f_groupID

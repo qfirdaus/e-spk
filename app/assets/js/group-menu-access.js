@@ -15,6 +15,19 @@ const MenuAccess = {
   
   // Translations
   T: null,
+
+  attachMultiSelectToggle(selectEl) {
+    if (!selectEl || selectEl.dataset.multiToggleBound === '1') return;
+    selectEl.dataset.multiToggleBound = '1';
+    selectEl.addEventListener('mousedown', function(e) {
+      const opt = e.target && e.target.tagName === 'OPTION' ? e.target : null;
+      if (!opt) return;
+      e.preventDefault();
+      opt.selected = !opt.selected;
+      // Fire change so dependent menu list refreshes
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  },
   
   // Helper untuk query edit modal
   $ME(sel) {
@@ -30,6 +43,17 @@ const MenuAccess = {
     this.cntEl = document.getElementById('menuContent');
     this.editModalEl = document.getElementById('menuEditModal');
     this.editErrorEl = document.getElementById('menuEditError');
+
+    const colorPicker = document.getElementById('gc_color_picker');
+    const colorInput = document.getElementById('gc_color');
+    if (colorPicker && colorInput) {
+      const syncColor = (v) => { colorInput.value = (v || '').trim(); };
+      syncColor(colorPicker.value || '#50a4c1');
+      colorPicker.addEventListener('input', () => syncColor(colorPicker.value));
+    }
+
+    this.attachMultiSelectToggle(document.getElementById('gc_moduls'));
+    this.attachMultiSelectToggle(document.getElementById('gc_menus'));
     
     // View menu button handler - removed to avoid conflict with main file handler
     // Handler is now in main file (kumpulan-pengguna.php)
@@ -43,7 +67,9 @@ const MenuAccess = {
       e.preventDefault();
       const errEl = document.getElementById('groupCreateError');
       if (errEl) errEl.classList.add('d-none');
+      const groupID = parseInt(document.getElementById('gc_groupID')?.value || '0', 10) || 0;
       const payload = {
+        groupID,
         groupKod: (document.getElementById('gc_groupKod')?.value || '').trim(),
         groupName: (document.getElementById('gc_groupName')?.value || '').trim(),
         priority: parseInt(document.getElementById('gc_priority')?.value || '0', 10) || 0,
@@ -53,14 +79,14 @@ const MenuAccess = {
         menuAccess: Array.from(document.getElementById('gc_menus')?.selectedOptions || []).map(o => o.value).filter(Boolean)
       };
       if (!payload.groupKod || !payload.groupName) {
-        if (errEl) { errEl.textContent = 'Sila isi Kod & Nama Kumpulan.'; errEl.classList.remove('d-none'); }
+        if (errEl) { errEl.textContent = this.T.err_group_code_name_required || 'Sila isi Kod & Nama Kumpulan.'; errEl.classList.remove('d-none'); }
         return;
       }
 
       // Export to global so page scripts can call populateCreateModal()
       try { window.MenuAccess = MenuAccess; } catch (e) { /* ignore */ }
       try {
-        const resp = await fetch('/ajax/group-create.php', {
+        const resp = await fetch(GroupUtils.apiUrl('group-create.php'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': GroupUtils.getCSRF() },
           body: JSON.stringify(payload)
@@ -68,38 +94,128 @@ const MenuAccess = {
         const j = await resp.json();
         if (!j || j.error) throw new Error(j && j.message ? j.message : 'Gagal simpan');
 
-        // Insert new row into DataTable without full reload
-        try {
-          const table = jQuery('#groupTable').DataTable();
-          const newId = (j.group && j.group.id) ? String(j.group.id) : String(Date.now());
-          const kod = GroupUtils.esc(payload.groupKod);
-          const nama = GroupUtils.esc(payload.groupName);
-
-          const btnPerm = '<button type="button" class="btn btn-sm btn-outline-secondary icon-btn view-group-perms" data-group-id="' + newId + '" data-group-kod="' + kod + '" data-group-nama="' + nama + '" title="Akses Kumpulan"><i class="ri-user-settings-line"></i></button>';
-          const modCell = (payload.modulAccess && payload.modulAccess.length)
-            ? '<button type="button" class="btn btn-sm btn-outline-primary icon-btn view-access" data-group-id="' + newId + '" data-group-kod="' + kod + '" data-group-nama="' + nama + '"><i class="ri-links-line"></i></button>'
-            : '<span class="text-muted"><i class="ri-link-unlink-m"></i></span>';
-          const menuCell = '<button type="button" class="btn btn-sm btn-outline-success icon-btn view-menu" data-group-id="' + newId + '" data-group-kod="' + kod + '" data-group-nama="' + nama + '"><i class="ri-menu-2-line"></i></button>';
-
-          // Add row (first column will be re-numbered in drawCallback)
-          table.row.add([ '', kod, nama, btnPerm, modCell, menuCell ]).draw(false);
-        } catch (e) {
-          // if DataTable not available or error, fallback to full reload
-          console.warn('Could not insert row into DataTable:', e);
-          location.reload();
-          return;
-        }
+        // Always reload after save (create/update) so table state/ordering stays correct.
+        // This also guarantees latest module/menu access indicators are rendered from DB.
+        location.reload();
+        return;
 
         // Close modal and reset form
         const modalEl = document.getElementById('groupCreateModal');
         const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
         modal.hide();
         document.getElementById('groupCreateForm')?.reset();
+        if (document.getElementById('gc_groupID')) document.getElementById('gc_groupID').value = '';
+        if (document.getElementById('gc_color_picker')) document.getElementById('gc_color_picker').value = '#50a4c1';
+        if (document.getElementById('gc_color')) document.getElementById('gc_color').value = '#50a4c1';
         // clear selects
         try { document.getElementById('gc_moduls').innerHTML = ''; document.getElementById('gc_menus').innerHTML = ''; } catch (_) {}
 
       } catch (err) {
         if (errEl) { errEl.textContent = err.message || 'Ralat rangkaian'; errEl.classList.remove('d-none'); }
+      }
+    });
+
+    // Edit group metadata (reuse create modal)
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-edit-group-meta');
+      if (!btn) return;
+      e.preventDefault();
+
+      const modalEl = document.getElementById('groupCreateModal');
+      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      const titleEl = document.getElementById('groupCreateTitle');
+      if (titleEl) titleEl.innerHTML = '<i class="ri-pencil-line"></i> <span>' + (this.T.modal_group_edit_title || 'Edit Kumpulan') + '</span>';
+      const saveTxt = document.getElementById('groupCreateSaveBtnText');
+      if (saveTxt) saveTxt.textContent = this.T.btn_update || 'Kemaskini';
+
+      const gid = btn.getAttribute('data-group-id') || '';
+      const kod = btn.getAttribute('data-group-kod') || '';
+      const nama = btn.getAttribute('data-group-nama') || '';
+      const prio = btn.getAttribute('data-group-priority') || '0';
+      const mod = btn.getAttribute('data-group-mod') || '0';
+      const color = btn.getAttribute('data-group-color') || '#50a4c1';
+
+      if (document.getElementById('gc_groupID')) document.getElementById('gc_groupID').value = gid;
+      if (document.getElementById('gc_groupKod')) document.getElementById('gc_groupKod').value = kod;
+      if (document.getElementById('gc_groupName')) document.getElementById('gc_groupName').value = nama;
+      if (document.getElementById('gc_priority')) document.getElementById('gc_priority').value = prio;
+      if (document.getElementById('gc_mod')) document.getElementById('gc_mod').value = mod;
+      if (document.getElementById('gc_color_picker')) document.getElementById('gc_color_picker').value = color;
+      if (document.getElementById('gc_color')) document.getElementById('gc_color').value = color;
+
+      try {
+        if (window.MenuAccess && typeof window.MenuAccess.populateCreateModal === 'function') {
+          await window.MenuAccess.populateCreateModal();
+        }
+        // Prefill existing module/menu selections for edit mode.
+        const j = await GroupUtils.fetchJSONSafe(GroupUtils.apiUrl('group-perms-get.php', { groupID: gid }));
+        const toList = (v) => Array.isArray(v) ? v.map(String) : String(v || '').split(',').map(s => s.trim()).filter(Boolean);
+        const modulIDs = toList(j.modulIDs ?? j.f_modulAccess ?? []);
+        const menuIDs = toList(j.menuIDs ?? j.f_menuAccess ?? []);
+        const selMod = document.getElementById('gc_moduls');
+        if (selMod) {
+          Array.from(selMod.options).forEach(o => { o.selected = modulIDs.includes(String(o.value)); });
+          await this.populateMenusForModules(menuIDs);
+        }
+      } catch (_) {}
+      modal.show();
+    });
+
+    // Delete group handler
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-delete-group');
+      if (!btn) return;
+      e.preventDefault();
+
+      const gid = parseInt(btn.getAttribute('data-group-id') || '0', 10) || 0;
+      const gnam = btn.getAttribute('data-group-nama') || 'Kumpulan';
+      if (gid <= 0) return;
+
+      const ask = await Swal.fire({
+        icon: 'warning',
+        title: this.T.confirm_title || 'Pengesahan',
+        text: (this.T.confirm_delete_group_text || 'Padam kumpulan "{name}"?').replace('{name}', gnam),
+        showCancelButton: true,
+        confirmButtonText: this.T.confirm_yes_delete || 'Ya, Padam',
+        cancelButtonText: this.T.confirm_cancel || 'Batal',
+      });
+      if (!ask.isConfirmed) return;
+
+      try {
+        const resp = await fetch(GroupUtils.apiUrl('group-delete.php'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': GroupUtils.getCSRF(),
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ groupID: gid })
+        });
+        const j = await resp.json();
+        if (!resp.ok || !j || j.error) {
+          const msg = (j && j.message) ? j.message : 'Gagal memadam kumpulan.';
+          await Swal.fire({
+            icon: 'error',
+            title: 'Tidak Dibenarkan',
+            text: msg,
+          });
+          return;
+        }
+
+        await Swal.fire({
+          icon: 'success',
+          title: 'Berjaya',
+          text: 'Kumpulan berjaya dipadam.',
+          timer: 1400,
+          showConfirmButton: false,
+        });
+        location.reload();
+      } catch (err) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Tidak Dibenarkan',
+          text: err && err.message ? err.message : 'Ralat rangkaian semasa memadam kumpulan.',
+        });
       }
     });
     // Ensure modal UI matches current mode when shown
@@ -266,6 +382,7 @@ const MenuAccess = {
           if (typeof selMod.removeEventListener === 'function') selMod.removeEventListener('change', MenuAccess.populateMenusForModules);
         } catch (e) { /* ignore */ }
         selMod.addEventListener('change', function() { MenuAccess.populateMenusForModules().catch(function(){/*ignore*/}); });
+        this.attachMultiSelectToggle(selMod);
       }
       // initial populate menus (none selected → empty)
       await MenuAccess.populateMenusForModules();
@@ -275,12 +392,13 @@ const MenuAccess = {
     }
   },
 
-  async populateMenusForModules() {
+  async populateMenusForModules(preselectedMenuIds = []) {
     try {
       const selMod = document.getElementById('gc_moduls');
       const selMenu = document.getElementById('gc_menus');
       if (!selMenu) return;
       selMenu.innerHTML = '';
+      this.attachMultiSelectToggle(selMenu);
       const selected = Array.from(selMod?.selectedOptions || []).map(o => o.value).filter(Boolean);
       if (!selected.length) return;
       const seen = new Set();
@@ -296,6 +414,10 @@ const MenuAccess = {
             const opt = document.createElement('option'); opt.value = id; opt.textContent = name; selMenu.appendChild(opt);
           }
         } catch (e) { /* ignore per-module errors */ }
+      }
+      if (preselectedMenuIds && preselectedMenuIds.length) {
+        const selectedSet = new Set(preselectedMenuIds.map(String));
+        Array.from(selMenu.options).forEach(o => { o.selected = selectedSet.has(String(o.value)); });
       }
     } catch (e) {
       console.warn('populateMenusForModules error', e);
@@ -477,19 +599,19 @@ const MenuAccess = {
 
     const resolvedGroupID = gidFromCtx || gidFromHidden || gidFromBtn || null;
 
-    if (!resolvedGroupID) {
-      if (window.Swal && typeof Swal.fire === 'function') {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Peringatan',
-          text: 'Sila pilih kumpulan dahulu (buka melalui butang "Akses Menu").',
-          confirmButtonText: 'OK'
-        });
-      } else {
-        alert('Sila pilih kumpulan dahulu (buka melalui butang "Akses Menu").');
+      if (!resolvedGroupID) {
+        if (window.Swal && typeof Swal.fire === 'function') {
+          Swal.fire({
+            icon: 'warning',
+            title: this.T.info_title || 'Makluman',
+            text: this.T.info_select_group_first || 'Sila pilih kumpulan dahulu melalui butang Akses Menu.',
+            confirmButtonText: 'OK'
+          });
+        } else {
+          alert(this.T.info_select_group_first || 'Sila pilih kumpulan dahulu melalui butang Akses Menu.');
+        }
+        return;
       }
-      return;
-    }
 
     const hidEl = document.getElementById('em_groupID');
     const infoEl = document.getElementById('em_groupInfo');

@@ -482,6 +482,19 @@ return [
 // Butang & Aksi
 // =========================
 'userGroup_btn_add_menu'            => 'Add Menu',
+'modul_tambah'                      => 'Add Module',
+'modul_tambah_title'                => 'Add Module',
+'modul_nama_ms'                     => 'Module Name (BM)',
+'modul_nama_en'                     => 'Module Name (EN)',
+'modul_icon'                        => 'Icon',
+'modul_susunan'                     => 'Order',
+'modul_simpan'                      => 'Save',
+'modul_batal'                       => 'Cancel',
+'modul_berjaya_title'               => 'Success',
+'modul_berjaya_msg'                 => 'Module added successfully.',
+'modul_ralat_title'                 => 'Error',
+'modul_ralat_duplikat'              => 'Module name already exists. Please use another name.',
+'modul_ralat_wajib'                 => 'Module Name (BM) is required.',
 'userGroup_btn_close'               => 'Close',
 'userGroup_btn_save'                => 'Save',
 
@@ -516,12 +529,22 @@ return [
 'userGroup_modal_group_access_title'=> 'Group Access',
 'userGroup_modal_summary_title'     => 'Access Summary',
 'userGroup_modal_pick_menu_title'   => 'Select Menu',
+'userGroup_modal_group_create_title'=> 'Add Group',
+'userGroup_modal_group_edit_title'  => 'Edit Group',
 
 // =========================
 // Medan Borang
 // =========================
 'userGroup_field_group'             => 'Group',
+'userGroup_field_group_code'        => 'Group Code',
+'userGroup_field_group_name'        => 'Group Name',
 'userGroup_field_modul'             => 'Module',
+'userGroup_field_color'             => 'Color',
+'userGroup_field_color_help'        => 'Pick a color visually.',
+'userGroup_field_pick_module'       => 'Select Module',
+'userGroup_field_pick_module_help'  => 'Select one or more modules for this group.',
+'userGroup_field_pick_menu'         => 'Select Menu (depends on Module)',
+'userGroup_field_pick_menu_help'    => 'Menus are shown based on selected modules.',
 'userGroup_field_path'              => 'Path',
 'userGroup_field_path_placeholder'  => 'example: report.php',
 
@@ -550,6 +573,7 @@ return [
 'userGroup_error_update_status' => 'Failed to update status.',
 
 'userGroup_err_path_required'       => 'Path is required.',
+'userGroup_err_group_code_name_required' => 'Please fill Group Code & Group Name.',
 'userGroup_err_group_modul_required'=> 'Please select Group and Module.',
 'userGroup_err_modul_required'      => 'Please select Module.',
 'userGroup_err_add_menu' => 'Failed to add menu.',
@@ -563,6 +587,9 @@ return [
 // =========================
 'userGroup_confirm_delete_title'    => 'Delete menu?',
 'userGroup_confirm_delete_text'     => 'This action cannot be undone.',
+'userGroup_confirm_title'           => 'Confirmation',
+'userGroup_confirm_delete_group_text' => 'Delete group "{name}"?',
+'userGroup_confirm_yes_delete'      => 'Yes, Delete',
 'userGroup_confirm_yes'             => 'Yes, delete',
 'userGroup_confirm_cancel'          => 'Cancel',
 
@@ -594,6 +621,13 @@ return [
 'userGroup_dt_paginate_last' => 'Last',
 'userGroup_dt_paginate_next'        => 'Next',
 'userGroup_dt_paginate_previous'    => 'Previous',
+'userGroup_edit_group'              => 'Edit Group',
+'userGroup_delete_group'            => 'Delete Group',
+'userGroup_info_title'              => 'Notice',
+'userGroup_info_select_group_first' => 'Please select a group first using the Group Access button.',
+'userGroup_btn_menu_label'          => 'Menu',
+'userGroup_btn_module_label'        => 'Module',
+'userGroup_btn_group_label'         => 'Group',
 
 
 /* =====================================================
@@ -1096,5 +1130,55 @@ return [
 'dashboard_health_cron' => 'Scheduled Jobs',
 'dashboard_health_unknown' => 'Unknown',
 'dashboard_health_tz' => 'Time & Timezone',
+
+/* =====================================================
+ * FAQ
+ * ===================================================== */
+'faq_title' => 'Frequently Asked Questions (FAQ)',
+'faq_heading' => 'System FAQ',
+'faq_intro' => 'Refer to general usage guidance. Choose a category or use search to find relevant answers.',
+'faq_label_category' => 'Category',
+'faq_placeholder_cari' => 'Search within selected category…',
+'faq_tiada_padamu' => 'No matching result found. Try another keyword.',
+'faq_count_display' => 'of',
+'faq_count_soalan' => 'questions shown',
+'faq_cat_semua' => 'All',
+'faq_cat_account_access' => 'Account & Access',
+'faq_cat_navigation' => 'Navigation & Usage',
+'faq_cat_profile_settings' => 'Profile & Settings',
+'faq_cat_user_management' => 'User Management',
+'faq_cat_group_management' => 'User Groups',
+'faq_cat_support' => 'Support',
+
+'faq_item_01_q' => 'How do I log in to the system?',
+'faq_item_01_a' => 'Use your <b>Staff ID</b> and <b>password</b> on the login page. If this is your first login, follow the instructions shown on the login page or contact the system administrator.',
+'faq_item_02_q' => 'Why can’t I log in?',
+'faq_item_02_a' => 'Common causes are incorrect password, blocked account, or group access not yet assigned. Recheck your ID/password. If the issue persists, contact the system administrator.',
+'faq_item_03_q' => 'How is menu access determined?',
+'faq_item_03_a' => 'Each user is assigned to a specific <b>user group</b>. This group controls which modules and menus are visible. If a menu is missing, ask the administrator to review your group access.',
+'faq_item_04_q' => 'Where can I view a quick system overview?',
+'faq_item_04_a' => 'Use the <b>Dashboard</b> page for a quick overview. It helps you understand current status and navigate to key modules faster.',
+'faq_item_05_q' => 'Why is my sidebar menu different from other users?',
+'faq_item_05_a' => 'Sidebar menus are displayed based on user group and role. This is expected behavior so users only see functions relevant to their responsibilities.',
+'faq_item_06_q' => 'How can I quickly find a function in the system?',
+'faq_item_06_a' => 'Use module navigation in the sidebar and select the related page. On data table pages, use the search box at the top to filter records quickly.',
+'faq_item_07_q' => 'How do I update language settings?',
+'faq_item_07_a' => 'You can change language from the topbar or from the <b>Profile</b> page. Your language preference is saved to your account.',
+'faq_item_08_q' => 'How do I change display theme?',
+'faq_item_08_a' => 'Go to the <b>Profile</b> page to adjust theme settings such as display mode and interface colors. Changes will apply to your session.',
+'faq_item_09_q' => 'What does Audit Trail on the Profile page show?',
+'faq_item_09_a' => 'Audit Trail displays important activity records such as data updates and system actions. It supports review and security monitoring.',
+'faq_item_10_q' => 'How can an administrator add or update users?',
+'faq_item_10_a' => 'Administrators can use the <b>User List</b> page to add users, change groups, and control access status. All changes should follow your organization’s internal policy.',
+'faq_item_11_q' => 'What does user access status mean?',
+'faq_item_11_a' => 'Access status defines whether a user is allowed to enter the system. If blocked, the user cannot log in until reactivated by an administrator.',
+'faq_item_12_q' => 'What is the purpose of the User Groups page?',
+'faq_item_12_a' => 'This page manages group structure, group color identity, and module/menu access for each group. It simplifies centralized access management.',
+'faq_item_13_q' => 'Can a user group be deleted?',
+'faq_item_13_a' => 'A group can only be deleted when it has no active module/menu access and no users assigned to it. This prevents operational disruption.',
+'faq_item_14_q' => 'What should I do if a system error occurs?',
+'faq_item_14_a' => 'Record the error message, time of occurrence, and action being performed. Send this information to the system administrator for further investigation.',
+'faq_item_15_q' => 'Who should I contact for access or configuration issues?',
+'faq_item_15_a' => 'Contact your internal system administrator. Access, user-group, and system configuration issues usually require administrator privileges.',
 
 ];

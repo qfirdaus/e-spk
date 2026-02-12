@@ -1361,76 +1361,184 @@ function hasActiveSession(array $loginActivity): bool {
 
       const modalHtml = `
         <style>
-          /* Modal header gradient to match DataTable theme */
-          .audit-meta-modal .modal-header {
-            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
-            color: #fff;
-            border-bottom: none;
+          .audit-meta-modal .modal-xl { max-width: 1320px; }
+          .audit-meta-modal .modal-content {
+            border: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 18px 48px rgba(15,23,42,.2);
           }
-          .audit-meta-modal .modal-title { color: #fff; }
-          .audit-meta-modal .badge.bg-info { background: rgba(255,255,255,.15); color:#fff; }
-          .audit-meta-modal .badge.bg-secondary { background: rgba(255,255,255,.12); color:#fff; }
-          .audit-meta-modal .table-sm td { vertical-align: middle; }
-          .audit-meta-modal .audit-changes-table tbody tr:hover { background: rgba(59,130,246,0.04); }
-          .audit-meta-modal .btn-copy-meta-modal { min-width: 90px; }
-
-          /* Tighter metadata table spacing and label styling */
-          .audit-meta-modal table.table-sm td,
-          .audit-meta-modal table.table-sm th {
-            padding: .35rem .5rem;
-            font-size: .88rem;
+          .audit-meta-modal .modal-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #2563eb 100%);
+            color: #fff;
+            border-bottom: 0;
+            padding: .9rem 1.1rem;
+          }
+          .audit-meta-modal .modal-title { color: #fff; font-weight: 700; letter-spacing: .2px; }
+          .audit-meta-modal .audit-subtitle { color: rgba(255,255,255,.78); font-size: .82rem; }
+          .audit-meta-modal .modal-body { background: #f8fafc; }
+          .audit-meta-modal .audit-left {
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            min-height: 72vh;
+          }
+          .audit-meta-modal .audit-right { background: #f8fafc; min-height: 72vh; }
+          .audit-meta-modal .audit-title { font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: .55rem; }
+          .audit-meta-modal .audit-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 999px;
+            padding: .25rem .55rem;
+            font-size: .76rem;
+            font-weight: 600;
+          }
+          .audit-meta-modal .audit-summary-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+            padding: .8rem;
+            box-shadow: 0 2px 8px rgba(15,23,42,.04);
+          }
+          .audit-meta-modal .audit-meta-table td {
+            padding: .46rem .55rem;
+            font-size: .86rem;
+            vertical-align: top;
+            border-color: #eef2f7;
+          }
+          .audit-meta-modal .audit-meta-table td:first-child {
+            width: 38%;
+            color: #64748b;
+            font-weight: 600;
+          }
+          .audit-meta-modal .audit-meta-table td:last-child {
+            word-break: break-word;
+            color: #0f172a;
+          }
+          .audit-meta-modal .audit-tabs .nav-link {
+            border: 0;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #475569;
+            background: transparent;
+            margin-right: .4rem;
+            padding: .45rem .85rem;
+          }
+          .audit-meta-modal .audit-tabs .nav-link:hover {
+            color: #1d4ed8;
+            background: #e8f0ff;
+          }
+          .audit-meta-modal .audit-tabs .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 6px 14px rgba(37,99,235,.28);
+          }
+          .audit-meta-modal .audit-pane-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+            padding: .85rem;
+          }
+          .audit-meta-modal .audit-changes-table {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+          }
+          .audit-meta-modal .audit-changes-table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: .75rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+          }
+          .audit-meta-modal .audit-changes-table tbody td {
+            font-size: .87rem;
             vertical-align: middle;
           }
-          .audit-meta-modal table.table-sm td:first-child {
-            width: 30%;
-            color: #6b7280;
-            white-space: nowrap;
-            padding-right: .6rem;
+          .audit-meta-modal .audit-changes-table tbody tr:hover { background: #f8fbff; }
+          .audit-meta-modal .old-value {
+            display: inline-block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            border-radius: 6px;
+            padding: .2rem .45rem;
+            font-size: .8rem;
           }
-          .audit-meta-modal table.table-sm td:nth-child(2) {
-            white-space: normal;
-            word-break: break-word;
+          .audit-meta-modal .new-value {
+            display: inline-block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            border-radius: 6px;
+            padding: .2rem .45rem;
+            font-size: .8rem;
           }
+          .audit-meta-modal .json-block {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            padding: .75rem;
+            font-size: .8rem;
+            max-height: 54vh;
+            overflow: auto;
+            white-space: pre-wrap;
+          }
+          .audit-meta-modal .btn-copy-meta-modal { min-width: 94px; }
+          .audit-meta-modal .btn-download-json { min-width: 100px; }
+          [data-bs-theme="dark"] .audit-meta-modal .modal-body,
+          [data-bs-theme="dark"] .audit-meta-modal .audit-right { background: #0f172a; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-left,
+          [data-bs-theme="dark"] .audit-meta-modal .audit-summary-card,
+          [data-bs-theme="dark"] .audit-meta-modal .audit-pane-card,
+          [data-bs-theme="dark"] .audit-meta-modal .json-block {
+            background: #111827;
+            border-color: #334155;
+            color: #e2e8f0;
+          }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-meta-table td { border-color: #273246; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-meta-table td:first-child { color: #94a3b8; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-meta-table td:last-child { color: #e2e8f0; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-tabs .nav-link { color: #94a3b8; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-tabs .nav-link:hover { background: #1f2937; color: #bfdbfe; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-changes-table { border-color: #334155; }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-changes-table thead th {
+            background: #0b1220;
+            color: #94a3b8;
+            border-bottom-color: #334155;
+          }
+          [data-bs-theme="dark"] .audit-meta-modal .audit-changes-table tbody tr:hover { background: #1a2436; }
         </style>
         <div class="modal fade audit-meta-modal" id="${modalId}" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow-sm">
-              <div class="modal-header align-items-center">
-                <h5 class="modal-title mb-0">Jejak Audit</h5>
+            <div class="modal-content">
+              <div class="modal-header">
+                <div>
+                  <h5 class="modal-title mb-0">Jejak Audit</h5>
+                  <div class="audit-subtitle">Event ID: ${this._escapeHtml(String(eventId || '—'))}</div>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
 
-              <div class="modal-body p-0" style="max-height:72vh; overflow:auto;">
+              <div class="modal-body p-0">
                 <div class="row g-0">
-                  <div class="col-md-5 bg-white border-end">
+                  <div class="col-lg-5 audit-left">
                     <div class="p-4">
-                      <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="d-flex align-items-center">
-                          <div class="me-3 rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
-                            <i class="ri-file-list-3-line" style="font-size:22px"></i>
-                          </div>
-                          <div>
-                            <div class="fw-semibold">Aktiviti</div>
-                            <div class="small text-muted">${this._escapeHtml(metaObj && (metaObj.activity || metaObj.activity_name) ? String(metaObj.activity || metaObj.activity_name) : (metaObj && (metaObj.activity_code) ? String(metaObj.activity_code) : '—'))}</div>
-                          </div>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-                          <button class="btn btn-sm btn-outline-secondary btn-copy-meta-modal" data-meta-json="${this._escapeHtml(metaForCopy)}">Salin JSON</button>
-                          <button class="btn btn-sm btn-outline-primary btn-download-json" data-json="${this._escapeHtml(metaForCopy)}" data-fname="audit-${this._escapeHtml(String(eventId || Date.now()))}">Muat Turun</button>
-                        </div>
-                      </div>
-
-                      <h6 class="small text-muted">Maklumat Ringkas</h6>
+                      <div class="audit-title">Maklumat Ringkas</div>
                       <div class="table-responsive">
-                        <table class="table table-sm mb-0">
+                        <table class="table table-sm audit-meta-table mb-0">
                           <tbody>
                             ${(() => {
                               try {
-                                if (!metaObj || typeof metaObj !== 'object') return '<tr><td class="text-muted">Tiada maklumat</td></tr>';
+                                if (!metaObj || typeof metaObj !== 'object') return '<tr><td class="text-muted">Tiada maklumat</td><td>—</td></tr>';
                                 const keys = ['occurred_at','module','action','ip','user_agent','device','browser','user_id','nopek'];
                                 const present = keys.filter(k=> metaObj[k] !== undefined).concat(Object.keys(metaObj).filter(k=> keys.indexOf(k)===-1));
-                                return present.slice(0,20).map(k=> `<tr><td class="text-muted small text-truncate" style="width:40%;">${this._escapeHtml(k)}</td><td class="fw-semibold small text-break">${this._escapeHtml(String(metaObj[k]===undefined||metaObj[k]===null||metaObj[k]===''? '—' : (typeof metaObj[k] === 'object' ? JSON.stringify(metaObj[k]) : metaObj[k])) )}</td></tr>`).join('');
-                              } catch (e) { return '<tr><td class="text-muted">—</td></tr>'; }
+                                return present.slice(0,20).map(k=> `<tr><td>${this._escapeHtml(k)}</td><td>${this._escapeHtml(String(metaObj[k]===undefined||metaObj[k]===null||metaObj[k]===''? '—' : (typeof metaObj[k] === 'object' ? JSON.stringify(metaObj[k]) : metaObj[k])) )}</td></tr>`).join('');
+                              } catch (e) { return '<tr><td class="text-muted">Data</td><td>—</td></tr>'; }
                             })()}
                           </tbody>
                         </table>
@@ -1438,9 +1546,9 @@ function hasActiveSession(array $loginActivity): bool {
                     </div>
                   </div>
 
-                  <div class="col-md-7 bg-light">
-                    <div class="p-3">
-                      <ul class="nav nav-tabs mb-3" role="tablist">
+                  <div class="col-lg-7 audit-right">
+                    <div class="p-3 p-lg-4">
+                      <ul class="nav audit-tabs mb-3" role="tablist">
                         <li class="nav-item" role="presentation"><button class="nav-link active" id="${modalId}-tab-summary" data-bs-toggle="tab" data-bs-target="#${modalId}-summary" type="button" role="tab">Ringkasan</button></li>
                         <li class="nav-item" role="presentation"><button class="nav-link" id="${modalId}-tab-changes" data-bs-toggle="tab" data-bs-target="#${modalId}-changes" type="button" role="tab">Perubahan</button></li>
                         <li class="nav-item" role="presentation"><button class="nav-link" id="${modalId}-tab-extra" data-bs-toggle="tab" data-bs-target="#${modalId}-extra" type="button" role="tab">Extra Info</button></li>
@@ -1449,46 +1557,36 @@ function hasActiveSession(array $loginActivity): bool {
 
                       <div class="tab-content">
                         <div class="tab-pane fade show active" id="${modalId}-summary" role="tabpanel">
-                          <div class="mb-2 small text-muted">Pengguna</div>
-                          <div class="d-flex align-items-center mb-2">
-                            <div class="me-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;">ID</div>
-                            <div>
-                              <div class="fw-semibold">${this._escapeHtml((function(){
-                                  if (!metaObj || typeof metaObj !== 'object') return (userId !== null ? String(userId) : '—');
-                                  const nameKeys = ['nama_penuh','full_name','name','display_name','f_nama','f_nama_penuh','f_nama_penuh','nama','staff_name','staf_nama'];
-                                  const titleKeys = ['gelaran','title','honorific','prefix','gelaran_depan'];
-                                  const nameVal = findFirstKey(metaObj, nameKeys);
-                                  const titleVal = findFirstKey(metaObj, titleKeys);
-                                  if (nameVal && titleVal) return titleVal + ' ' + nameVal;
-                                  if (nameVal) return nameVal;
-                                  return (userId !== null ? String(userId) : '—');
-                                })())}</div>
-                              <div class="small text-muted">No. Pekerja: ${this._escapeHtml((noPekerja !== null ? String(noPekerja) : '—'))}</div>
-                              <div class="small text-muted">${this._escapeHtml(String(dateVal || ''))}</div>
-                            </div>
+                          <div class="audit-pane-card">
+                            <div class="audit-title">Perubahan Utama</div>
+                            <div id="${modalId}-summary-changes">${renderChangeSetsTable(csObj)}</div>
                           </div>
-                          <div class="mb-3 small text-muted">Perubahan Utama</div>
-                          <div id="${modalId}-summary-changes">${renderChangeSetsTable(csObj)}</div>
                         </div>
 
                         <div class="tab-pane fade" id="${modalId}-changes" role="tabpanel">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <input id="${modalId}-changes-search" class="form-control form-control-sm" placeholder="Cari perubahan..." style="width:260px;">
-                            <div>
-                              <button class="btn btn-sm btn-outline-secondary btn-copy-meta-modal" data-meta-json="${this._escapeHtml(csForCopy)}">Salin</button>
-                              <button class="btn btn-sm btn-outline-primary btn-download-json" data-json="${this._escapeHtml(csForCopy)}" data-fname="changes-${this._escapeHtml(String(eventId || Date.now()))}">Muat Turun</button>
+                          <div class="audit-pane-card">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                              <div class="input-group input-group-sm" style="max-width:300px;">
+                                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                                <input id="${modalId}-changes-search" class="form-control" placeholder="Cari perubahan...">
+                              </div>
                             </div>
+                            <div id="${modalId}-cs-table">${renderChangeSetsTable(csObj)}</div>
                           </div>
-                          <div id="${modalId}-cs-table">${renderChangeSetsTable(csObj)}</div>
                         </div>
 
                         <div class="tab-pane fade" id="${modalId}-extra" role="tabpanel">
-                          <div class="mb-2 small text-muted">Extra Info (readable)</div>
-                          <div class="bg-white p-2 rounded small" style="max-height:52vh; overflow:auto; white-space:pre-wrap;">${this._escapeHtml(prettyMeta)}</div>
+                          <div class="audit-pane-card">
+                            <div class="audit-title">Extra Info (readable)</div>
+                            <div class="json-block">${this._escapeHtml(prettyMeta)}</div>
+                          </div>
                         </div>
 
                         <div class="tab-pane fade" id="${modalId}-raw" role="tabpanel">
-                          <pre class="bg-white p-3 rounded small" style="max-height:52vh; overflow:auto;">${this._escapeHtml(prettyMeta)}\n\n-- Changes --\n\n${this._escapeHtml(prettyCs)}</pre>
+                          <div class="audit-pane-card">
+                            <div class="audit-title">Raw Data</div>
+                            <pre class="json-block mb-0">${this._escapeHtml(prettyMeta)}\n\n-- Changes --\n\n${this._escapeHtml(prettyCs)}</pre>
+                          </div>
                         </div>
                       </div>
                     </div>

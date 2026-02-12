@@ -89,33 +89,47 @@ $roleAdminHrKod = defined('PRESTASI_ROLE_ADM_HR') ? (string)PRESTASI_ROLE_ADM_HR
 $roleAdminKeKod = defined('PRESTASI_ROLE_ADM_KE') ? (string)PRESTASI_ROLE_ADM_KE : 'ADM-KE';
 $isSuperAdmin = function_exists('is_user_super_admin') ? is_user_super_admin($profile, $dbMySQL) : ($roleAdminSaId > 0 && (int)($profile['f_groupID'] ?? 0) === $roleAdminSaId);
 
-// ======================= Load Group List dengan Caching (30 minit TTL) =======================
+// ======================= Load Group List (fresh DB for style consistency) =======================
 $senaraiGroup = [];
-$groupCacheKey = 'group_list';
-$groupCacheTTL = 1800; // 30 minit
-
-// Try get from cache first
-$cachedGroups = UserListCache::get($groupCacheKey, $groupCacheTTL);
-if (is_array($cachedGroups)) {
-    $senaraiGroup = $cachedGroups;
-} else {
-    // Cache miss - load from database
-    try {
-        $groupSql = "SELECT f_groupID, f_groupKod, f_groupName, f_badge_class, f_row_class FROM tbl_m_group ORDER BY f_groupName ASC";
-        $groupStmt = $dbMySQL->query($groupSql);
-        $senaraiGroup = $groupStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        // Store in cache
-        UserListCache::set($groupCacheKey, $senaraiGroup);
-    } catch (Throwable $e) {
-        error_log('[senarai-pengguna] Error loading groups: ' . $e->getMessage());
-        $senaraiGroup = [];
-    }
+try {
+    $groupSql = "SELECT f_groupID, f_groupKod, f_groupName, f_badge_class, f_row_class, f_color FROM tbl_m_group ORDER BY f_groupName ASC";
+    $groupStmt = $dbMySQL->query($groupSql);
+    $senaraiGroup = $groupStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) {
+    error_log('[senarai-pengguna] Error loading groups: ' . $e->getMessage());
+    $senaraiGroup = [];
 }
 
 // ======================= Data-Driven UI Style Map (Group) =======================
 $groupUiMaps = prestasi_group_ui_load_maps($dbMySQL, $senaraiGroup);
 $groupUiById = $groupUiMaps['by_id'] ?? [];
 $groupUiByCode = $groupUiMaps['by_code'] ?? [];
+$showGroupUiDebug = $isSuperAdmin && (string)($_GET['debug_group_ui'] ?? '') === '1';
+
+// Build dynamic row highlight CSS based on tbl_m_group.f_color (no manual CSS per role needed).
+$groupDynamicCssRules = [];
+foreach ($senaraiGroup as $gRow) {
+  $gId = (int)($gRow['f_groupID'] ?? 0);
+  $gKod = (string)($gRow['f_groupKod'] ?? '');
+  $resolved = prestasi_group_ui_resolve($groupUiMaps, $gId, $gKod);
+  $rowClass = trim((string)($resolved['rowClass'] ?? ''));
+  $rowColor = trim((string)($resolved['rowColor'] ?? ''));
+  if ($rowClass === '' || $rowColor === '') continue;
+  $safeClass = preg_replace('/[^a-zA-Z0-9_-]+/', '', $rowClass) ?? '';
+  if ($safeClass === '') continue;
+  $safeColor = trim((string)$rowColor);
+  if (!preg_match('/^#[0-9a-fA-F]{3,8}$/', $safeColor) && !preg_match('/^[a-zA-Z]+$/', $safeColor)) continue;
+  $groupDynamicCssRules[$safeClass] = $safeColor;
+}
+
+function group_badge_inline_style(array $groupStyle): string {
+  $badgeClass = trim((string)($groupStyle['badgeClass'] ?? ''));
+  $rowColor = trim((string)($groupStyle['rowColor'] ?? ''));
+  if ($badgeClass !== '' && $badgeClass !== 'bg-secondary') return '';
+  if ($rowColor === '') return '';
+  if (!preg_match('/^#[0-9a-fA-F]{3,8}$/', $rowColor) && !preg_match('/^[a-zA-Z]+$/', $rowColor)) return '';
+  return 'background-color: ' . $rowColor . '; color: #fff;';
+}
 
 // ======================= Staf List: Lazy Load via AJAX (removed from page load) =======================
 // Staf list akan di-load via AJAX endpoint (user-list-staf-options.php) dengan caching
@@ -622,25 +636,35 @@ try {
       background-color: #fff9d6 !important;
     }
     /* Peranan lain tidak perlu highlight */
+    <?php foreach ($groupDynamicCssRules as $cssClass => $cssColor): ?>
+    #userDT tbody tr.<?= h($cssClass) ?> {
+      background-color: <?= h($cssColor) ?> !important;
+    }
+    #userDT tbody tr.<?= h($cssClass) ?> td {
+      background-color: <?= h($cssColor) ?> !important;
+      background-image: linear-gradient(rgba(255,255,255,.58), rgba(255,255,255,.58)) !important;
+    }
+    #userDT tbody tr.<?= h($cssClass) ?>:hover {
+      background-color: <?= h($cssColor) ?> !important;
+    }
+    #userDT tbody tr.<?= h($cssClass) ?>:hover td {
+      background-color: <?= h($cssColor) ?> !important;
+      background-image: linear-gradient(rgba(255,255,255,.46), rgba(255,255,255,.46)) !important;
+    }
+    <?php endforeach; ?>
     
     /* Highlight effect untuk row yang baru dikemas kini */
     #userDT tbody tr.row-updated-highlight {
-      background-color: #d4edda !important;
       border-left: 4px solid #28a745 !important;
-      animation: highlightPulse 2s ease-in-out;
-    }
-    #userDT tbody tr.row-updated-highlight td {
-      background-color: #d4edda !important;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.30) !important;
+      animation: highlightPulse 1.2s ease-in-out infinite;
     }
     #userDT tbody tr.row-updated-highlight:hover {
-      background-color: #c3e6cb !important;
-    }
-    #userDT tbody tr.row-updated-highlight:hover td {
-      background-color: #c3e6cb !important;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.40) !important;
     }
     @keyframes highlightPulse {
-      0%, 100% { background-color: #d4edda; }
-      50% { background-color: #b8e0c4; }
+      0%, 100% { box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.28); }
+      50% { box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.48); }
     }
 
     /* Carian di kanan, kemas dan sebaris */
@@ -1007,6 +1031,17 @@ try {
         </div>
 
         <!-- Kad DataTable -->
+        <?php if ($showGroupUiDebug): ?>
+        <div class="row mb-2">
+          <div class="col-12">
+            <div class="alert alert-warning py-2 px-3 mb-2">
+              <strong>DEBUG GROUP UI</strong>
+              <span class="ms-2">groups: <?= h((string)count($senaraiGroup)) ?>, by_id: <?= h((string)count($groupUiById)) ?>, by_code: <?= h((string)count($groupUiByCode)) ?>, css_rules: <?= h((string)count($groupDynamicCssRules)) ?></span>
+              <div class="small mt-1">Append <code>?debug_group_ui=1</code> to view this panel.</div>
+            </div>
+          </div>
+        </div>
+        <?php endif; ?>
         <div class="row">
           <div class="col-12">
             <div class="card">
@@ -1049,6 +1084,7 @@ try {
                           $groupStyle = prestasi_group_ui_resolve($groupUiMaps, $gId, $gKod);
                           $badgeClass = (string)($groupStyle['badgeClass'] ?? 'bg-secondary');
                           $rowClass = (string)($groupStyle['rowClass'] ?? '');
+                          $badgeInlineStyle = group_badge_inline_style($groupStyle);
                         ?>
                         <tr data-user-id="<?= h((string)$userID) ?>" data-group-id="<?= h((string)$gId) ?>" data-group-kod="<?= h($gKod) ?>" data-row-class="<?= h($rowClass) ?>" data-flag="<?= h((string)$f_flag) ?>" data-extra-count="<?= h((string)$extraCount) ?>" data-extra-roles="<?= h(implode(', ', $extraRoles)) ?>" class="<?= h($rowClass) ?>">
                           <td class="col-bil"></td>
@@ -1056,7 +1092,7 @@ try {
                           <td class="col-jabatan"><span class="truncate-1line"><?= h($jabatan) ?></span></td>
                           <td class="col-jawatan"><span class="truncate-1line"><?= h($jawatan) ?></span></td>
                           <td class="col-group">
-                            <span class="badge <?= h($badgeClass) ?>"><?= h($gName) ?></span>
+                            <span class="badge <?= h($badgeClass) ?>"<?= $badgeInlineStyle !== '' ? ' style="' . h($badgeInlineStyle) . '"' : '' ?>><?= h($gName) ?></span>
                             <i class="ri-information-line ms-1 text-muted extra-roles-info"
                                data-bs-toggle="tooltip"
                                data-bs-placement="top"
@@ -1576,12 +1612,20 @@ try {
     const style = CONFIG.GROUP_UI_BY_ID[idKey] || (codeKey !== '' ? CONFIG.GROUP_UI_BY_CODE[codeKey] : null) || {};
     return {
       badgeClass: String(style.badgeClass || 'bg-secondary').trim() || 'bg-secondary',
-      rowClass: String(style.rowClass || '').trim()
+      rowClass: String(style.rowClass || '').trim(),
+      rowColor: String(style.rowColor || '').trim()
     };
   }
 
   function getBadgeClass(groupId, groupKod = '') {
     return getGroupStyle(groupId, groupKod).badgeClass;
+  }
+
+  function getBadgeInlineStyle(groupId, groupKod = '') {
+    const style = getGroupStyle(groupId, groupKod);
+    if (style.badgeClass && style.badgeClass !== 'bg-secondary') return '';
+    if (!style.rowColor) return '';
+    return `background-color:${style.rowColor};color:#fff;`;
   }
 
   /**
@@ -1591,18 +1635,70 @@ try {
     return getGroupStyle(groupId, groupKod).rowClass;
   }
 
+  function isValidCssColor(value) {
+    const v = String(value || '').trim();
+    if (!v) return false;
+    return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v) || /^[a-zA-Z]+$/.test(v);
+  }
+
+  function toSoftRowBg(color) {
+    const v = String(color || '').trim();
+    const m3 = /^#([0-9a-f]{3})$/i.exec(v);
+    if (m3) {
+      const h = m3[1];
+      const r = parseInt(h[0] + h[0], 16);
+      const g = parseInt(h[1] + h[1], 16);
+      const b = parseInt(h[2] + h[2], 16);
+      return `rgba(${r}, ${g}, ${b}, 0.18)`;
+    }
+    const m6 = /^#([0-9a-f]{6})$/i.exec(v);
+    if (m6) {
+      const h = m6[1];
+      const r = parseInt(h.slice(0, 2), 16);
+      const g = parseInt(h.slice(2, 4), 16);
+      const b = parseInt(h.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.18)`;
+    }
+    return v;
+  }
+
   function applyRowClass($row) {
     const groupId = parseInt($row.attr('data-group-id') || '0', 10);
     const groupKod = String($row.attr('data-group-kod') || '');
-    const nextClass = getRowClass(groupId, groupKod);
+    const mapStyle = getGroupStyle(groupId, groupKod);
+    const nextClass = String(mapStyle.rowClass || '').trim();
+    const nextColor = String($row.attr('data-row-color') || mapStyle.rowColor || '').trim();
     const oldClass = String($row.attr('data-row-class') || '').trim();
     if (oldClass) {
       $row.removeClass(oldClass);
     }
-    if (nextClass) {
-      $row.addClass(nextClass);
+    const finalClass = nextClass || oldClass;
+    if (finalClass) $row.addClass(finalClass);
+    if (isValidCssColor(nextColor)) {
+      const bg = toSoftRowBg(nextColor);
+      const trEl = $row.get(0);
+      if (trEl && trEl.style && typeof trEl.style.setProperty === 'function') {
+        trEl.style.setProperty('background-color', bg, 'important');
+      }
+      $row.find('td').each(function() {
+        if (this && this.style && typeof this.style.setProperty === 'function') {
+          this.style.setProperty('background-color', bg, 'important');
+          this.style.setProperty('background-image', 'linear-gradient(rgba(255,255,255,.58), rgba(255,255,255,.58))', 'important');
+        }
+      });
+    } else {
+      const trEl = $row.get(0);
+      if (trEl && trEl.style) {
+        trEl.style.removeProperty('background-color');
+      }
+      $row.find('td').each(function() {
+        if (this && this.style) {
+          this.style.removeProperty('background-color');
+          this.style.removeProperty('background-image');
+        }
+      });
     }
-    $row.attr('data-row-class', nextClass);
+    $row.attr('data-row-class', finalClass);
   }
 
   /**
@@ -1667,10 +1763,14 @@ try {
       $row.attr('data-group-id', newData.groupID);
       const rowGroupKod = (newData.groupKod !== undefined) ? newData.groupKod : $row.attr('data-group-kod');
       $row.attr('data-group-kod', rowGroupKod || '');
+      const style = getGroupStyle(newData.groupID, rowGroupKod || '');
+      $row.attr('data-row-color', style.rowColor || '');
       applyRowClass($row);
     }
     if (newData.groupKod) {
       $row.attr('data-group-kod', newData.groupKod);
+      const style = getGroupStyle(newData.groupID || $row.attr('data-group-id'), newData.groupKod);
+      $row.attr('data-row-color', style.rowColor || $row.attr('data-row-color') || '');
       applyRowClass($row);
     }
     if (Array.isArray(newData.extraRoles)) {
@@ -1690,7 +1790,13 @@ try {
       const $badge = $row.find('.col-group .badge');
       const groupKod = newData.groupKod || $row.attr('data-group-kod') || '';
       const badgeClass = getBadgeClass(newData.groupID, groupKod);
+      const badgeInlineStyle = getBadgeInlineStyle(newData.groupID, groupKod);
       $badge.attr('class', `badge ${badgeClass}`).text(newData.groupName);
+      if (badgeInlineStyle) {
+        $badge.attr('style', badgeInlineStyle);
+      } else {
+        $badge.removeAttr('style');
+      }
     }
     
     // Update access badge
@@ -1760,6 +1866,7 @@ try {
     const gName = String(r.f_groupName || r.groupName || r.group_name || gKod);
     const explicitBadgeClass = String(r.f_badge_class || r.badgeClass || '').trim();
     const explicitRowClass = String(r.f_row_class || r.rowClass || '').trim();
+    const explicitRowColor = String(r.f_row_color || r.rowColor || '').trim();
     const extraRoles = Array.isArray(r.extra_roles) ? r.extra_roles : (Array.isArray(r.extraRoles) ? r.extraRoles : []);
     const flag = (typeof r.f_flag !== 'undefined') ? r.f_flag : (typeof r.flag !== 'undefined' ? r.flag : 0);
     const nopekerja = String(r.f_nopekerja || r.nopekerja || '');
@@ -1770,6 +1877,7 @@ try {
       .attr('data-user-id', userID)
       .attr('data-group-id', String(gId || ''))
       .attr('data-group-kod', gKod)
+      .attr('data-row-color', explicitRowColor || getGroupStyle(gId, gKod).rowColor || '')
       .attr('data-row-class', explicitRowClass || getRowClass(gId, gKod))
       .attr('data-flag', String(flag))
       .attr('data-extra-count', String(extraRoles.length))
@@ -1793,6 +1901,12 @@ try {
     const $groupTd = $('<td>').addClass('col-group');
     const $badgeClass = explicitBadgeClass || getBadgeClass(gId, gKod);
     const $badge = $('<span>').addClass('badge').addClass($badgeClass).text(gName);
+    const inlineBadgeStyle = explicitRowColor
+      ? `background-color:${explicitRowColor};color:#fff;`
+      : getBadgeInlineStyle(gId, gKod);
+    if ((!explicitBadgeClass || explicitBadgeClass === 'bg-secondary') && inlineBadgeStyle) {
+      $badge.attr('style', inlineBadgeStyle);
+    }
     const $info = $('<i>')
       .addClass('ri-information-line ms-1 text-muted extra-roles-info')
       .attr('data-bs-toggle', 'tooltip')

@@ -402,7 +402,7 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
         </div>
 
         <div class="row g-3 mb-4">
-          <div class="col-lg-8">
+          <div class="<?= $showSystemResources ? 'col-lg-8' : 'col-12' ?>">
             <div class="profile-card">
               <div class="profile-hero">
                 <div class="d-flex align-items-start gap-3 flex-nowrap justify-content-between">
@@ -431,76 +431,9 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
               </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-              <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(t('dashboard_tabs_label','Dashboard tabs')) ?>">
-                <li class="nav-item">
-                  <a class="nav-link active" data-bs-toggle="tab" href="#tab-overview" role="tab"><?= h(t('dashboard_tab_overview','Overview')) ?></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tab-activity" role="tab"><?= h(t('dashboard_tab_activity','My Activity')) ?></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tab-tasks" role="tab"><?= h(t('dashboard_tab_tasks','My Tasks')) ?></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tab-access" role="tab"><?= h(t('dashboard_tab_access','Access & Roles')) ?></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tab-security" role="tab"><?= h(t('dashboard_tab_security','Security')) ?></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tab-health" role="tab"><?= h(t('dashboard_tab_health','System Health Check')) ?></a>
-                </li>
-              </ul>
-              <div class="tab-content p-4">
-                <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
-                  <div class="muted-empty"><?= h(t('dashboard_tab_overview_empty','Overview content will appear here.')) ?></div>
-                </div>
-                <div class="tab-pane fade" id="tab-activity" role="tabpanel">
-                  <div class="muted-empty"><?= h(t('dashboard_tab_activity_empty','My Activity content will appear here.')) ?></div>
-                </div>
-                <div class="tab-pane fade" id="tab-tasks" role="tabpanel">
-                  <div class="muted-empty"><?= h(t('dashboard_tab_tasks_empty','My Tasks content will appear here.')) ?></div>
-                </div>
-                <div class="tab-pane fade" id="tab-access" role="tabpanel">
-                  <div class="muted-empty"><?= h(t('dashboard_tab_access_empty','Access & Roles content will appear here.')) ?></div>
-                </div>
-                <div class="tab-pane fade" id="tab-security" role="tabpanel">
-                  <div class="muted-empty"><?= h(t('dashboard_tab_security_empty','Security content will appear here.')) ?></div>
-                </div>
-                <div class="tab-pane fade" id="tab-health" role="tabpanel">
-                  <div class="table-responsive">
-                    <table class="table table-sm table-hover table-neutral mb-0">
-                      <thead>
-                        <tr>
-                          <th><?= h(t('dashboard_health_col_check','Check')) ?></th>
-                          <th><?= h(t('dashboard_health_col_status','Status')) ?></th>
-                          <th><?= h(t('dashboard_health_col_info','Info')) ?></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php foreach ($healthChecks as $hc):
-                          $status = $hc['status'] ?? 'Unknown';
-                          $badgeClass = 'bg-secondary';
-                          if ($status === 'OK') $badgeClass = 'bg-success';
-                          elseif ($status === 'Warning' || $status === 'Degraded') $badgeClass = 'bg-warning';
-                          elseif ($status === 'Critical') $badgeClass = 'bg-danger';
-                        ?>
-                        <tr>
-                          <td><?= h($hc['name'] ?? '-') ?></td>
-                          <td><span class="badge <?= h($badgeClass) ?>"><?= h($statusLabelMap[$status] ?? $status) ?></span></td>
-                          <td><?= h($hc['info'] ?? '-') ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
+          <?php if ($showSystemResources): ?>
           <div class="col-lg-4">
-            <?php if ($showSystemResources): ?>
               <div class="dash-card resource-panel">
               <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="mb-0"><?= h(t('dashboard_resources_title','System Resources')) ?></h5>
@@ -583,28 +516,9 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
                   </tbody>
                 </table>
               </div>
-            </div>
-            <?php else: ?>
-              <div class="dash-card resource-panel">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                  <h5 class="mb-0"><?= h(t('dashboard_announcements_title','Announcements')) ?></h5>
-                  <span class="text-muted small"><?= h(t('dashboard_announcements_sub','System notices')) ?></span>
-                </div>
-                <?php if (!empty($announcements) && is_array($announcements)): ?>
-                  <ul class="list-group list-group-flush">
-                    <?php foreach (array_slice($announcements, 0, 6) as $note): ?>
-                      <li class="list-group-item px-0">
-                        <div class="fw-semibold"><?= h($note['title'] ?? t('dashboard_notice','Notice')) ?></div>
-                        <div class="text-muted small"><?= h($note['body'] ?? '-') ?></div>
-                      </li>
-                    <?php endforeach; ?>
-                  </ul>
-                <?php else: ?>
-                  <div class="muted-empty"><?= h(t('dashboard_announcements_empty','No announcements.')) ?></div>
-                <?php endif; ?>
               </div>
-            <?php endif; ?>
           </div>
+          <?php endif; ?>
         </div>
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>

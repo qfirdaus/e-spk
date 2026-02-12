@@ -174,9 +174,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
 
     /* Kolum jadual kumpulan - use percentages to match requested layout */
     table.table th.th-nowrap { white-space: nowrap; }
+    table.table th.th-color, table.table td.td-color { width: 4%; min-width: 46px; max-width: 56px; }
     table.table th.th-mod,  table.table td.td-mod  { width: 10%; }
     table.table th.th-menu, table.table td.td-menu { width: 10%; }
     table.table th.th-grp,  table.table td.td-grp  { width: 10%; }
+    .group-color-cell { display: flex; justify-content: flex-end; }
+    .group-color-bar {
+      display: inline-block;
+      width: 40px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 23, 42, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+    html[data-bs-theme="dark"] .group-color-bar { border-color: rgba(148, 163, 184, 0.55); }
 
     /* Reorder view */
     .modul-badge { font-size:.75rem; }
@@ -853,9 +864,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
                     <thead>
                         <tr>
                           <th style="width:5%" class="th-nowrap">#</th>
-                          <th style="width:15%" class="th-nowrap"><?= __('userGroup_col_code') ?></th>
-                          <th style="width:35%" class="th-nowrap"><?= __('userGroup_col_name') ?></th>
-                          <th style="width:15%" class="text-center th-nowrap th-grp"><?= __('userGroup_col_group_access') ?></th>
+                          <th style="width:12%" class="th-nowrap"><?= __('userGroup_col_code') ?></th>
+                          <th style="width:31%" class="th-nowrap"><?= __('userGroup_col_name') ?></th>
+                          <th style="width:4%" class="text-end th-nowrap th-color">&nbsp;</th>
+                          <th style="width:15%" class="text-start th-nowrap th-grp"><?= __('userGroup_col_group_access') ?></th>
                           <th style="width:15%" class="text-center th-nowrap th-mod"><?= __('userGroup_col_module_access') ?></th>
                           <th style="width:16%" class="text-center th-nowrap th-menu"><?= __('userGroup_col_menu_access') ?></th>
                         </tr>
@@ -869,15 +881,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
                             $nama    = (string)($g['f_groupName'] ?? '');
                             $modAks  = (string)($g['f_modulAccess'] ?? '');
                             $menuAks = (string)($g['f_menuAccess'] ?? '');
+                            $rawColor = trim((string)($g['f_color'] ?? ''));
+                            $barColor = '#94a3b8';
+                            if (
+                              $rawColor !== '' &&
+                              (preg_match('/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i', $rawColor) || preg_match('/^[a-zA-Z]+$/', $rawColor))
+                            ) {
+                              $barColor = $rawColor;
+                            }
                             $hasAccess = (trim($modAks) !== '' || trim($menuAks) !== '');
+                            $canDeleteGroup = (trim($modAks) === '' && trim($menuAks) === '');
                           ?>
                           <tr data-group-id="<?= $groupID ?>">
                             <td><?= $i + 1 ?></td>
                             <td><?= h($kod) ?></td>
                             <td><?= h($nama) ?></td>
+                            <td class="text-end td-color">
+                              <div class="group-color-cell">
+                                <span class="group-color-bar" style="background-color: <?= h($barColor) ?>;" title="<?= h($barColor) ?>"></span>
+                              </div>
+                            </td>
 
                             <!-- Akses Kumpulan -->
-                            <td class="text-center td-grp">
+                            <td class="text-start td-grp">
                               <button
                                 type="button"
                                 class="btn btn-sm btn-outline-secondary icon-btn view-group-perms<?= $permDisabledClass ?>"
@@ -888,6 +914,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
                                 title="<?= h(__('userGroup_col_group_access')) ?>">
                                 <i class="ri-user-settings-line"></i>
                               </button>
+                              <?php if ($canManageGroups): ?>
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-warning icon-btn btn-edit-group-meta ms-1<?= $permDisabledClass ?>"
+                                  <?= $permDisabledAttr ?>
+                                  data-group-id="<?= $groupID ?>"
+                                  data-group-kod="<?= h($kod) ?>"
+                                  data-group-nama="<?= h($nama) ?>"
+                                  data-group-priority="<?= h((string)($g['f_priority'] ?? 0)) ?>"
+                                  data-group-mod="<?= h((string)($g['f_mod'] ?? 0)) ?>"
+                                  data-group-color="<?= h((string)($g['f_color'] ?? '')) ?>"
+                                  title="<?= h(__('userGroup_edit_group')) ?>">
+                                  <i class="ri-pencil-line"></i>
+                                </button>
+                                <?php if ($canDeleteGroup): ?>
+                                  <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger icon-btn btn-delete-group ms-1<?= $permDisabledClass ?>"
+                                    <?= $permDisabledAttr ?>
+                                    data-group-id="<?= $groupID ?>"
+                                    data-group-kod="<?= h($kod) ?>"
+                                    data-group-nama="<?= h($nama) ?>"
+                                    title="<?= h(__('userGroup_delete_group')) ?>">
+                                    <i class="ri-delete-bin-line"></i>
+                                  </button>
+                                <?php endif; ?>
+                              <?php endif; ?>
                             </td>
 
                             <!-- Akses Modul -->
@@ -926,7 +979,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
                         <?php endforeach; ?>
                       <?php else: ?>
                         <tr>
-                          <td colspan="6" class="text-center text-muted"><?= __('userGroup_no_records') ?></td>
+                          <td colspan="7" class="text-center text-muted"><?= __('userGroup_no_records') ?></td>
                         </tr>
                       <?php endif; ?>
                     </tbody>
@@ -1169,54 +1222,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
 
       <!-- MODAL: Tambah Kumpulan -->
       <div class="modal fade modal-themed" id="groupCreateModal" tabindex="-1" aria-hidden="true" aria-labelledby="groupCreateTitle">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="groupCreateTitle"><i class="ri-add-line"></i> <span>Tambah Kumpulan</span></h5>
+              <h5 class="modal-title" id="groupCreateTitle"><i class="ri-add-line"></i> <span><?= h(__('userGroup_modal_group_create_title')) ?></span></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= h(__('userGroup_btn_close')) ?>"></button>
             </div>
             <div class="modal-body">
               <form id="groupCreateForm" autocomplete="off">
+                <input type="hidden" id="gc_groupID" name="groupID" value="">
                 <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label">Kod Kumpulan</label>
+                  <div class="col-md-4">
+                    <label class="form-label"><?= h(__('userGroup_field_group_code')) ?></label>
                     <input type="text" class="form-control" id="gc_groupKod" name="groupKod" placeholder="e.g. ADM-XX" required>
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Nama Kumpulan</label>
+                  <div class="col-md-4">
+                    <label class="form-label"><?= h(__('userGroup_field_group_name')) ?></label>
                     <input type="text" class="form-control" id="gc_groupName" name="groupName" required>
                   </div>
+                  <input type="hidden" id="gc_priority" name="priority" value="0">
+                  <input type="hidden" id="gc_mod" name="mod" value="0">
                   <div class="col-md-4">
-                    <label class="form-label">Keutamaan</label>
-                    <input type="number" class="form-control" id="gc_priority" name="priority" value="0">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Mod</label>
-                    <select class="form-select" id="gc_mod" name="mod">
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label">Warna</label>
-                    <input type="text" class="form-control" id="gc_color" name="color" placeholder="#50a4c1">
+                    <label class="form-label"><?= h(__('userGroup_field_color')) ?></label>
+                    <div class="input-group">
+                      <input type="color" class="form-control form-control-color" id="gc_color_picker" value="#50a4c1" title="Pilih warna">
+                      <input type="text" class="form-control" id="gc_color" name="color" placeholder="#50a4c1" readonly>
+                    </div>
+                    <div class="form-text"><?= h(__('userGroup_field_color_help')) ?></div>
                   </div>
                 </div>
 
                 <div class="row g-3 mt-2">
                   <div class="col-md-6">
-                    <label class="form-label">Pilih Modul</label>
+                    <label class="form-label"><?= h(__('userGroup_field_pick_module')) ?></label>
                     <select class="form-select" id="gc_moduls" name="modulAccess" multiple size="6">
                       <!-- options populated dynamically -->
                     </select>
-                    <div class="form-text">Pilih satu atau lebih modul untuk kumpulan ini.</div>
+                    <div class="form-text"><?= h(__('userGroup_field_pick_module_help')) ?></div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Pilih Menu (bergantung pada Modul)</label>
+                    <label class="form-label"><?= h(__('userGroup_field_pick_menu')) ?></label>
                     <select class="form-select" id="gc_menus" name="menuAccess" multiple size="6">
                       <!-- options populated dynamically based on selected modul -->
                     </select>
-                    <div class="form-text">Menu akan dipaparkan mengikut modul yang dipilih.</div>
+                    <div class="form-text"><?= h(__('userGroup_field_pick_menu_help')) ?></div>
                   </div>
                 </div>
               </form>
@@ -1224,7 +1273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
             </div>
             <div class="modal-footer">
               <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="ri-close-line me-1"></i> <?= __('btn_close') ?></button>
-              <button class="btn btn-primary" id="groupCreateSaveBtn" <?= $permDisabledAttr ?>><i class="ri-save-3-line me-1"></i> <?= __('btn_save') ?></button>
+              <button class="btn btn-primary" id="groupCreateSaveBtn" <?= $permDisabledAttr ?>><i class="ri-save-3-line me-1"></i> <span id="groupCreateSaveBtnText"><?= __('btn_save') ?></span></button>
             </div>
           </div>
         </div>
@@ -1320,7 +1369,7 @@ window.hasDT = function() {
   }
 
   // ===================== I18N ringkas ======================
-    const T = {
+  const T = {
     label_module: <?= json_encode(__('userGroup_label_module')) ?>,
     label_menu: <?= json_encode(__('userGroup_label_menu')) ?>,
     modul_fallback: <?= json_encode(__('userGroup_label_modul_fallback')) ?>,
@@ -1362,8 +1411,25 @@ window.hasDT = function() {
     dt_paginate_first: <?= json_encode(__('userGroup_dt_paginate_first')) ?>,
     dt_paginate_last: <?= json_encode(__('userGroup_dt_paginate_last')) ?>,
     dt_paginate_next: <?= json_encode(__('userGroup_dt_paginate_next')) ?>,
-    dt_paginate_previous: <?= json_encode(__('userGroup_dt_paginate_previous')) ?>
+    dt_paginate_previous: <?= json_encode(__('userGroup_dt_paginate_previous')) ?>,
+    modal_group_create_title: <?= json_encode(__('userGroup_modal_group_create_title')) ?>,
+    modal_group_edit_title: <?= json_encode(__('userGroup_modal_group_edit_title')) ?>,
+    btn_save: <?= json_encode(__('btn_save')) ?>,
+    btn_update: <?= json_encode(__('btn_update')) ?>,
+    btn_close: <?= json_encode(__('btn_close')) ?>,
+    err_group_code_name_required: <?= json_encode(__('userGroup_err_group_code_name_required')) ?>,
+    confirm_title: <?= json_encode(__('userGroup_confirm_title')) ?>,
+    confirm_delete_group_text: <?= json_encode(__('userGroup_confirm_delete_group_text')) ?>,
+    confirm_yes_delete: <?= json_encode(__('userGroup_confirm_yes_delete')) ?>,
+    confirm_cancel: <?= json_encode(__('userGroup_confirm_cancel')) ?>,
+    info_title: <?= json_encode(__('userGroup_info_title')) ?>,
+    info_select_group_first: <?= json_encode(__('userGroup_info_select_group_first')) ?>,
+    btn_menu_label: <?= json_encode(__('userGroup_btn_menu_label')) ?>,
+    btn_module_label: <?= json_encode(__('userGroup_btn_module_label')) ?>,
+    btn_group_label: <?= json_encode(__('userGroup_btn_group_label')) ?>
   };
+  // Expose page translations for other script scopes (e.g. second IIFE / DataTable init)
+  window.GroupPageT = T;
 
   // Initialize modules dan setup event handlers
   function initializeModules() {
@@ -1489,6 +1555,7 @@ window.hasDT = function() {
 (function() {
   'use strict';
   const canManageGroups = <?= $canManageGroups ? 'true' : 'false' ?>;
+  const T = (window.GroupPageT && typeof window.GroupPageT === 'object') ? window.GroupPageT : {};
 
   // =========================================================
   // 1. Search/Filter untuk Group List (DataTable)
@@ -1534,7 +1601,7 @@ window.hasDT = function() {
       order: [[2, 'asc']], // Sort by code
       columnDefs: [
         { targets: [0], orderable: false }, // Disable sorting on first column
-        { targets: [3, 4, 5], orderable: false, searchable: false }
+        { targets: [3, 4, 5, 6], orderable: false, searchable: false }
       ],
       language: {
         search: "",
@@ -1577,9 +1644,9 @@ window.hasDT = function() {
         if ($right.length && canManageGroups) {
           // Add "Tambah Menu" (page-level) and "Tambah Kumpulan" buttons
           // Use full action labels for visible buttons
-          const fullMenuLabel = 'Menu';
-          const fullModuleLabel = 'Modul';
-          const fullGroupLabel = 'Kumpulan';
+          const fullMenuLabel = T.btn_menu_label || 'Menu';
+          const fullModuleLabel = T.btn_module_label || 'Modul';
+          const fullGroupLabel = T.btn_group_label || 'Kumpulan';
 
           // Visible text shows full labels; also include title/aria-label for accessibility
           const $btnMenu = jQuery('<button type="button" id="btnAddMenuPage" class="btn btn-sm btn-primary me-2" title="' + GroupUtils.esc(fullMenuLabel) + '" aria-label="' + GroupUtils.esc(fullMenuLabel) + '"><i class="ri-menu-2-line"></i> ' + GroupUtils.esc(fullMenuLabel) + '</button>');
@@ -1602,12 +1669,12 @@ window.hasDT = function() {
             if (window.Swal && typeof Swal.fire === 'function') {
               Swal.fire({
                 icon: 'info',
-                title: 'Makluman',
-                text: 'Sila pilih kumpulan dahulu melalui butang Akses Menu.',
+                title: T.info_title || 'Makluman',
+                text: T.info_select_group_first || 'Sila pilih kumpulan dahulu melalui butang Akses Menu.',
                 confirmButtonText: 'OK'
               });
             } else {
-              alert('Sila pilih kumpulan dahulu melalui butang Akses Menu.');
+              alert(T.info_select_group_first || 'Sila pilih kumpulan dahulu melalui butang Akses Menu.');
             }
           });
 
@@ -1625,10 +1692,16 @@ window.hasDT = function() {
           $btn.off('click').on('click', function(){
             const modal = new bootstrap.Modal(document.getElementById('groupCreateModal'));
             // reset form
+            document.getElementById('groupCreateTitle').innerHTML = '<i class="ri-add-line"></i> <span>' + (T.modal_group_create_title || 'Tambah Kumpulan') + '</span>';
+            const saveTxt = document.getElementById('groupCreateSaveBtnText');
+            if (saveTxt) saveTxt.textContent = T.btn_save || 'Simpan';
+            document.getElementById('gc_groupID').value = '';
             document.getElementById('gc_groupKod').value = '';
             document.getElementById('gc_groupName').value = '';
-            document.getElementById('gc_color').value = '';
+            document.getElementById('gc_color_picker').value = '#50a4c1';
+            document.getElementById('gc_color').value = '#50a4c1';
             document.getElementById('gc_priority').value = '0';
+            document.getElementById('gc_mod').value = '0';
             // populate modul/menu selects before showing
             try { if (window.MenuAccess && typeof window.MenuAccess.populateCreateModal === 'function') window.MenuAccess.populateCreateModal().finally(()=>modal.show()); else modal.show(); } catch(e){ modal.show(); }
           });

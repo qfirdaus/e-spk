@@ -18,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && session_status() === PHP_SESSION_ACT
 
 /* ================= Helpers ================= */
 function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function tx(string $key, string $fallback): string {
+  $v = __($key);
+  return ($v === $key || $v === null || $v === '') ? $fallback : (string)$v;
+}
 
 /* ================= Data: Kategori + FAQ =================
  *  - Setiap item wajib ada: cat (kategori), q (soalan), a (jawapan), tags (opsyen)
@@ -31,39 +35,31 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 */
 $faqs = [
   // Akaun & Akses
-  ['cat'=>__('faq_cat_akaun_akses') ?: 'Akaun & Akses','q'=>__('faq_q_login') ?: 'Bagaimana cara log masuk e-Prestasi?','a'=>__('faq_a_login') ?: 'Gunakan <b>ID Staf</b> dan <b>Kata Laluan</b> anda. Untuk log masuk kali pertama, gunakan ID Staf sebagai kata laluan. Jika terlupa kata laluan atau menghadapi masalah, hubungi pentadbir sistem.','tags'=>'akaun login id staf katalaluan password','audience'=>'all'],
-  ['cat'=>__('faq_cat_akaun_akses') ?: 'Akaun & Akses','q'=>__('faq_q_blocked') ?: 'Kenapa saya tidak boleh log masuk walaupun ID dan kata laluan betul?','a'=>__('faq_a_blocked') ?: 'Akaun anda mungkin telah <b>disekat</b> oleh pentadbir. Sila hubungi pentadbir sistem untuk membuka semula akses. Status akses boleh disemak melalui menu <b>Senarai Pengguna</b> (untuk pentadbir sahaja).','tags'=>'akses disekat blocked login gagal'],
-  ['cat'=>__('faq_cat_akaun_akses') ?: 'Akaun & Akses','q'=>__('faq_q_access') ?: 'Siapa boleh akses modul dalam sistem?','a'=>__('faq_a_access') ?: 'Akses modul ditentukan oleh <b>Kumpulan Pengguna</b> (contoh: Super Admin, Admin HR, Admin Kewangan). Setiap kumpulan mempunyai akses modul dan menu yang berbeza. Hubungi pentadbir untuk menukar kumpulan atau akses.','tags'=>'akses peranan role kumpulan pengguna modul menu'],
+  ['cat'=>tx('faq_cat_account_access','Akaun & Akses'),'q'=>tx('faq_item_01_q','Bagaimana cara log masuk ke sistem?'),'a'=>tx('faq_item_01_a','Gunakan <b>ID Staf</b> dan <b>kata laluan</b> anda pada halaman log masuk. Jika ini kali pertama, sila ikut arahan yang dipaparkan pada halaman login atau hubungi pentadbir sistem untuk bantuan.'),'tags'=>'akaun login id staf kata laluan'],
+  ['cat'=>tx('faq_cat_account_access','Akaun & Akses'),'q'=>tx('faq_item_02_q','Kenapa saya tidak boleh log masuk?'),'a'=>tx('faq_item_02_a','Punca biasa ialah kata laluan tidak tepat, akaun disekat, atau akses kumpulan belum ditetapkan. Semak semula ID/kata laluan anda. Jika masih gagal, hubungi pentadbir sistem.'),'tags'=>'login gagal akaun disekat akses'],
+  ['cat'=>tx('faq_cat_account_access','Akaun & Akses'),'q'=>tx('faq_item_03_q','Bagaimana akses menu ditentukan?'),'a'=>tx('faq_item_03_a','Setiap pengguna berada dalam <b>kumpulan pengguna</b> tertentu. Kumpulan ini menentukan modul dan menu yang boleh dilihat. Jika menu tiada, minta pentadbir semak tetapan kumpulan anda.'),'tags'=>'kumpulan pengguna akses menu modul'],
 
-  // Dashboard & Prestasi
-  ['cat'=>__('faq_cat_dashboard_prestasi') ?: 'Dashboard & Prestasi','q'=>__('faq_q_dashboard') ?: 'Bagaimana nak lihat statistik prestasi?','a'=>__('faq_a_dashboard') ?: 'Pergi ke <b>Dashboard</b> untuk melihat KPI, carta trend, dan analisis prestasi. Gunakan penapis <b>Tahun</b> dan <b>Jabatan</b> untuk melihat data spesifik. Pilih "Semua" untuk melihat data keseluruhan.','tags'=>'dashboard kpi statistik prestasi carta trend','audience'=>'all'],
-  ['cat'=>__('faq_cat_dashboard_prestasi') ?: 'Dashboard & Prestasi','q'=>__('faq_q_dashboard_filter') ?: 'Kenapa data dashboard tidak berubah apabila saya pilih "Semua" jabatan?','a'=>__('faq_a_dashboard_filter') ?: 'Pastikan anda memilih <b>"Semua"</b> dari dropdown jabatan (bukan kosong). Sistem akan memaparkan data untuk semua jabatan apabila "Semua" dipilih. Jika masih tidak berubah, cuba refresh halaman.','tags'=>'dashboard filter semua jabatan data'],
+  // Navigasi & Penggunaan
+  ['cat'=>tx('faq_cat_navigation','Navigasi & Penggunaan'),'q'=>tx('faq_item_04_q','Di mana saya boleh lihat maklumat ringkas sistem?'),'a'=>tx('faq_item_04_a','Gunakan halaman <b>Dashboard</b> untuk paparan ringkas. Ia membantu anda faham status semasa dan navigasi ke modul utama dengan lebih cepat.'),'tags'=>'dashboard ringkasan'],
+  ['cat'=>tx('faq_cat_navigation','Navigasi & Penggunaan'),'q'=>tx('faq_item_05_q','Kenapa menu sidebar saya berbeza dengan pengguna lain?'),'a'=>tx('faq_item_05_a','Menu sidebar dipaparkan mengikut kumpulan dan peranan pengguna. Ini adalah normal untuk memastikan setiap pengguna hanya melihat fungsi yang berkaitan dengan tugas masing-masing.'),'tags'=>'sidebar menu peranan role'],
+  ['cat'=>tx('faq_cat_navigation','Navigasi & Penggunaan'),'q'=>tx('faq_item_06_q','Bagaimana cara cepat cari fungsi dalam sistem?'),'a'=>tx('faq_item_06_a','Gunakan menu modul di sidebar dan pilih halaman berkaitan. Untuk halaman jadual, gunakan carian di bahagian atas jadual untuk tapis data dengan cepat.'),'tags'=>'carian jadual sidebar modul'],
 
-  // Anugerah Perkhidmatan Cemerlang (APC)
-  ['cat'=>__('faq_cat_apc') ?: 'Anugerah Perkhidmatan Cemerlang (APC)','q'=>__('faq_q_apc_jawatan') ?: 'Bagaimana nak kemaskini maklumat Jawatankuasa Penilai?','a'=>__('faq_a_apc_jawatan') ?: 'Pergi ke <b>Senarai APC → Tab 1: Jawatankuasa Penilai</b>. Isi maklumat mesyuarat (tarikh, masa, tempat) dan pilih ahli jawatankuasa (Pengerusi, Setiausaha, Ahli). Klik <b>Simpan</b> selepas selesai.','tags'=>'apc jawatankuasa penilai mesyuarat pengerusi setiausaha'],
-  ['cat'=>__('faq_cat_apc') ?: 'Anugerah Perkhidmatan Cemerlang (APC)','q'=>__('faq_q_apc_status') ?: 'Bagaimana nak kemaskini status penerima APC dan PGT?','a'=>__('faq_a_apc_status') ?: 'Pergi ke <b>Senarai APC → Tab 2: Borang Pencalonan APC</b>. Pilih staf dan klik butang <b>APC</b> atau <b>PGT</b> untuk menukar status. Status akan disimpan secara automatik dan dipaparkan dalam jadual.','tags'=>'apc pgt penerima status pencalonan'],
-  ['cat'=>__('faq_cat_apc') ?: 'Anugerah Perkhidmatan Cemerlang (APC)','q'=>__('faq_q_apc_catatan') ?: 'Bagaimana nak tambah catatan dalam Laporan Format A?','a'=>__('faq_a_apc_catatan') ?: 'Pergi ke <b>Senarai APC → Tab 3: Laporan Format A → Subtab 1: Laporan</b>. Scroll ke bahagian <b>Catatan Keseluruhan Jawatankuasa Penilai</b>. Catatan hanya boleh dikemaskini jika dokumen belum dihantar (<i>f_statusdokumen = 0</i>). Gunakan template untuk memudahkan.','tags'=>'apc format a catatan keseluruhan template dokumen'],
-  ['cat'=>__('faq_cat_apc') ?: 'Anugerah Perkhidmatan Cemerlang (APC)','q'=>__('faq_q_apc_lock') ?: 'Kenapa saya tidak boleh edit catatan keseluruhan?','a'=>__('faq_a_apc_lock') ?: 'Catatan keseluruhan hanya boleh dikemaskini apabila <b>dokumen belum dihantar</b> (<i>f_statusdokumen = 0</i>). Selepas dokumen dihantar melalui <b>Subtab 2: Dokumen</b>, catatan akan dikunci. Untuk membuka semula, padam dokumen yang telah dihantar.','tags'=>'apc catatan dikunci dokumen dihantar status'],
-  ['cat'=>__('faq_cat_apc') ?: 'Anugerah Perkhidmatan Cemerlang (APC)','q'=>__('faq_q_apc_print') ?: 'Bagaimana nak cetak Laporan Format A?','a'=>__('faq_a_apc_print') ?: 'Pergi ke <b>Laporan Format A</b>. Pilih tahun dan jabatan (atau "Semua"), kemudian klik butang <b>Cetak</b>. Pastikan catatan keseluruhan telah diisi dan tidak mengandungi placeholder <code>[ISI: ...]</code> sebelum mencetak.','tags'=>'apc format a cetak laporan print'],
+  // Profil & Tetapan
+  ['cat'=>tx('faq_cat_profile_settings','Profil & Tetapan'),'q'=>tx('faq_item_07_q','Bagaimana saya kemaskini tetapan bahasa?'),'a'=>tx('faq_item_07_a','Anda boleh menukar bahasa melalui topbar atau halaman <b>Profil</b>. Pilihan bahasa akan disimpan untuk akaun anda.'),'tags'=>'bahasa language profil'],
+  ['cat'=>tx('faq_cat_profile_settings','Profil & Tetapan'),'q'=>tx('faq_item_08_q','Bagaimana saya ubah tema paparan?'),'a'=>tx('faq_item_08_a','Pergi ke halaman <b>Profil</b> untuk menukar tetapan tema seperti mode paparan dan warna antaramuka. Perubahan akan digunakan pada sesi anda.'),'tags'=>'tema dark light profil'],
+  ['cat'=>tx('faq_cat_profile_settings','Profil & Tetapan'),'q'=>tx('faq_item_09_q','Apa kandungan Jejak Audit di halaman Profil?'),'a'=>tx('faq_item_09_a','Jejak Audit memaparkan rekod aktiviti penting seperti kemaskini data dan tindakan sistem. Ia membantu semakan dan pemantauan keselamatan.'),'tags'=>'audit jejak aktiviti profil'],
 
   // Pengurusan Pengguna
-  ['cat'=>__('faq_cat_pengurusan_pengguna') ?: 'Pengurusan Pengguna','q'=>__('faq_q_user_sync') ?: 'Bagaimana nak sync data pengguna dari Sybase?','a'=>__('faq_a_user_sync') ?: 'Pergi ke <b>Senarai Pengguna</b>. Klik butang <b>Sync Data</b> (icon refresh) untuk sync data secara manual. Data akan disegerakkan dari view Sybase <code>v630staf_service_skim_all</code> ke MySQL. Hanya staf aktif (<i>kodstatus = 1</i>) akan disync.','tags'=>'pengguna sync sybase mysql data staf aktif','audience'=>'Super Admin'],
-  ['cat'=>__('faq_cat_pengurusan_pengguna') ?: 'Pengurusan Pengguna','q'=>__('faq_q_user_group') ?: 'Bagaimana nak tukar kumpulan pengguna?','a'=>__('faq_a_user_group') ?: 'Pergi ke <b>Senarai Pengguna</b>. Klik butang <b>Edit</b> pada baris pengguna yang ingin ditukar. Pilih kumpulan baru dari dropdown dan klik <b>Simpan</b>. Anda juga boleh tukar status akses (Dibenarkan/Disekat) dalam modal yang sama.','tags'=>'pengguna kumpulan group tukar akses status'],
-  ['cat'=>__('faq_cat_pengurusan_pengguna') ?: 'Pengurusan Pengguna','q'=>__('faq_q_user_flag') ?: 'Apa maksud status "Dibenarkan" dan "Disekat"?','a' =>__('faq_a_user_flag') ?: '<b>Dibenarkan</b> (<i>f_flag = 1</i>) membolehkan pengguna log masuk ke sistem. <b>Disekat</b> (<i>f_flag = 0</i>) menghalang pengguna daripada log masuk. Status ini boleh ditukar melalui menu <b>Senarai Pengguna</b> oleh pentadbir.','tags'=>'pengguna akses dibenarkan disekat flag status'],
+  ['cat'=>tx('faq_cat_user_management','Pengurusan Pengguna'),'q'=>tx('faq_item_10_q','Bagaimana pentadbir tambah atau kemaskini pengguna?'),'a'=>tx('faq_item_10_a','Pentadbir boleh menggunakan halaman <b>Senarai Pengguna</b> untuk menambah pengguna, menukar kumpulan, dan mengawal status akses. Setiap perubahan perlu ikut polisi dalaman organisasi.'),'tags'=>'senarai pengguna tambah kemaskini kumpulan'],
+  ['cat'=>tx('faq_cat_user_management','Pengurusan Pengguna'),'q'=>tx('faq_item_11_q','Apakah maksud status akses pengguna?'),'a'=>tx('faq_item_11_a','Status akses menentukan sama ada pengguna dibenarkan masuk ke sistem. Jika status disekat, pengguna tidak boleh log masuk sehingga status diaktifkan semula oleh pentadbir.'),'tags'=>'status akses dibenarkan disekat'],
 
-  // Laporan
-  ['cat'=>__('faq_cat_laporan') ?: 'Laporan','q'=>__('faq_q_report') ?: 'Bagaimana nak lihat Laporan Format A?','a'=>__('faq_a_report') ?: 'Pergi ke <b>Laporan Format A</b>. Pilih tahun dan jabatan (atau "Semua") untuk melihat senarai jabatan yang telah menghantar dokumen. Klik butang <b>Lihat Dokumen</b> atau <b>Muat Turun Dokumen</b> untuk akses dokumen. Status "Dah Hantar" atau "Belum Hantar" akan dipaparkan.','tags'=>'laporan format a dokumen status hantar'],
+  // Kumpulan Pengguna
+  ['cat'=>tx('faq_cat_group_management','Kumpulan Pengguna'),'q'=>tx('faq_item_12_q','Apa fungsi halaman Kumpulan Pengguna?'),'a'=>tx('faq_item_12_a','Halaman ini digunakan untuk mengurus struktur kumpulan, warna identiti kumpulan, serta akses modul/menu bagi setiap kumpulan. Ini memudahkan pengurusan hak capaian secara berpusat.'),'tags'=>'kumpulan pengguna modul menu akses'],
+  ['cat'=>tx('faq_cat_group_management','Kumpulan Pengguna'),'q'=>tx('faq_item_13_q','Bolehkah kumpulan dipadam?'),'a'=>tx('faq_item_13_a','Kumpulan hanya boleh dipadam jika tiada akses modul/menu yang aktif dan tiada pengguna yang masih ditetapkan pada kumpulan tersebut. Ini untuk elak gangguan operasi.'),'tags'=>'padam kumpulan pengguna'],
 
-  // Tetapan Sistem
-  ['cat'=>__('faq_cat_tetapan_sistem') ?: 'Tetapan Sistem','q'=>__('faq_q_lang') ?: 'Bagaimana nak tukar bahasa paparan sistem?','a'=>__('faq_a_lang') ?: 'Klik ikon <b>bahasa</b> di topbar (ikon bendera) atau pergi ke <b>Profil</b> untuk menukar bahasa. Sistem menyokong 4 bahasa: Bahasa Melayu (BM), English (EN), 中文 (ZH), dan தமிழ் (TA). Pilihan bahasa akan disimpan dalam profil anda.','tags'=>'bahasa language tukar translate profil'],
-  ['cat'=>__('faq_cat_tetapan_sistem') ?: 'Tetapan Sistem','q'=>__('faq_q_theme') ?: 'Bagaimana nak tukar tema sistem?','a'=>__('faq_a_theme') ?: 'Pergi ke <b>Profil</b> dan scroll ke bahagian <b>Tetapan Tema</b>. Anda boleh menukar warna sidebar, topbar, dan layout mode (light/dark). Tetapan akan disimpan secara automatik dan digunakan pada semua halaman.','tags'=>'tema theme warna sidebar topbar dark light','audience'=>'all'],
-  // ---- Role specific / practical FAQs
-  ['cat'=>'Pengurusan & Konfigurasi','q'=>'Bagaimana saya tambahkan/ubah menu akses untuk kumpulan pengguna?','a'=>'Pergi ke <b>Kumpulan Pengguna → Pilih kumpulan → Edit</b>. Di panel akses, tandakan menu yang perlu diaktifkan dan klik <b>Simpan</b>. Untuk perubahan besar, pastikan anda diuji pada akaun ujian terlebih dahulu.','tags'=>'kumpulan pengguna akses menu kumpulan','audience'=>'Super Admin'],
-  ['cat'=>'HR Workflow','q'=>'Bagaimana cara Admin HR mengesahkan permohonan cuti atau pengesahan data prestasi?','a'=>'Admin HR boleh menggunakan modul <b>Pengurusan Cuti</b> dan <b>Pengesahan Prestasi</b>. Gunakan filter jabatan untuk mencari staf, buka rekod dan klik <b>Sahkan</b> atau <b>Tolak</b>. Pastikan anda mempunyai kebenaran <i>Approve</i>.','tags'=>'hr pengesahan cuti kelulusan','audience'=>'Admin HR'],
-  ['cat'=>'Operasi & Kelulusan','q'=>'Bagaimana Admin Kewangan menguruskan kelulusan dan semakan tiket?','a'=>'Admin Kewangan mempunyai akses ke modul <b>Kelulusan</b> dan <b>Tiket Aduan</b>. Semak senarai tiket, klik nombor tiket untuk melihat butiran, berikan komen dan tetapkan status. Gunakan templat respons untuk menjimatkan masa.','tags'=>'kelulusan tiket aduan operasi','audience'=>'Admin Kewangan'],
-  ['cat'=>'Akaun & Akses','q'=>'Bagaimana cara tukar kata laluan untuk pengguna lain (pentadbir)?','a'=>'Sebagai pentadbir (Super Admin), pergi ke <b>Senarai Pengguna</b>, pilih pengguna, klik <b>Reset Password</b> dan berikan pilihan untuk tetapkan kata laluan sementara. Ingat untuk minta pengguna menukar kata laluan selepas log masuk.','tags'=>'reset kata laluan pentadbir reset password','audience'=>'Super Admin'],
-  ['cat'=>'Pengurusan Pengguna','q'=>'Soalan biasa untuk Admin HR: Bagaimana nak eksport senarai staf untuk laporan?','a'=>'Gunakan <b>Senarai Pengguna</b> → pilih penapis yang diperlukan → klik <b>Export</b> dan pilih format CSV atau Excel. Semak hak akses eksport pada kumpulan pengguna anda.','tags'=>'export csv excel senarai pengguna','audience'=>'Admin HR'],
-  ['cat'=>'Operasi & Kelulusan','q'=>'Soalan biasa untuk Admin Kewangan: Bagaimana nak lihat log audit perubahan untuk rekod tertentu?','a'=>'Buka halaman rekod, klik butang <b>Jejak Audit</b> untuk melihat perubahan dan siapa yang membuatnya. Anda juga boleh muat turun log sebagai JSON jika perlu.','tags'=>'audit log jejak audit rekod muat turun','audience'=>'Admin Kewangan'],
+  // Sokongan
+  ['cat'=>tx('faq_cat_support','Sokongan'),'q'=>tx('faq_item_14_q','Apa perlu dibuat jika berlaku ralat sistem?'),'a'=>tx('faq_item_14_a','Catat mesej ralat, masa kejadian, dan tindakan semasa ralat berlaku. Hantar maklumat tersebut kepada pentadbir sistem untuk semakan lanjut.'),'tags'=>'ralat error sokongan bantuan'],
+  ['cat'=>tx('faq_cat_support','Sokongan'),'q'=>tx('faq_item_15_q','Siapa perlu dihubungi untuk isu akses atau konfigurasi?'),'a'=>tx('faq_item_15_a','Hubungi pentadbir sistem dalaman organisasi anda. Isu akses, kumpulan pengguna, dan tetapan sistem biasanya memerlukan kebenaran pentadbir.'),'tags'=>'hubungi pentadbir akses konfigurasi'],
 ];
 
 /* ================= Kategori ================= */
@@ -86,16 +82,30 @@ $defaultCat = $cats[0];
   <style>
     body { font-size:.95rem }
     .faq-muted { color: var(--bs-secondary-color) }
-    .faq-lead { max-width:800px; margin:0 auto }
+    .faq-lead { max-width:820px; margin:0 auto }
+    .faq-hero-card{
+      border: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #2563eb 100%);
+      box-shadow: 0 10px 28px rgba(15,23,42,.18);
+    }
+    .faq-card {
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(15,23,42,.06);
+    }
 
     /* Left category list - Professional styling */
-    .faq-cat .list-group-item{ 
+    .faq-cat .list-group-item{
       cursor:pointer; 
       user-select:none;
       border-left: 3px solid transparent;
-      transition: all 0.3s ease;
+      transition: all 0.24s ease;
       padding: 0.75rem 1rem;
-      color: var(--bs-body-color); /* Use body text color for default */
+      color: var(--bs-body-color);
+      border-radius: .55rem;
+      margin-bottom: .25rem;
     }
     .faq-cat .list-group-item:hover:not(.active) {
       background: var(--bs-primary-bg-subtle);
@@ -106,11 +116,11 @@ $defaultCat = $cats[0];
     .faq-cat .list-group-item.active,
     .faq-cat .list-group-item.active:hover,
     .faq-cat .list-group-item.active:focus {
-      background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important; /* Use specific blue gradient */
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
       border-left-color: #0d6efd !important;
-      color: #ffffff !important; /* Force white text for active state */
+      color: #ffffff !important;
       font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 10px rgba(15,23,42,.18);
     }
     .faq-cat .list-group-item.active:hover {
       background: linear-gradient(135deg, #0b5ed7 0%, #084298 100%) !important; /* Darker on hover */
@@ -130,11 +140,11 @@ $defaultCat = $cats[0];
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
       color: var(--bs-primary);
     }
-    .acc-item { 
+    .acc-item {
       border-radius:.75rem; 
       overflow:hidden;
       border: 1px solid #e9ecef;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(15,23,42,.05);
       transition: all 0.3s ease;
     }
     .acc-item:hover {
@@ -168,10 +178,11 @@ $defaultCat = $cats[0];
 
     /* Count badge */
     #faqCount {
-      background: var(--bs-primary-bg-subtle);
+      background: #eff6ff;
+      color: #1d4ed8;
       padding: 0.5rem 1rem;
       border-radius: 0.5rem;
-      font-weight: 500;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -203,14 +214,14 @@ $defaultCat = $cats[0];
 
         <!-- Intro -->
         <div class="row"><div class="col-12">
-          <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <div class="card faq-hero-card">
             <div class="card-body text-center faq-lead text-white py-4">
               <div class="mb-3">
                 <i class="ri-question-answer-line" style="font-size: 3rem; opacity: 0.9;"></i>
               </div>
-              <h3 class="mt-1 mb-3 fw-bold"><?= h(__('faq_heading') ?: 'Bantuan Pantas') ?></h3>
+              <h3 class="mt-1 mb-3 fw-bold"><?= h(__('faq_heading') ?: 'Soalan Lazim Sistem') ?></h3>
               <p class="mb-0" style="opacity: 0.95;">
-                <?= h(__('faq_intro') ?: 'Pilih kategori di sebelah kiri, atau cari ikut kata kunci di sebelah kanan.') ?>
+                <?= h(__('faq_intro') ?: 'Rujuk panduan umum penggunaan sistem. Pilih kategori atau gunakan carian untuk jawapan yang berkaitan.') ?>
               </p>
             </div>
           </div>
@@ -220,7 +231,7 @@ $defaultCat = $cats[0];
         <div class="row g-3">
           <!-- LEFT: Kategori -->
           <div class="col-xl-3">
-            <div class="card shadow-sm">
+            <div class="card faq-card">
               <div class="card-header bg-gradient bg-primary text-white py-3">
                 <i class="ri-folder-2-line me-2"></i> <strong><?= h(__('faq_label_category') ?: 'Kategori') ?></strong>
               </div>
@@ -240,7 +251,7 @@ $defaultCat = $cats[0];
 
           <!-- RIGHT: Carian + Accordion -->
           <div class="col-xl-9">
-            <div class="card shadow-sm">
+            <div class="card faq-card">
               <div class="card-body">
                 <!-- Carian -->
                 <div class="row align-items-center g-2 mb-2">

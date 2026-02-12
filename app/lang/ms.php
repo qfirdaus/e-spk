@@ -81,12 +81,12 @@ return [
 // Medan borang
 'login_staffid'            => 'ID Staf',
 'login_userid_placeholder' => 'Contoh: XXXX-XX',
-'login_password'           => 'Kata Laluan',
+'login_password'           => 'Katalaluan',
 'login_language'           => 'Bahasa',
 
 // Nota & tindakan
-'login_note'               => 'Untuk log masuk kali pertama, gunakan ID Staf anda sebagai kata laluan.',
-'login_forgot'             => 'Lupa kata laluan?',
+'login_note'               => 'Untuk log masuk kali pertama, gunakan ID Staf anda sebagai katalaluan.',
+'login_forgot'             => 'Lupa katalaluan?',
 'login_btnLogin'           => 'Log Masuk',
 
 // Status & mesej masa
@@ -482,6 +482,19 @@ return [
 // Butang & Aksi
 // =========================
 'userGroup_btn_add_menu'            => 'Tambah Menu',
+'modul_tambah'                      => 'Tambah Modul',
+'modul_tambah_title'                => 'Tambah Modul',
+'modul_nama_ms'                     => 'Nama Modul (BM)',
+'modul_nama_en'                     => 'Nama Modul (EN)',
+'modul_icon'                        => 'Icon',
+'modul_susunan'                     => 'Susunan',
+'modul_simpan'                      => 'Simpan',
+'modul_batal'                       => 'Batal',
+'modul_berjaya_title'               => 'Berjaya',
+'modul_berjaya_msg'                 => 'Modul berjaya ditambah.',
+'modul_ralat_title'                 => 'Ralat',
+'modul_ralat_duplikat'              => 'Nama modul telah wujud. Sila gunakan nama lain.',
+'modul_ralat_wajib'                 => 'Nama Modul (BM) wajib diisi.',
 'userGroup_btn_close'               => 'Tutup',
 'userGroup_btn_save'                => 'Simpan',
 
@@ -516,12 +529,22 @@ return [
 'userGroup_modal_group_access_title'=> 'Akses Kumpulan',
 'userGroup_modal_summary_title'     => 'Ringkasan Akses',
 'userGroup_modal_pick_menu_title'   => 'Pilih Menu',
+'userGroup_modal_group_create_title'=> 'Tambah Kumpulan',
+'userGroup_modal_group_edit_title'  => 'Edit Kumpulan',
 
 // =========================
 // Medan Borang
 // =========================
 'userGroup_field_group'             => 'Kumpulan',
+'userGroup_field_group_code'        => 'Kod Kumpulan',
+'userGroup_field_group_name'        => 'Nama Kumpulan',
 'userGroup_field_modul'             => 'Modul',
+'userGroup_field_color'             => 'Warna',
+'userGroup_field_color_help'        => 'Pilih warna secara visual.',
+'userGroup_field_pick_module'       => 'Pilih Modul',
+'userGroup_field_pick_module_help'  => 'Pilih satu atau lebih modul untuk kumpulan ini.',
+'userGroup_field_pick_menu'         => 'Pilih Menu (bergantung pada Modul)',
+'userGroup_field_pick_menu_help'    => 'Menu akan dipaparkan mengikut modul yang dipilih.',
 'userGroup_field_path'              => 'Path',
 'userGroup_field_path_placeholder'  => 'contoh: laporan.php',
 
@@ -550,6 +573,7 @@ return [
 'userGroup_error_update_status' => 'Gagal kemas kini status.',
 
 'userGroup_err_path_required'       => 'Path tidak boleh kosong.',
+'userGroup_err_group_code_name_required' => 'Sila isi Kod & Nama Kumpulan.',
 'userGroup_err_group_modul_required'=> 'Sila pilih Kumpulan dan Modul.',
 'userGroup_err_modul_required'      => 'Sila pilih Modul.',
 'userGroup_err_add_menu' => 'Gagal tambah menu.',
@@ -563,6 +587,9 @@ return [
 // =========================
 'userGroup_confirm_delete_title'    => 'Padam menu?',
 'userGroup_confirm_delete_text'     => 'Tindakan ini tidak boleh diundur.',
+'userGroup_confirm_title'           => 'Pengesahan',
+'userGroup_confirm_delete_group_text' => 'Padam kumpulan "{name}"?',
+'userGroup_confirm_yes_delete'      => 'Ya, Padam',
 'userGroup_confirm_yes'             => 'Ya, padam',
 'userGroup_confirm_cancel'          => 'Batal',
 
@@ -594,6 +621,13 @@ return [
 'userGroup_dt_paginate_last' => 'Akhir',
 'userGroup_dt_paginate_next'        => 'Seterusnya',
 'userGroup_dt_paginate_previous'    => 'Sebelumnya',
+'userGroup_edit_group'              => 'Edit Kumpulan',
+'userGroup_delete_group'            => 'Padam Kumpulan',
+'userGroup_info_title'              => 'Makluman',
+'userGroup_info_select_group_first' => 'Sila pilih kumpulan dahulu melalui butang Akses Menu.',
+'userGroup_btn_menu_label'          => 'Menu',
+'userGroup_btn_module_label'        => 'Modul',
+'userGroup_btn_group_label'         => 'Kumpulan',
 
 
 /* =====================================================
@@ -1096,5 +1130,55 @@ return [
 'dashboard_health_cron' => 'Kerja Berjadual',
 'dashboard_health_unknown' => 'Tidak diketahui',
 'dashboard_health_tz' => 'Masa & Zon Masa',
+
+/* =====================================================
+ * FAQ (SOALAN LAZIM)
+ * ===================================================== */
+'faq_title' => 'Soalan Lazim (FAQ)',
+'faq_heading' => 'Soalan Lazim Sistem',
+'faq_intro' => 'Rujuk panduan umum penggunaan sistem. Pilih kategori atau gunakan carian untuk jawapan yang berkaitan.',
+'faq_label_category' => 'Kategori',
+'faq_placeholder_cari' => 'Cari dalam kategori terpilih…',
+'faq_tiada_padamu' => 'Tiada padanan ditemui. Cuba kata kunci lain.',
+'faq_count_display' => 'daripada',
+'faq_count_soalan' => 'soalan dipaparkan',
+'faq_cat_semua' => 'Semua',
+'faq_cat_account_access' => 'Akaun & Akses',
+'faq_cat_navigation' => 'Navigasi & Penggunaan',
+'faq_cat_profile_settings' => 'Profil & Tetapan',
+'faq_cat_user_management' => 'Pengurusan Pengguna',
+'faq_cat_group_management' => 'Kumpulan Pengguna',
+'faq_cat_support' => 'Sokongan',
+
+'faq_item_01_q' => 'Bagaimana cara log masuk ke sistem?',
+'faq_item_01_a' => 'Gunakan <b>ID Staf</b> dan <b>kata laluan</b> anda pada halaman log masuk. Jika ini kali pertama, sila ikut arahan yang dipaparkan pada halaman login atau hubungi pentadbir sistem untuk bantuan.',
+'faq_item_02_q' => 'Kenapa saya tidak boleh log masuk?',
+'faq_item_02_a' => 'Punca biasa ialah kata laluan tidak tepat, akaun disekat, atau akses kumpulan belum ditetapkan. Semak semula ID/kata laluan anda. Jika masih gagal, hubungi pentadbir sistem.',
+'faq_item_03_q' => 'Bagaimana akses menu ditentukan?',
+'faq_item_03_a' => 'Setiap pengguna berada dalam <b>kumpulan pengguna</b> tertentu. Kumpulan ini menentukan modul dan menu yang boleh dilihat. Jika menu tiada, minta pentadbir semak tetapan kumpulan anda.',
+'faq_item_04_q' => 'Di mana saya boleh lihat maklumat ringkas sistem?',
+'faq_item_04_a' => 'Gunakan halaman <b>Dashboard</b> untuk paparan ringkas. Ia membantu anda faham status semasa dan navigasi ke modul utama dengan lebih cepat.',
+'faq_item_05_q' => 'Kenapa menu sidebar saya berbeza dengan pengguna lain?',
+'faq_item_05_a' => 'Menu sidebar dipaparkan mengikut kumpulan dan peranan pengguna. Ini adalah normal untuk memastikan setiap pengguna hanya melihat fungsi yang berkaitan dengan tugas masing-masing.',
+'faq_item_06_q' => 'Bagaimana cara cepat cari fungsi dalam sistem?',
+'faq_item_06_a' => 'Gunakan menu modul di sidebar dan pilih halaman berkaitan. Untuk halaman jadual, gunakan carian di bahagian atas jadual untuk tapis data dengan cepat.',
+'faq_item_07_q' => 'Bagaimana saya kemaskini tetapan bahasa?',
+'faq_item_07_a' => 'Anda boleh menukar bahasa melalui topbar atau halaman <b>Profil</b>. Pilihan bahasa akan disimpan untuk akaun anda.',
+'faq_item_08_q' => 'Bagaimana saya ubah tema paparan?',
+'faq_item_08_a' => 'Pergi ke halaman <b>Profil</b> untuk menukar tetapan tema seperti mode paparan dan warna antaramuka. Perubahan akan digunakan pada sesi anda.',
+'faq_item_09_q' => 'Apa kandungan Jejak Audit di halaman Profil?',
+'faq_item_09_a' => 'Jejak Audit memaparkan rekod aktiviti penting seperti kemaskini data dan tindakan sistem. Ia membantu semakan dan pemantauan keselamatan.',
+'faq_item_10_q' => 'Bagaimana pentadbir tambah atau kemaskini pengguna?',
+'faq_item_10_a' => 'Pentadbir boleh menggunakan halaman <b>Senarai Pengguna</b> untuk menambah pengguna, menukar kumpulan, dan mengawal status akses. Setiap perubahan perlu ikut polisi dalaman organisasi.',
+'faq_item_11_q' => 'Apakah maksud status akses pengguna?',
+'faq_item_11_a' => 'Status akses menentukan sama ada pengguna dibenarkan masuk ke sistem. Jika status disekat, pengguna tidak boleh log masuk sehingga status diaktifkan semula oleh pentadbir.',
+'faq_item_12_q' => 'Apa fungsi halaman Kumpulan Pengguna?',
+'faq_item_12_a' => 'Halaman ini digunakan untuk mengurus struktur kumpulan, warna identiti kumpulan, serta akses modul/menu bagi setiap kumpulan. Ini memudahkan pengurusan hak capaian secara berpusat.',
+'faq_item_13_q' => 'Bolehkah kumpulan dipadam?',
+'faq_item_13_a' => 'Kumpulan hanya boleh dipadam jika tiada akses modul/menu yang aktif dan tiada pengguna yang masih ditetapkan pada kumpulan tersebut. Ini untuk elak gangguan operasi.',
+'faq_item_14_q' => 'Apa perlu dibuat jika berlaku ralat sistem?',
+'faq_item_14_a' => 'Catat mesej ralat, masa kejadian, dan tindakan semasa ralat berlaku. Hantar maklumat tersebut kepada pentadbir sistem untuk semakan lanjut.',
+'faq_item_15_q' => 'Siapa perlu dihubungi untuk isu akses atau konfigurasi?',
+'faq_item_15_a' => 'Hubungi pentadbir sistem dalaman organisasi anda. Isu akses, kumpulan pengguna, dan tetapan sistem biasanya memerlukan kebenaran pentadbir.',
 
 ];
