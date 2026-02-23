@@ -1235,7 +1235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="moduleCreateTitle"><i class="ri-stack-line"></i> <span><?= h(__('modul_tambah_title')) ?></span></h5>
+              <h5 class="modal-title" id="moduleCreateTitle"><i class="ri-stack-line"></i> <span><?= h(__('userGroup_btn_add_modul')) ?></span></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= h(__('modul_batal')) ?>"></button>
             </div>
             <div class="modal-body">
@@ -1263,8 +1263,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
               </form>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="ri-close-line me-1"></i> <?= h(__('modul_batal')) ?></button>
-              <button class="btn btn-primary" id="moduleCreateSaveBtn" <?= $permDisabledAttr ?>><i class="ri-save-3-line me-1"></i> <?= h(__('modul_simpan')) ?></button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="ri-close-line me-1"></i> <?= h(__('userGroup_btn_close')) ?></button>
+              <button class="btn btn-primary" id="moduleCreateSaveBtn" <?= $permDisabledAttr ?>><i class="ri-save-3-line me-1"></i> <?= h(__('userGroup_btn_save')) ?></button>
             </div>
           </div>
         </div>

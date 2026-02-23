@@ -482,6 +482,7 @@ return [
 // Butang & Aksi
 // =========================
 'userGroup_btn_add_menu'            => 'Tambah Menu',
+'userGroup_btn_add_modul'            => 'Tambah Modul',
 'userGroup_btn_close'               => 'Tutup',
 'userGroup_btn_save'                => 'Simpan',
 
