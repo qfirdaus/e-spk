@@ -66,7 +66,7 @@ return [
 // Tajuk & navigasi
 'login_title'              => 'Log Masuk',
 'login.title'              => 'Log Masuk',
-'login_heading'            => 'Log masuk',
+'login_heading'            => 'Log Masuk',
 'login_welcome'            => 'Selamat Datang',
 
 'login_nav.home'           => 'Laman Utama',
