@@ -482,6 +482,7 @@ return [
 // Butang & Aksi
 // =========================
 'userGroup_btn_add_menu'            => 'Add Menu',
+'userGroup_btn_add_modul'            => 'Add Modul',
 'modul_tambah'                      => 'Add Module',
 'modul_tambah_title'                => 'Add Module',
 'modul_nama_ms'                     => 'Module Name (BM)',

@@ -12,9 +12,9 @@ return [
 
     'system' => [
         'name'    => 'MyHEPA',
-        'version' => '2.0.0',
+        'version' => '1.0.0',
         'author'  => 'UPNM, Seksyen Aplikasi Digital, BTMK',
-        'support' => 'personel_ict@upnm.edu.my',
+        'support' => 'sokonganweb_ict@upnm.edu.my',
     ],
 
     'organization' => [

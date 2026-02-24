@@ -66,7 +66,7 @@ return [
 // Tajuk & navigasi
 'login_title'              => 'Log Masuk',
 'login.title'              => 'Log Masuk',
-'login_heading'            => 'Log masuk',
+'login_heading'            => 'Log Masuk',
 'login_welcome'            => 'Selamat Datang',
 
 'login_nav.home'           => 'Laman Utama',
@@ -495,6 +495,7 @@ return [
 'modul_ralat_title'                 => 'Ralat',
 'modul_ralat_duplikat'              => 'Nama modul telah wujud. Sila gunakan nama lain.',
 'modul_ralat_wajib'                 => 'Nama Modul (BM) wajib diisi.',
+'userGroup_btn_add_modul'            => 'Tambah Modul',
 'userGroup_btn_close'               => 'Tutup',
 'userGroup_btn_save'                => 'Simpan',
 
