@@ -137,7 +137,7 @@ $attempts_left  = $attempts_left ?? 3;
     </form>
 
     <p class="text-center text-gray-400 text-xs mt-10">
-      <?= htmlspecialchars(app_config('system.name', 'e-Prestasi')) ?> <?= htmlspecialchars(app_config('system.version', '2.0.0')) ?><br>
+      <?= htmlspecialchars(app_config('system.name', 'MyHEPA')) ?> <?= htmlspecialchars(app_config('system.version', '1.0.0')) ?><br>
       <?= htmlspecialchars(app_config('system.author', 'Hak Cipta © UPNM')) ?>
     </p>
 
