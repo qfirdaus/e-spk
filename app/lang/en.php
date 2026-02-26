@@ -127,7 +127,7 @@ return [
 // =========================
 // Tajuk & Breadcrumb
 // =========================
-'profile_title'                 => 'User Profile',
+'profile_title'                 => 'Personal Information',
 'profile_breadcrumb'            => 'Profile',
 
 // =========================
@@ -146,7 +146,16 @@ return [
 // =========================
 'profile_no_staf'               => 'Staff No.',
 'profile_no_pekerja'            => 'Employee No.',
+'profile_no_matrik'             => 'Matrik No.',
+'profile_nama'                  => 'Name',
+'profile_no_kad_pengenalan'     => 'Identity Card No.',
+'profile_no_passport'           => 'Passport No.',
+'profile_jantina'               => 'Gender',
+'profile_bangsa'                => 'Ethnicity',
+'profile_agama'                 => 'Religion',
 'profile_jabatan'               => 'Department',
+'profile_telefon'               => 'Phone No.',
+'profile_fakulti'               => 'Faculty',
 'profile_emel'                  => 'Email',
 
 // =========================
@@ -161,7 +170,7 @@ return [
 // Tabs
 // =========================
 'profile_tabs_label'            => 'User profile tabs',
-'profile_tab_profil_pengguna'   => 'User Profile',
+'profile_tab_profil_pengguna'   => 'Personal Information',
 'profile_tab_login_aktiviti'    => 'Login Activity',
 'profile_tab_jejak_audit'       => 'Audit Trail',
 
@@ -207,6 +216,12 @@ return [
                                 => 'Network error. Please try again.',
 'profile_login_kill_error_no_session'
                                 => 'Invalid session ID',
+
+
+/* =====================================================
+ * FAMILY (family_)
+ * ===================================================== */
+'family_title'                 => 'Family Information',   
 
 /* =====================================================
  * SETTINGS (config result titles)

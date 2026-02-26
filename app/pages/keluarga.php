@@ -1,5 +1,5 @@
 <?php
-// pages/profile.php
+// pages/keluarga.php
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/init.php';
@@ -491,7 +491,7 @@ function hasActiveSession(array $loginActivity): bool {
             <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap">
               <h4 class="page-title">
                 <i class="ri-user-3-line me-1"></i>
-                <?= h(tr('profile_title','Profil Pengguna')) ?>
+                <?= h(tr('family_title','Maklumat Keluarga')) ?>
               </h4>
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -587,20 +587,10 @@ function hasActiveSession(array $loginActivity): bool {
           </div>
 
           <!-- Tab Navigasi -->
-          <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
+          <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab maklumat keluarga')) ?>">
             <li class="nav-item">
-              <a class="nav-link active" data-bs-toggle="tab" href="#login-aktiviti-tab" role="tab">
-                <i class="ri-login-box-line me-1"></i> <?= h(tr('profile_tab_login_aktiviti','Login Aktiviti')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#jejak-audit-tab" role="tab">
-                <i class="ri-file-list-3-line me-1"></i> <?= h(tr('profile_tab_jejak_audit','Jejak Audit')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#profil-pengguna-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('profile_tab_profil_pengguna','Profil Pengguna')) ?>
+              <a class="nav-link active" data-bs-toggle="tab" href="#profil-keluarga-tab" role="tab">
+                <i class="ri-user-line me-1"></i> <?= h(tr('profile_tab_maklumat_keluarga','Maklumat Keluarga')) ?>
               </a>
             </li>
           </ul>
@@ -628,82 +618,8 @@ function hasActiveSession(array $loginActivity): bool {
               </div>
             <?php endif; ?>
 
-            <!-- Tab 1: Login Aktiviti -->
-            <div class="tab-pane fade show active" id="login-aktiviti-tab" role="tabpanel">
-              <div id="loginActivityLoading" class="skeleton-loader" style="display: none;">
-                <div class="skeleton-row"></div>
-                <div class="skeleton-row"></div>
-                <div class="skeleton-row"></div>
-              </div>
-              
-              <?php if (empty($loginActivity)): ?>
-                <div class="text-center py-5">
-                  <i class="ri-login-box-line text-muted empty-state-icon"></i>
-                  <p class="text-muted mt-3 mb-0">
-                    <?= h(tr('profile_login_aktiviti_empty','Tiada rekod login aktiviti ditemui.')) ?>
-                  </p>
-                </div>
-              <?php else: ?>
-                <div class="table-responsive">
-                  <table id="loginActivityTable" class="table table-bordered align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th class="profile-table-col-no text-center">No.</th>
-                        <th class="profile-table-col-date"><?= h(tr('profile_login_date','Tarikh & Masa')) ?></th>
-                        <th class="profile-table-col-ip"><?= h(tr('profile_login_ip','Alamat IP')) ?></th>
-                        <th><?= h(tr('profile_login_device','Peranti')) ?></th>
-                        <th class="profile-table-col-duration text-center"><?= h(tr('profile_login_duration','Tempoh')) ?></th>
-                        <th class="profile-table-col-status text-center"><?= h(tr('profile_login_status','Status')) ?></th>
-                        <th style="width: 100px;" class="text-center"><?= h(tr('profile_login_actions','Tindakan')) ?></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- Data populated via AJAX (profile-login-activity.php) to avoid initial flicker -->
-                    </tbody>
-                  </table>
-                  <!-- Reuse report-style AJAX loader (positioned inside table container) -->
-                  <div id="loginAjaxLoader" class="table-loader d-none">
-                    <div class="text-center">
-                      <div class="spinner-border text-primary mb-2" role="status" style="width: 3rem; height: 3rem;" aria-label="Loading">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                      <div class="text-muted"><?= h(tr('profile_loading','Memuatkan…')) ?></div>
-                    </div>
-                  </div>
-                </div>
-              <?php endif; ?>
-            </div>
-
-            <!-- Tab 2: Jejak Audit -->
-            <div class="tab-pane fade" id="jejak-audit-tab" role="tabpanel">
-              <div id="auditEventsLoading" class="skeleton-loader" style="display: none;">
-                <div class="skeleton-row"></div>
-                <div class="skeleton-row"></div>
-                <div class="skeleton-row"></div>
-              </div>
-
-              <div class="table-responsive">
-                <table id="auditEventsTable" class="table table-bordered align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th class="profile-table-col-no text-center">No.</th>
-                      <th class="profile-table-col-date"><?= h(tr('profile_audit_date','Tarikh & Masa')) ?></th>
-                        <th class="profile-table-col-user"><?= h(tr('profile_audit_user','Pengguna')) ?></th>
-                      <th class="profile-table-col-ip"><?= h(tr('profile_audit_ip','Alamat IP')) ?></th>
-                      <th><?= h(tr('profile_audit_activity','Aktiviti')) ?></th>
-                      <th class="text-center"><?= h(tr('profile_audit_outcome','Keputusan')) ?></th>
-                      <th class="text-center"><?= h(tr('profile_audit_severity','Keparahan')) ?></th>
-                      <th class="text-center" style="width:120px;"><?= h(tr('profile_audit_actions','Tindakan')) ?></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Populated via AJAX: ajax/profile-audit-events.php -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <!-- Tab 3: Profil Pengguna -->
-            <div class="tab-pane fade" id="profil-pengguna-tab" role="tabpanel">
+            <!-- Tab 1: Maklumat Keluarga -->
+            <div class="tab-pane fade show active" id="profil-keluarga-tab" role="tabpanel">
               <div class="kv">
                 <div class="text-muted"><?= h(tr('profile_no_staf','No. Staf')) ?></div>
                 <div class="fw-semibold"><?= h($stafID !== '' ? $stafID : '—') ?></div>
