@@ -5,7 +5,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/BaseModel.php';
 
 /**
- * ✅ Model Modul untuk sistem e-Prestasi (MySQL)
  * - Papar menu jika f_flag = 1
  * - Susun ikut COALESCE(f_order, 99999), f_*ID
  * - Jika $menuIDs kosong, ambil SEMUA menu aktif di modul tersebut

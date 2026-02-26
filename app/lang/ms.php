@@ -66,7 +66,7 @@ return [
 // Tajuk & navigasi
 'login_title'              => 'Log Masuk',
 'login.title'              => 'Log Masuk',
-'login_heading'            => 'Log masuk',
+'login_heading'            => 'Log Masuk',
 'login_welcome'            => 'Selamat Datang',
 
 'login_nav.home'           => 'Laman Utama',
@@ -127,7 +127,7 @@ return [
 // =========================
 // Tajuk & Breadcrumb
 // =========================
-'profile_title'                 => 'Profil Pengguna',
+'profile_title'                 => 'Maklumat Peribadi',
 'profile_breadcrumb'            => 'Profil',
 
 // =========================
@@ -146,7 +146,16 @@ return [
 // =========================
 'profile_no_staf'               => 'No. Staf',
 'profile_no_pekerja'            => 'No. Pekerja',
+'profile_no_matrik'             => 'No. Matrik',
+'profile_nama'                  => 'Nama',
+'profile_no_kad_pengenalan'     => 'No. Kad Pengenalan',
+'profile_no_passport'           => 'No. Passport',
+'profile_jantina'               => 'Jantina',
+'profile_bangsa'                => 'Bangsa',
+'profile_agama'                 => 'Agama',
 'profile_jabatan'               => 'Jabatan',
+'profile_telefon'               => 'No. Telefon',
+'profile_fakulti'               => 'Fakulti',
 'profile_emel'                  => 'Emel',
 
 // =========================
@@ -161,7 +170,7 @@ return [
 // Tabs
 // =========================
 'profile_tabs_label'            => 'Tab profil pengguna',
-'profile_tab_profil_pengguna'   => 'Profil Pengguna',
+'profile_tab_profil_pengguna'   => 'Maklumat Peribadi',
 'profile_tab_login_aktiviti'    => 'Login Aktiviti',
 'profile_tab_jejak_audit'       => 'Jejak Audit',
 
@@ -207,6 +216,11 @@ return [
                                 => 'Ralat rangkaian. Sila cuba lagi.',
 'profile_login_kill_error_no_session'
                                 => 'ID sesi tidak sah',
+
+// =====================================================
+// Keluarga
+// =====================================================
+'family_title'                 => 'Maklumat Keluarga',                                
 
 /* =====================================================
  * SETTINGS (config result titles)
@@ -495,6 +509,7 @@ return [
 'modul_ralat_title'                 => 'Ralat',
 'modul_ralat_duplikat'              => 'Nama modul telah wujud. Sila gunakan nama lain.',
 'modul_ralat_wajib'                 => 'Nama Modul (BM) wajib diisi.',
+'userGroup_btn_add_modul'            => 'Tambah Modul',
 'userGroup_btn_close'               => 'Tutup',
 'userGroup_btn_save'                => 'Simpan',
 
