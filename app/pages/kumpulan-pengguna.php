@@ -160,6 +160,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
     }
   }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') === 'add_menu') {
+  $moduleFormOpen = true;
+  $moduleFormData['modulNameMs'] = trim((string)($_POST['modulNameMs'] ?? ''));
+  $moduleFormData['modulNameEn'] = trim((string)($_POST['modulNameEn'] ?? ''));
+  $moduleFormData['icon'] = trim((string)($_POST['icon'] ?? ''));
+  $moduleFormData['order'] = trim((string)($_POST['order'] ?? ''));
+
+  $postedCsrf = (string)($_POST['csrf_token'] ?? '');
+  if ($postedCsrf === '' || !hash_equals((string)($_SESSION['csrf_token'] ?? ''), $postedCsrf)) {
+    $moduleSwal = [
+      'icon' => 'error',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('userGroup_error_unknown'),
+    ];
+  } elseif (!$canManageGroups) {
+    $moduleSwal = [
+      'icon' => 'error',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('userList_err_no_permission'),
+    ];
+  } elseif ($moduleFormData['modulNameMs'] === '') {
+    $moduleSwal = [
+      'icon' => 'warning',
+      'title' => (string)__('modul_ralat_title'),
+      'text' => (string)__('modul_ralat_wajib'),
+    ];
+  } else {
+    try {
+      $pdo = Database::getInstance('mysql')->getConnection();
+      $nameMs = $moduleFormData['modulNameMs'];
+      $nameEn = $moduleFormData['modulNameEn'];
+
+      $dupSql = "
+        SELECT 1
+        FROM tbl_m_modul
+        WHERE LOWER(TRIM(f_modulName_ms)) = LOWER(TRIM(:name_ms_1))
+           OR LOWER(TRIM(f_modulName_en)) = LOWER(TRIM(:name_ms_2))
+      ";
+      $dupParams = [
+        ':name_ms_1' => $nameMs,
+        ':name_ms_2' => $nameMs,
+      ];
+      if ($nameEn !== '') {
+        $dupSql .= "
+           OR LOWER(TRIM(f_modulName_ms)) = LOWER(TRIM(:name_en_1))
+           OR LOWER(TRIM(f_modulName_en)) = LOWER(TRIM(:name_en_2))
+        ";
+        $dupParams[':name_en_1'] = $nameEn;
+        $dupParams[':name_en_2'] = $nameEn;
+      }
+      $dupSql .= " LIMIT 1";
+
+      $dupStmt = $pdo->prepare($dupSql);
+      $dupStmt->execute($dupParams);
+      $isDuplicate = (bool)$dupStmt->fetchColumn();
+
+      if ($isDuplicate) {
+        $moduleSwal = [
+          'icon' => 'error',
+          'title' => (string)__('modul_ralat_title'),
+          'text' => (string)__('modul_ralat_duplikat'),
+        ];
+      } else {
+        $orderRaw = $moduleFormData['order'];
+        $orderVal = ($orderRaw !== '' && is_numeric($orderRaw)) ? (int)$orderRaw : $nextModuleOrder;
+
+        $ins = $pdo->prepare("
+          INSERT INTO tbl_m_modul (f_modulName_ms, f_modulName_en, f_icon, f_order)
+          VALUES (:name_ms, :name_en, :icon, :f_order)
+        ");
+        $ins->execute([
+          ':name_ms' => $nameMs,
+          ':name_en' => ($nameEn !== '' ? $nameEn : null),
+          ':icon' => ($moduleFormData['icon'] !== '' ? $moduleFormData['icon'] : null),
+          ':f_order' => $orderVal,
+        ]);
+
+        $_SESSION['module_add_flash'] = [
+          'icon' => 'success',
+          'title' => (string)__('modul_berjaya_title'),
+          'text' => (string)__('modul_berjaya_msg'),
+        ];
+        header('Location: ' . base_url('pages/kumpulan-pengguna.php'));
+        exit;
+      }
+    } catch (Throwable $e) {
+      error_log('[kumpulan-pengguna:add-module] ' . $e->getMessage());
+      $moduleSwal = [
+        'icon' => 'error',
+        'title' => (string)__('modul_ralat_title'),
+        'text' => (string)__('userGroup_error_unknown'),
+      ];
+    }
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= h($lang) ?>" data-bs-theme="<?= h($_SESSION['theme.layout'] ?? 'light') ?>">
@@ -1085,6 +1182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
       <div class="modal-body">
         <form id="menuEditForm" autocomplete="off">
           <input type="hidden" name="menuID" id="em_menuID">
+          <input type="hidden" name="action" value="add_menu">
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label"><?= h(__('userGroup_field_modul')) ?></label>
