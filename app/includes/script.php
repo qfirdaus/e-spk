@@ -83,6 +83,166 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<!-- ========== Session Idle Guard ========== -->
+<?php
+$isLoggedIn = !empty($_SESSION['f_stafID']);
+?>
+<?php if ($isLoggedIn): ?>
+<script>
+(function () {
+  'use strict';
+
+  const IDLE_LIMIT_MS = 10 * 60 * 1000;   // 10 minit idle
+  const PROMPT_MS = 60 * 1000;            // tunggu respon 1 minit
+  const KEEPALIVE_URL = <?= json_encode(base_url('ajax/session-keepalive.php'), JSON_UNESCAPED_UNICODE) ?>;
+  const LOGOUT_URL = <?= json_encode(base_url('logout.php'), JSON_UNESCAPED_UNICODE) ?>;
+
+  const I18N = {
+    title: <?= json_encode(__('session_idle_title') ?: 'Masih di sini?', JSON_UNESCAPED_UNICODE) ?>,
+    text: <?= json_encode(__('session_idle_text') ?: 'Tiada aktiviti 10 minit. Kekal log masuk?', JSON_UNESCAPED_UNICODE) ?>,
+    stay: <?= json_encode(__('session_idle_stay_connected') ?: 'Kekal Log Masuk', JSON_UNESCAPED_UNICODE) ?>,
+    logout: <?= json_encode(__('session_idle_logout_now') ?: 'Log Keluar', JSON_UNESCAPED_UNICODE) ?>,
+    timeoutText: <?= json_encode(__('session_idle_timeout_text') ?: 'Auto log keluar dalam 1 minit.', JSON_UNESCAPED_UNICODE) ?>,
+    timeoutTitle: <?= json_encode(__('session_idle_timeout_title') ?: 'Sesi Tamat', JSON_UNESCAPED_UNICODE) ?>,
+    timeoutLogoutNow: <?= json_encode(__('session_idle_timeout_logout_now') ?: 'Tiada respons. Sistem akan log keluar sekarang.', JSON_UNESCAPED_UNICODE) ?>,
+    keepaliveFailed: <?= json_encode(__('session_idle_keepalive_failed') ?: 'Sesi tidak dapat diperbaharui. Anda akan dilog keluar.', JSON_UNESCAPED_UNICODE) ?>
+  };
+
+  let lastActivityAt = Date.now();
+  let promptOpen = false;
+  let checking = false;
+
+  const markActivity = () => {
+    if (promptOpen) return;
+    lastActivityAt = Date.now();
+  };
+
+  const forceLogout = () => {
+    window.location.href = LOGOUT_URL;
+  };
+
+  const keepAlive = async () => {
+    const res = await fetch(KEEPALIVE_URL, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      cache: 'no-store'
+    });
+    if (!res.ok) throw new Error('keepalive_failed');
+    const data = await res.json();
+    if (!data || data.ok !== true) throw new Error('keepalive_invalid');
+  };
+
+  const showTimeoutLogoutAlert = async () => {
+    if (window.Swal && typeof Swal.fire === 'function') {
+      await Swal.fire({
+        icon: 'info',
+        title: I18N.timeoutTitle,
+        text: I18N.timeoutLogoutNow,
+        confirmButtonText: 'OK',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      });
+    }
+    forceLogout();
+  };
+
+  const showIdlePrompt = async () => {
+    if (promptOpen) return;
+    promptOpen = true;
+
+    try {
+      if (window.Swal && typeof Swal.fire === 'function') {
+        const result = await Swal.fire({
+          icon: 'warning',
+          title: I18N.title,
+          text: I18N.text,
+          footer: I18N.timeoutText,
+          showCancelButton: true,
+          confirmButtonText: I18N.stay,
+          cancelButtonText: I18N.logout,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          timer: PROMPT_MS,
+          timerProgressBar: true
+        });
+
+        if (result.isConfirmed) {
+          await keepAlive();
+          lastActivityAt = Date.now();
+          promptOpen = false;
+          return;
+        }
+
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          promptOpen = false;
+          forceLogout();
+          return;
+        }
+
+        promptOpen = false;
+        await showTimeoutLogoutAlert();
+        return;
+      }
+
+      const stay = window.confirm(I18N.text);
+      if (stay) {
+        await keepAlive();
+        lastActivityAt = Date.now();
+        promptOpen = false;
+      } else {
+        promptOpen = false;
+        forceLogout();
+      }
+    } catch (e) {
+      promptOpen = false;
+      if (window.Swal && typeof Swal.fire === 'function') {
+        await Swal.fire({
+          icon: 'error',
+          title: I18N.timeoutTitle,
+          text: I18N.keepaliveFailed,
+          confirmButtonText: 'OK'
+        });
+      }
+      forceLogout();
+    }
+  };
+
+  const checkIdle = async () => {
+    if (checking || promptOpen) return;
+    checking = true;
+    try {
+      const idleFor = Date.now() - lastActivityAt;
+      if (idleFor >= IDLE_LIMIT_MS) {
+        await showIdlePrompt();
+      }
+    } finally {
+      checking = false;
+    }
+  };
+
+  const throttledMarkActivity = (() => {
+    let last = 0;
+    return () => {
+      const now = Date.now();
+      if (now - last < 500) return;
+      last = now;
+      markActivity();
+    };
+  })();
+
+  ['click', 'keydown', 'mousedown', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, markActivity, { passive: true });
+  });
+  ['mousemove', 'scroll', 'touchmove'].forEach(evt => {
+    document.addEventListener(evt, throttledMarkActivity, { passive: true });
+  });
+  window.addEventListener('focus', markActivity, { passive: true });
+
+  setInterval(checkIdle, 1000);
+})();
+</script>
+<?php endif; ?>
 <!-- ========== Topbar Theme Toggle ========== -->
 <script>
 const updateThemeIcon = isDark => {
@@ -377,3 +537,4 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('pageshow', stopAll);
 })();
 </script>
+
