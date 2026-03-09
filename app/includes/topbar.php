@@ -185,14 +185,14 @@ if ($roleSwitchFlash !== null) {
       <?php if ($activeLangCount <= 1): ?>
         <li>
           <div class="nav-link">
-            <img src="<?= h(base_url('assets/images/flags/'.$currentFlag)) ?>" height="16" alt="flag">
+            <img src="<?= h(base_url('assets/images/flags/'.$currentFlag)) ?>" height="16" alt="flag"> 
             <span class="d-none d-lg-inline-block"><?= h($currentLabel) ?></span>
           </div>
         </li>
       <?php else: ?>
         <li class="dropdown">
           <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-            <img src="<?= h(base_url('assets/images/flags/'.$currentFlag)) ?>" height="16" alt="flag">
+            <img src="<?= h(base_url('assets/images/flags/'.$currentFlag)) ?>" height="16" alt="flag">&nbsp;
             <span class="d-none d-lg-inline-block"><?= h($currentLabel) ?></span>
             <i class="ri-arrow-down-s-line d-none d-sm-inline-block align-middle"></i>
           </a>

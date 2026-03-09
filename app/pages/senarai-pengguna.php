@@ -161,9 +161,9 @@ try {
   <meta name="csrf-token" content="<?= h($csrf) ?>">
   
   <!-- ✅ Select2 CSS (untuk dropdown) -->
-  <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>?v=<?= h($version) ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?> ?>" rel="stylesheet">
   <!-- ✅ Standard DataTables CSS (shared) -->
-  <link href="<?= base_url('assets/css/datatables-standard.css') ?>?v=<?= h($version) ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/css/datatables-standard.css') ?> ?>" rel="stylesheet">
   
   <!-- ✅ Senarai APC Admin CSS (untuk table, dropdown, textbox styling) -->
   
@@ -2317,6 +2317,7 @@ try {
     // Remove existing buttons jika ada
     $('#btnSyncSybase').remove();
     $('#btnAddUser').remove();
+    $('#btnImportStudent').remove();    
     
     // Button Sync
     if (!document.getElementById('btnSyncSybase')) {
@@ -2452,17 +2453,160 @@ try {
           }
       }, 2000));
     }
-    
+
+    // Button Import Student (Super Admin sahaja)
+    if (isSuperAdmin && !document.getElementById('btnImportStudent')) {
+      const $importBtn = $('<button type="button" id="btnImportStudent" class="btn btn-danger">' +
+          '<i class="ri-file-download-line me-1"></i> <?= h(__('userList_import_student_button')) ?>' +
+        '</button>');
+      
+      // Append button ke akhir topRight container (kanan sekali, selepas btnSyncSybase jika ada)
+      if ($topRight.length) {
+        if (document.getElementById('btnSyncSybase')) {
+          $('#btnSyncSybase').after($importBtn);
+        } else {
+          $topRight.append($importBtn);
+        }
+      } else {
+        // Fallback: append ke filter jika topRight tidak wujud
+        const $filter = $('#userDT_filter');
+        if ($filter.length) {
+          if (document.getElementById('btnSyncSybase')) {
+            $('#btnSyncSybase').after($importBtn);
+          } else {
+            $filter.append($importBtn);
+          }
+        }
+      }
+      
+      $importBtn.on('click', createRateLimitedHandler(async function(e){
+        e.preventDefault();
+          const $btn = $(this);
+          const originalHtml = $btn.html();
+          const originalDisabled = $btn.prop('disabled');
+          
+          $btn.prop('disabled', true);
+          $btn.html('<i class="ri-loader-4-line ri-spin me-1"></i> <?= h(__('userList_sync_processing')) ?>');
+
+          try {
+            trackEvent('user_import_student', {});
+            
+            const r = await fetchWithRetry('<?= base_url('ajax/user-import-student.php') ?>', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': CSRF,
+                'Accept': 'application/json'
+              }
+            });
+            
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const j = await r.json();
+            if (j.error) throw new Error(j.message || '<?= h(__('userList_import_student_error')) ?>');
+            
+            trackEvent('user_import_student_success', { updated: j.updated || 0 });
+            
+            await Swal.fire({
+              icon: 'success',
+              title: '<div class="d-flex align-items-center justify-content-center gap-2">' +
+                '<i class="ri-checkbox-circle-line" style="font-size: 2rem; color: #198754;"></i>' +
+                '<span><?= h(__('userList_import_student_success_title')) ?></span>' +
+                '</div>',
+              html: '<div class="text-start" style="padding: 0.5rem 0;">' +
+                '<div class="alert alert-success d-flex align-items-start mb-3" style="border-left: 4px solid #198754; background: #f0f9ff;">' +
+                '<i class="ri-information-line me-2 mt-1" style="font-size: 1.25rem; color: #198754;"></i>' +
+                '<div>' + (j.message || '<?= h(__('userList_import_student_success_message')) ?>') + '</div>' +
+                '</div>' +
+                '<div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">' +
+                '<div class="card-body p-3">' +
+                '<h6 class="mb-3 fw-bold text-dark" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">' +
+                '<i class="ri-bar-chart-line me-2"></i><?= h(__('userList_import_student_summary_title')) ?>' +
+                '</h6>' +
+                '<div class="row g-2">' +
+                '<div class="col-6">' +
+                '<div class="d-flex align-items-center p-2 rounded" style="background: rgba(25, 135, 84, 0.1);">' +
+                '<i class="ri-refresh-line me-2" style="font-size: 1.25rem; color: #198754;"></i>' +
+                '<div class="flex-grow-1">' +
+                '<div class="small text-muted"><?= h(__('userList_import_student_updated')) ?></div>' +
+                '<div class="fw-bold text-success" style="font-size: 1.1rem;">' + (j.updated || 0) + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="d-flex align-items-center p-2 rounded" style="background: rgba(255, 193, 7, 0.1);">' +
+                '<i class="ri-skip-forward-line me-2" style="font-size: 1.25rem; color: #ffc107;"></i>' +
+                '<div class="flex-grow-1">' +
+                '<div class="small text-muted"><?= h(__('userList_import_student_skipped')) ?></div>' +
+                '<div class="fw-bold text-warning" style="font-size: 1.1rem;">' + (j.skipped || 0) + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6 mt-2">' +
+                '<div class="d-flex align-items-center p-2 rounded" style="background: rgba(220, 53, 69, 0.1);">' +
+                '<i class="ri-error-warning-line me-2" style="font-size: 1.25rem; color: #dc3545;"></i>' +
+                '<div class="flex-grow-1">' +
+                '<div class="small text-muted"><?= h(__('userList_import_student_errors')) ?></div>' +
+                '<div class="fw-bold text-danger" style="font-size: 1.1rem;">' + (j.errors || 0) + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6 mt-2">' +
+                '<div class="d-flex align-items-center p-2 rounded" style="background: rgba(13, 110, 253, 0.1);">' +
+                '<i class="ri-database-2-line me-2" style="font-size: 1.25rem; color: #0d6efd;"></i>' +
+                '<div class="flex-grow-1">' +
+                '<div class="small text-muted"><?= h(__('userList_import_student_total')) ?></div>' +
+                '<div class="fw-bold text-primary" style="font-size: 1.1rem;">' + (j.total || 0) + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>',
+              confirmButtonText: '<i class="ri-check-line me-1"></i><?= h(__('userList_btn_ok')) ?>',
+              confirmButtonColor: '#198754',
+              buttonsStyling: true,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showCloseButton: false,
+              width: '500px',
+              customClass: {
+                popup: 'swal2-popup-custom',
+                title: 'swal2-title-custom',
+                confirmButton: 'swal2-confirm-custom'
+              }
+            });
+            
+            await reloadUserTable();
+          } catch (e) {
+            const errorMsg = sanitizeError(e);
+            trackEvent('user_import_student_error', { error: errorMsg });
+            
+            await Swal.fire({
+              icon: 'error',
+              title: '<?= h(__('userList_import_student_error_title')) ?>',
+              text: errorMsg || '<?= h(__('userList_import_student_error')) ?>',
+              confirmButtonText: '<?= h(__('userList_btn_ok')) ?>',
+              confirmButtonColor: '#dc3545'
+            });
+          } finally {
+            $btn.prop('disabled', originalDisabled);
+            $btn.html(originalHtml);
+          }
+          
+      }));
+    }
+
     // Button Tambah Pengguna (Super Admin sahaja)
     if (isSuperAdmin && !document.getElementById('btnAddUser')) {
       const $addBtn = $('<button type="button" id="btnAddUser" class="btn btn-success">' +
           '<i class="ri-user-add-line me-1"></i> <?= h(__('userList_add_button')) ?>' +
         '</button>');
       
-      // Append button ke akhir topRight container (kanan sekali, selepas btnSyncSybase jika ada)
+      // Append button ke akhir topRight container (kanan sekali, selepas btnImportStudent jika ada)
       if ($topRight.length) {
-        if (document.getElementById('btnSyncSybase')) {
-          $('#btnSyncSybase').after($addBtn);
+        if (document.getElementById('btnImportStudent')) {
+          $('#btnImportStudent').after($addBtn);
         } else {
           $topRight.append($addBtn);
         }
@@ -2470,8 +2614,8 @@ try {
         // Fallback: append ke filter jika topRight tidak wujud
         const $filter = $('#userDT_filter');
         if ($filter.length) {
-          if (document.getElementById('btnSyncSybase')) {
-            $('#btnSyncSybase').after($addBtn);
+          if (document.getElementById('btnImportStudent')) {
+            $('#btnImportStudent').after($addBtn);
           } else {
             $filter.append($addBtn);
           }

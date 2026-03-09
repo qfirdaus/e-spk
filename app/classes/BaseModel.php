@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * ✅ Kelas asas untuk semua model dalam sistem e-Prestasi
+ * ✅ Kelas asas untuk semua model 
  */
 class BaseModel
 {

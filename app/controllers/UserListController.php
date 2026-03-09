@@ -723,4 +723,297 @@ class UserListController {
       ];
     }
   }
+
+  public function importStudentsFromSybase(): array {
+    $this->syncDebug = ['started' => date('Y-m-d H:i:s')];
+    
+    try {
+      error_log("[UserListController] Starting manual import from Sybase...");
+      $this->syncDebug['step'] = 'Connecting to Sybase...';
+      
+      // Connect ke Sybase aktif
+      $pdoSybase = Database::pdoSybaseAsis();
+      error_log("[UserListController] Sybase connection successful");
+      $this->syncDebug['step'] = 'Sybase connected';
+      
+      // Query view untuk sudent aktif sahaja (statuskategori = AKTIF)
+      // tidak auto sekat pelajar yang sudah tamat pengajian sebab kita nak import semua sekali.
+      $sql = "
+        SELECT 
+          matrik,
+          nama,
+          nokp,
+          notentera,
+          email,
+          alfateh,
+          case when notel_terkini is not null then notel_terkini else hpno end as handphone,
+          fakulti,
+          statuskategori
+        FROM v210
+        WHERE statuskategori = 'AKTIF'
+      ";
+      
+      $stmt = $pdoSybase->prepare($sql);
+      $stmt->execute();
+      $sybaseUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      
+      $sybaseCount = count($sybaseUsers);
+      error_log("[UserListController] Fetched {$sybaseCount} active students from Sybase");
+      $this->syncDebug['sybase_count'] = $sybaseCount;
+      
+      if (empty($sybaseUsers)) {
+        return [
+          'success' => true,
+          'message' => 'Tiada data dari Sybase untuk diimport.',
+          'updated' => 0,
+          'skipped' => 0,
+          'errors' => 0,
+          'total' => 0
+        ];
+      }
+      
+      // Prepare UPDATE statement untuk MySQL
+      // = : hanya untuk placeholder, bukan untuk value 
+      $loggedInStafID = $_SESSION['f_stafID'] ?? null;
+      $remarks = 'Manual import student from Sybase (v210)';
+
+      // Set charset supaya UTF-8 safe
+      $this->pdo->exec("SET NAMES utf8mb4");
+      $this->pdo->exec("SET CHARACTER SET utf8mb4");
+
+      $insertSql = "
+      INSERT INTO tbl_m_user (
+        f_stafID,
+        f_nopekerja,
+        f_groupID,
+        f_groupKod,
+        f_nama,
+        f_nickname,
+        f_nokp,
+        f_email,
+        f_handphone,
+        f_jawatanKod,
+        f_jawatan,
+        f_jenisID,
+        f_jenis,
+        f_jabatanKod,
+        f_namajabatan,
+        f_kumpjawatan,
+        f_statusID,
+        f_status,
+        f_password,
+        f_flag,
+        f_insertdt,
+        f_updateby,
+        f_remarks
+      ) VALUES %s
+        ON DUPLICATE KEY UPDATE
+        f_nama = VALUES(f_nama),
+        f_nokp = VALUES(f_nokp),
+        f_email = VALUES(f_email),
+        f_handphone = VALUES(f_handphone),
+        f_status = VALUES(f_status),
+        f_updatedt = NOW(),
+        f_updateby = VALUES(f_updateby)
+
+      "; //ON DUPLICATE KEY UPDATE : column untuk dikemaskini sekiranya id dah ada
+      
+      // Helper: normalize stafID untuk matching
+      $normalizeStafID = function($id) {
+        return str_replace('-', '', trim((string)$id));
+      };
+      
+      // Ambil semua f_stafID yang wujud dalam MySQL
+      $existingStafIDs = [];
+      $existingStafIDsNormalized = [];
+      $checkAllSql = "SELECT f_stafID FROM tbl_m_user";
+      $checkAllStmt = $this->pdo->query($checkAllSql);
+      while ($row = $checkAllStmt->fetch(PDO::FETCH_ASSOC)) {
+        $original = trim((string)($row['f_stafID'] ?? ''));
+        $normalized = $normalizeStafID($original);
+        $existingStafIDs[$original] = $original;
+        $existingStafIDsNormalized[$normalized] = $original;
+      }
+
+      $insertedCount = 0;
+      $skippedCount = 0;
+      $errorCount = 0;
+      
+      // Update setiap record yang match nopekerja (nomatrik)
+      $values = [];
+      $params = [];
+
+      foreach ($sybaseUsers as $sybaseUser) {
+        $matrik = trim((string)($sybaseUser['matrik'] ?? ''));
+
+        if (empty($matrik)) {
+          $skippedCount++;
+          continue;
+        }
+
+        // password dari NOKP
+        $nokp = $sybaseUser['nokp'] ?? null;
+        $passwordHashes = [];
+        foreach ($sybaseUsers as $user) {
+            $nokp = $user['nokp'] ?? '';
+            $passwordHashes[$user['matrik']] = !empty($nokp) ? hash('sha256', $nokp) : null;
+        }
+
+        $values[] = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+        $params[] = $matrik;
+        $params[] = $matrik;
+        $params[] = 27; // groupID untuk pemohon
+        $params[] = 'APPLICANT'; // groupKod untuk pemohon
+        $params[] = $sybaseUser['nama'] ?? null;
+        $params[] = $sybaseUser['nama'] ?? null;
+        $params[] = $sybaseUser['nokp'] ?? null;
+        $params[] = $sybaseUser['alfateh'] ?? null;
+        $params[] = $sybaseUser['handphone'] ?? null;
+        $params[] = null;
+        $params[] = null;
+        $params[] = 0;
+        $params[] = 'Pelajar';
+        $params[] = 0;
+        $params[] = $sybaseUser['fakulti'] ?? null;
+        $params[] = null;
+        $params[] = 1;
+        $params[] = $sybaseUser['statuskategori'] ?? null;
+        $params[] = $passwordHashes[$matrik];
+        $params[] = 1; // dibenarkan access
+        $params[] = date('Y-m-d H:i:s'); 
+        $params[] = $loggedInStafID;
+        $params[] = $remarks;
+      }
+
+      // insert bulk record student dari sybase.
+      if (!empty($values)) {
+        $totalRows = count($values);
+        $this->pdo->beginTransaction();
+
+        try {
+            $chunkSize = 200; // 200 row per batch, elakkan memory issue dan timeout untuk jumlah besar
+            for ($i = 0; $i < $totalRows; $i += $chunkSize) {
+                $chunkValues = array_slice($values, $i, $chunkSize);
+                $chunkParams = array_slice($params, $i * 23, count($chunkValues) * 23); // 23 = jumlah column
+
+                $sqlChunk = sprintf($insertSql, implode(',', $chunkValues));
+                $stmt = $this->pdo->prepare($sqlChunk);
+                $stmt->execute($chunkParams);
+
+                error_log("[UserListController] Inserted rows " . ($i+1) . " to " . ($i + count($chunkValues)));
+            }
+
+            $this->pdo->commit();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            error_log("[UserListController] Bulk insert error: " . $e->getMessage()); //. print_r($chunkParams, true) check params if needed
+        }
+      }
+
+      $this->syncDebug['completed'] = date('Y-m-d H:i:s');
+      $this->syncDebug['inserted'] = $insertedCount;
+      $this->syncDebug['skipped'] = $skippedCount;
+      $this->syncDebug['errors'] = $errorCount;
+      $this->syncDebug['status'] = 'success';
+      
+      // ✅ Audit: Log user sync operation (summary for bulk operation)
+      // try {
+      //   if (function_exists('audit_event')) {
+      //     $requestId = $GLOBALS['__AUDIT_REQUEST_ID'] ?? null;
+      //     $sessionId = session_id() ?: null;
+          
+      //     // Derive numeric user_id for audit (prefer f_userID then parse staff no; DB fallback)
+      //     $userId = null;
+      //     if (!empty($_SESSION['user']['f_userID']) && is_numeric($_SESSION['user']['f_userID'])) {
+      //       $userId = (int)$_SESSION['user']['f_userID'];
+      //     } elseif (!empty($_SESSION['f_userID']) && is_numeric($_SESSION['f_userID'])) {
+      //       $userId = (int)$_SESSION['f_userID'];
+      //     } else {
+      //       $cand = $_SESSION['f_nopekerja'] ?? $_SESSION['user']['f_nopekerja'] ?? $_SESSION['f_stafID'] ?? null;
+      //       if ($cand) {
+      //         if (is_numeric($cand)) $userId = (int)$cand;
+      //         elseif (preg_match('/^(\d+)/', (string)$cand, $m)) $userId = (int)$m[1];
+      //       }
+      //       if ($userId === null && !empty($_SESSION['f_stafID'])) {
+      //         try {
+      //           $up = (new User($this->pdo))->getProfile($_SESSION['f_stafID']);
+      //           if (!empty($up['f_nopekerja'])) {
+      //             $c = $up['f_nopekerja'];
+      //             if (is_numeric($c)) $userId = (int)$c;
+      //             elseif (preg_match('/^(\d+)/', (string)$c, $m2)) $userId = (int)$m2[1];
+      //           }
+      //         } catch (Throwable $e) {
+      //           error_log('[UserListController] user_id derivation DB lookup failed: ' . $e->getMessage());
+      //         }
+      //       }
+      //     }
+          
+      //     // Format actor_label
+      //     $nama = $_SESSION['user']['f_nama'] ?? $_SESSION['f_nama'] ?? null;
+      //     $nostaf = $_SESSION['f_nopekerja'] ?? $_SESSION['user']['f_nopekerja'] ?? null;
+      //     $actorLabel = null;
+      //     if (function_exists('audit_format_actor_label')) {
+      //       $actorLabel = audit_format_actor_label($nama, $nostaf);
+      //     } else {
+      //       $actorLabel = $nama;
+      //     }
+          
+      //     // Get MySQL count
+      //     $mysqlCount = count($existingStafIDs);
+          
+      //     // Format message
+      //     $message = audit_format_message('User sync from Sybase completed (manual)', $actorLabel);
+          
+      //     audit_event([
+      //       'event_type'  => 'UPDATE',
+      //       'severity'    => 'INFO',
+      //       'outcome'     => ($errorCount > 0) ? 'PARTIAL' : 'SUCCESS',
+      //       'target_type' => 'user_sync',
+      //       'target_id'   => 'bulk_sync',
+      //       'target_label' => 'User Sync (Manual)',
+      //       'message'     => $message,
+      //       'request_id'  => $requestId,
+      //       'session_id'  => $sessionId,
+      //       'user_id'     => $userId,
+      //       'actor_label' => $actorLabel,
+      //       'meta'        => [
+      //         'sync_type' => 'manual',
+      //         'source' => 'v630staf_service_skim_all',
+      //         'updated_count' => $updatedCount,
+      //         'skipped_count' => $skippedCount,
+      //         'error_count' => $errorCount,
+      //         'total_from_sybase' => $sybaseCount,
+      //         'total_in_mysql' => $mysqlCount
+      //       ]
+      //     ]);
+      //   }
+      // } catch (\Throwable $auditError) {
+      //   error_log('[UserListController::syncUsersFromSybaseManual] Audit error: ' . $auditError->getMessage());
+      //   // Don't block sync if audit fails
+      // }
+      
+      return [
+        'success' => true,
+        'message' => "Import berjaya. {$insertedCount} rekod ditambah, {$skippedCount} rekod dilangkau, {$errorCount} ralat.",
+        'updated' => $insertedCount,
+        'skipped' => $skippedCount,
+        'errors' => $errorCount,
+        'total' => $sybaseCount
+      ];
+      
+    } catch (Throwable $e) {
+      $errorMsg = $e->getMessage();
+      error_log("[UserListController] Student Import failed: " . $errorMsg);
+      
+      return [
+        'success' => false,
+        'message' => 'Gagal import data pelajar: ' . $errorMsg,
+        'updated' => 0,
+        'skipped' => 0,
+        'errors' => 0,
+        'total' => 0
+      ];
+    }
+  }  
 }

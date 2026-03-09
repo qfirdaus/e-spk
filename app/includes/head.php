@@ -17,9 +17,9 @@
   $INCLUDE_I18N_PRESTASI = $INCLUDE_I18N_PRESTASI ?? false;
 ?>
   <meta charset="utf-8" />
-  <title><?= htmlspecialchars(__('title') ?? 'Sistem e-Prestasi', ENT_QUOTES, 'UTF-8') ?></title>
+  <title><?= htmlspecialchars(__('title') ?? 'Sistem MyHEPA', ENT_QUOTES, 'UTF-8') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta content="<?= htmlspecialchars((__('title') ?? 'Sistem e-Prestasi').' UPNM', ENT_QUOTES, 'UTF-8') ?>" name="description" />
+  <meta content="<?= htmlspecialchars((__('title') ?? 'Sistem MyHEPA').' UPNM', ENT_QUOTES, 'UTF-8') ?>" name="description" />
   <meta content="UPNM ICT" name="author" />
 
   <!-- ⬇️ Tambah SATU blok ni di sini -->
@@ -113,27 +113,27 @@
   <?php if (!isset($INCLUDE_I18N_PRESTASI)) { $INCLUDE_I18N_PRESTASI = true; } ?>
   <?php if (!empty($INCLUDE_I18N_PRESTASI)): ?>
   <script>
-    window.I18N_PRESTASI = {
-      table_empty:             "<?= h(__('prestasi_js_table_empty')) ?>",
-      year_selected_title:     "<?= h(__('prestasi_js_year_selected_title')) ?>",
-      year_selected_text:      "<?= h(__('prestasi_js_year_selected_text')) ?>",
-      ok:                      "<?= h(__('prestasi_js_ok')) ?>",
-      cancel:                  "<?= h(__('prestasi_js_cancel')) ?>",
-      saving:                  "<?= h(__('prestasi_js_saving')) ?>",
-      success_title:           "<?= h(__('prestasi_js_success_title')) ?>",
-      error_title:             "<?= h(__('prestasi_js_error_title')) ?>",
-      non_json_prefix:         "<?= h(__('prestasi_js_non_json_prefix')) ?>",
-      reminder_confirm_title:  "<?= h(__('prestasi_js_reminder_confirm_title')) ?>",
-      email_missing_title:     "<?= h(__('prestasi_js_email_missing_title')) ?>",
-      email_missing_text:      "<?= h(__('prestasi_js_email_missing_text')) ?>",
-      reminder_sent_title:     "<?= h(__('prestasi_js_reminder_sent_title')) ?>",
-      reminder_sent_text:      "<?= h(__('prestasi_js_reminder_sent_text')) ?>",
-      reminder_failed_default: "<?= h(__('prestasi_js_reminder_failed_default')) ?>",
-      server_error_prefix:     "<?= h(__('prestasi_js_server_error_prefix')) ?>",
-      reminder_intro:          "<?= h(__('prestasi_js_reminder_intro')) ?>",
-      reminder_footer:         "<?= h(__('prestasi_js_reminder_footer')) ?>",
-      reminder_btn_send:       "<?= h(__('prestasi_js_reminder_btn_send')) ?>"
-    };
+    // window.I18N_PRESTASI = {
+    //   table_empty:             "<?= h(__('prestasi_js_table_empty')) ?>",
+    //   year_selected_title:     "<?= h(__('prestasi_js_year_selected_title')) ?>",
+    //   year_selected_text:      "<?= h(__('prestasi_js_year_selected_text')) ?>",
+    //   ok:                      "<?= h(__('prestasi_js_ok')) ?>",
+    //   cancel:                  "<?= h(__('prestasi_js_cancel')) ?>",
+    //   saving:                  "<?= h(__('prestasi_js_saving')) ?>",
+    //   success_title:           "<?= h(__('prestasi_js_success_title')) ?>",
+    //   error_title:             "<?= h(__('prestasi_js_error_title')) ?>",
+    //   non_json_prefix:         "<?= h(__('prestasi_js_non_json_prefix')) ?>",
+    //   reminder_confirm_title:  "<?= h(__('prestasi_js_reminder_confirm_title')) ?>",
+    //   email_missing_title:     "<?= h(__('prestasi_js_email_missing_title')) ?>",
+    //   email_missing_text:      "<?= h(__('prestasi_js_email_missing_text')) ?>",
+    //   reminder_sent_title:     "<?= h(__('prestasi_js_reminder_sent_title')) ?>",
+    //   reminder_sent_text:      "<?= h(__('prestasi_js_reminder_sent_text')) ?>",
+    //   reminder_failed_default: "<?= h(__('prestasi_js_reminder_failed_default')) ?>",
+    //   server_error_prefix:     "<?= h(__('prestasi_js_server_error_prefix')) ?>",
+    //   reminder_intro:          "<?= h(__('prestasi_js_reminder_intro')) ?>",
+    //   reminder_footer:         "<?= h(__('prestasi_js_reminder_footer')) ?>",
+    //   reminder_btn_send:       "<?= h(__('prestasi_js_reminder_btn_send')) ?>"
+    // };
   </script>
   <?php endif; ?>
 

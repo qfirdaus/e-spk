@@ -428,6 +428,7 @@ return [
 'userList_sync_button'           => 'Sync Data',
 'userList_sync_processing'       => 'Memproses…',
 'userList_add_button'            => 'Tambah Pengguna',
+'userList_import_student_button' => 'Import Pelajar',
 
 'userList_err_add_failed'        => 'Gagal menambah pengguna.',
 'userList_err_delete_failed'     => 'Gagal memadam pengguna.',
@@ -464,6 +465,18 @@ return [
 'userList_sync_error_title'      => 'Sync Gagal',
 'userList_sync_error'            => 'Ralat semasa sync data.',
 
+// =========================
+// Import Pelajar
+// =========================
+'userList_import_student_success_title'    => 'Import Pelajar Berjaya',
+'userList_import_student_success_message'  => 'Data pelajar berjaya diimport.',
+'userList_import_student_summary_title'    => 'Ringkasan Import Pelajar',
+'userList_import_student_updated'          => 'Dikemas kini',
+'userList_import_student_skipped'          => 'Dilangkau',
+'userList_import_student_errors'           => 'Ralat',
+'userList_import_student_total'            => 'Jumlah',
+'userList_import_student_error_title'      => 'Import Pelajar Gagal',
+'userList_import_student_error'            => 'Ralat semasa import data pelajar.',
 
 /* =====================================================
  * KUMPULAN PENGGUNA (userGroup_)
