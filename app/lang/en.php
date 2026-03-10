@@ -1207,4 +1207,12 @@ return [
 'faq_item_15_q' => 'Who should I contact for access or configuration issues?',
 'faq_item_15_a' => 'Contact your internal system administrator. Access, user-group, and system configuration issues usually require administrator privileges.',
 
+'session_idle_title' => 'Still there?',
+'session_idle_text' => 'No activity for 10 minutes. Stay signed in?',
+'session_idle_stay_connected' => 'Stay Connected',
+'session_idle_logout_now' => 'Log Out',
+'session_idle_timeout_text' => 'Auto log out in 1 minute.',
+'session_idle_timeout_title' => 'Session Ended',
+'session_idle_timeout_logout_now' => 'No response. The system will log you out now.',
+'session_idle_keepalive_failed' => 'Session refresh failed. You will be logged out.',
 ];

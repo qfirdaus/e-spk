@@ -1206,4 +1206,12 @@ return [
 'faq_item_15_q' => 'Siapa perlu dihubungi untuk isu akses atau konfigurasi?',
 'faq_item_15_a' => 'Hubungi pentadbir sistem dalaman organisasi anda. Isu akses, kumpulan pengguna, dan tetapan sistem biasanya memerlukan kebenaran pentadbir.',
 
+'session_idle_title' => 'Masih di sini?',
+'session_idle_text' => 'Tiada aktiviti 10 minit. Kekal log masuk?',
+'session_idle_stay_connected' => 'Kekal Log Masuk',
+'session_idle_logout_now' => 'Log Keluar',
+'session_idle_timeout_text' => 'Auto log keluar dalam 1 minit.',
+'session_idle_timeout_title' => 'Sesi Tamat',
+'session_idle_timeout_logout_now' => 'Tiada respons. Sistem akan log keluar sekarang.',
+'session_idle_keepalive_failed' => 'Sesi tidak dapat diperbaharui. Anda akan dilog keluar.',
 ];
