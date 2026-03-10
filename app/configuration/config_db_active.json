@@ -1,7 +1,5 @@
 {
     "ehrmdb": true,
     "ehrmdb_dev": false,
-    "stafdb": false,
-    "asisdb": true,
-    "asisdb_dev": false
+    "stafdb": false
 }

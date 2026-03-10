@@ -83,6 +83,12 @@ function is_profile_empty(array $profile): bool {
            (empty($profile['f_stafID']) && empty($profile['f_nopekerja']) && empty($profile['f_nama']));
 }
 
+function student_avatar_url_sidebar(?string $matrik): string {
+    $clean = preg_replace('/\D+/', '', (string)$matrik) ?? '';
+    if ($clean === '') return base_url('assets/images/no-image.jpg');
+    return 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/' . rawurlencode($clean) . '.jpg';
+}
+
 // Initialize controller and load sidebar data
 $currentFile = basename($_SERVER['PHP_SELF'] ?? '');
 $sidebarController = new SidebarController();
@@ -94,6 +100,24 @@ $senaraiModul = $sidebarController->getSenaraiModul();
 $modulMenus = $sidebarController->getModulMenus();
 $modulAktifID = $sidebarController->getModulAktifID();
 $lang = $sidebarController->getLang();
+
+// Student fallback profile (pra-SSO): SidebarController guna MySQL user profile.
+// Jika student tiada dalam tbl_m_user, bina profil minimum dari session.
+$authType = (string)($_SESSION['auth_type'] ?? '');
+if ($authType === 'student') {
+    $studentProfile = is_array($_SESSION['student_profile'] ?? null) ? $_SESSION['student_profile'] : [];
+    $sessionUser = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
+    if (empty($profile)) {
+        $profile = [
+            'f_stafID'    => (string)($_SESSION['f_stafID'] ?? ($studentProfile['matrik'] ?? '')),
+            'f_nopekerja' => (string)($_SESSION['f_nopekerja'] ?? ($studentProfile['matrik'] ?? '')),
+            'f_nama'      => (string)($sessionUser['f_nama'] ?? ($studentProfile['nama'] ?? ($_SESSION['user_name'] ?? 'Pengguna'))),
+            'f_nickname'  => (string)($sessionUser['f_nickname'] ?? ($studentProfile['nama'] ?? '')),
+            'f_groupName' => (string)($sessionUser['f_groupName'] ?? 'Student'),
+            'f_groupID'   => (int)($sessionUser['f_groupID'] ?? 0),
+        ];
+    }
+}
 
 // Extract profile data with fallbacks
 $isProfileEmpty = is_profile_empty($profile);
@@ -117,10 +141,17 @@ if (!$isProfileEmpty) {
     
     // Get avatar URL
     try {
-        $userModel = new User(Database::getInstance()->getConnection());
-        $avatarUrl = $userModel->getAvatarUrl($profile['f_nopekerja'] ?? null);
-        if (empty($avatarUrl)) {
-            $avatarUrl = base_url('assets/images/no-image.jpg');
+        if ($authType === 'student') {
+            $avatarUrl = (string)($studentProfile['avatar_url']
+                ?? ($sessionUser['avatar_url']
+                ?? ($_SESSION['avatar_url']
+                ?? student_avatar_url_sidebar((string)($studentProfile['matrik'] ?? ($_SESSION['f_stafID'] ?? ''))))));
+        } else {
+            $userModel = new User(Database::getInstance()->getConnection());
+            $avatarUrl = $userModel->getAvatarUrl($profile['f_nopekerja'] ?? null);
+            if (empty($avatarUrl)) {
+                $avatarUrl = base_url('assets/images/no-image.jpg');
+            }
         }
     } catch (Throwable $e) {
         error_log("Sidebar: Failed to get avatar URL: " . $e->getMessage());

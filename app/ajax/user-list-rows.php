@@ -136,6 +136,13 @@ try {
             $style = prestasi_group_ui_resolve($groupUiMaps, $gId, $gKod);
             $badgeClass = (string)($style['badgeClass'] ?? 'bg-secondary');
             $rowClass = (string)($style['rowClass'] ?? '');
+            $rowColor = (string)($style['rowColor'] ?? '');
+            $badgeInlineStyle = '';
+            if (($badgeClass === '' || $badgeClass === 'bg-secondary') && $rowColor !== '') {
+                if (preg_match('/^#[0-9a-fA-F]{3,8}$/', $rowColor) || preg_match('/^[a-zA-Z]+$/', $rowColor)) {
+                    $badgeInlineStyle = ' style="background-color:' . h($rowColor) . ';color:#fff;"';
+                }
+            }
 
             $htmlRows .= '<tr data-user-id="' . h((string)$userID) . '" data-group-id="' . h((string)$gId) . '" data-group-kod="' . h($gKod) . '" data-row-class="' . h($rowClass) . '" data-flag="' . h((string)$f_flag) . '" data-extra-count="' . h((string)$extraCount) . '" data-extra-roles="' . h(implode(', ', $extraRoles)) . '" class="' . h($rowClass) . '">';
             $htmlRows .= '<td class="col-bil"></td>';
@@ -143,7 +150,7 @@ try {
             $htmlRows .= '<td class="col-jabatan"><span class="truncate-1line">' . h($jabatan) . '</span></td>';
             $htmlRows .= '<td class="col-jawatan"><span class="truncate-1line">' . h($jawatan) . '</span></td>';
             $htmlRows .= '<td class="col-group">';
-            $htmlRows .= '<span class="badge ' . h($badgeClass) . '">' . h($gName) . '</span>';
+            $htmlRows .= '<span class="badge ' . h($badgeClass) . '"' . $badgeInlineStyle . '>' . h($gName) . '</span>';
             $title = !empty($extraRoles) ? implode(', ', $extraRoles) : (__('userList_role_none') ?? 'Tiada peranan tambahan.');
             $htmlRows .= '<i class="ri-information-line ms-1 text-muted extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" title="' . h($title) . '"></i>';
             $htmlRows .= '</td>';
@@ -192,6 +199,7 @@ try {
                 'f_groupName' => $gName,
                 'f_badge_class' => $badgeClass,
                 'f_row_class' => $rowClass,
+                'f_row_color' => $rowColor,
                 'extra_roles' => $extraRoles,
                 'extra_roles_count' => $extraCount,
                 'f_flag' => $f_flag,

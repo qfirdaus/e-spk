@@ -17,8 +17,7 @@ try {
       SELECT
         f_groupID   AS id,
         f_groupKod  AS kod,
-        f_groupName AS nama,
-        TRIM(COALESCE(f_color, '')) AS color
+        f_groupName AS nama
       FROM tbl_m_group
       WHERE $where
       ORDER BY f_groupKod ASC, f_groupName ASC, f_groupID ASC

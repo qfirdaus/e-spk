@@ -109,20 +109,8 @@ try {
     }
 
     require_once __DIR__ . '/../classes/Database.php';
-    require_once __DIR__ . '/../classes/User.php';
 
     $pdo = Database::getInstance('mysql')->getConnection();
-    $userModel = new User($pdo);
-    $currentProfile = $userModel->getProfile($_SESSION['f_stafID'] ?? '');
-    $isSuperAdmin = $currentProfile && function_exists('is_user_super_admin') && is_user_super_admin($currentProfile, $pdo);
-    if (!$isSuperAdmin) {
-        http_response_code(403);
-        echo json_encode([
-            'error' => true,
-            'message' => 'Anda tidak mempunyai kebenaran untuk menambah pengguna.'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
 
     // Validate group exists in database (prefer f_groupID)
     $groupRow = null;

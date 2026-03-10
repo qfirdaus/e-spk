@@ -10,6 +10,9 @@ require_once __DIR__ . '/../classes/Config.php';
 
 class LoginController
 {
+    private const STUDENT_GROUP_ID = 24;
+    private const STUDENT_AVATAR_BASE_URL = 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/';
+
     private User $userModel;
     private PDO $pdo;
 
@@ -35,6 +38,11 @@ class LoginController
         // Cari user
         $user = $this->userModel->findByStafID($f_stafID);
         if (!$user) {
+            // Fallback sementara sebelum SSO:
+            // Benarkan login pelajar menggunakan matrik + IC (nokp) dari view v210.
+            if ($this->authenticateStudentLocal($f_stafID, $password)) {
+                return true;
+            }
             $this->auditLoginFail($f_stafID, 'user_not_found');
             return false;
         }
@@ -165,6 +173,152 @@ class LoginController
         }
 
         return true;
+    }
+
+    /**
+     * Login sementara pelajar (pra-SSO):
+     * - username: matrik
+     * - password: IC (nokp)
+     * - syarat: statuskategori = 'AKTIF' dalam view v210
+     */
+    private function authenticateStudentLocal(string $matrik, ?string $password): bool
+    {
+        $matrik = trim($matrik);
+        if ($matrik === '' || $password === null || $password === '') {
+            return false;
+        }
+
+        // Matrik lazimnya numerik; jika bukan numerik, jangan treat sebagai student flow.
+        if (!preg_match('/^\d+$/', $matrik)) {
+            return false;
+        }
+
+        try {
+            $pdoStudent = Database::getInstance('sybase_student')->getConnection();
+            $sql = "SELECT TOP 1
+                        matrik,
+                        fakulti,
+                        program,
+                        nama,
+                        nokp,
+                        email,
+                        notel_terkini,
+                        statuskategori
+                    FROM v210
+                    WHERE matrik = :matrik
+                      AND statuskategori = 'AKTIF'";
+            $stmt = $pdoStudent->prepare($sql);
+            $stmt->bindValue(':matrik', (int)$matrik, PDO::PARAM_INT);
+            $stmt->execute();
+            $student = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+            if (!$student) {
+                $this->auditLoginFail($matrik, 'student_not_found_or_inactive');
+                return false;
+            }
+
+            // Semak IC (nokp) secara normalized: buang ruang/simbol, compare digits sahaja.
+            $inputIc = $this->normalizeDigits((string)$password);
+            $dbIc    = $this->normalizeDigits((string)($student['nokp'] ?? ''));
+            if ($inputIc === '' || $dbIc === '' || !hash_equals($dbIc, $inputIc)) {
+                $this->auditLoginFail($matrik, 'student_wrong_ic');
+                return false;
+            }
+
+            // 🔒 Kuatkan sesi
+            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+            session_regenerate_id(true);
+
+            $nama = trim((string)($student['nama'] ?? '')) ?: ('Pelajar ' . $matrik);
+            $fakulti = trim((string)($student['fakulti'] ?? ''));
+            $program = trim((string)($student['program'] ?? ''));
+            $email = trim((string)($student['email'] ?? ''));
+            $tel = trim((string)($student['notel_terkini'] ?? ''));
+            $studentAvatarUrl = $this->getStudentAvatarUrl($matrik);
+            $studentGroupId = self::STUDENT_GROUP_ID;
+            $studentGroupKod = 'STUDENT';
+            $studentGroupName = 'Student';
+
+            // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=24)
+            try {
+                $g = $this->pdo->prepare("SELECT f_groupKod, f_groupName FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
+                $g->execute([':gid' => $studentGroupId]);
+                $grow = $g->fetch(PDO::FETCH_ASSOC) ?: [];
+                if (!empty($grow['f_groupKod'])) $studentGroupKod = (string)$grow['f_groupKod'];
+                if (!empty($grow['f_groupName'])) $studentGroupName = (string)$grow['f_groupName'];
+            } catch (\Throwable $e) {
+                error_log('[LoginController] student group lookup warn: ' . $e->getMessage());
+            }
+
+            // Simpan session minimum yang serasi dengan flow sedia ada.
+            $_SESSION['auth_type']   = 'student';
+            $_SESSION['f_stafID']    = $matrik; // compatibility untuk require_login()
+            $_SESSION['f_nopekerja'] = $matrik;
+            $_SESSION['f_nama']      = $nama;
+            $_SESSION['f_nickname']  = $nama;
+            $_SESSION['f_groupID']   = $studentGroupId;
+            $_SESSION['f_groupKod']  = $studentGroupKod;
+            $_SESSION['f_userID']    = 0;
+            $_SESSION['user_name']   = $nama;
+            $_SESSION['f_jabatan']   = $fakulti;
+            $_SESSION['f_jawatan']   = $program;
+            $_SESSION['avatar_url']  = $studentAvatarUrl;
+            $_SESSION['group_default_id'] = $studentGroupId;
+            $_SESSION['group_active_id']  = $studentGroupId;
+            $_SESSION['role'] = $studentGroupKod;
+
+            $_SESSION['user'] = [
+                'f_userID'     => 0,
+                'f_nopekerja'  => $matrik,
+                'f_nama'       => $nama,
+                'f_nickname'   => $nama,
+                'f_groupID'    => $studentGroupId,
+                'f_groupKod'   => $studentGroupKod,
+                'f_groupName'  => $studentGroupName,
+                'f_jabatan'    => $fakulti,
+                'f_jawatan'    => $program,
+                'jabatan'      => $fakulti,
+                'jawatan'      => $program,
+                'avatar_url'   => $studentAvatarUrl,
+            ];
+
+            $_SESSION['student_profile'] = [
+                'matrik'         => $matrik,
+                'fakulti'        => $fakulti,
+                'program'        => $program,
+                'nama'           => $nama,
+                'email'          => $email,
+                'notel_terkini'  => $tel,
+                'statuskategori' => (string)($student['statuskategori'] ?? ''),
+                'avatar_url'     => $studentAvatarUrl,
+            ];
+
+            // Theme default untuk elak undefined key pada view tertentu.
+            $_SESSION['theme.menu']   = $_SESSION['theme.menu'] ?? 'light';
+            $_SESSION['theme.topbar'] = $_SESSION['theme.topbar'] ?? 'light';
+            $_SESSION['theme.layout'] = $_SESSION['theme.layout'] ?? 'light';
+
+            $this->auditStudentSessionStart($matrik);
+            $this->auditStudentLoginSuccess($student);
+            return true;
+        } catch (\Throwable $e) {
+            // DB/driver issue untuk student connection -> bubble up sebagai error sistem login.
+            throw $e;
+        }
+    }
+
+    private function normalizeDigits(string $value): string
+    {
+        return preg_replace('/\D+/', '', $value) ?? '';
+    }
+
+    private function getStudentAvatarUrl(string $matrik): string
+    {
+        $clean = preg_replace('/\D+/', '', $matrik) ?? '';
+        if ($clean === '') {
+            return base_url('assets/images/no-image.jpg');
+        }
+        return self::STUDENT_AVATAR_BASE_URL . rawurlencode($clean) . '.jpg';
     }
 
     /* ===========================
@@ -319,6 +473,75 @@ class LoginController
             ]);
         } catch (\Throwable $e) {
             error_log('[LoginController] audit_event error: ' . $e->getMessage());
+        }
+    }
+
+    private function auditStudentLoginSuccess(array $student): void
+    {
+        try {
+            if (!function_exists('audit_event')) return;
+
+            $requestId = $GLOBALS['__AUDIT_REQUEST_ID'] ?? null;
+            $matrik = (string)($student['matrik'] ?? '');
+            $nama   = (string)($student['nama'] ?? '');
+            $auditUserId = is_numeric($matrik) ? (int)$matrik : null;
+            $actorLabel = function_exists('audit_format_actor_label')
+                ? audit_format_actor_label($nama, $matrik)
+                : trim($nama . ' (' . $matrik . ')');
+
+            $message = function_exists('audit_format_message')
+                ? audit_format_message('Student login', $actorLabel)
+                : ('Student login by ' . $actorLabel);
+
+            audit_event([
+                'event_type'  => 'LOGIN',
+                'severity'    => 'INFO',
+                'outcome'     => 'SUCCESS',
+                'target_type' => 'auth',
+                'target_id'   => 'login_student_local',
+                'message'     => $message,
+                'request_id'  => $requestId,
+                'session_id'  => session_id(),
+                'user_id'     => $auditUserId,
+                'actor_label' => $actorLabel,
+                'meta'        => [
+                    'auth_type'      => 'student_local',
+                    'matrik'         => $matrik,
+                    'statuskategori' => $student['statuskategori'] ?? null,
+                    'email'          => $student['email'] ?? null,
+                    'ip'             => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'user_agent'     => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[LoginController] student audit_event error: ' . $e->getMessage());
+        }
+    }
+
+    private function auditStudentSessionStart(string $matrik): void
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO audit_session
+                (session_id, user_id, user_nopekerja, started_at, ip_address, user_agent)
+                VALUES (:sid, :uid, :no, NOW(6), :ip, :ua)
+            ");
+
+            $uid = is_numeric($matrik) ? (int)$matrik : null;
+            $ipBin = null;
+            if (class_exists('AuditLogger') && method_exists('AuditLogger','clientIp')) {
+                $ipBin = AuditLogger::ipToBinary(AuditLogger::clientIp());
+            }
+
+            $stmt->execute([
+                ':sid' => session_id(),
+                ':uid' => $uid,
+                ':no'  => $matrik,
+                ':ip'  => $ipBin,
+                ':ua'  => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[LoginController] student audit_session error: ' . $e->getMessage());
         }
     }
 }

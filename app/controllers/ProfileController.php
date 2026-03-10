@@ -7,6 +7,8 @@ require_once __DIR__ . '/../classes/User.php';
 
 class ProfileController
 {
+    private const STUDENT_AVATAR_BASE_URL = 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/';
+
     public string $lang = 'ms';
     public array  $profile = [];
 
@@ -61,6 +63,27 @@ class ProfileController
         $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 
         if (!$row) {
+            // Fallback untuk student (pra-SSO) yang tiada rekod dalam tbl_m_user
+            if ((string)($_SESSION['auth_type'] ?? '') === 'student') {
+                $sp = is_array($_SESSION['student_profile'] ?? null) ? $_SESSION['student_profile'] : [];
+                $su = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
+                $nama = trim((string)($su['f_nama'] ?? ($sp['nama'] ?? ($_SESSION['user_name'] ?? 'Pelajar'))));
+                $matrik = (string)($sp['matrik'] ?? ($_SESSION['f_stafID'] ?? ''));
+                $avatar = (string)($sp['avatar_url'] ?? ($su['avatar_url'] ?? $_SESSION['avatar_url'] ?? $this->getStudentAvatarUrl($matrik)));
+
+                return $this->profile = [
+                    'stafID'     => $matrik,
+                    'nopekerja'  => (string)($_SESSION['f_nopekerja'] ?? $matrik),
+                    'nama_penuh' => $nama !== '' ? $nama : 'Pelajar',
+                    'nickname'   => $nama,
+                    'jawatan'    => (string)($sp['program'] ?? ''),  // papar sebagai jawatan
+                    'gred'       => '',
+                    'jabatan'    => (string)($sp['fakulti'] ?? ''),  // papar sebagai jabatan
+                    'emel'       => (string)($sp['email'] ?? ''),
+                    'avatar_url' => $avatar,
+                ];
+            }
+
             return $this->profile = $this->emptyProfile($this->userModel->getAvatarUrl(null));
         }
 
@@ -96,6 +119,13 @@ class ProfileController
             'emel'       => '',
             'avatar_url' => (string)($avatar ?: base_url('assets/images/no-image.jpg')),
         ];
+    }
+
+    private function getStudentAvatarUrl(string $matrik): string
+    {
+        $clean = preg_replace('/\D+/', '', $matrik) ?? '';
+        if ($clean === '') return base_url('assets/images/no-image.jpg');
+        return self::STUDENT_AVATAR_BASE_URL . rawurlencode($clean) . '.jpg';
     }
 
     /**

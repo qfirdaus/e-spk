@@ -10,6 +10,13 @@ require_once __DIR__ . '/../classes/Config.php';
 if (!function_exists('h')) {
   function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 }
+if (!function_exists('student_avatar_url')) {
+  function student_avatar_url(?string $matrik): string {
+    $clean = preg_replace('/\D+/', '', (string)$matrik) ?? '';
+    if ($clean === '') return base_url('assets/images/no-image.jpg');
+    return 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/' . rawurlencode($clean) . '.jpg';
+  }
+}
 
 // Helper: bina URL semasa + ganti/tambah 1 query param
 if (!function_exists('url_with_param')) {
@@ -28,10 +35,21 @@ $pdo_mysql  = Database::getInstance('mysql')->getConnection();
 $user       = new User($pdo_mysql);
 $f_stafID   = $_SESSION['f_stafID'] ?? null;
 $profile    = $f_stafID ? ($user->getProfile($f_stafID) ?: []) : [];
+$authType   = (string)($_SESSION['auth_type'] ?? '');
+$sessionUser = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
+$studentProfile = is_array($_SESSION['student_profile'] ?? null) ? $_SESSION['student_profile'] : [];
 
-$nama_pengguna     = $profile['f_nama'] ?? ($profile['f_nickname'] ?? 'Pengguna');
-$peranan_pengguna  = $profile['f_groupName'] ?? 'Pengguna';
-$avatarUrl         = $user->getAvatarUrl($profile['f_nopekerja'] ?? null);
+$nama_pengguna     = $profile['f_nama']
+                  ?? $profile['f_nickname']
+                  ?? ($sessionUser['f_nama'] ?? ($studentProfile['nama'] ?? ($_SESSION['user_name'] ?? 'Pengguna')));
+$peranan_pengguna  = $profile['f_groupName']
+                  ?? ($sessionUser['f_groupName'] ?? ($authType === 'student' ? 'Student' : 'Pengguna'));
+$avatarUrl         = ($authType === 'student')
+                  ? ((string)($studentProfile['avatar_url']
+                      ?? ($sessionUser['avatar_url']
+                      ?? ($_SESSION['avatar_url']
+                      ?? student_avatar_url((string)($studentProfile['matrik'] ?? ($_SESSION['f_stafID'] ?? '')))))))
+                  : $user->getAvatarUrl($profile['f_nopekerja'] ?? null);
 $lang              = $_SESSION['lang'] ?? 'ms';
 
 // CSRF for AJAX actions in topbar
@@ -100,7 +118,7 @@ try {
 }
 
 // Default role label (from tbl_m_user)
-$defaultGroupName = $profile['f_groupName'] ?? 'Pengguna';
+$defaultGroupName = $profile['f_groupName'] ?? ($peranan_pengguna ?: 'Pengguna');
 
 // Tetapan bahasa aktif dari DB
 $config = new Config($pdo_mysql);

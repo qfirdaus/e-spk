@@ -66,7 +66,7 @@ return [
 // Tajuk & navigasi
 'login_title'              => 'Log Masuk',
 'login.title'              => 'Log Masuk',
-'login_heading'            => 'Log Masuk',
+'login_heading'            => 'Log masuk',
 'login_welcome'            => 'Selamat Datang',
 
 'login_nav.home'           => 'Laman Utama',
@@ -119,7 +119,13 @@ return [
 'config_login_error_message'
                            => 'Berlaku ralat semasa proses log masuk. Sila cuba lagi.',
 
-
+// Session idle timeout (global)
+'session_idle_title' => 'Masih di sini?',
+'session_idle_text' => 'Tiada aktiviti 10 minit. Kekal log masuk?',
+'session_idle_stay_connected' => 'Kekal Log Masuk',
+'session_idle_logout_now' => 'Log Keluar',
+'session_idle_timeout_text' => 'Auto log keluar dalam 1 minit.',
+'session_idle_keepalive_failed' => 'Sesi tidak dapat diperbaharui. Anda akan dilog keluar.',
 /* =====================================================
  * PROFILE (profile_)
  * ===================================================== */
@@ -127,7 +133,7 @@ return [
 // =========================
 // Tajuk & Breadcrumb
 // =========================
-'profile_title'                 => 'Maklumat Peribadi',
+'profile_title'                 => 'Profil Pengguna',
 'profile_breadcrumb'            => 'Profil',
 
 // =========================
@@ -146,16 +152,7 @@ return [
 // =========================
 'profile_no_staf'               => 'No. Staf',
 'profile_no_pekerja'            => 'No. Pekerja',
-'profile_no_matrik'             => 'No. Matrik',
-'profile_nama'                  => 'Nama',
-'profile_no_kad_pengenalan'     => 'No. Kad Pengenalan',
-'profile_no_passport'           => 'No. Passport',
-'profile_jantina'               => 'Jantina',
-'profile_bangsa'                => 'Bangsa',
-'profile_agama'                 => 'Agama',
 'profile_jabatan'               => 'Jabatan',
-'profile_telefon'               => 'No. Telefon',
-'profile_fakulti'               => 'Fakulti',
 'profile_emel'                  => 'Emel',
 
 // =========================
@@ -170,7 +167,7 @@ return [
 // Tabs
 // =========================
 'profile_tabs_label'            => 'Tab profil pengguna',
-'profile_tab_profil_pengguna'   => 'Maklumat Peribadi',
+'profile_tab_profil_pengguna'   => 'Profil Pengguna',
 'profile_tab_login_aktiviti'    => 'Login Aktiviti',
 'profile_tab_jejak_audit'       => 'Jejak Audit',
 
@@ -216,11 +213,6 @@ return [
                                 => 'Ralat rangkaian. Sila cuba lagi.',
 'profile_login_kill_error_no_session'
                                 => 'ID sesi tidak sah',
-
-// =====================================================
-// Keluarga
-// =====================================================
-'family_title'                 => 'Maklumat Keluarga',                                
 
 /* =====================================================
  * SETTINGS (config result titles)
@@ -522,7 +514,6 @@ return [
 'modul_ralat_title'                 => 'Ralat',
 'modul_ralat_duplikat'              => 'Nama modul telah wujud. Sila gunakan nama lain.',
 'modul_ralat_wajib'                 => 'Nama Modul (BM) wajib diisi.',
-'userGroup_btn_add_modul'            => 'Tambah Modul',
 'userGroup_btn_close'               => 'Tutup',
 'userGroup_btn_save'                => 'Simpan',
 
@@ -736,29 +727,19 @@ return [
 /* =========================
  * TAB DATABASE
  * ========================= */
-'config_tab_db_header'                   => 'Sybase EHRM (Pilih Satu Sahaja)',
-'config_tab_db_header_2'                 => 'Sybase ASIS (Pilih Satu Sahaja)',   
-'config_tab_db_sybase_header'            => 'Hanya satu sambungan Sybase EHRM dibenarkan aktif dalam satu masa.',
-'config_tab_db_sybase_header_asis'       => 'Hanya satu sambungan Sybase ASIS dibenarkan aktif dalam satu masa.',
+'config_tab_db_header'                   => 'Sybase (Pilih Satu Sahaja)',
+'config_tab_db_sybase_header'            => 'Hanya satu sambungan Sybase dibenarkan aktif dalam satu masa.',
 'config_tab_db_sybase_sambungan'         => 'Nama Sambungan',
 'config_tab_db_sybase_keterangan'        => 'Keterangan',
 
 'config_tab_db_sybase_nama_production'   => 'e-HRMDB (Production)',
 'config_tab_db_sybase_nama_production_penerangan'
-                                        => 'Pangkalan data utama sistem EHRM',
-
-'config_tab_db_sybase_nama_production_asis'   => 'SAP (Production)',
-'config_tab_db_sybase_nama_production_penerangan_asis'
-                                        => 'Pangkalan data utama sistem SAP',                                        
+                                        => 'Pangkalan data utama sistem e-Prestasi',
 
 'config_tab_db_sybase_nama_development'  => 'e-HRMDB (Development)',
 'config_tab_db_sybase_nama_development_penerangan'
                                         => 'Pangkalan data pembangunan',
 
-'config_tab_db_sybase_nama_development_asis'  => 'SAP (Development)',
-'config_tab_db_sybase_nama_development_penerangan_asis'
-                                        => 'Pangkalan data pembangunan SAP',
-                                        
 'config_tab_db_sybase_smp'               => 'STAFDB',
 'config_tab_db_sybase_smp_penerangan'    => 'Pangkalan data SMP (tidak digunakan lagi)',
 
@@ -1219,4 +1200,7 @@ return [
 'faq_item_15_q' => 'Siapa perlu dihubungi untuk isu akses atau konfigurasi?',
 'faq_item_15_a' => 'Hubungi pentadbir sistem dalaman organisasi anda. Isu akses, kumpulan pengguna, dan tetapan sistem biasanya memerlukan kebenaran pentadbir.',
 
+'session_idle_timeout_title' => 'Sesi Tamat',
+'session_idle_timeout_logout_now' => 'Tiada respons. Sistem akan log keluar sekarang.',
 ];
+
