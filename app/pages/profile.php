@@ -39,6 +39,19 @@ try {
   $errorMessage = 'Ralat memuat data profil. Sila cuba lagi atau hubungi pentadbir sistem.';
 }
 
+// Akses metadata audit: Super Admin sahaja
+$canViewAuditMeta = false;
+try {
+  $pdoAccess = Database::pdoMysql();
+  $sidAccess = (string)($_SESSION['f_stafID'] ?? '');
+  $profileAccess = (new User($pdoAccess))->getProfile($sidAccess) ?: ($_SESSION['user'] ?? []);
+  $canViewAuditMeta = function_exists('is_user_super_admin')
+    ? is_user_super_admin((array)$profileAccess, $pdoAccess)
+    : false;
+} catch (Throwable $e) {
+  $canViewAuditMeta = false;
+}
+
 // Close session lock after reading
 if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
 
@@ -148,8 +161,6 @@ function hasActiveSession(array $loginActivity): bool {
   ?>
   <!-- ✅ Standard DataTables CSS (shared) -->
   <link href="<?= base_url('assets/css/datatables-standard.css') ?>?v=<?= h($version) ?>" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>  
   <style>
     :root{
       --card-radius: 18px;
@@ -159,38 +170,18 @@ function hasActiveSession(array $loginActivity): bool {
       overflow: hidden;
       border-radius: var(--card-radius);
     }
-    .profile-hero {
-      /* background: linear-gradient(135deg, #89c2ff 0%, #ffafcc 100%); */
-      background: linear-gradient(135deg, #5daeff 0%, #89c2ff 60%, #ffafcc 105%);
-      padding: 2rem;
-      color: #fff;
+    .profile-hero{
       position: relative;
+      border-radius: calc(var(--card-radius) - 2px);
+      background: linear-gradient(135deg, rgba(59,130,246,.10), rgba(16,185,129,.10));
+      padding: 1.25rem 1.25rem 1rem 1.25rem;
     }
-
-    .profile-hero .display-name {
-      color: #f8fbff;
-      font-weight: 600;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      letter-spacing: 0.3px;
+    .profile-hero .avatar{
+      width: 120px;height: 120px;border-radius: 50%;
+      object-fit: cover;border: var(--ring);
+      box-shadow: 0 6px 20px rgba(0,0,0,.08);
+      background:#fff;
     }
-
-    .profile-hero .subline {
-      opacity: 0.9;
-    }
-
-    .avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.4);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      transition: 0.3s ease;
-    }
-
-    .avatar:hover {
-      transform: scale(1.05);
-    }    
     .status-dot{
       position:absolute; right: 6px; bottom: 10px;
       width:14px; height:14px; border-radius:50%;
@@ -198,16 +189,13 @@ function hasActiveSession(array $loginActivity): bool {
       box-shadow:0 0 0 2px rgba(0,0,0,.05);
     }
     .display-name{ font-weight: 700; letter-spacing:.2px; }
-    .subline{ 
-      /* color: var(--tb-muted, #6b7280);  */
-      color: rgba(255, 255, 255, 0.9);
-    }
+    .subline{ color: var(--tb-muted, #6b7280); }
 
     .chip{
       display:inline-flex; align-items:center; gap:.4rem;
       padding:.35rem .6rem; border-radius:999px;
       border:1px solid rgba(0,0,0,.08);
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,.03);
       font-size:.875rem;
     }
     [data-bs-theme="dark"] .chip{
@@ -247,7 +235,7 @@ function hasActiveSession(array $loginActivity): bool {
     /* Remove inline styles - move to CSS */
     .profile-tabs{
       border-bottom: 2px solid #e9ecef;
-      padding: 0.25rem 1.25rem 0rem 1.25rem;
+      padding: 0 1.25rem;
       margin: 0;
     }
     .profile-table-col-no{ width:5%; text-align:center; }
@@ -495,17 +483,6 @@ function hasActiveSession(array $loginActivity): bool {
       0%{ background-position: 200% 0; }
       100%{ background-position: -200% 0; }
     }
-
-    .form-control[readonly] {
-      background-color: #e9ecef;
-      border-left: 4px solid #6c757d;
-    }
-
-    /* Flatpickr calendar */
-    .flatpickr-calendar {
-    transform: scale(0.83) !important;
-    transform-origin: top left;
-    }    
   </style>
 </head>
 <body
@@ -573,7 +550,7 @@ function hasActiveSession(array $loginActivity): bool {
                      onerror="this.onerror=null;this.src='<?= h(base_url('assets/images/no-image.jpg')) ?>';">
                 <span class="status-dot <?= $isActive ? 'status-active' : 'status-inactive' ?>"
                       title="<?= h($isActive ? tr('profile_status_active','Aktif') : tr('profile_status_inactive','Tidak Aktif')) ?>"></span>
-              </div>           
+              </div>
 
               <div class="flex-grow-1">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -622,7 +599,27 @@ function hasActiveSession(array $loginActivity): bool {
             </div>
           </div>
 
-          <div class="card-body p-4">
+          <!-- Tab Navigasi -->
+          <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
+            <li class="nav-item">
+              <a class="nav-link active" data-bs-toggle="tab" href="#login-aktiviti-tab" role="tab">
+                <i class="ri-login-box-line me-1"></i> <?= h(tr('profile_tab_login_aktiviti','Login Aktiviti')) ?>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#jejak-audit-tab" role="tab">
+                <i class="ri-file-list-3-line me-1"></i> <?= h(tr('profile_tab_jejak_audit','Jejak Audit')) ?>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#profil-pengguna-tab" role="tab">
+                <i class="ri-user-line me-1"></i> <?= h(tr('profile_tab_profil_pengguna','Profil Pengguna')) ?>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Kandungan Tab -->
+          <div class="tab-content p-4">
             <?php if ($errorMessage): ?>
               <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <i class="ri-error-warning-line me-2"></i>
@@ -644,138 +641,105 @@ function hasActiveSession(array $loginActivity): bool {
               </div>
             <?php endif; ?>
 
-<form method="post" action="<?= base_url('profile/update') ?>">
-  <div class="row  justify-content-center">
-    <div class="col-12 col-md-8">
-
-      <!-- Nama Pemohon -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_nama','Nama Pemohon')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control" value="<?= h($namaPenuh) ?>" readonly>
-        </div>
-      </div>
-
-      <!-- No Kad Pengenalan -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_no_kad_pengenalan','No Kad Pengenalan')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="no_kp" class="form-control" value="<?= h($noKadPengenalan) ?>">
-        </div>
-      </div>
-
-      <!-- No Passport -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_no_passport','No Passport')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="no_passport" class="form-control" value="<?= h($noPassport) ?>">
-        </div>
-      </div>
-
-      <!-- No Matrik -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_no_matrik','No. Matrik')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control" value="<?= h($nopek) ?>" readonly>
-        </div>
-      </div>
-
-      <!-- Jantina -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_jantina','Jantina')) ?></label>
-        <div class="col-sm-9">
-          <select name="jantina" class="form-select">
-            <option value="">-- Sila Pilih --</option>
-            <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Lelaki</option>
-            <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Perempuan</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Bangsa -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_bangsa','Bangsa')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="bangsa" class="form-control" value="<?= h($bangsa) ?>">
-        </div>
-      </div>
-
-      <!-- Agama -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_agama','Agama')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="agama" class="form-control" value="<?= h($agama) ?>">
-        </div>
-      </div>
-
-      <!-- Telefon -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_telefon','No Telefon')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="telefon" class="form-control" value="<?= h($notel) ?>">
-        </div>
-      </div>
-
-      <!-- Emel -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_emel','Emel')) ?></label>
-        <div class="col-sm-9">
-          <input type="email" name="emel" class="form-control" value="<?= h($emel) ?>">
-        </div>
-      </div>
-
-      <!-- Kewarganegaraan -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_kewarganegaraan','Kewarganegaraan')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="kewarganegaraan" class="form-control" value="<?= h($kewarganegaraan) ?>">
-        </div>
-      </div>
-
-      <!-- Status Perkahwinan -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_status_perkawinan','Status Perkawinan')) ?></label>
-        <div class="col-sm-9">
-          <select name="status_perkahwinan" class="form-select">
-            <option value="">-- Sila Pilih --</option>
-            <option value="Bujang" <?= $statusPerkawinan=='Bujang'?'selected':'' ?>>Bujang</option>
-            <option value="Berkahwin" <?= $statusPerkawinan=='Berkahwin'?'selected':'' ?>>Berkahwin</option>
-            <option value="Bercerai" <?= $statusPerkawinan=='Bercerai'?'selected':'' ?>>Bercerai</option>
-            <option value="Duda" <?= $statusPerkawinan=='Duda'?'selected':'' ?>>Duda</option>
-            <option value="Janda" <?= $statusPerkawinan=='Janda'?'selected':'' ?>>Janda</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Tarikh Lahir -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_tarikh_lahir','Tarikh Lahir')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" id="tarikh_lahir" name="tarikh_lahir" class="form-control" placeholder="dd/mm/yyyy" value="<?= !empty($tarikhLahir) ? date('d/m/Y', strtotime($tarikhLahir)) : '' ?>">
-        </div>
-      </div>
-
-      <!-- Pendidikan -->
-      <div class="mb-4 row align-items-center">
-        <label class="col-sm-2 col-form-label fw-semibold"><?= h(tr('profile_pendidikan','Pendidikan')) ?></label>
-        <div class="col-sm-9">
-          <input type="text" name="pendidikan" class="form-control" value="<?= h($pendidikan) ?>">
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="mb-4 row">
-        <div class="col-sm-9 offset-sm-2">
-          <button type="submit" class="btn btn-primary px-4">
-            <?= h(tr('profile_save_button','Simpan Perubahan')) ?>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</form>
+            <!-- Tab 1: Login Aktiviti -->
+            <div class="tab-pane fade show active" id="login-aktiviti-tab" role="tabpanel">
+              <div id="loginActivityLoading" class="skeleton-loader" style="display: none;">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+              </div>
+              
+              <?php if (empty($loginActivity)): ?>
+                <div class="text-center py-5">
+                  <i class="ri-login-box-line text-muted empty-state-icon"></i>
+                  <p class="text-muted mt-3 mb-0">
+                    <?= h(tr('profile_login_aktiviti_empty','Tiada rekod login aktiviti ditemui.')) ?>
+                  </p>
+                </div>
+              <?php else: ?>
+                <div class="table-responsive">
+                  <table id="loginActivityTable" class="table table-bordered align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th class="profile-table-col-no text-center">No.</th>
+                        <th class="profile-table-col-date"><?= h(tr('profile_login_date','Tarikh & Masa')) ?></th>
+                        <th class="profile-table-col-ip"><?= h(tr('profile_login_ip','Alamat IP')) ?></th>
+                        <th><?= h(tr('profile_login_device','Peranti')) ?></th>
+                        <th class="profile-table-col-duration text-center"><?= h(tr('profile_login_duration','Tempoh')) ?></th>
+                        <th class="profile-table-col-status text-center"><?= h(tr('profile_login_status','Status')) ?></th>
+                        <th style="width: 100px;" class="text-center"><?= h(tr('profile_login_actions','Tindakan')) ?></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data populated via AJAX (profile-login-activity.php) to avoid initial flicker -->
+                    </tbody>
+                  </table>
+                  <!-- Reuse report-style AJAX loader (positioned inside table container) -->
+                  <div id="loginAjaxLoader" class="table-loader d-none">
+                    <div class="text-center">
+                      <div class="spinner-border text-primary mb-2" role="status" style="width: 3rem; height: 3rem;" aria-label="Loading">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <div class="text-muted"><?= h(tr('profile_loading','Memuatkan…')) ?></div>
+                    </div>
+                  </div>
+                </div>
+              <?php endif; ?>
             </div>
+
+            <!-- Tab 2: Jejak Audit -->
+            <div class="tab-pane fade" id="jejak-audit-tab" role="tabpanel">
+              <div id="auditEventsLoading" class="skeleton-loader" style="display: none;">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+              </div>
+
+              <div class="table-responsive">
+                <table id="auditEventsTable" class="table table-bordered align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th class="profile-table-col-no text-center">No.</th>
+                      <th class="profile-table-col-date"><?= h(tr('profile_audit_date','Tarikh & Masa')) ?></th>
+                        <th class="profile-table-col-user"><?= h(tr('profile_audit_user','Pengguna')) ?></th>
+                      <th class="profile-table-col-ip"><?= h(tr('profile_audit_ip','Alamat IP')) ?></th>
+                      <th><?= h(tr('profile_audit_activity','Aktiviti')) ?></th>
+                      <th class="text-center"><?= h(tr('profile_audit_outcome','Keputusan')) ?></th>
+                      <th class="text-center"><?= h(tr('profile_audit_severity','Keparahan')) ?></th>
+                      <th class="text-center" style="width:120px;"><?= h(tr('profile_audit_actions','Tindakan')) ?></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated via AJAX: ajax/profile-audit-events.php -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Tab 3: Profil Pengguna -->
+            <div class="tab-pane fade" id="profil-pengguna-tab" role="tabpanel">
+              <div class="kv">
+                <div class="text-muted"><?= h(tr('profile_no_staf','No. Staf')) ?></div>
+                <div class="fw-semibold"><?= h($stafID !== '' ? $stafID : '—') ?></div>
+
+                <div class="text-muted"><?= h(tr('profile_no_pekerja','No. Pekerja')) ?></div>
+                <div class="fw-semibold"><?= h($nopek !== '' ? $nopek : '—') ?></div>
+
+                <div class="text-muted"><?= h(tr('profile_jabatan','Jabatan')) ?></div>
+                <div class="fw-semibold"><?= h($jabatan !== '' ? $jabatan : '—') ?></div>
+
+                <div class="text-muted"><?= h(tr('profile_emel','Emel')) ?></div>
+                <div class="fw-semibold">
+                  <?php if ($emel !== ''): ?>
+                    <a href="mailto:<?= h($emel) ?>" class="text-decoration-underline">
+                      <?= h($emel) ?>
+                    </a>
+                  <?php else: ?>
+                    —
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- /Profile Card with Tabs -->
 
@@ -802,6 +766,18 @@ function hasActiveSession(array $loginActivity): bool {
     COPY_RATE_LIMIT: <?= PROFILE_CONFIG['COPY_RATE_LIMIT'] ?>
   };
   // Current user's group (from server-side) — used to restrict metadata view
+  const CAN_VIEW_AUDIT_META = <?= $canViewAuditMeta ? 'true' : 'false' ?>;
+  const AUDIT_META_DENIED_MSG = <?= json_encode(tr('profile_audit_meta_admin_only', 'Paparan metadata hanya untuk Sistem Administrator sahaja.'), JSON_UNESCAPED_UNICODE) ?>;
+  const showMetaDeniedAlert = () => {
+    if (typeof Swal !== 'undefined' && Swal && typeof Swal.fire === 'function') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Akses Terhad',
+        text: AUDIT_META_DENIED_MSG,
+        confirmButtonText: 'OK'
+      });
+    }
+  };
   
   // ==================== NAMESPACE ====================
   const ProfilePage = {
@@ -1836,6 +1812,10 @@ function hasActiveSession(array $loginActivity): bool {
         if (btn) {
           e.preventDefault();
           e.stopPropagation();
+          if (!CAN_VIEW_AUDIT_META) {
+            showMetaDeniedAlert();
+            return;
+          }
           const eventId = btn.getAttribute('data-event-id') || btn.dataset.eventId || '';
           if (!eventId) return;
 
@@ -1844,6 +1824,10 @@ function hasActiveSession(array $loginActivity): bool {
             method: 'GET',
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
           }).then(r => r.json()).then(data => {
+            if (data && data.error === 'forbidden') {
+              showMetaDeniedAlert();
+              return;
+            }
             const metaJson = data.meta ? JSON.stringify(data.meta) : '';
             const changeSets = data.change_sets ? JSON.stringify(data.change_sets) : '';
             this.openAuditMetaModal(metaJson, changeSets, eventId);
@@ -1852,6 +1836,15 @@ function hasActiveSession(array $loginActivity): bool {
             this.toast('Gagal muat metadata acara', 'error');
           });
         }
+      });
+
+      // Non-admin metadata click
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-audit-meta-denied');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        showMetaDeniedAlert();
       });
 
       // Delegated copy handler for dynamically created copy buttons
@@ -1911,11 +1904,6 @@ function hasActiveSession(array $loginActivity): bool {
   window.copyText = (text) => ProfilePage.copyText(text);
   window.toast = (msg, type) => ProfilePage.toast(msg, type);
 })();
-
-  flatpickr("#tarikh_lahir", {
-      dateFormat: "d/m/Y",
-      allowInput: true
-  });
 </script>
 <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>

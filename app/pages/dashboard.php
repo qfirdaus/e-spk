@@ -21,6 +21,13 @@ $jawatan = $profile['jawatan'] ?? $profile['f_jawatan'] ?? '';
 $jabatan = $profile['jabatan'] ?? $profile['f_jabatan'] ?? '';
 $lastLoginRaw = $profile['last_login'] ?? ($_SESSION['last_login'] ?? '');
 
+// Fallback paparan untuk student login (pra-SSO)
+if (($jabatan === '' || $jawatan === '') && !empty($_SESSION['auth_type']) && $_SESSION['auth_type'] === 'student') {
+  $sp = $_SESSION['student_profile'] ?? [];
+  if ($jabatan === '') $jabatan = (string)($sp['fakulti'] ?? '');
+  if ($jawatan === '') $jawatan = (string)($sp['program'] ?? '');
+}
+
 // Fill jabatan/jawatan from tbl_m_user by f_stafID (if missing)
 try {
   if (($jabatan === '' || $jawatan === '') && !empty($_SESSION['f_stafID'])) {
@@ -79,6 +86,150 @@ $health = $dashboard['health'] ?? [];
 $announcements = $dashboard['announcements'] ?? [];
 
 $activeRoleId = (int)($_SESSION['group_active_id'] ?? ($profile['f_groupID'] ?? 0));
+
+// Statistik pelajar aktif ikut tahap_pengajian (Sybase student v210)
+$showStudentTahapStats = false;
+$studentTahapScopeLabel = '';
+$studentTahapStats = [];
+$studentProgramByTahap = [];
+$studentTahapTotal = 0;
+try {
+  $authType = (string)($_SESSION['auth_type'] ?? '');
+  if ($authType !== 'student') {
+    $pdoMysql = Database::getInstance('mysql')->getConnection();
+    $pdoStudent = Database::getInstance('sybase_student')->getConnection();
+
+    $activeGroupCode = (string)($profile['f_groupKod'] ?? $_SESSION['f_groupKod'] ?? ($_SESSION['user']['f_groupKod'] ?? ''));
+    $activeGroupName = (string)($profile['f_groupName'] ?? ($_SESSION['user']['f_groupName'] ?? ''));
+    if ($activeRoleId > 0) {
+      $stmtGroup = $pdoMysql->prepare("SELECT f_groupKod, f_groupName FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
+      $stmtGroup->execute([':gid' => $activeRoleId]);
+      $groupMeta = $stmtGroup->fetch(PDO::FETCH_ASSOC) ?: [];
+      if (!empty($groupMeta['f_groupKod'])) $activeGroupCode = (string)$groupMeta['f_groupKod'];
+      if (!empty($groupMeta['f_groupName'])) $activeGroupName = (string)$groupMeta['f_groupName'];
+    }
+
+    $isSuperAdmin = function_exists('is_user_super_admin') ? is_user_super_admin((array)$profile, $pdoMysql) : false;
+    $isHepa = (stripos($activeGroupCode, 'HEPA') !== false) || (stripos($activeGroupName, 'HEPA') !== false);
+    $canViewAllStats = $isSuperAdmin || $isHepa;
+
+    $where = [
+      "statuskategori = 'AKTIF'",
+      "matrik IS NOT NULL",
+      "COALESCE(LTRIM(RTRIM(tahap_pengajian)), '') <> ''",
+    ];
+    $bind = [];
+
+    if ($canViewAllStats) {
+      $studentTahapScopeLabel = 'Semua Fakulti';
+      $showStudentTahapStats = true;
+    } else {
+      $staffJabatanKod = trim((string)($profile['f_jabatanKod'] ?? $profile['f_jabatankod'] ?? $_SESSION['f_jabatanKod'] ?? ''));
+      if ($staffJabatanKod === '' && !empty($_SESSION['f_stafID'])) {
+        $stmtJbtn = $pdoMysql->prepare("SELECT f_jabatanKod, f_namajabatan FROM tbl_m_user WHERE f_stafID = :sid LIMIT 1");
+        $stmtJbtn->execute([':sid' => (string)$_SESSION['f_stafID']]);
+        $rowJbtn = $stmtJbtn->fetch(PDO::FETCH_ASSOC) ?: [];
+        if (!empty($rowJbtn['f_jabatanKod'])) {
+          $staffJabatanKod = trim((string)$rowJbtn['f_jabatanKod']);
+        }
+        if (empty($profile['f_namajabatan']) && !empty($rowJbtn['f_namajabatan'])) {
+          $profile['f_namajabatan'] = (string)$rowJbtn['f_namajabatan'];
+        }
+      }
+
+      if ($staffJabatanKod !== '') {
+        $where[] = "kdfakulti = :kdfakulti";
+        $bind[':kdfakulti'] = $staffJabatanKod;
+        $fakultiName = '';
+        $fakultiSingkatan = '';
+        try {
+          $stmtFak = $pdoStudent->prepare("
+            SELECT TOP 1 fakulti, fakulti_singkatan
+            FROM v210
+            WHERE statuskategori = 'AKTIF'
+              AND kdfakulti = :kdfakulti
+          ");
+          $stmtFak->execute([':kdfakulti' => $staffJabatanKod]);
+          $rowFak = $stmtFak->fetch(PDO::FETCH_ASSOC) ?: [];
+          $fakultiName = trim((string)($rowFak['fakulti'] ?? ''));
+          $fakultiSingkatan = trim((string)($rowFak['fakulti_singkatan'] ?? ''));
+        } catch (Throwable $e) {
+          // fallback to mysql/profile name only
+        }
+        if ($fakultiName === '') {
+          $fakultiName = trim((string)($profile['f_namajabatan'] ?? $profile['f_jabatan'] ?? $jabatan ?? ''));
+        }
+        if ($fakultiName !== '' && $fakultiSingkatan !== '') {
+          $studentTahapScopeLabel = $fakultiName . ' (' . $fakultiSingkatan . ')';
+        } elseif ($fakultiName !== '') {
+          $studentTahapScopeLabel = $fakultiName;
+        } else {
+          $studentTahapScopeLabel = 'Fakulti';
+        }
+        $showStudentTahapStats = true;
+      }
+    }
+
+    if ($showStudentTahapStats) {
+      $sqlTahap = "
+        SELECT
+          tahap_pengajian,
+          COUNT(*) AS jumlah
+        FROM (
+          SELECT DISTINCT kdfakulti, fakulti, fakulti_singkatan, tahap_pengajian, matrik
+          FROM v210
+          WHERE " . implode(' AND ', $where) . "
+        ) x
+        GROUP BY tahap_pengajian
+        ORDER BY tahap_pengajian
+      ";
+      $stmtTahap = $pdoStudent->prepare($sqlTahap);
+      foreach ($bind as $k => $v) {
+        $stmtTahap->bindValue($k, (string)$v, PDO::PARAM_STR);
+      }
+      $stmtTahap->execute();
+      $studentTahapStats = $stmtTahap->fetchAll(PDO::FETCH_ASSOC) ?: [];
+      foreach ($studentTahapStats as $rowTahap) {
+        $studentTahapTotal += (int)($rowTahap['jumlah'] ?? 0);
+      }
+
+      // Pecahan program ikut tahap_pengajian (untuk paparan collapsible di card)
+      $sqlProgram = "
+        SELECT
+          tahap_pengajian,
+          program,
+          COUNT(*) AS jumlah
+        FROM (
+          SELECT DISTINCT kdfakulti, fakulti, fakulti_singkatan, tahap_pengajian, program, matrik
+          FROM v210
+          WHERE " . implode(' AND ', $where) . "
+        ) x
+        GROUP BY tahap_pengajian, program
+        ORDER BY tahap_pengajian, program
+      ";
+      $stmtProgram = $pdoStudent->prepare($sqlProgram);
+      foreach ($bind as $k => $v) {
+        $stmtProgram->bindValue($k, (string)$v, PDO::PARAM_STR);
+      }
+      $stmtProgram->execute();
+      $programRows = $stmtProgram->fetchAll(PDO::FETCH_ASSOC) ?: [];
+      foreach ($programRows as $pr) {
+        $tahapKey = trim((string)($pr['tahap_pengajian'] ?? ''));
+        if ($tahapKey === '') $tahapKey = 'Tidak Dinyatakan';
+        $studentProgramByTahap[$tahapKey][] = [
+          'program' => trim((string)($pr['program'] ?? '')) !== '' ? (string)$pr['program'] : 'Tidak Dinyatakan',
+          'jumlah'  => (int)($pr['jumlah'] ?? 0),
+        ];
+      }
+    }
+  }
+} catch (Throwable $e) {
+  $showStudentTahapStats = false;
+  $studentTahapScopeLabel = '';
+  $studentTahapStats = [];
+  $studentProgramByTahap = [];
+  $studentTahapTotal = 0;
+}
 
 // ===== System Resources (OPTIONAL, admin-only) =====
 // SECURITY CRITICAL – DO NOT MODIFY: admin-only gating for optional resources panel
@@ -376,6 +527,11 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
       display: inline-flex;
       align-items: center;
     }
+    .student-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
   </style>
 </head>
 <body data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>" data-menu-color="<?= h($_SESSION['theme.menu'] ?? 'light') ?>" data-layout="vertical">
@@ -430,6 +586,83 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
                 </div>
               </div>
             </div>
+
+            <?php if ($showStudentTahapStats): ?>
+            <div class="row g-3 mt-1">
+              <div class="col-12">
+                <div class="dash-card">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <h5 class="mb-0">Statistik Pelajar Aktif Mengikut Tahap Pengajian</h5>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <?php if ($studentTahapScopeLabel !== ''): ?>
+                        <span class="badge bg-info-subtle text-info-emphasis"><?= h($studentTahapScopeLabel) ?></span>
+                      <?php endif; ?>
+                      <span class="badge bg-primary-subtle text-primary-emphasis">
+                        Jumlah Pelajar: <?= h(number_format($studentTahapTotal)) ?>
+                      </span>
+                    </div>
+                  </div>
+
+                  <?php if (!empty($studentTahapStats)): ?>
+                    <div class="student-stats-grid">
+                      <?php foreach ($studentTahapStats as $idxTahap => $rowTahap): ?>
+                        <?php
+                          $tahap = trim((string)($rowTahap['tahap_pengajian'] ?? ''));
+                          $jumlah = (int)($rowTahap['jumlah'] ?? 0);
+                          if ($tahap === '') $tahap = 'Tidak Dinyatakan';
+                          $collapseId = 'prog-by-tahap-' . substr(md5($tahap . '|' . (string)$idxTahap), 0, 12);
+                          $programRows = $studentProgramByTahap[$tahap] ?? [];
+                        ?>
+                        <div class="kpi-card h-100">
+                          <div class="d-flex justify-content-between align-items-center gap-2">
+                            <div class="kpi-label mb-0"><?= h($tahap) ?></div>
+                            <button
+                              type="button"
+                              class="btn btn-link btn-sm p-0 text-decoration-none js-program-toggle"
+                              data-bs-target="#<?= h($collapseId) ?>"
+                              aria-expanded="false"
+                              aria-controls="<?= h($collapseId) ?>"
+                              data-label-show="Papar Program"
+                              data-label-hide="Hide Program">
+                              Papar Program
+                            </button>
+                          </div>
+                          <div class="kpi-value"><?= h(number_format($jumlah)) ?></div>
+                          <div class="kpi-sub">Pelajar Aktif</div>
+                          <div class="collapse mt-2" id="<?= h($collapseId) ?>">
+                            <?php if (!empty($programRows)): ?>
+                              <div class="table-responsive">
+                                <table class="table table-sm mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="small">Program</th>
+                                      <th class="small text-end">Jumlah</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <?php foreach ($programRows as $pr): ?>
+                                      <tr>
+                                        <td class="small"><?= h((string)$pr['program']) ?></td>
+                                        <td class="small text-end"><?= h(number_format((int)$pr['jumlah'])) ?></td>
+                                      </tr>
+                                    <?php endforeach; ?>
+                                  </tbody>
+                                </table>
+                              </div>
+                            <?php else: ?>
+                              <div class="small text-muted">Tiada data program.</div>
+                            <?php endif; ?>
+                          </div>
+                        </div>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php else: ?>
+                    <div class="muted-empty">Tiada data statistik pelajar aktif untuk dipaparkan.</div>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+            <?php endif; ?>
 
           </div>
           <?php if ($showSystemResources): ?>
@@ -614,6 +847,37 @@ addHealthCheck($healthChecks, t('dashboard_health_tz','Time & Timezone'), $tzSta
     btn?.addEventListener('click', function(e){
       e.preventDefault();
       refreshResources();
+    });
+  })();
+</script>
+<script>
+  (function(){
+    const toggles = document.querySelectorAll('.js-program-toggle[data-bs-target]');
+    if (!toggles.length) return;
+
+    if (!(window.bootstrap && window.bootstrap.Collapse)) return;
+
+    toggles.forEach(btn => {
+      const target = btn.getAttribute('data-bs-target') || '';
+      if (!target) return;
+      const el = document.querySelector(target);
+      if (!el) return;
+      const instance = window.bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+      const showLabel = btn.getAttribute('data-label-show') || 'Papar Program';
+      const hideLabel = btn.getAttribute('data-label-hide') || 'Hide Program';
+
+      const setLabel = (expanded) => {
+        btn.textContent = expanded ? hideLabel : showLabel;
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      };
+
+      setLabel(el.classList.contains('show'));
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        instance.toggle();
+      });
+      el.addEventListener('shown.bs.collapse', () => setLabel(true));
+      el.addEventListener('hidden.bs.collapse', () => setLabel(false));
     });
   })();
 </script>

@@ -2,7 +2,7 @@
 // includes/functions-db.php
 // ======================================
 // ✅ Funksi Database Tambahan - e-Prestasi
-// - Support Sybase: ehrmdb, ehrmdb_dev, stafdb
+// - Support Sybase: ehrmdb, ehrmdb_dev, stafdb, student
 // - Auto pilih DSN vs DBLIB ikut driver tersedia
 // - Fallback + ping connection
 // - Compat untuk PHP lama (tanpa str_ends_with)
@@ -230,6 +230,36 @@ function getSybaseEHRMDBDev(): ?\PDO
 
     $primary   = (PHP_OS_FAMILY === 'Windows') ? 'sybase_ehrmdb_dev_dsn' : 'sybase_ehrmdb_dev_dblib';
     $alternate = str_ends_with($primary, '_dsn') ? 'sybase_ehrmdb_dev_dblib' : 'sybase_ehrmdb_dev_dsn';
+
+    if (str_ends_with($primary, '_dsn') && !$hasOdbc)    { $primary = $alternate; }
+    if (str_ends_with($primary, '_dblib') && !$hasDblib) { $primary = $alternate; }
+
+    try {
+        $pdo = Database::getInstance($primary)->getConnection();
+        $pdo->query('select 1');
+        return $pdo;
+    } catch (\Throwable $e) {
+        try {
+            $pdo2 = Database::getInstance($alternate)->getConnection();
+            $pdo2->query('select 1');
+            return $pdo2;
+        } catch (\Throwable $e2) {
+            return null;
+        }
+    }
+}
+
+/**
+ * Auto-detect Sybase STUDENT (shortcut)
+ */
+function getSybaseStudent(): ?\PDO
+{
+    $drivers  = \PDO::getAvailableDrivers();
+    $hasOdbc  = in_array('odbc',  $drivers, true);
+    $hasDblib = in_array('dblib', $drivers, true);
+
+    $primary   = (PHP_OS_FAMILY === 'Windows') ? 'sybase_student_dsn' : 'sybase_student_dblib';
+    $alternate = str_ends_with($primary, '_dsn') ? 'sybase_student_dblib' : 'sybase_student_dsn';
 
     if (str_ends_with($primary, '_dsn') && !$hasOdbc)    { $primary = $alternate; }
     if (str_ends_with($primary, '_dblib') && !$hasDblib) { $primary = $alternate; }

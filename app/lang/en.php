@@ -119,7 +119,13 @@ return [
 'config_login_error_message'
                            => 'An error occurred during the login process. Please try again.',
 
-
+// Session idle timeout (global)
+'session_idle_title' => 'Still there?',
+'session_idle_text' => 'No activity for 10 minutes. Stay signed in?',
+'session_idle_stay_connected' => 'Stay Connected',
+'session_idle_logout_now' => 'Log Out',
+'session_idle_timeout_text' => 'Auto log out in 1 minute.',
+'session_idle_keepalive_failed' => 'Session refresh failed. You will be logged out.',
 /* =====================================================
  * PROFILE (profile_)
  * ===================================================== */
@@ -127,7 +133,7 @@ return [
 // =========================
 // Tajuk & Breadcrumb
 // =========================
-'profile_title'                 => 'Personal Information',
+'profile_title'                 => 'User Profile',
 'profile_breadcrumb'            => 'Profile',
 
 // =========================
@@ -146,16 +152,7 @@ return [
 // =========================
 'profile_no_staf'               => 'Staff No.',
 'profile_no_pekerja'            => 'Employee No.',
-'profile_no_matrik'             => 'Matrik No.',
-'profile_nama'                  => 'Name',
-'profile_no_kad_pengenalan'     => 'Identity Card No.',
-'profile_no_passport'           => 'Passport No.',
-'profile_jantina'               => 'Gender',
-'profile_bangsa'                => 'Ethnicity',
-'profile_agama'                 => 'Religion',
 'profile_jabatan'               => 'Department',
-'profile_telefon'               => 'Phone No.',
-'profile_fakulti'               => 'Faculty',
 'profile_emel'                  => 'Email',
 
 // =========================
@@ -170,7 +167,7 @@ return [
 // Tabs
 // =========================
 'profile_tabs_label'            => 'User profile tabs',
-'profile_tab_profil_pengguna'   => 'Personal Information',
+'profile_tab_profil_pengguna'   => 'User Profile',
 'profile_tab_login_aktiviti'    => 'Login Activity',
 'profile_tab_jejak_audit'       => 'Audit Trail',
 
@@ -216,12 +213,6 @@ return [
                                 => 'Network error. Please try again.',
 'profile_login_kill_error_no_session'
                                 => 'Invalid session ID',
-
-
-/* =====================================================
- * FAMILY (family_)
- * ===================================================== */
-'family_title'                 => 'Family Information',   
 
 /* =====================================================
  * SETTINGS (config result titles)
@@ -497,7 +488,6 @@ return [
 // Butang & Aksi
 // =========================
 'userGroup_btn_add_menu'            => 'Add Menu',
-'userGroup_btn_add_modul'            => 'Add Modul',
 'modul_tambah'                      => 'Add Module',
 'modul_tambah_title'                => 'Add Module',
 'modul_nama_ms'                     => 'Module Name (BM)',
@@ -724,28 +714,18 @@ return [
 /* =========================
  * TAB DATABASE
  * ========================= */
-'config_tab_db_header'                   => 'Sybase EHRM (Select One Only)',
-'config_tab_db_header_2'                 => 'Sybase ASIS (Select One Only)',
-'config_tab_db_sybase_header'            => 'Only one Sybase EHRM connection can be active at a time.',
-'config_tab_db_sybase_header_asis'       => 'Only one Sybase ASIS connection can be active at a time.',
+'config_tab_db_header'                   => 'Sybase (Select One Only)',
+'config_tab_db_sybase_header'            => 'Only one Sybase connection can be active at a time.',
 'config_tab_db_sybase_sambungan'         => 'Connection Name',
 'config_tab_db_sybase_keterangan'        => 'Description',
 
 'config_tab_db_sybase_nama_production'   => 'e-HRMDB (Production)',
 'config_tab_db_sybase_nama_production_penerangan'
-                                        => 'Primary database EHRM',
-
-'config_tab_db_sybase_nama_production_asis'   => 'SAP (Production)',
-'config_tab_db_sybase_nama_production_penerangan_asis'
-                                        => 'Primary database SAP',                                        
+                                        => 'Primary database',
 
 'config_tab_db_sybase_nama_development'  => 'e-HRMDB (Development)',
 'config_tab_db_sybase_nama_development_penerangan'
                                         => 'Development database',
-
-'config_tab_db_sybase_nama_development_asis'  => 'SAP (Development)',
-'config_tab_db_sybase_nama_development_penerangan_asis'
-                                        => 'Development database for SAP',
 
 'config_tab_db_sybase_smp'               => 'STAFDB',
 'config_tab_db_sybase_smp_penerangan'    => 'SMP database (no longer used)',
@@ -1207,12 +1187,7 @@ return [
 'faq_item_15_q' => 'Who should I contact for access or configuration issues?',
 'faq_item_15_a' => 'Contact your internal system administrator. Access, user-group, and system configuration issues usually require administrator privileges.',
 
-'session_idle_title' => 'Still there?',
-'session_idle_text' => 'No activity for 10 minutes. Stay signed in?',
-'session_idle_stay_connected' => 'Stay Connected',
-'session_idle_logout_now' => 'Log Out',
-'session_idle_timeout_text' => 'Auto log out in 1 minute.',
 'session_idle_timeout_title' => 'Session Ended',
 'session_idle_timeout_logout_now' => 'No response. The system will log you out now.',
-'session_idle_keepalive_failed' => 'Session refresh failed. You will be logged out.',
 ];
+

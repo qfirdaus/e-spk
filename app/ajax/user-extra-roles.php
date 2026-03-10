@@ -51,14 +51,6 @@ try {
     }
 
     $pdo = Database::getInstance('mysql')->getConnection();
-    $currentUserModel = new User($pdo);
-    $currentProfile = $currentUserModel->getProfile($_SESSION['f_stafID'] ?? '');
-    $isSuperAdmin = $currentProfile && function_exists('is_user_super_admin') && is_user_super_admin($currentProfile, $pdo);
-    if (!$isSuperAdmin) {
-        http_response_code(403);
-        echo json_encode(['error' => true, 'message' => 'Anda tidak mempunyai kebenaran untuk mengurus peranan tambahan.'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
 
     // Load target user data (stafID + primary role)
     $stmtU = $pdo->prepare("SELECT f_userID, f_stafID, f_groupID FROM tbl_m_user WHERE f_userID = :uid LIMIT 1");

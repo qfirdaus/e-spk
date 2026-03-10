@@ -183,15 +183,20 @@ class SidebarController
             $this->profile = $this->userModel->getProfile($f_stafID);
             if (!is_array($this->profile)) {
                 $this->profile = [];
-            } else {
-                $defaultGroupId = isset($this->profile['f_groupID']) ? (int)$this->profile['f_groupID'] : null;
-                $activeGroupId = isset($_SESSION['group_active_id']) ? (int)$_SESSION['group_active_id'] : 0;
-                $this->groupId = ($activeGroupId > 0) ? $activeGroupId : $defaultGroupId;
-                $this->groupKod = $this->profile['f_groupKod'] ?? null; // display/logging only
             }
+
+            $defaultGroupId = isset($this->profile['f_groupID']) ? (int)$this->profile['f_groupID'] : 0;
+            $activeGroupId = isset($_SESSION['group_active_id']) ? (int)$_SESSION['group_active_id'] : 0;
+            $sessionDefaultGroupId = isset($_SESSION['group_default_id']) ? (int)$_SESSION['group_default_id'] : 0;
+            $this->groupId = $activeGroupId > 0 ? $activeGroupId : ($defaultGroupId > 0 ? $defaultGroupId : $sessionDefaultGroupId);
+            $this->groupKod = $this->profile['f_groupKod'] ?? ($_SESSION['f_groupKod'] ?? null); // display/logging only
         } catch (Throwable $e) {
             error_log("SidebarController: Failed to get user profile for f_stafID={$f_stafID}: " . $e->getMessage());
             $this->profile = [];
+            $activeGroupId = isset($_SESSION['group_active_id']) ? (int)$_SESSION['group_active_id'] : 0;
+            $sessionDefaultGroupId = isset($_SESSION['group_default_id']) ? (int)$_SESSION['group_default_id'] : 0;
+            $this->groupId = $activeGroupId > 0 ? $activeGroupId : $sessionDefaultGroupId;
+            $this->groupKod = $_SESSION['f_groupKod'] ?? null;
         }
     }
 
@@ -466,7 +471,6 @@ class SidebarController
         return null; // No notifications for now
     }
 }
-
 
 
 

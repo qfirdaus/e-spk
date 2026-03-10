@@ -13,3 +13,4 @@ echo json_encode([
     'ts' => time(),
 ], JSON_UNESCAPED_UNICODE);
 exit;
+

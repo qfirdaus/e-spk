@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../includes/init.php';
 require_login();
 require_once __DIR__ . '/../controllers/ProfileController.php';
+require_once __DIR__ . '/../classes/User.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -31,6 +32,24 @@ try {
 if (!$pdo) {
     http_response_code(500);
     echo json_encode(['error' => 'Database unavailable']);
+    exit;
+}
+
+// Authorization: metadata view is only for System Administrator (Super Admin)
+$canViewMeta = false;
+try {
+    $sid = (string)($_SESSION['f_stafID'] ?? '');
+    $profileForAccess = (new User($pdo))->getProfile($sid) ?: ($_SESSION['user'] ?? []);
+    $canViewMeta = function_exists('is_user_super_admin')
+        ? is_user_super_admin((array)$profileForAccess, $pdo)
+        : false;
+} catch (Throwable $e) {
+    $canViewMeta = false;
+}
+
+if (!$canViewMeta) {
+    http_response_code(403);
+    echo json_encode(['error' => 'forbidden', 'message' => 'Paparan metadata hanya untuk Sistem Administrator sahaja.']);
     exit;
 }
 

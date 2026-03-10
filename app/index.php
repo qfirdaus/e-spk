@@ -66,7 +66,7 @@ $attempts_left  = $attempts_left ?? 3;
 
 <header class="bg-white shadow">
   <div class="max-w-7xl mx-auto p-4">
-    <img src="<?= base_url('assets/images/logo_upnm.png') ?>" alt="UPNM Logo" class="w-44">
+    <img src="<?= base_url('assets/images/e-prestasi-logo-upnm.png') ?>" alt="UPNM Logo" class="w-44">
     <nav class="flex space-x-4 border-b border-gray-300 mt-4" id="navTabs">
       <button class="tab-btn px-4 py-2 font-semibold text-[#0babcd] border-b-4 border-[#0babcd]"><?= __('login_nav.home') ?></button>
       <button @click="$store.faq?.showFaq?.()" class="tab-btn px-4 py-2 text-[#0babcd] hover:font-semibold hover:border-b-4 hover:border-[#0babcd]"><?= __('login_nav.faq') ?></button>
@@ -101,7 +101,7 @@ $attempts_left  = $attempts_left ?? 3;
   <!-- Login Form -->
   <div class="bg-white p-8 rounded-xl shadow">
     <div class="text-center mb-6">
-      <img src="<?= base_url('assets/images/logo_upnm.png') ?>" class="mx-auto h-20 mb-2" alt="Logo">
+      <img src="<?= base_url('assets/images/e-prestasi-logo.png') ?>" class="mx-auto h-20 mb-2" alt="Logo">
       <h2 class="text-lg font-bold text-gray-700"><?= __('login_heading') ?></h2>
     </div>
     
@@ -137,7 +137,7 @@ $attempts_left  = $attempts_left ?? 3;
     </form>
 
     <p class="text-center text-gray-400 text-xs mt-10">
-      <?= htmlspecialchars(app_config('system.name', 'MyHEPA')) ?> <?= htmlspecialchars(app_config('system.version', '1.0.0')) ?><br>
+      <?= htmlspecialchars(app_config('system.name', 'e-Prestasi')) ?> <?= htmlspecialchars(app_config('system.version', '2.0.0')) ?><br>
       <?= htmlspecialchars(app_config('system.author', 'Hak Cipta © UPNM')) ?>
     </p>
 

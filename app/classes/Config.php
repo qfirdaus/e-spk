@@ -155,30 +155,20 @@ class Config extends BaseModel
      * ========================= */
 
     /** Set base key aktif, contoh: 'sybase_ehrmdb' | 'sybase_ehrmdb_dev' | 'sybase_stafdb' */
-    public function setSybaseActiveBase(string $base, bool $isAsis = false): bool
+    public function setSybaseActiveBase(string $base): bool
     {
-        // validate ringkas untuk semua DB yang dibenarkan
-        $allowed = [
-            'sybase_ehrmdb', 'sybase_ehrmdb_dev', 'sybase_stafdb',
-            'sybase_asisdb', 'sybase_asisdb_dev'
-        ];
-
+        // validate ringkas
+        $allowed = ['sybase_ehrmdb', 'sybase_ehrmdb_dev', 'sybase_stafdb'];
         if (!in_array($base, $allowed, true)) {
             return false;
         }
-
-        // pilih key berdasarkan sama ada ASIS atau EHRM
-        $key = $isAsis ? 'SYBASE_ACTIVE_BASE_ASIS' : 'SYBASE_ACTIVE_BASE';
-
-        // simpan ke DB config
-        return $this->setValue($key, $base, 'system');
+        return $this->setValue('SYBASE_ACTIVE_BASE', $base, 'system');
     }
 
     /** Dapatkan base key aktif; jika tiada pulangkan default (null jika tak diberi) */
-    public function getSybaseActiveBase(?string $default = null, bool $isAsis = false): ?string
+    public function getSybaseActiveBase(?string $default = null): ?string
     {
-        $key = $isAsis ? 'SYBASE_ACTIVE_BASE_ASIS' : 'SYBASE_ACTIVE_BASE';
-        $val = $this->getValue($key, null, 'system');
+        $val = $this->getValue('SYBASE_ACTIVE_BASE', null, 'system');
         if ($val === null || $val === '') return $default;
         return $val;
     }

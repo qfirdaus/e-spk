@@ -9,12 +9,22 @@ ob_start();
 require_once __DIR__ . '/../includes/init.php';
 require_login();
 require_once __DIR__ . '/../controllers/ProfileController.php';
+require_once __DIR__ . '/../classes/User.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 $controller = new ProfileController();
 $limit = defined('PROFILE_CONFIG') && isset(PROFILE_CONFIG['AUDIT_EVENTS_LIMIT']) ? PROFILE_CONFIG['AUDIT_EVENTS_LIMIT'] : 200;
 $rows = $controller->getAuditEvents((int)$limit);
+$pdo = Database::pdoMysql();
+$profileForAccess = [];
+try {
+    $sid = (string)($_SESSION['f_stafID'] ?? '');
+    $profileForAccess = (new User($pdo))->getProfile($sid) ?: ($_SESSION['user'] ?? []);
+} catch (Throwable $e) {
+    $profileForAccess = $_SESSION['user'] ?? [];
+}
+$canViewMeta = function_exists('is_user_super_admin') ? is_user_super_admin((array)$profileForAccess, $pdo) : false;
 
 function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 function safeDateTime(?string $s): ?DateTime { if (empty($s)) return null; try { return new DateTime($s); } catch (Throwable $e) { return null; } }
@@ -57,10 +67,12 @@ foreach ($rows as $event) {
     $hasChangeSets = !empty($event['change_sets']) && is_array($event['change_sets']) && count($event['change_sets']) > 0;
     $hasAnyData = $hasMetadata || $hasChangeSets;
 
-    if ($hasAnyData) {
+    if ($hasAnyData && $canViewMeta) {
         // Only include event id to avoid sending large meta/change-set payloads in table
         $eid = h((string)($event['id'] ?? ''));
         $actions = '<button class="btn btn-sm btn-outline-primary btn-open-audit-meta" type="button" data-event-id="' . $eid . '" title="' . h((__('profile_audit_view_meta') ?: 'Lihat metadata')) . '"><i class="ri-information-line"></i></button>';
+    } elseif ($hasAnyData && !$canViewMeta) {
+        $actions = '<button class="btn btn-sm btn-outline-secondary btn-audit-meta-denied" type="button" title="' . h((__('profile_audit_meta_admin_only') ?: 'Paparan metadata hanya untuk Sistem Administrator sahaja.')) . '"><i class="ri-lock-line"></i></button>';
     } else {
         $actions = '<span class="text-muted">—</span>';
     }
@@ -138,4 +150,3 @@ if ($stray !== '') { $payload['_raw_output_b64'] = base64_encode($stray); }
 
 echo json_encode($payload, JSON_UNESCAPED_UNICODE);
 exit;
-

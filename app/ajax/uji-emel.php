@@ -13,8 +13,9 @@ $pdo_mysql = Database::getInstance('mysql')->getConnection();
 $userModel = new User($pdo_mysql);
 $f_stafID = $_SESSION['f_stafID'] ?? null;
 $profile = $f_stafID ? $userModel->getProfile($f_stafID) : [];
-$isSuperAdmin = $profile && function_exists('is_user_super_admin') && is_user_super_admin($profile, $pdo_mysql);
-if (!$isSuperAdmin) {
+$userGroupId = (int)($profile['f_groupID'] ?? 0);
+
+if ($userGroupId !== PRESTASI_ROLE_ID_ADM_SA) {
     echo json_encode([
         'success' => false,
         'message' => 'Akses ditolak. Hanya Super Admin dibenarkan.'
