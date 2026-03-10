@@ -728,7 +728,7 @@ return [
  * TAB DATABASE
  * ========================= */
 'config_tab_db_header'                   => 'Sybase (Select One Only)',
-'config_tab_db_sybase_header'            => 'Only one Sybase connection can be active at a time.',
+'config_tab_db_sybase_header'            => 'Only one Sybase EHRM connection can be active at a time.',
 'config_tab_db_sybase_sambungan'         => 'Connection Name',
 'config_tab_db_sybase_keterangan'        => 'Description',
 
@@ -738,6 +738,19 @@ return [
 
 'config_tab_db_sybase_nama_development'  => 'e-HRMDB (Development)',
 'config_tab_db_sybase_nama_development_penerangan'
+                                        => 'Development database',
+
+'config_tab_db_header_2'                   => 'Sybase ASIS (Select One Only)',
+'config_tab_db_sybase_header_asis'            => 'Only one Sybase ASIS connection can be active at a time.',
+'config_tab_db_sybase_sambungan'         => 'Connection Name',
+'config_tab_db_sybase_keterangan'        => 'Description',
+
+'config_tab_db_sybase_nama_production_asis'   => 'ASISDB (Production)',
+'config_tab_db_sybase_nama_production_penerangan_asis'
+                                        => 'Primary database',
+
+'config_tab_db_sybase_nama_development_asis'  => 'ASISDB (Development)',
+'config_tab_db_sybase_nama_development_penerangan_asis'
                                         => 'Development database',
 
 'config_tab_db_sybase_smp'               => 'STAFDB',

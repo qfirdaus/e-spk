@@ -364,7 +364,7 @@ require_once __DIR__ . '/../includes/functions-page.php';
                           <div class="col-sm-4">
                               <label class="col-form-label text-nowrap">
                               <?= h(tr('profile_dokumen_akaun','Dokumen Akaun')) ?>
-                              </label>
+                              </label> <i class="ri-information-line me-2"></i>
                               <br>
                               <small class="text-danger">
                               <?= h(tr('profile_dokumen_akaun_note','(Sila sertakan Penyata No. Akaun Bank (Aktif) dalam format JPG/JPEG/PDF, maks 5MB)')) ?>

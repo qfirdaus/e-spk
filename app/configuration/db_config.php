@@ -6,9 +6,9 @@ return [
     // ===================================================
     'mysql' => [
         'driver' => 'mysql',
-        'dsn'    => 'mysql:host=172.16.2.141;dbname=emadanidb;charset=utf8mb4',
-        'user'   => 'academic', 
-        'pass'   => 'Academic@2025?',
+        'dsn'    => 'mysql:host=172.16.2.141;dbname=ehepadb;charset=utf8mb4',
+        'user'   => 'sokongan', 
+        'pass'   => '_Sok0ng@n@2025?',
     ],
 
     // ===================================================
@@ -78,7 +78,7 @@ return [
     // ===================================================
 
     // 🔸 via dblib (Docker/Linux)
-    'sybase_student_dblib' => [
+    'sybase_asisdb_dblib' => [
         'driver' => 'dblib',
         'dsn'    => 'dblib:host=172.16.2.14:5004;dbname=asisdb',
         'user'   => 'dba_student',
@@ -86,12 +86,30 @@ return [
     ],
 
     // 🔸 via DSN (Windows/Pejabat)
-    'sybase_student_dsn' => [
+    'sybase_asisdb_dsn' => [
         'driver' => 'odbc',
-        'dsn'    => 'odbc:dsn_sybase_student',
+        'dsn'    => 'odbc:dsn_sybase_asisdb',
         'user'   => 'dba_student',
         'pass'   => 'mnpu123',
     ],
 
+    // ===================================================
+    // ✅ Sybase: ASISDB (Development) 172.16.2.8
+    // ===================================================
 
+    // 🔸 via dblib (Docker/Linux)
+    'sybase_asisdb_dev_dblib' => [
+        'driver' => 'dblib',
+        'dsn'    => 'dblib:host=172.16.2.8:7000;dbname=asisdb',
+        'user'   => 'dba_student',
+        'pass'   => 'mnpu123',
+    ],
+
+    // 🔸 via DSN (Windows/Dev)
+    'sybase_asisdb_dev_dsn' => [
+        'driver' => 'odbc',
+        'dsn'    => 'odbc:dsn_sybase_asisdb_dev',
+        'user'   => 'dba_student',
+        'pass'   => 'mnpu123',
+    ],
 ];
