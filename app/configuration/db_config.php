@@ -6,9 +6,9 @@ return [
     // ===================================================
     'mysql' => [
         'driver' => 'mysql',
-        'dsn'    => 'mysql:host=172.16.2.141;dbname=emadanidb;charset=utf8mb4',
-        'user'   => 'academic', 
-        'pass'   => 'Academic@2025?',
+        'dsn'    => 'mysql:host=172.16.2.141;dbname=ehepadb;charset=utf8mb4',
+        'user'   => 'sokongan', 
+        'pass'   => '_Sok0ng@n@2025?',
     ],
 
     // ===================================================

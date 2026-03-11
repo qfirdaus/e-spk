@@ -10,7 +10,7 @@ require_once __DIR__ . '/../classes/Config.php';
 
 class LoginController
 {
-    private const STUDENT_GROUP_ID = 24;
+    private const STUDENT_GROUP_ID = 27;
     private const STUDENT_AVATAR_BASE_URL = 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/';
 
     private User $userModel;
@@ -239,7 +239,7 @@ class LoginController
             $studentGroupKod = 'STUDENT';
             $studentGroupName = 'Student';
 
-            // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=24)
+            // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=27)
             try {
                 $g = $this->pdo->prepare("SELECT f_groupKod, f_groupName FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
                 $g->execute([':gid' => $studentGroupId]);
