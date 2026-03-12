@@ -239,7 +239,7 @@ class LoginController
             $studentGroupKod = 'APPLICANT';
             $studentGroupName = 'Pemohon';
 
-            // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=24)
+            // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=27)
             try {
                 $g = $this->pdo->prepare("SELECT f_groupKod, f_groupName FROM tbl_m_group WHERE f_groupID = :gid LIMIT 1");
                 $g->execute([':gid' => $studentGroupId]);

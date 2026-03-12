@@ -612,6 +612,7 @@ const MenuAccess = {
         }
         return;
       }
+    GroupState.setMenuGroupID(resolvedGroupID);
 
     const hidEl = document.getElementById('em_groupID');
     const infoEl = document.getElementById('em_groupInfo');
@@ -668,7 +669,12 @@ const MenuAccess = {
 
     const gidFromCtx = GroupState.getMenuGroupID();
     const gidFromHidden = Number.parseInt(document.getElementById('em_groupID')?.value || '0', 10) || 0;
-    const groupID = gidFromCtx || gidFromHidden || 0;
+    const gidFromBtn = (() => {
+      const btn = GroupState.getLastMenuBtn() || document.querySelector('.view-menu[data-group-id]');
+      const v = btn ? parseInt(btn.getAttribute('data-group-id') || '0', 10) : 0;
+      return Number.isFinite(v) && v > 0 ? v : 0;
+    })();
+    const groupID = gidFromCtx || gidFromHidden || gidFromBtn || 0;
 
     const payload = {
       groupID,

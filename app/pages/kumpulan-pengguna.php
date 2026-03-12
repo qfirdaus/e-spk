@@ -813,6 +813,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
     }
     .dt-top-right { gap: 0.5rem !important; }
     .dt-top-right button + button { margin-left: 0 !important; }
+    #btnAddMenuPage, #btnAddModule, #btnAddGroup {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+      border-color: #1d4ed8 !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    }
+    #btnAddMenuPage:hover, #btnAddModule:hover, #btnAddGroup:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+      border-color: #1e40af !important;
+      color: #ffffff !important;
+    }
+    #btnAddMenuPage i, #btnAddModule i, #btnAddGroup i {
+      color: #ffffff !important;
+      opacity: 1 !important;
+    }
+    html[data-bs-theme="dark"] #btnAddMenuPage,
+    html[data-bs-theme="dark"] #btnAddModule,
+    html[data-bs-theme="dark"] #btnAddGroup {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important;
+      border-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
 
 
   </style>
@@ -1085,7 +1108,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
       <div class="modal-body">
         <form id="menuEditForm" autocomplete="off">
           <input type="hidden" name="menuID" id="em_menuID">
-          <input type="hidden" name="groupID" id="em_groupID" value="<?= $_SESSION['group_active_id'] ?>" >
+          <input type="hidden" name="groupID" id="em_groupID">
+          <div class="mb-3">
+            <label class="form-label"><?= h(__('userGroup_field_group')) ?></label>
+            <input type="text" class="form-control" id="em_groupInfo" readonly>
+          </div>
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label"><?= h(__('userGroup_field_modul')) ?></label>
