@@ -10,7 +10,7 @@ require_once __DIR__ . '/../classes/Config.php';
 
 class LoginController
 {
-    private const STUDENT_GROUP_ID = 24;
+    private const STUDENT_GROUP_ID = 27; //Pemohon - pastikan wujud dalam tbl_m_group untuk consistency dengan sistem sedia ada.
     private const STUDENT_AVATAR_BASE_URL = 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/';
 
     private User $userModel;
@@ -194,7 +194,7 @@ class LoginController
         }
 
         try {
-            $pdoStudent = Database::getInstance('sybase_student')->getConnection();
+            $pdoStudent = Database::getInstance('sybase_asisdb')->getConnection();
             $sql = "SELECT TOP 1
                         matrik,
                         fakulti,
@@ -236,8 +236,8 @@ class LoginController
             $tel = trim((string)($student['notel_terkini'] ?? ''));
             $studentAvatarUrl = $this->getStudentAvatarUrl($matrik);
             $studentGroupId = self::STUDENT_GROUP_ID;
-            $studentGroupKod = 'STUDENT';
-            $studentGroupName = 'Student';
+            $studentGroupKod = 'APPLICANT';
+            $studentGroupName = 'Pemohon';
 
             // Ambil metadata group dari MySQL jika wujud (tbl_m_group.f_groupID=24)
             try {

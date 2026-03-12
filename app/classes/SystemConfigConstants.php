@@ -54,7 +54,8 @@ class SystemConfigConstants {
     'ri-dashboard-line',
     'ri-user-fill',
     'ri-user-line',
-    'ri-settings-fill',
+    'ri-settings-fill',    
+    'ri-settings5-fill',
     'ri-settings-line',
     'ri-file-list-fill',
     'ri-file-list-line',
@@ -88,6 +89,14 @@ class SystemConfigConstants {
     'ri-home-line',
     'ri-arrow-right-s-fill',
     'ri-arrow-right-s-line',
+    'ri-shield-user-line',
+    'ri-shield-user-fill',
+    'ri-sticky-note-line',
+    'ri-sticky-note-fill',
+    'ri-profile-line',
+    'ri-profile-fill',
+    'ri-account-circle-fill',
+    'ri-account-circle-line',
   ];
   
   // Audit Event Types

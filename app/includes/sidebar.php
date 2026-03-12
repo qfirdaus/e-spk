@@ -5,7 +5,7 @@
  * Displays user profile, modules, and menu items based on user access.
  * Uses SidebarController for business logic and implements security validations.
  * 
- * @package e-prestasi
+ * @package MyHepa
  * @author UPNM, Seksyen Aplikasi Digital, BTMK
  */
 
@@ -185,80 +185,9 @@ $notificationCount = $sidebarController->getNotificationCount();
 
 <!-- ========== Left Sidebar Start ========== -->
 <div class="leftside-menu" id="leftside-menu" data-menu-color="<?= $sidebarColor ?>" data-sidebar-loaded="true">
+
 <style>
-/* Sidebar Loading State */
-#leftside-menu[data-sidebar-loaded="false"] .sidebar-loading-overlay {
-    display: flex;
-}
-#leftside-menu[data-sidebar-loaded="true"] .sidebar-loading-overlay {
-    display: none;
-}
-.sidebar-loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(2px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    flex-direction: column;
-    gap: 12px;
-}
-html[data-bs-theme="dark"] .sidebar-loading-overlay {
-    background: rgba(0, 0, 0, 0.75);
-}
-.sidebar-loading-spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    border-top-color: #0d6efd;
-    border-radius: 50%;
-    animation: sidebar-spin 0.8s linear infinite;
-}
-html[data-bs-theme="dark"] .sidebar-loading-spinner {
-    border-color: rgba(255, 255, 255, 0.1);
-    border-top-color: #0d6efd;
-}
-.sidebar-loading-text {
-    font-size: 0.875rem;
-    color: #6c757d;
-    opacity: 0.8;
-}
-html[data-bs-theme="dark"] .sidebar-loading-text {
-    color: #adb5bd;
-}
-@keyframes sidebar-spin {
-    to { transform: rotate(360deg); }
-}
-/* Sidebar Chart Icon (Dashboard) */
-.side-nav .sidebar-chart-icon {
-    position: absolute;
-    right: calc(var(--ct-menu-item-padding-x) * 1.5);
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: calc(var(--ct-menu-item-font-size) * 1.1);
-    color: var(--ct-menu-item-color);
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-}
-.side-nav .sidebar-chart-icon:hover {
-    opacity: 1;
-}
-/* Sidebar Logout Icon */
-.side-nav .sidebar-logout-icon {
-    position: absolute;
-    right: calc(var(--ct-menu-item-padding-x) * 1.5);
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: calc(var(--ct-menu-item-font-size) * 1.1);
-    color: var(--bs-danger);
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-.side-nav .sidebar-logout-icon:hover {
-    opacity: 1;
-}
+
 </style>
 <div class="sidebar-loading-overlay">
     <div class="sidebar-loading-spinner"></div>
@@ -342,10 +271,9 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
                 $modulId = 'sidebarModul' . $modulID;
                 
                 // ✅ VALIDATE ICON CLASS
-                $icon = validate_sidebar_icon($modul['f_icon'] ?? 'ri-folder-fill');
-                
+                $icon = validate_sidebar_icon(trim($modul['f_icon']) ?? 'ri-folder-fill');
                 $nama = htmlspecialchars($modul['modulName'] ?? '', ENT_QUOTES, 'UTF-8');
-                
+           
                 // ✅ USE BATCH LOADED MENUS (no N+1 query)
                 $childs = $modulMenus[$modulID] ?? [];
                 if (empty($childs)) continue;

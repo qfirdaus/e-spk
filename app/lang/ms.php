@@ -21,7 +21,7 @@ return [
 
 // New dashboard-specific keys (dashboard_ prefix)
 'dashboard_title'               => 'Dashboard Strategik',
-'dashboard_breadcrumb'          => 'Dashboard',
+'dashboard_breadcrumb'          => 'Papan Pemuka',
 'dashboard_all_teras'           => 'Semua Teras',
 'dashboard_deviation'           => 'Penyimpangan:',
 'dashboard_no_data_category'    => 'Tiada data untuk kategori ini.',
@@ -135,6 +135,8 @@ return [
 // =========================
 'profile_title'                 => 'Profil Pengguna',
 'profile_breadcrumb'            => 'Profil',
+'peribadi_title'                 => 'Peribadi',
+'peribadi_breadcrumb'            => 'Peribadi',
 
 // =========================
 // Status
@@ -1104,7 +1106,6 @@ return [
  * DASHBOARD (ASAS)
  * ===================================================== */
 'dashboard_title' => 'Dashboard',
-'dashboard_breadcrumb' => 'Dashboard',
 'dashboard_welcome' => 'Selamat datang',
 'dashboard_last_login' => 'Log masuk terakhir',
 'dashboard_tabs_label' => 'Tab dashboard',

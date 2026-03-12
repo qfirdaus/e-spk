@@ -2,6 +2,113 @@
     --card-radius: 18px;
     --ring: 3px solid rgba(0,0,0,.06);
 }    
+
+/* Sidebar Loading State */
+#leftside-menu[data-sidebar-loaded="false"] .sidebar-loading-overlay {
+    display: flex;
+}
+#leftside-menu[data-sidebar-loaded="true"] .sidebar-loading-overlay {
+    display: none;
+}
+.sidebar-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    flex-direction: column;
+    gap: 12px;
+}
+html[data-bs-theme="dark"] .sidebar-loading-overlay {
+    background: rgba(0, 0, 0, 0.75);
+}
+.sidebar-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #0d6efd;
+    border-radius: 50%;
+    animation: sidebar-spin 0.8s linear infinite;
+}
+html[data-bs-theme="dark"] .sidebar-loading-spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: #0d6efd;
+}
+.sidebar-loading-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    opacity: 0.8;
+}
+html[data-bs-theme="dark"] .sidebar-loading-text {
+    color: #adb5bd;
+}
+@keyframes sidebar-spin {
+    to { transform: rotate(360deg); }
+}
+/* Sidebar Chart Icon (Dashboard) */
+.side-nav .sidebar-chart-icon {
+    position: absolute;
+    right: calc(var(--ct-menu-item-padding-x) * 1.5);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: calc(var(--ct-menu-item-font-size) * 1.1);
+    color: var(--ct-menu-item-color);
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+.side-nav .sidebar-chart-icon:hover {
+    opacity: 1;
+}
+/* Sidebar Logout Icon */
+.side-nav .sidebar-logout-icon {
+    position: absolute;
+    right: calc(var(--ct-menu-item-padding-x) * 1.5);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: calc(var(--ct-menu-item-font-size) * 1.1);
+    color: var(--bs-danger);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+.side-nav .sidebar-logout-icon:hover {
+    opacity: 1;
+}
+
+.side-nav-item > a.active {
+    background-color: #007bff;  /* biru terang contoh */
+    color: #fff;                 /* teks putih supaya jelas */
+    font-weight: bold;           /* optional, nampak lagi menonjol */
+}                
+.side-nav-second-level li a {
+    display: block;           /* pastikan dia ambil ruang penuh */
+    white-space: normal;      /* izinkan teks wrap */
+    word-break: break-word;   /* pecahkan perkataan panjang */
+    overflow-wrap: anywhere;  /* standard moden */
+}          
+.side-nav-second-level li a i {
+    margin-right: 8px;        /* jarak icon dengan teks */
+}
+
+.side-nav-second-level li a span {
+    display: inline;           /* atau inline-block, ikut keperluan */
+}    
+.side-nav-second-level {
+    max-width: 220px;       /* sesuaikan ikut sidebar */
+}  
+.side-nav-second-level li a.active {
+    background-color: #0056b3;  /* biru gelap contoh */
+    color: #fff;
+    font-weight: bold;
+}   
+.side-nav-item > a:hover,
+.side-nav-second-level li a:hover {
+    background-color: #cce5ff;  /* ringan supaya highlight lain dari active */
+    color: #000;
+}   
+
 .profile-card{
     overflow: hidden;
     border-radius: var(--card-radius);
