@@ -161,9 +161,9 @@ try {
   <meta name="csrf-token" content="<?= h($csrf) ?>">
   
   <!-- ✅ Select2 CSS (untuk dropdown) -->
-  <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>?v=<?= h($version) ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?> ?>" rel="stylesheet">
   <!-- ✅ Standard DataTables CSS (shared) -->
-  <link href="<?= base_url('assets/css/datatables-standard.css') ?>?v=<?= h($version) ?>" rel="stylesheet">
+  <link href="<?= base_url('assets/css/datatables-standard.css') ?> ?>" rel="stylesheet">
   
   <!-- ✅ Senarai APC Admin CSS (untuk table, dropdown, textbox styling) -->
   
@@ -2317,6 +2317,7 @@ try {
     // Remove existing buttons jika ada
     $('#btnSyncSybase').remove();
     $('#btnAddUser').remove();
+    $('#btnImportStudent').remove();    
     
     // Button Sync
     if (!document.getElementById('btnSyncSybase')) {
@@ -2459,10 +2460,10 @@ try {
           '<i class="ri-user-add-line me-1"></i> <?= h(__('userList_add_button')) ?>' +
         '</button>');
       
-      // Append button ke akhir topRight container (kanan sekali, selepas btnSyncSybase jika ada)
+      // Append button ke akhir topRight container (kanan sekali, selepas btnImportStudent jika ada)
       if ($topRight.length) {
-        if (document.getElementById('btnSyncSybase')) {
-          $('#btnSyncSybase').after($addBtn);
+        if (document.getElementById('btnImportStudent')) {
+          $('#btnImportStudent').after($addBtn);
         } else {
           $topRight.append($addBtn);
         }
@@ -2470,8 +2471,8 @@ try {
         // Fallback: append ke filter jika topRight tidak wujud
         const $filter = $('#userDT_filter');
         if ($filter.length) {
-          if (document.getElementById('btnSyncSybase')) {
-            $('#btnSyncSybase').after($addBtn);
+          if (document.getElementById('btnImportStudent')) {
+            $('#btnImportStudent').after($addBtn);
           } else {
             $filter.append($addBtn);
           }

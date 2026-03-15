@@ -19,6 +19,7 @@ class TetapanSistemController {
 
   /** @var ?string base key sybase aktif, cth: 'sybase_ehrmdb' */
   public ?string $active_sybase_name = null;
+  public ?string $active_sybase_asis_name = null;
 
   private PDO $pdo;
   private Config $configModel;
@@ -40,14 +41,24 @@ class TetapanSistemController {
     $this->db_configs         = require __DIR__ . '/../configuration/db_config.php';
     $this->active_db_flags    = $this->getActiveDBConfig();
     $this->active_sybase_name = $this->findActiveSybaseName(); // base key, contoh 'sybase_ehrmdb'
+    $this->active_sybase_asis_name = $this->findActiveSybaseAsisName();
 
     // Selaraskan flags dengan sumber SSoT (session/constant/DB)
-    if ($this->active_sybase_name) {
-      $logical = $this->baseToLogical($this->active_sybase_name);
-      if ($logical) {
-        $this->active_db_flags = ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-        $this->active_db_flags[$logical] = true;
-      }
+    $activeLogical      = $this->active_sybase_name      ? $this->baseToLogical($this->active_sybase_name) : null;
+    $activeLogical_ASIS = $this->active_sybase_asis_name ? $this->baseToLogical($this->active_sybase_asis_name) : null;
+
+    $this->active_db_flags = [
+        'ehrmdb'       => false,
+        'ehrmdb_dev'   => false,
+        'asisdb'       => false,
+        'asisdb_dev'   => false,
+        'stafdb'       => false,
+    ];
+
+    foreach ([$activeLogical, $activeLogical_ASIS] as $logical) {
+        if ($logical) {
+            $this->active_db_flags[$logical] = true;
+        }
     }
   }
 
@@ -309,39 +320,77 @@ class TetapanSistemController {
       'ehrmdb'     => 'sybase_ehrmdb',
       'ehrmdb_dev' => 'sybase_ehrmdb_dev',
       'stafdb'     => 'sybase_stafdb',
+      'asisdb'     => 'sybase_asisdb',
+      'asisdb_dev' => 'sybase_asisdb_dev',
       default      => null,
     };
   }
 
   /** Baca flags JSON untuk paparan */
-  public function getActiveDBConfig(): array {
-    $path = __DIR__ . '/../configuration/config_db_active.json';
-    if (is_file($path)) {
-      try {
-        $content = file_get_contents($path);
-        if ($content === false) {
-          error_log("[TetapanSistem] Failed to read config file: {$path}");
-          return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-        }
-        $data = json_decode($content, true);
-        if (!is_array($data)) {
-          error_log("[TetapanSistem] Invalid JSON in config file: {$path}");
-          return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-        }
-        $data += ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-        return array_intersect_key($data, ['ehrmdb'=>1,'ehrmdb_dev'=>1,'stafdb'=>1]);
-      } catch (\Throwable $e) {
-        error_log("[TetapanSistem] Error reading config file: " . $e->getMessage());
-        return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-      }
-    }
-    return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  // public function getActiveDBConfig(): array {
+  //   $path = __DIR__ . '/../configuration/config_db_active.json';
+  //   if (is_file($path)) {
+  //     try {
+  //       $content = file_get_contents($path);
+  //       if ($content === false) {
+  //         error_log("[TetapanSistem] Failed to read config file: {$path}");
+  //         return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  //       }
+  //       $data = json_decode($content, true);
+  //       if (!is_array($data)) {
+  //         error_log("[TetapanSistem] Invalid JSON in config file: {$path}");
+  //         return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  //       }
+  //       $data += ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  //       return array_intersect_key($data, ['ehrmdb'=>1,'ehrmdb_dev'=>1,'stafdb'=>1]);
+  //     } catch (\Throwable $e) {
+  //       error_log("[TetapanSistem] Error reading config file: " . $e->getMessage());
+  //       return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  //     }
+  //   }
+  //   return ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+  // }
+public function getActiveDBConfig(): array {
+  $path = __DIR__ . '/../configuration/config_db_active.json';
+
+  $default = [
+    'ehrmdb'       => false,
+    'ehrmdb_dev'   => false,
+    'stafdb'       => false,
+    'asisdb'       => false,
+    'asisdb_dev'   => false,
+  ];
+
+  if (!is_file($path)) {
+    return $default;
   }
+
+  try {
+    $content = file_get_contents($path);
+    if ($content === false) {
+      return $default;
+    }
+
+    $data = json_decode($content, true);
+    if (!is_array($data)) {
+      return $default;
+    }
+
+    // merge supaya semua key wujud
+    $data += $default;
+
+    // hanya pulangkan key yang kita support
+    return array_intersect_key($data, $default);
+
+  } catch (\Throwable $e) {
+    return $default;
+  }
+}
 
   /** Normalise pilihan POST */
   private function normalizeSelected(string $selected): string {
     return match (strtolower(trim($selected))) {
-      'ehrmdb','ehrmdb_dev','stafdb' => strtolower(trim($selected)),
+      'ehrmdb','ehrmdb_dev','stafdb','asisdb','asisdb_dev' => strtolower(trim($selected)),
       default => '',
     };
   }
@@ -373,6 +422,8 @@ class TetapanSistemController {
       'ehrmdb'     => (bool)($config['ehrmdb']     ?? false),
       'ehrmdb_dev' => (bool)($config['ehrmdb_dev'] ?? false),
       'stafdb'     => (bool)($config['stafdb']     ?? false),
+      'asisdb'     => (bool)($config['asisdb']     ?? false),
+      'asisdb_dev' => (bool)($config['asisdb_dev'] ?? false),
     ], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
     
     try {
@@ -392,17 +443,34 @@ class TetapanSistemController {
    * Uji sambungan Sybase berdasarkan **base key** (suffix auto oleh Database::getInstance)
    */
   public function testSybaseConnection(string $logicalName): bool {
-    $logicalName = $this->normalizeSelected($logicalName);
-    if ($logicalName === '') return false;
-    $base = $this->logicalToBase($logicalName);
-    if (!$base) return false;
-    try {
-      $pdo  = Database::getInstance($base)->getConnection(); // auto _dsn/_dblib
-      $stmt = $pdo->query('SELECT getdate()');
-      return $stmt !== false;
-    } catch (Throwable $e) {
+      $logicalName = $this->normalizeSelected($logicalName);
+      if ($logicalName === '') return false;
+
+      $baseDblib = $this->logicalToBase($logicalName) . '_dblib';
+      $baseOdbc  = $this->logicalToBase($logicalName) . '_dsn';
+
+      $connectionKeys = [];
+
+      if (PHP_OS_FAMILY === 'Windows') {
+          if (isset($this->db_configs[$baseOdbc])) $connectionKeys[] = $baseOdbc;
+          if (isset($this->db_configs[$baseDblib])) $connectionKeys[] = $baseDblib;
+      } else {
+          if (isset($this->db_configs[$baseDblib])) $connectionKeys[] = $baseDblib;
+          if (isset($this->db_configs[$baseOdbc])) $connectionKeys[] = $baseOdbc;
+      }
+
+      foreach ($connectionKeys as $base) {
+          if (!isset($this->db_configs[$base])) continue;
+          try {
+              $pdo = Database::getInstance($base)->getConnection();
+              $stmt = $pdo->query('SELECT getdate()');
+              if ($stmt !== false) return true;
+          } catch (\Throwable $e) {
+              //print_r($e->getMessage() . "\n"); die();
+              error_log("[DEBUG] Failed connection for {$base}: " . $e->getMessage());
+          }
+      }
       return false;
-    }
   }
 
   public function getMysqlInfo(): array {
@@ -412,43 +480,65 @@ class TetapanSistemController {
   /**
    * ❗API: Aktifkan Sybase base (persist ke DB + session + JSON).
    */
-  public function activateSybaseBase(string $logical): bool {
+  //public function activateSybaseBases(string $logical): bool {
+  public function activateSybaseBases(string $logicalEHRM, string $logicalASIS): bool {
     $this->ensureSession();
 
-    $selected = $this->normalizeSelected($logical);
-    if ($selected === '') {
+    $selectedEHRM = $this->normalizeSelected($logicalEHRM);
+    $selectedASIS = $this->normalizeSelected($logicalASIS);
+
+    if ($selectedEHRM === '' || $selectedASIS === '') {
       throw new \RuntimeException('Pilihan DB tidak sah.');
     }
-    if (!$this->testSybaseConnection($selected)) {
-      throw new \RuntimeException('Sambungan ke '.$selected.' gagal.');
+    
+    if (!$this->testSybaseConnection($selectedEHRM)) {
+      throw new \RuntimeException('Sambungan ke '.$selectedEHRM.' gagal.');
+    }
+    if (!$this->testSybaseConnection($selectedASIS)) {
+      throw new \RuntimeException('Sambungan ke '.$selectedASIS.' gagal.');
     }
 
-    $base = $this->logicalToBase($selected); // 'sybase_ehrmdb' | 'sybase_ehrmdb_dev' | 'sybase_stafdb'
+    $baseEHRM = $this->logicalToBase($selectedEHRM); // 'sybase_ehrmdb' | 'sybase_ehrmdb_dev' | 'sybase_stafdb'
+    $baseASIS = $this->logicalToBase($selectedASIS); // 'sybase_asisdb' | 'sybase_asisdb_dev'
 
     // Session (immediate effect)
-    $_SESSION['SYBASE_ACTIVE_BASE'] = $base;
+    $_SESSION['SYBASE_ACTIVE_BASE'] = $baseEHRM;
+    $_SESSION['SYBASE_ACTIVE_BASE_ASIS'] = $baseASIS;
 
     // Persist ke DB config (system)
     try {
-      if (method_exists($this->configModel, 'setSybaseActiveBase')) {
-        $this->configModel->setSybaseActiveBase($base);
-      } elseif (method_exists($this->configModel, 'setValue')) {
-        $this->configModel->setValue('SYBASE_ACTIVE_BASE', $base, 'system');
-      } else {
-        $this->configModel->saveGroup('system', ['SYBASE_ACTIVE_BASE' => $base]);
-      }
+        if (method_exists($this->configModel, 'setSybaseActiveBase')) {
+            $this->configModel->setSybaseActiveBase($baseEHRM,false);
+        } elseif (method_exists($this->configModel, 'setValue')) {
+            $this->configModel->setValue('SYBASE_ACTIVE_BASE', $baseEHRM, 'system');
+        } else {
+            $this->configModel->saveGroup('system', ['SYBASE_ACTIVE_BASE' => $baseEHRM]);
+        }
+
+        if (method_exists($this->configModel, 'setSybaseActiveBase')) {
+            $this->configModel->setSybaseActiveBase($baseASIS, true); // alternatif jika ada method
+        } elseif (method_exists($this->configModel, 'setValue')) {
+            $this->configModel->setValue('SYBASE_ACTIVE_BASE_ASIS', $baseASIS, 'system');
+        } else {
+            $this->configModel->saveGroup('system', ['SYBASE_ACTIVE_BASE_ASIS' => $baseASIS]);
+        }
     } catch (\Throwable $e) {
-      // abaikan; session sudah cover runtime
+        // abaikan; session sudah cover runtime
     }
 
     // JSON flags (hanya satu true)
-    $flags = ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
-    $flags[$selected] = true;
-    $this->saveActiveDBConfig($flags);
+    $flags = [
+        'ehrmdb'       => $selectedEHRM === 'ehrmdb',
+        'ehrmdb_dev'   => $selectedEHRM === 'ehrmdb_dev',
+        'asisdb'       => $selectedASIS === 'asisdb',
+        'asisdb_dev'   => $selectedASIS === 'asisdb_dev',
+        'stafdb'       => false,
+    ];
 
-    // Refresh state dalaman
-    $this->active_db_flags    = $flags;
-    $this->active_sybase_name = $base;
+    $this->saveActiveDBConfig($flags);
+    $this->active_db_flags       = $flags;
+    $this->active_sybase_name    = $baseEHRM;
+    $this->active_sybase_asis_name = $baseASIS;
 
     // Bersih micro-cache page tetapan (kalau ada)
     $this->invalidateTsCache('dbcfg');
@@ -459,12 +549,13 @@ class TetapanSistemController {
   /** Proses POST tab DB */
   private function prosesSimpananDB(): void {
     $this->ensureSession();
-    $selectedRaw = trim($_POST['active_db'] ?? '');
+    $selectedEHRM = trim($_POST['active_db'] ?? '');
+    $selectedASIS = trim($_POST['active_db_asis'] ?? '');
     
-    if (empty($selectedRaw)) {
+    if (empty($selectedEHRM) || empty($selectedASIS)) {
       set_alert([
         'title' => 'Ralat Validasi',
-        'text' => 'Sila pilih pangkalan data yang ingin diaktifkan.',
+        'text' => 'Sila pilih kedua-dua pangkalan data EHRM dan ASIS.',
         'icon' => 'error'
       ]);
       header('Location: tetapan-sistem.php?tab=db');
@@ -472,16 +563,18 @@ class TetapanSistemController {
     }
     
     try {
-      $oldBase = $this->active_sybase_name;
-      $this->activateSybaseBase($selectedRaw);
-      $dbName = strtolower($this->normalizeSelected($selectedRaw));
+      $oldBases = [ 'ehrm' => $this->active_sybase_name, 'asis' => $this->active_sybase_asis_name ?? null];
+      $this->activateSybaseBases($selectedEHRM, $selectedASIS);
+      $dbNameEHRM = strtolower($this->normalizeSelected($selectedEHRM));
+      $dbNameASIS = strtolower($this->normalizeSelected($selectedASIS));
       
       // Audit logging
-      $this->auditDatabaseUpdate($oldBase, $this->active_sybase_name);
+      $this->auditDatabaseUpdate($oldBases['ehrm'], $this->active_sybase_name);
+      $this->auditDatabaseUpdate($oldBases['asis'], $this->active_sybase_asis_name);
       
       set_alert([
         'title'   => 'Berjaya',
-        'text'    => "Pangkalan data '{$dbName}' telah berjaya diaktifkan.",
+        'text'    => "Pangkalan data EHRM dan SAP telah berjaya diaktifkan.",
         'icon'    => 'success',
         'confirm' => true,
         'confirmText' => 'config_js_btn_tutup',
@@ -491,7 +584,7 @@ class TetapanSistemController {
       ]);
     } catch (\RuntimeException $e) {
       $message = match(true) {
-        str_contains($e->getMessage(), 'tidak sah') => 'Pilihan pangkalan data tidak sah. Sila pilih salah satu pilihan yang tersedia (ehrmdb, ehrmdb_dev, atau stafdb).',
+        str_contains($e->getMessage(), 'tidak sah') => 'Pilihan pangkalan data tidak sah. Sila pilih sambungan yang tersedia.',
         str_contains($e->getMessage(), 'gagal') => 'Sambungan ke pangkalan data gagal. Sila semak konfigurasi sambungan database atau hubungi pentadbir sistem.',
         default => $e->getMessage()
       };
@@ -499,7 +592,7 @@ class TetapanSistemController {
         'title' => 'Ralat Sambungan Database',
         'text' => $message,
         'icon' => 'error'
-      ]);
+      ]); // die($e->getMessage());
     } catch (\Throwable $e) {
       error_log("[TetapanSistem] Database activation error: " . $e->getMessage());
       set_alert([
@@ -524,11 +617,33 @@ class TetapanSistemController {
     if (defined('SYBASE_ACTIVE_BASE')) return (string)SYBASE_ACTIVE_BASE;
 
     // 2) Persisted in DB config (system)
-    $fromDb = $this->configModel->getSybaseActiveBase(null);
+    $fromDb = $this->configModel->getSybaseActiveBase(null, false);
     if ($fromDb) return $fromDb;
 
     // 3) JSON flags (legacy)
     foreach (['ehrmdb','ehrmdb_dev','stafdb'] as $k) {
+      if (!empty($this->active_db_flags[$k])) {
+        return $this->logicalToBase($k);
+      }
+    }
+
+    return null;
+  }
+
+  
+  private function findActiveSybaseAsisName(): ?string {
+    $this->ensureSession();
+
+    // 1) Session / constant (runtime SSoT)
+    if (!empty($_SESSION['SYBASE_ACTIVE_BASE_ASIS'])) return (string)$_SESSION['SYBASE_ACTIVE_BASE_ASIS'];
+    if (defined('SYBASE_ACTIVE_BASE_ASIS')) return (string)SYBASE_ACTIVE_BASE_ASIS;
+
+    // 2) Persisted in DB config (system)
+    $fromDb = $this->configModel->getSybaseActiveBase(null, true);
+    if ($fromDb) return $fromDb;
+
+    // 3) JSON flags (legacy)
+    foreach (['asisdb','asisdb_dev'] as $k) {
       if (!empty($this->active_db_flags[$k])) {
         return $this->logicalToBase($k);
       }
@@ -544,6 +659,8 @@ class TetapanSistemController {
       str_contains($base, 'ehrmdb_dev') => 'ehrmdb_dev',
       str_contains($base, 'stafdb')     => 'stafdb',
       str_contains($base, 'ehrmdb')     => 'ehrmdb',
+      str_contains($base, 'asisdb_dev') => 'asisdb_dev',
+      str_contains($base, 'asisdb')     => 'asisdb',      
       default                           => null,
     };
   }

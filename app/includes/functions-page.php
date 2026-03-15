@@ -36,9 +36,6 @@ const PROFILE_CONFIG = [
   'COPY_RATE_LIMIT' => 1000
 ];
 
-// Controller
-require_once __DIR__ . '/../controllers/ProfileController.php';
-
 // Error boundary - catch all exceptions
 $errorMessage = null;
 try {

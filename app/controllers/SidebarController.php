@@ -5,7 +5,7 @@
  * Handles business logic for sidebar navigation component.
  * Manages user profile, modules, menus, and active page detection.
  * 
- * @package e-prestasi
+ * @package MyHepa
  * @author UPNM, Seksyen Aplikasi Digital, BTMK
  */
 

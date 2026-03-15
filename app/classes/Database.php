@@ -155,6 +155,11 @@ class Database
         return self::getInstance('sybase_active')->getConnection();
     }
 
+    public static function pdoSybaseAsis(): PDO
+    {
+        return self::getInstance(defined('SYBASE_ACTIVE_BASE_ASIS') ? SYBASE_ACTIVE_BASE_ASIS : 'sybase_asisdb')->getConnection();
+    }
+
     /**
      * 🎯 Terus dapatkan PDO MySQL
      */

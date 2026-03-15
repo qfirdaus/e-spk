@@ -30,7 +30,7 @@ $csrf = $_SESSION['csrf_token'];
 <head>
     <?php include __DIR__ . '/../includes/head.php'; ?>
     <?php // Ensure browser tab shows page-specific title (fallback to site title)
-      $page_title_js = tr('access_title', tr('title', 'Sistem e-Prestasi'));
+      $page_title_js = tr('access_title', tr('title', 'Sistem MyHepa'));
     ?>
     <script>document.title = <?= json_encode($page_title_js, JSON_UNESCAPED_UNICODE) ?>;</script>
   <meta name="csrf-token" content="<?= h($csrf) ?>">

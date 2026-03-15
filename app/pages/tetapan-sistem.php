@@ -136,6 +136,7 @@ $bahasaAktif   = $languageData['active'] ?? [];
 /* ===== Tentukan DB aktif untuk UI — ikut SSoT runtime (session/constant) dahulu ===== */
 // 1) Session / constant (ditetapkan oleh init.php)
 $activeBase = $_SESSION['SYBASE_ACTIVE_BASE'] ?? (defined('SYBASE_ACTIVE_BASE') ? (string)SYBASE_ACTIVE_BASE : null);
+$activeBase_ASIS = $_SESSION['SYBASE_ACTIVE_BASE_ASIS'] ?? (defined('SYBASE_ACTIVE_BASE_ASIS') ? (string)SYBASE_ACTIVE_BASE_ASIS : null);
 
 // 2) Persisted DB config (system)
 if (!$activeBase) {
@@ -150,12 +151,22 @@ if (!$activeBase && is_array($dbAktif)) {
   elseif (!empty($dbAktif['stafdb']))     $activeBase = 'sybase_stafdb';
 }
 
+if (!$activeBase_ASIS && is_array($dbAktif)) {
+  if (!empty($dbAktif['asisdb']))         $activeBase_ASIS = 'sybase_asisdb';
+  elseif (!empty($dbAktif['asisdb_dev'])) $activeBase_ASIS = 'sybase_asisdb_dev';
+}
+
 $activeBase = $activeBase ?: 'sybase_ehrmdb';
+$activeBase_ASIS = $activeBase_ASIS ?: 'sybase_asisdb';
+
 $base = strtolower($activeBase);
+$base_ASIS = strtolower($activeBase_ASIS);
+
 if (str_contains($base, 'ehrmdb_dev'))      $activeLogical = 'ehrmdb_dev';
-elseif (str_contains($base, 'stafdb'))      $activeLogical = 'stafdb';
 else                                        $activeLogical = 'ehrmdb';
 
+if (str_contains($base_ASIS, 'asisdb_dev'))      $activeLogical_ASIS = 'asisdb_dev';
+else                                        $activeLogical_ASIS = 'asisdb';
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($lang, ENT_QUOTES, 'UTF-8') ?>" data-bs-theme="<?= htmlspecialchars($_SESSION['theme.layout'] ?? 'light', ENT_QUOTES, 'UTF-8') ?>">
@@ -361,11 +372,12 @@ else                                        $activeLogical = 'ehrmdb';
             <!-- Tab 2: Pangkalan Data -->
             <div class="tab-pane fade <?= (($_GET['tab'] ?? '') === 'db' || !isset($_GET['tab'])) ? 'show active' : '' ?>" id="db-tab" role="tabpanel">
               <form method="post" id="form-db-aktif">
+                <!-- Hidden fields for submit to database : function in TetapanSistemController -->
                 <input type="hidden" name="submit_db" value="1">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>" />
                 <div class="row g-4">
-                  <!-- Sybase -->
-                  <div class="col-md-6">
+                  <!-- Sybase EHRM-->
+                  <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                       <div class="card-header bg-warning bg-opacity-10 border-bottom border-warning border-opacity-25 py-3 px-4">
                         <div class="d-flex align-items-center">
@@ -373,15 +385,15 @@ else                                        $activeLogical = 'ehrmdb';
                             <i class="mdi mdi-database-marker text-warning fs-5"></i>
                       </div>
                           <div>
-                            <h5 class="mb-0 fw-semibold text-warning"><?= __('config_tab_db_header') ?? 'Sybase (Pilih Satu Sahaja)' ?></h5>
+                            <h5 class="mb-0 fw-semibold text-warning"><?= __('config_tab_db_header') ?? 'Sybase EHRM (Pilih Satu Sahaja)' ?></h5>
                             <small class="text-muted">Select one connection only</small>
                           </div>
                         </div>
                       </div>
                       <div class="card-body p-4">
-                        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+                        <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
                           <i class="ri-information-line me-2"></i>
-                          <small><?= __('config_tab_db_sybase_header') ?? 'Hanya satu sambungan Sybase dibenarkan aktif dalam satu masa.' ?></small>
+                          <small><?= __('config_tab_db_sybase_header') ?? 'Hanya satu sambungan EHRM dibenarkan aktif dalam satu masa.' ?></small>
                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         <div class="table-responsive">
@@ -430,21 +442,77 @@ else                                        $activeLogical = 'ehrmdb';
                                   <?= __('config_tab_db_sybase_nama_development_penerangan') ?? 'Pangkalan data pembangunan e-HRMDB (dev)' ?>
                                 </td>
                             </tr>
-                              <tr class="<?= ($activeLogical === 'stafdb') ? 'table-primary' : '' ?>">
+                          </tbody>
+                        </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sybase ASIS-->
+                  <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-header bg-info bg-opacity-10 border-bottom border-info border-opacity-25 py-3 px-4">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar-sm bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="mdi mdi-database-marker text-info fs-5"></i>
+                      </div>
+                          <div>
+                            <h5 class="mb-0 fw-semibold text-info"><?= __('config_tab_db_header_2') ?? 'Sybase ASIS (Pilih Satu Sahaja)' ?></h5>
+                            <small class="text-muted">Select one connection only</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-body p-4">
+                        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+                          <i class="ri-information-line me-2"></i>
+                          <small><?= __('config_tab_db_sybase_header_asis') ?? 'Hanya satu sambungan Sybase ASIS dibenarkan aktif dalam satu masa.' ?></small>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <div class="table-responsive">
+                          <table class="table table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width:50px">
+                                  <i class="ri-radio-button-line text-muted"></i>
+                                </th>
+                                <th style="width:220px" class="fw-semibold"><?= __('config_tab_db_sybase_sambungan') ?? 'Nama Sambungan' ?></th>
+                                <th class="fw-semibold"><?= __('config_tab_db_sybase_keterangan') ?? 'Keterangan' ?></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <tr class="<?= ($activeLogical_ASIS === 'asisdb') ? 'table-primary' : '' ?>">
                               <td class="text-center">
                                   <div class="form-check form-check-primary">
-                                <input class="form-check-input" type="radio" name="active_db" id="stafdb"
-                                  value="stafdb" <?= ($activeLogical === 'stafdb') ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="radio" name="active_db_asis" id="asisdb"
+                                  value="asisdb" <?= ($activeLogical_ASIS === 'asisdb') ? 'checked' : '' ?>>
                                   </div>
                               </td>
                                 <td>
-                                  <label class="form-check-label fw-bold cursor-pointer" for="stafdb">
-                                    <?= __('config_tab_db_sybase_smp') ?? 'STAFDB' ?>
+                                  <label class="form-check-label fw-bold cursor-pointer" for="asisdb">
+                                    <?= __('config_tab_db_sybase_nama_production_asis') ?? 'SAP (Production)' ?>
                                   </label>
                                 </td>
                                 <td>
-                                  <span class="badge bg-secondary-subtle text-secondary me-2">📘</span>
-                                  <?= __('config_tab_db_sybase_smp_penerangan') ?? 'Pangkalan data SMP (tidak digunakan lagi)' ?>
+                                  <span class="badge bg-success-subtle text-success me-2">✅</span>
+                                  <?= __('config_tab_db_sybase_nama_production_penerangan_asis') ?? 'Pangkalan data utama sistem SAP' ?>
+                                </td>
+                            </tr>
+                              <tr class="<?= ($activeLogical_ASIS === 'asisdb_dev') ? 'table-primary' : '' ?>">
+                              <td class="text-center">
+                                  <div class="form-check form-check-primary">
+                                <input class="form-check-input" type="radio" name="active_db_asis" id="asisdb_dev"
+                                  value="asisdb_dev" <?= ($activeLogical_ASIS === 'asisdb_dev') ? 'checked' : '' ?>>
+                                  </div>
+                              </td>
+                                <td>
+                                  <label class="form-check-label fw-bold cursor-pointer" for="asisdb_dev">
+                                    <?= __('config_tab_db_sybase_nama_development_asis') ?? 'SAP (Development)' ?>
+                                  </label>
+                                </td>
+                                <td>
+                                  <span class="badge bg-info-subtle text-info me-2">🧪</span>
+                                  <?= __('config_tab_db_sybase_nama_development_penerangan_asis') ?? 'Pangkalan data pembangunan SAP (dev)' ?>
                                 </td>
                             </tr>
                           </tbody>
@@ -455,7 +523,7 @@ else                                        $activeLogical = 'ehrmdb';
                   </div>
 
                   <!-- MySQL -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                       <div class="card-header bg-success bg-opacity-10 border-bottom border-success border-opacity-25 py-3 px-4">
                         <div class="d-flex align-items-center">
@@ -525,7 +593,7 @@ else                                        $activeLogical = 'ehrmdb';
                     </div>
                   </div>
 
-                </div>
+                </div>            
 
                 <div class="d-flex justify-content-end mt-3">
                   <button type="submit" class="btn btn-primary px-4" id="btn-simpan-db">

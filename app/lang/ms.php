@@ -420,6 +420,7 @@ return [
 'userList_sync_button'           => 'Sync Data',
 'userList_sync_processing'       => 'Memproses…',
 'userList_add_button'            => 'Tambah Pengguna',
+'userList_import_student_button' => 'Import Pelajar',
 
 'userList_err_add_failed'        => 'Gagal menambah pengguna.',
 'userList_err_delete_failed'     => 'Gagal memadam pengguna.',
@@ -456,6 +457,18 @@ return [
 'userList_sync_error_title'      => 'Sync Gagal',
 'userList_sync_error'            => 'Ralat semasa sync data.',
 
+// =========================
+// Import Pelajar
+// =========================
+'userList_import_student_success_title'    => 'Import Pelajar Berjaya',
+'userList_import_student_success_message'  => 'Data pelajar berjaya diimport.',
+'userList_import_student_summary_title'    => 'Ringkasan Import Pelajar',
+'userList_import_student_updated'          => 'Dikemas kini',
+'userList_import_student_skipped'          => 'Dilangkau',
+'userList_import_student_errors'           => 'Ralat',
+'userList_import_student_total'            => 'Jumlah',
+'userList_import_student_error_title'      => 'Import Pelajar Gagal',
+'userList_import_student_error'            => 'Ralat semasa import data pelajar.',
 
 /* =====================================================
  * KUMPULAN PENGGUNA (userGroup_)
@@ -714,18 +727,31 @@ return [
 /* =========================
  * TAB DATABASE
  * ========================= */
-'config_tab_db_header'                   => 'Sybase (Pilih Satu Sahaja)',
-'config_tab_db_sybase_header'            => 'Hanya satu sambungan Sybase dibenarkan aktif dalam satu masa.',
+'config_tab_db_header'                   => 'Sybase EHRM (Pilih Satu Sahaja)',
+'config_tab_db_sybase_header'            => 'Hanya satu sambungan EHRM dibenarkan aktif dalam satu masa.',
 'config_tab_db_sybase_sambungan'         => 'Nama Sambungan',
 'config_tab_db_sybase_keterangan'        => 'Keterangan',
 
 'config_tab_db_sybase_nama_production'   => 'e-HRMDB (Production)',
 'config_tab_db_sybase_nama_production_penerangan'
-                                        => 'Pangkalan data utama sistem e-Prestasi',
+                                        => 'Pangkalan data utama sistem eHRM',
 
 'config_tab_db_sybase_nama_development'  => 'e-HRMDB (Development)',
 'config_tab_db_sybase_nama_development_penerangan'
                                         => 'Pangkalan data pembangunan',
+
+'config_tab_db_header_2'                   => 'Sybase ASIS (Pilih Satu Sahaja)',
+'config_tab_db_sybase_header_asis'            => 'Hanya satu sambungan ASIS dibenarkan aktif dalam satu masa.',
+'config_tab_db_sybase_sambungan'         => 'Nama Sambungan',
+'config_tab_db_sybase_keterangan'        => 'Keterangan',
+
+'config_tab_db_sybase_nama_production_asis'   => 'ASISDB (Production)',
+'config_tab_db_sybase_nama_production_penerangan_asis'
+                                        => 'Pangkalan data utama sistem SAP',
+
+'config_tab_db_sybase_nama_development_asis'  => 'ASISDB (Development)',
+'config_tab_db_sybase_nama_development_penerangan_asis'
+                                        => 'Pangkalan data pembangunan',                                        
 
 'config_tab_db_sybase_smp'               => 'STAFDB',
 'config_tab_db_sybase_smp_penerangan'    => 'Pangkalan data SMP (tidak digunakan lagi)',

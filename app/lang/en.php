@@ -420,6 +420,7 @@ return [
 'userList_sync_button'           => 'Sync Data',
 'userList_sync_processing'       => 'Processing...',
 'userList_add_button'            => 'Add User',
+'userList_import_student_button' => 'Import Students',
 
 'userList_err_add_failed'        => 'Failed to add user.',
 'userList_err_delete_failed'     => 'Failed to delete user.',
@@ -456,6 +457,18 @@ return [
 'userList_sync_error_title'      => 'Sync Failed',
 'userList_sync_error'            => 'Error during data sync.',
 
+// =========================
+// Import Students
+// =========================
+'userList_import_student_success_title'    => 'Import Students Successful',
+'userList_import_student_success_message'  => 'Student data imported successfully.',
+'userList_import_student_summary_title'    => 'Import Students Summary',
+'userList_import_student_updated'          => 'Updated',
+'userList_import_student_skipped'          => 'Skipped',
+'userList_import_student_errors'           => 'Errors',
+'userList_import_student_total'            => 'Total',
+'userList_import_student_error_title'      => 'Import Students Failed',
+'userList_import_student_error'            => 'Error during student data import.',
 
 /* =====================================================
  * KUMPULAN PENGGUNA (userGroup_)
@@ -715,7 +728,7 @@ return [
  * TAB DATABASE
  * ========================= */
 'config_tab_db_header'                   => 'Sybase (Select One Only)',
-'config_tab_db_sybase_header'            => 'Only one Sybase connection can be active at a time.',
+'config_tab_db_sybase_header'            => 'Only one Sybase EHRM connection can be active at a time.',
 'config_tab_db_sybase_sambungan'         => 'Connection Name',
 'config_tab_db_sybase_keterangan'        => 'Description',
 
@@ -725,6 +738,19 @@ return [
 
 'config_tab_db_sybase_nama_development'  => 'e-HRMDB (Development)',
 'config_tab_db_sybase_nama_development_penerangan'
+                                        => 'Development database',
+
+'config_tab_db_header_2'                   => 'Sybase ASIS (Select One Only)',
+'config_tab_db_sybase_header_asis'            => 'Only one Sybase ASIS connection can be active at a time.',
+'config_tab_db_sybase_sambungan'         => 'Connection Name',
+'config_tab_db_sybase_keterangan'        => 'Description',
+
+'config_tab_db_sybase_nama_production_asis'   => 'ASISDB (Production)',
+'config_tab_db_sybase_nama_production_penerangan_asis'
+                                        => 'Primary database',
+
+'config_tab_db_sybase_nama_development_asis'  => 'ASISDB (Development)',
+'config_tab_db_sybase_nama_development_penerangan_asis'
                                         => 'Development database',
 
 'config_tab_db_sybase_smp'               => 'STAFDB',
