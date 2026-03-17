@@ -1,11 +1,11 @@
 <?php
-// controllers/PeribadiController.php
+// controllers/KeluargaController.php
 declare(strict_types=1);
 
 require_once __DIR__ . '/../classes/Database.php';
 require_once __DIR__ . '/../classes/User.php';
 
-class PeribadiController
+class KeluargaController
 {
     private const STUDENT_AVATAR_BASE_URL = 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/';
 
@@ -56,14 +56,14 @@ class PeribadiController
         return self::STUDENT_AVATAR_BASE_URL . rawurlencode($clean) . '.jpg';
     }
 
-    public function getCurrentUserDetailsInfo(): array
+    public function getCurrentParentDetailsInfo(): array
     {
         $matrik = trim((string)($_SESSION['f_stafID'] ?? '')); 
         if ($matrik === '') {
             return $this->studentprofile = $this->emptyProfile($this->userModel->getAvatarUrl(null));
         }
 
-        $sql = "SELECT a.*, b.f015keterangan as warganegara_desc, c.f015keterangan as negeri_lahir, d.f021keterangan as status_kahwin 
+        $sql = "SELECT a.*
                 FROM v210 a
                 LEFT JOIN t015kewarganegaraan b ON a.kewarganegaraan = b.f015kdnegeri
                 LEFT JOIN t015negeri c ON a.neglahir = c.f015kdnegeri
@@ -77,33 +77,14 @@ class PeribadiController
         if (!$student) {
             return $this->studentprofile = $this->emptyProfile(base_url('assets/images/no-image.jpg'));
         }        
-        
-        // Avatar: guna nilai f_nopekerja dari hasil query (BUKAN dari session)
-        $avatar  = $this->getStudentAvatarUrl((string)$student['matrik'] ?? null);
-        $nama    = trim((string)($student['nama'] ?? ''));
-        $nick    = trim((string)($student['nama'] ?? ''));
-        $display = $nama !== '' ? $nama : ($nick !== '' ? $nick : 'Pengguna');
 
         return $this->studentprofile = [
-            'matrik'     => (string)($student['matrik'] ?? ''),
-            'fakulti'    => (string)($student['fakulti'] ?? ''),
-            'program'       => (string)($student['program'] ?? ''),
-            'nokp'    => (string)($student['nokp'] ?? ''),
-            'email'       => (string)($student['alfateh'] ?? ''),            
-            'notel_terkini'       => (string)($student['notel_terkini'] ?? ''),
-            'jantina'       => (string)($student['jantina'] ?? ''),
-            'agama'       => (string)($student['agama'] ?? ''),
-            'bangsa'       => (string)($student['bangsa'] ?? ''),
-            'warganegara'       => (string)($student['warganegara_desc'] ?? ''),
-            'negeri_lahir'       => (string)($student['negeri_lahir'] ?? ''),
-            'status_kahwin'       => (string)($student['status_kahwin'] ?? ''),
-            'tarikh_lahir'       => (string)($student['thlahir'] ?? ''),
-            'alamat1'       => (string)($student['alamat1'] ?? ''),
-            'alamat2'       => (string)($student['alamat2'] ?? ''), 
-            'alamat3'       => (string)($student['alamat3'] ?? ''),
-            'alamat4'       => (string)($student['alamat4'] ?? ''),
-            'negeri'       => (string)($student['negeri'] ?? ''),
-            'avatar_url' => (string)($avatar ?: base_url('assets/images/no-image.jpg')),
+            'nama_bapa'     => (string)($student['namabapa'] ?? ''),
+            'nokpbapa'      => (string)($student['nokpbapa'] ?? ''),
+            'nohp_bapa'     => (string)($student['nohp_bapa'] ?? ''),
+            'nama_ibu'      => (string)($student['namaibu'] ?? ''),
+            'nokpibu'       => (string)($student['nokpibu'] ?? ''),
+            'nohp_ibu'      => (string)($student['nohp_ibu'] ?? ''),
         ];        
     }    
 }

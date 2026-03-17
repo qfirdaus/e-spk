@@ -64,12 +64,28 @@ function sanitize_menu_path(string $path): ?string {
  * @param string $menuPath Menu path from database
  * @return bool True if menu is active, false otherwise
  */
+// function is_menu_active(string $currentFile, string $menuPath): bool {
+//     $sanitizedPath = sanitize_menu_path($menuPath);
+//     if (!$sanitizedPath) {
+//         return false;
+//     }
+//     return $currentFile === basename($sanitizedPath);
+// }
+
 function is_menu_active(string $currentFile, string $menuPath): bool {
     $sanitizedPath = sanitize_menu_path($menuPath);
     if (!$sanitizedPath) {
         return false;
     }
-    return $currentFile === basename($sanitizedPath);
+
+    // Get current script relative path from /pages/
+    $currentPath = str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '');
+    
+    // Extract path after "pages/"
+    $parts = explode('pages/', $currentPath, 2);
+    $relativeCurrent = $parts[1] ?? '';
+
+    return $relativeCurrent === $sanitizedPath;
 }
 
 /**
@@ -209,13 +225,13 @@ $notificationCount = $sidebarController->getNotificationCount();
 
     <!-- ✅ Logo Sidebar -->
     <a href="<?= base_path('pages/dashboard.php') ?>" class="logo logo-dark">
-        <span class="logo-lg"><img src="<?= base_url('assets/images/new-logo.png') ?>" alt="logo" style="width: 200px; height: auto;"></span>
-        <span class="logo-sm"><img src="<?= base_url('assets/images/new-logo.png') ?>" alt="small logo" style="height: 30px; width: auto;"></span>
+        <span class="logo-lg"><img src="<?= base_url('assets/images/logo.png') ?>" alt="logo" style="width: 200px; height: auto;"></span>
+        <span class="logo-sm"><img src="<?= base_url('assets/images/logo-sm.png') ?>" alt="small logo" style="height: 30px; width: auto;"></span>
     </a>
 
     <a href="<?= base_path('pages/dashboard.php') ?>" class="logo logo-light">
-        <span class="logo-lg"><img src="<?= base_url('assets/images/new-logo.png') ?>" alt="logo" style="width: 200px; height: auto;"></span>
-        <span class="logo-sm"><img src="<?= base_url('assets/images/new-logo.png') ?>" alt="small logo" style="height: 30px; width: auto;"></span>
+        <span class="logo-lg"><img src="<?= base_url('assets/images/logo.png') ?>" alt="logo" style="width: 200px; height: auto;"></span>
+        <span class="logo-sm"><img src="<?= base_url('assets/images/logo-sm.png') ?>" alt="small logo" style="height: 30px; width: auto;"></span>
     </a>
 
     <div class="h-100" id="leftside-menu-container" data-simplebar>

@@ -8,7 +8,6 @@
                   <span class="status-dot <?= $isActive ? 'status-active' : 'status-inactive' ?>"
                         title="<?= h($isActive ? tr('profile_status_active','Aktif') : tr('profile_status_inactive','Tidak Aktif')) ?>"></span>
                 </div>
-
                 <div class="flex-grow-1">
                   <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="display-name fs-4 mb-0">
@@ -31,13 +30,19 @@
                 </div>
 
                 <div class="quick-actions d-flex align-items-center gap-2 ms-auto">
-                  <?php if ($stafID !== ''): ?>
+                  <?php if ($stafID !== ''): 
+                          if($_SESSION['auth_type'] === 'student'):  
+                            $label_button = h(tr('profile_btn_copy_no_staf','Salin No. Matrik'));
+                          else: 
+                            $label_button = h(tr('profile_btn_copy_no_matrik','Salin No. Staf'));
+                          endif;
+                  ?>
                     <button class="btn btn-sm btn-copy-staf" 
                             type="button"
-                            aria-label="<?= h(tr('profile_btn_copy_no_staf','Salin No. Staf')) ?>"
+                            aria-label="<?= $label_button ?>"
                             data-copy-value="<?= h($stafID) ?>">
                       <i class="ri-file-copy-2-line me-1" aria-hidden="true"></i>
-                      <?= h(tr('profile_btn_copy_no_staf','Salin No. Staf')) ?>
+                      <?= $label_button ?>
                     </button>
                   <?php endif; ?>
 

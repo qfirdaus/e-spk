@@ -201,7 +201,7 @@ class LoginController
                         program,
                         nama,
                         nokp,
-                        email,
+                        alfateh,
                         notel_terkini,
                         statuskategori
                     FROM v210

@@ -99,7 +99,7 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
     max-width: 220px;       /* sesuaikan ikut sidebar */
 }  
 .side-nav-second-level li a.active {
-    background-color: #0056b3;  /* biru gelap contoh */
+    background-color: #3870da;  /* biru gelap contoh */
     color: #fff;
     font-weight: bold;
 }   
@@ -652,3 +652,18 @@ html[data-bs-theme="dark"] #groupTable tbody tr:hover {
     margin-top: 0.5rem;
     }
 } 
+
+.tooltip-inner {
+  background-color: #dbeafe; /* biru lembut */
+  color: #1e3a8a; /* teks biru gelap supaya jelas */
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #dbeafe;
+}
+
+.text-h5 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  color: #0B2C4D; /* teks biru gelap supaya jelas */
+}

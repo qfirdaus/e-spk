@@ -20,10 +20,10 @@
     $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
     $auditEvents = $profile_controller->getAuditEvents(PROFILE_CONFIG['AUDIT_EVENTS_LIMIT']);
 
-    $controller   = new PeribadiController();
+    $controller   = new KeluargaController();
     $lang         = $controller->getLang();
     $version      = (string)($_ENV['APP_ASSET_VER'] ?? date('ymdHis'));
-    $userDetails  = $controller->getCurrentUserDetailsInfo();
+    $parentDetails  = $controller->getCurrentParentDetailsInfo();
     
   } catch (Throwable $e) {
     error_log('[profile.php] Error loading data: ' . $e->getMessage());
@@ -45,23 +45,12 @@
   $jawGred   = trim($jawatan . ($gred ? ' • '.$gred : ''));
   $jantina   = $profileView['jantina']    ?? '';
 
-  $notel_terkini   = $userDetails['notel_terkini'] ?? '';
-  $nokp            = $userDetails['nokp'] ?? '';
-  $nomatrik        = $userDetails['matrik'] ?? ''; 
-  $email           = $userDetails['email'] ?? '';
-  $jantina         = $userDetails['jantina'] ?? '';
-  $agama           = $userDetails['agama'] ?? '';
-  $bangsa          = $userDetails['bangsa'] ?? '';
-  $warganegara     = $userDetails['warganegara'] ?? '';
-  $negeri_lahir    = $userDetails['negeri_lahir'] ?? '';
-  $status_kahwin   = $userDetails['status_kahwin'] ?? '';
-  $tarikh_lahir    = $userDetails['tarikh_lahir'] ?? '';
-  $age             = count_age(new DateTime($tarikh_lahir));
-  $alamat1         = $userDetails['alamat1'] ?? '';
-  $alamat2         = $userDetails['alamat2'] ?? '';
-  $poskod         = $userDetails['alamat3'] ?? '';
-  $bandar         = $userDetails['alamat4'] ?? '';
-  $negeri          = $userDetails['negeri'] ?? '';
+  $nama_bapa   = $parentDetails['nama_bapa'] ?? '';
+  $nokpbapa    = $parentDetails['nokpbapa'] ?? '';
+  $nohp_bapa   = $parentDetails['nohp_bapa'] ?? '';
+  $nama_ibu    = $parentDetails['nama_ibu'] ?? '';
+  $nokpibu     = $parentDetails['nokpibu'] ?? '';
+  $nohp_ibu    = $parentDetails['nohp_ibu'] ?? ''; 
 
 function count_age(DateTime $tarikh_lahir) {
   $today = new DateTime();
