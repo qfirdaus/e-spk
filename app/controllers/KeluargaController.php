@@ -87,4 +87,94 @@ class KeluargaController
             'nohp_ibu'      => (string)($student['nohp_ibu'] ?? ''),
         ];        
     }    
+
+    public function getSalaryRange(): array
+    {
+        $sql = "SELECT * FROM lp_salary";
+
+        $stmt = $this->pdoMysql->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+
+        $salaryRanges = [];
+        foreach ($rows as $row) {
+            $min = (int)$row['min_salary'];
+            $max = isset($row['max_salary']) ? (int)$row['max_salary'] : null;
+
+            // Buat label untuk dropdown
+            if ($min == 0 && $max !== null) {
+                $label = '< RM' . $max;
+            } elseif ($max === null) {
+                $label = '> RM' . $min;
+            } else {
+                $label = 'RM' . $min . ' – RM' . $max;
+            }
+
+            $salaryRanges[] = [
+                'value' => $min, // submit min_salary sebagai value
+                'label' => $label
+            ];
+        }
+
+        return $salaryRanges;
+    }
+
+    public function getEmploymentStatus(): array
+    {
+        $sql = "SELECT * FROM lp_employment_status";
+
+        $stmt = $this->pdoMysql->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+
+        $employmentStatuses = [];
+        foreach ($rows as $row) {
+            $employmentStatuses[] = [
+                'statusCode' => $row["status_code"],
+                'statusMY' => $row["status_my"], 
+                'statusEN' => $row["status_en"], 
+            ];
+        }
+        
+        return $employmentStatuses;
+    }  
+    public function getEmploymentSector(): array
+    {
+        $sql = "SELECT * FROM lp_employment_sector";
+
+        $stmt = $this->pdoMysql->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+
+        $employmentSectors = [];
+        foreach ($rows as $row) {
+            $employmentSectors[] = [
+                'sectorCode' => $row["sector_code"],
+                'sectorMY' => $row["sector_my"], 
+                'sectorEN' => $row["sector_en"], 
+            ];
+        }
+        
+        return $employmentSectors;
+    } 
+
+    public function getUniformService(): array
+    {
+        $sql = "SELECT * FROM lp_uniform_service_type";
+
+        $stmt = $this->pdoMysql->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+
+        $uniformServices = [];
+        foreach ($rows as $row) {
+            $uniformServices[] = [
+                'serviceCode' => $row["service_code"],
+                'serviceMY' => $row["service_my"], 
+                'serviceEN' => $row["service_en"], 
+            ];
+        }
+        
+        return $uniformServices;
+    }     
 }

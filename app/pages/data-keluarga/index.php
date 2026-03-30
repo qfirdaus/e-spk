@@ -56,72 +56,73 @@
         </div>
 
         <!-- Profile Card with Tabs -->
-        <div class="card border-0 shadow-sm profile-card">
-          <?php include __DIR__ . '/../../includes/profile-card.php'; ?>
-
-          <!-- Tab Navigasi -->
-          <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
-            <li class="nav-item">
-              <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-bapa-tab" role="tab">
-                <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_maklumat_bapa', 'Maklumat Bapa')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#maklumat-ibu-tab" role="tab">
-                <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_maklumat_ibu','Maklumat Ibu')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#maklumat-penjaga-tab" role="tab">
-                <i class="ri-briefcase-line me-1"></i> <?= h(tr('tab_maklumat_penjaga', 'Maklumat Penjaga')) ?>
-              </a>
-            </li>
-          </ul>
-
-          <!-- Kandungan Tab -->
-          <div class="tab-content p-4">
-            <?php if ($errorMessage): ?>
-              <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <i class="ri-error-warning-line me-2"></i>
-                <div>
-                  <?= h($errorMessage) ?>
-                </div>
-              </div>
-            <?php endif; ?>
+          <!-- Profile Card with Tabs -->
+          <div class="card border-0 shadow-sm profile-card">
+            <?php include __DIR__ . '/../../includes/profile-card.php'; ?>
             
-            <?php if ($stafID === '' && !$errorMessage): ?>
-              <div class="alert alert-warning d-flex align-items-center" role="alert">
-                <i class="ri-alert-line me-2"></i>
-                <div>
-                  <?= h(tr(
-                    'profile_empty_notice',
-                    'Profil tidak dijumpai. Sesi login mungkin tamat atau rekod tiada.'
-                  )) ?>
+            <!-- Tab Navigasi -->
+            <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-bapa-tab" role="tab">
+                  <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_maklumat_bapa','Maklumat Bapa')) ?>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-ibu-tab" role="tab">
+                  <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_maklumat_ibu', 'Maklumat Ibu')) ?>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-penjaga-tab" role="tab">
+                  <i class="ri-briefcase-line me-1"></i> <?= h(tr('tab_maklumat_penjaga', 'Maklumat Penjaga')) ?>
+                </a>
+              </li>
+            </ul>
+
+            <!-- Kandungan Tab -->
+            <div class="tab-content p-4">
+              <?php if ($errorMessage): ?>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                  <i class="ri-error-warning-line me-2"></i>
+                  <div>
+                    <?= h($errorMessage) ?>
+                  </div>
                 </div>
+              <?php endif; ?>
+              
+              <?php if ($stafID === '' && !$errorMessage): ?>
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                  <i class="ri-alert-line me-2"></i>
+                  <div>
+                    <?= h(tr(
+                      'profile_empty_notice',
+                      'Profil tidak dijumpai. Sesi login mungkin tamat atau rekod tiada.'
+                    )) ?>
+                  </div>
+                </div>
+              <?php endif; ?>
+
+              <!-- Tab 1: Maklumat Bapa -->
+              <div class="tab-pane fade show active" id="maklumat-bapa-tab" role="tabpanel"> 
+                <?php include __DIR__ . '/form-bapa.php'; ?>
               </div>
-            <?php endif; ?>
 
-            <!-- Tab 1: Maklumat Bapa -->
-            <div class="tab-pane fade show active" id="maklumat-bapa-tab" role="tabpanel">
-                <?php include __DIR__ . '/form-bapa.php'; ?>    
+              <!-- Tab 2: Maklumat Ibu -->
+              <div class="tab-pane fade show" id="maklumat-ibu-tab" role="tabpanel">                
+                <?php include __DIR__ . '/form-ibu.php'; ?>
+              </div>    
+
+              <!-- Tab 3: Maklumat Penjaga -->
+              <div class="tab-pane fade show" id="maklumat-penjaga-tab" role="tabpanel">
+                <?php  include __DIR__ . '/form-penjaga.php'; ?>
+              </div>
+
             </div>
+          </div>        
+          <!-- /Profile Card with Tabs -->
 
-            <!-- Tab 2: Maklumat Ibu -->
-            <div class="tab-pane fade" id="maklumat-ibu-tab" role="tabpanel">
-                <?php include __DIR__ . '/form-ibu.php'; ?>             
-            </div>
-
-            <!-- Tab 3: Maklumat Penjaga -->
-            <div class="tab-pane fade" id="maklumat-penjaga-tab" role="tabpanel">
-                <?php include __DIR__ . '/form-penjaga.php'; ?>
-            </div>
-
-          </div>
-        </div>        
-        <!-- /Profile Card with Tabs -->
-
+        </div>
       </div>
-    </div>
       <?php include __DIR__ . '/../../includes/footer.php'; ?>
     </div>
   </div>

@@ -32,9 +32,8 @@
                           <div class="mb-2 row">
                             <label class="col-sm-4 col-form-label text-nowrap">Tarikh Lahir</label>
                             <div class="col-sm-8">
-                              <input type="text" id="tarikh_lahir" name="tarikh_lahir" class="form-control"
-                                placeholder="dd/mm/yyyy"
-                                value="<?= !empty($tarikh_lahir) ? date('d/m/Y', strtotime($tarikh_lahir)) : '' ?>" readonly>
+                              <input type="text" id="tarikh_lahir" name="tarikh_lahir" class="form-control" 
+                              value="<?= !empty($tarikh_lahir) ? date('d/m/Y', strtotime($tarikh_lahir)) : '' ?>" readonly>
                             </div>
                           </div>
 

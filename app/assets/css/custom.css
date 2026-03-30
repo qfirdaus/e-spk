@@ -667,3 +667,8 @@ html[data-bs-theme="dark"] #groupTable tbody tr:hover {
   font-weight: bold;
   color: #0B2C4D; /* teks biru gelap supaya jelas */
 }
+
+.label-left-fixed {
+  flex: 0 0 40%; /* label ambil 40% ruang, tak shrink */
+  max-width: 40%;
+}

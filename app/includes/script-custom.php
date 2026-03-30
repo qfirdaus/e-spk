@@ -1,9 +1,9 @@
 <script>
 
-    flatpickr("#tarikh_lahir", {
-        dateFormat: "d/m/Y",
-        allowInput: true
-    });
+    // flatpickr("#tarikh_lahir", {
+    //     dateFormat: "d/m/Y",
+    //     allowInput: true
+    // });
 
     function checkFileSize(input) {
         const maxFileSize = 5 * 1024 * 1024; // 5MB
