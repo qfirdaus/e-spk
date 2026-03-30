@@ -135,6 +135,8 @@ return [
 // =========================
 'profile_title'                 => 'User Profile',
 'profile_breadcrumb'            => 'Profile',
+'peribadi_title'                 => 'Personal',
+'peribadi_breadcrumb'            => 'Personal',
 
 // =========================
 // Status
@@ -1104,7 +1106,6 @@ return [
  * DASHBOARD (BASE)
  * ===================================================== */
 'dashboard_title' => 'Dashboard',
-'dashboard_breadcrumb' => 'Dashboard',
 'dashboard_welcome' => 'Welcome',
 'dashboard_last_login' => 'Last login',
 'dashboard_tabs_label' => 'Dashboard tabs',

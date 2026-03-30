@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
 <!DOCTYPE html>
 <html lang="<?= h($lang) ?>" data-bs-theme="<?= h($_SESSION['theme.layout'] ?? 'light') ?>">
 <head>
-  <?php include __DIR__ . '/../includes/head.php'; ?>
+  <?php   include __DIR__ . '/../includes/head.php';  ?>  
 
   <meta name="csrf-token" content="<?= h($csrf) ?>">
   <!-- ✅ Standard DataTables CSS (shared) -->
@@ -1330,8 +1330,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string)($_POST['action'] ?? '') ==
                   </div>
                   <div class="col-md-6">
                     <label class="form-label"><?= h(__('modul_icon')) ?></label>
-                    <input type="text" class="form-control" id="mc_icon" name="icon" value="<?= h($moduleFormData['icon']) ?>">
-                  </div>
+                    <input type="text" class="form-control" id="mc_icon" name="icon" value="<?= h($moduleFormData['icon']) ?>">    
+                  </div>                
                   <div class="col-md-6">
                     <label class="form-label"><?= h(__('modul_susunan')) ?></label>
                     <input type="number" class="form-control" id="mc_order" name="order" value="<?= h($moduleFormData['order']) ?>" data-default-order="<?= h((string)$nextModuleOrder) ?>">
@@ -1579,6 +1579,7 @@ window.hasDT = function() {
 // =========================================================
 // Priority 3: UX Improvements
 // =========================================================
+
 
 (function() {
   'use strict';
@@ -1916,6 +1917,7 @@ window.hasDT = function() {
       } else {
     setTimeout(initGroupTable, 100);
   }
+ 
 })();
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -1948,9 +1950,8 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   <?php endif; ?>
 });
+
 </script>
-
-
 
 </body>
 </html>

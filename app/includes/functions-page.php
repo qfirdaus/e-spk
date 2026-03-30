@@ -24,37 +24,6 @@ if (!function_exists('tr')) {
     }
 }
 
-// ==================== CONFIGURATION CONSTANTS ====================
-const PROFILE_CONFIG = [
-  'LOGIN_ACTIVITY_LIMIT' => 50,
-  'AUDIT_EVENTS_LIMIT' => 100,
-  'DATATABLES_PAGE_LENGTH' => 10,
-  'DATATABLES_INIT_DELAY' => 300,
-  'TOAST_DURATION' => 1400,
-  'POLLING_INTERVAL' => 100,
-  'POLLING_MAX_ATTEMPTS' => 50,
-  'COPY_RATE_LIMIT' => 1000
-];
-
-// Error boundary - catch all exceptions
-$errorMessage = null;
-try {
-  $controller   = new ProfileController();
-  $lang         = $controller->getLang();
-  $version      = (string)($_ENV['APP_ASSET_VER'] ?? date('ymdHis'));
-  $profile      = $controller->getCurrentUserProfile();
-  $profileView  = $profile; // freeze to avoid include collisions
-  $loginActivity = $controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
-  $auditEvents = $controller->getAuditEvents(PROFILE_CONFIG['AUDIT_EVENTS_LIMIT']);
-} catch (Throwable $e) {
-  error_log('[profile.php] Error loading data: ' . $e->getMessage());
-  $profile = [];
-  $profileView = [];
-  $loginActivity = [];
-  $auditEvents = [];
-  $errorMessage = 'Ralat memuat data profil. Sila cuba lagi atau hubungi pentadbir sistem.';
-}
-
 /**
  * Safe DateTime creation dengan error handling
  */

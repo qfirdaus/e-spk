@@ -1,6 +1,6 @@
 <?php
 // ===============================================
-// ✅ INIT Sistem e-Prestasi (header-safe & no-legacy echo)
+// ✅ INIT Sistem e-HEPA (header-safe & no-legacy echo)
 // ===============================================
 
 // (Opsyen debug sementara; tukar ke false bila siap)
@@ -251,15 +251,15 @@ $_SESSION['theme.layout'] = $themeSetting['layoutMode']   ?? 'light';
 $configJsonPath = __DIR__ . '/../configuration/config_db_active.json';
 if (file_exists($configJsonPath)) {
     $GLOBALS['sybase_active'] = json_decode((string)file_get_contents($configJsonPath), true) ?? [
-        'ehrmdb' => false, 'ehrmdb_dev' => false, 'stafdb' => false,
+        'ehrmdb' => false, 'ehrmdb_dev' => false, 'asisdb' => false, 'asisdb_dev' => false
     ];
 } else {
-    $GLOBALS['sybase_active'] = ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+    $GLOBALS['sybase_active'] = ['ehrmdb'=>false,'ehrmdb_dev'=>false,'asisdb'=>false,'asisdb_dev'=>false];
 }
 
 // 12) SYBASE_ACTIVE_BASE – SSoT
 // Keutamaan sumber: SESSION → DB Config (system/SYBASE_ACTIVE_BASE) → JSON flags → 'sybase_ehrmdb'
-// Keutamaan pilihan: ehrmdb → ehrmdb_dev → stafdb
+// Keutamaan pilihan: ehrmdb → ehrmdb_dev
 if (!defined('SYBASE_ACTIVE_BASE')) {
     $activeBase = $_SESSION['SYBASE_ACTIVE_BASE'] ?? null;
 
@@ -277,12 +277,11 @@ if (!defined('SYBASE_ACTIVE_BASE')) {
     }
 
     if (!$activeBase) {
-        $flags = $GLOBALS['sybase_active'] ?? ['ehrmdb'=>false,'ehrmdb_dev'=>false,'stafdb'=>false];
+        $flags = $GLOBALS['sybase_active'] ?? ['ehrmdb'=>false,'ehrmdb_dev'=>false];
         $map = function(string $k): ?string {
             return match ($k) {
                 'ehrmdb'     => 'sybase_ehrmdb',
                 'ehrmdb_dev' => 'sybase_ehrmdb_dev',
-                'stafdb'     => 'sybase_stafdb',
                 default      => null,
             };
         };
@@ -298,6 +297,55 @@ if (!defined('SYBASE_ACTIVE_BASE')) {
         $_SESSION['SYBASE_ACTIVE_BASE'] = $activeBase;
     }
 }
+
+// 12A) SYBASE_ACTIVE_BASE_ASIS – SSoT ASIS
+if (!defined('SYBASE_ACTIVE_BASE_ASIS')) {
+
+    $activeBaseAsis = $_SESSION['SYBASE_ACTIVE_BASE_ASIS'] ?? null;
+
+    // Cuba DB config jika kosong
+    if (!$activeBaseAsis) {
+        try {
+            $sys = $config->getGroup('system');
+            if (!empty($sys['SYBASE_ACTIVE_BASE_ASIS'])) {
+                $activeBaseAsis = (string)$sys['SYBASE_ACTIVE_BASE_ASIS'];
+                $_SESSION['SYBASE_ACTIVE_BASE_ASIS'] = $activeBaseAsis;
+            }
+        } catch (Throwable $e) {
+            // ignore
+        }
+    }
+
+    // Fallback ke JSON
+    if (!$activeBaseAsis) {
+        $flags = $GLOBALS['sybase_active'] ?? ['asisdb'=>false,'asisdb_dev'=>false];
+
+        $map = function(string $k): ?string {
+            return match ($k) {
+                'asisdb'     => 'sybase_asisdb',
+                'asisdb_dev' => 'sybase_asisdb_dev',
+                default      => null,
+            };
+        };
+
+        foreach (['asisdb','asisdb_dev'] as $k) {
+            if (!empty($flags[$k])) {
+                $activeBaseAsis = $map($k);
+                break;
+            }
+        }
+    }
+
+    if (!$activeBaseAsis) {
+        $activeBaseAsis = 'sybase_asisdb';
+    }
+
+    define('SYBASE_ACTIVE_BASE_ASIS', $activeBaseAsis);
+
+    if (empty($_SESSION['SYBASE_ACTIVE_BASE_ASIS'])) {
+        $_SESSION['SYBASE_ACTIVE_BASE_ASIS'] = $activeBaseAsis;
+    }
+} //ASIS: SYBASE_ACTIVE_BASE_ASIS
 
 // 12.5) Helper untuk check development mode
 if (!function_exists('is_development_mode')) {
@@ -333,14 +381,10 @@ if (!function_exists('sybase_pdo')) {
         return Database::getInstance(SYBASE_ACTIVE_BASE)->getConnection();
     }
 }
-if (!function_exists('sybase_staff_pdo')) {
-    function sybase_staff_pdo(): PDO {
-        return Database::getInstance('sybase_stafdb')->getConnection();
-    }
-}
-if (!function_exists('sybase_student_pdo')) {
-    function sybase_student_pdo(): PDO {
-        return Database::getInstance('sybase_student')->getConnection();
+
+if (!function_exists('sybase_pdo_asis')) {
+    function sybase_pdo_asis(): PDO {
+        return Database::getInstance(SYBASE_ACTIVE_BASE_ASIS)->getConnection();
     }
 }
 
