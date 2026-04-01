@@ -63,18 +63,8 @@
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
               <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-bapa-tab" role="tab">
-                  <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_maklumat_bapa','Maklumat Bapa')) ?>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-ibu-tab" role="tab">
-                  <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_maklumat_ibu', 'Maklumat Ibu')) ?>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-penjaga-tab" role="tab">
-                  <i class="ri-briefcase-line me-1"></i> <?= h(tr('tab_maklumat_penjaga', 'Maklumat Penjaga')) ?>
+                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-kokurikulum-tab" role="tab">
+                  <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_maklumat_kokurikulum','Maklumat Kokurikulum')) ?>
                 </a>
               </li>
             </ul>
@@ -102,19 +92,9 @@
                 </div>
               <?php endif; ?>
 
-              <!-- Tab 1: Maklumat Bapa -->
-              <div class="tab-pane fade show active" id="maklumat-bapa-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/f-bapa.php'; ?>
-              </div>
-
-              <!-- Tab 2: Maklumat Ibu -->
-              <div class="tab-pane fade show" id="maklumat-ibu-tab" role="tabpanel">                
-                <?php include __DIR__ . '/f-ibu.php'; ?>
-              </div>    
-
-              <!-- Tab 3: Maklumat Penjaga -->
-              <div class="tab-pane fade show" id="maklumat-penjaga-tab" role="tabpanel">
-                <?php  include __DIR__ . '/f-penjaga.php'; ?>
+              <!-- Tab 1: Maklumat Kokurikulum -->
+              <div class="tab-pane fade show active" id="maklumat-kokurikulum-tab" role="tabpanel"> 
+                <?php include __DIR__ . '/f-kokurikulum.php'; ?>
               </div>
 
             </div>

@@ -64,13 +64,6 @@ function sanitize_menu_path(string $path): ?string {
  * @param string $menuPath Menu path from database
  * @return bool True if menu is active, false otherwise
  */
-// function is_menu_active(string $currentFile, string $menuPath): bool {
-//     $sanitizedPath = sanitize_menu_path($menuPath);
-//     if (!$sanitizedPath) {
-//         return false;
-//     }
-//     return $currentFile === basename($sanitizedPath);
-// }
 
 function is_menu_active(string $currentFile, string $menuPath): bool {
     $sanitizedPath = sanitize_menu_path($menuPath);
@@ -103,6 +96,33 @@ function student_avatar_url_sidebar(?string $matrik): string {
     $clean = preg_replace('/\D+/', '', (string)$matrik) ?? '';
     if ($clean === '') return base_url('assets/images/no-image.jpg');
     return 'https://kemasukan.upnm.edu.my/tawaran/pelajar/student_image/' . rawurlencode($clean) . '.jpg';
+}
+
+/**
+ * Group menu permohonan kepada kategori kecil
+ * 
+ * @param array $menus
+ * @return array
+ */
+function group_permohonan_menus(array $menus): array {
+    $grouped = [
+        'Kebajikan' => [],
+        'Anugerah' => []
+    ];
+
+    foreach ($menus as $menu) {
+        $name = strtolower(trim($menu['menuName'] ?? ''));
+
+        if (str_starts_with($name, 'anugerah')) {
+            $grouped['Anugerah'][] = $menu;
+        } else if (str_starts_with($name, 'anugerah')) {
+            $grouped['Kebajikan'][] = $menu;
+        } else {
+            $grouped['Senarai'][] = $menu;
+        }
+    }
+
+    return $grouped;
 }
 
 // Initialize controller and load sidebar data
@@ -294,7 +314,22 @@ $notificationCount = $sidebarController->getNotificationCount();
                 $childs = $modulMenus[$modulID] ?? [];
                 if (empty($childs)) continue;
 
+                // ✅ Special grouping untuk modul Permohonan (ID = 6) - Sistem MyHEPA sahaja
+                $isPermohonan = ($modulID === 6);
+                $groupedMenus = $isPermohonan ? group_permohonan_menus($childs) : [];
+
                 $isActive     = ($modulID === $modulAktifID);
+                // check kalau mana-mana child menu active
+                if (!$isActive) {
+                    foreach ($childs as $menu) {
+                        $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
+                        if ($menuPath && is_menu_active($currentFile, $menuPath)) {
+                            $isActive = true;
+                            break;
+                        }
+                    }
+                }
+
                 $collapseCls  = $isActive ? 'collapse show' : 'collapse';
                 $linkCls      = 'side-nav-link' . ($isActive ? '' : ' collapsed');
                 $ariaExpanded = $isActive ? 'true' : 'false';
@@ -310,25 +345,80 @@ $notificationCount = $sidebarController->getNotificationCount();
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="<?= $collapseCls ?>" id="<?= $modulId ?>">
-                        <ul class="side-nav-second-level">
-                            <?php foreach ($childs as $menu): 
+                        <!-- <ul class="side-nav-second-level"> -->
+                            <?php 
+                                // foreach ($childs as $menu): 
                                 // ✅ SANITIZE MENU PATH
-                                $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
-                                if (!$menuPath) continue; // Skip invalid paths
+                                // $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
+                                // if (!$menuPath) continue; // Skip invalid paths
                                 
                                 // ✅ USE HELPER FUNCTION FOR ACTIVE DETECTION
+                                // $menuActive = is_menu_active($currentFile, $menuPath);
+                                // $menuHref = base_path('pages/' . $menuPath);
+                                // $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
+                            ?>
+                                <!-- <li>
+                                    <a class="<?= $menuActive ? 'active' : '' ?>"
+                                       href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= $menuName ?>
+                                    </a>
+                                </li> -->
+                            <?php 
+                                // endforeach ?>
+                        <!-- </ul>  -->
+
+                        <ul class="side-nav-second-level">
+
+                        <?php if ($isPermohonan): ?>
+
+                            <?php foreach ($groupedMenus as $groupTitle => $menus): ?>
+                                
+                                <?php if (!empty($menus)): ?>
+                                    <li class="side-nav-subtitle">
+                                        <?= htmlspecialchars($groupTitle) ?>
+                                    </li>
+
+                                    <?php foreach ($menus as $menu): 
+                                        $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
+                                        if (!$menuPath) continue;
+
+                                        $menuActive = is_menu_active($currentFile, $menuPath);
+                                        $menuHref = base_path('pages/' . $menuPath);
+                                        $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                        <li>
+                                            <a class="<?= $menuActive ? 'active' : '' ?>"
+                                            href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
+                                                <?= $menuName ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+
+                                <?php endif; ?>
+
+                            <?php endforeach; ?>
+
+                        <?php else: ?>
+
+                            <?php foreach ($childs as $menu): 
+                                $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
+                                if (!$menuPath) continue;
+
                                 $menuActive = is_menu_active($currentFile, $menuPath);
                                 $menuHref = base_path('pages/' . $menuPath);
                                 $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
                             ?>
                                 <li>
                                     <a class="<?= $menuActive ? 'active' : '' ?>"
-                                       href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
+                                    href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
                                         <?= $menuName ?>
                                     </a>
                                 </li>
-                            <?php endforeach ?>
-                        </ul>
+                            <?php endforeach; ?>
+
+                        <?php endif; ?>
+
+                        </ul>                        
                     </div>
                 </li>
             <?php endforeach ?>

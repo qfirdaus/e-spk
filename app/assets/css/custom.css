@@ -672,3 +672,24 @@ html[data-bs-theme="dark"] #groupTable tbody tr:hover {
   flex: 0 0 40%; /* label ambil 40% ruang, tak shrink */
   max-width: 40%;
 }
+
+.side-nav-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 10px !important;
+    color: #0744b6;
+    letter-spacing: 0.6px;
+    opacity: 0.7;
+    position: relative;
+}
+
+/* garis bawah align dengan text */
+.side-nav-subtitle::after {
+    content: '';
+    position: absolute;
+    left: 10px;   /* sama dengan padding-left */
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #0B2C4D;
+}

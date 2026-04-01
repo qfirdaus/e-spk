@@ -108,22 +108,22 @@
 
               <!-- Tab 1: Maklumat Peribadi -->
               <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/form-peribadi.php'; ?>
+                <?php include __DIR__ . '/f-peribadi.php'; ?>
               </div>
 
               <!-- Tab 2: Maklumat Alamat -->
               <div class="tab-pane fade show" id="maklumat-alamat-tab" role="tabpanel">                
-                <?php include __DIR__ . '/form-alamat.php'; ?>
+                <?php include __DIR__ . '/f-alamat.php'; ?>
               </div>    
 
               <!-- Tab 3: Maklumat Pekerjaan -->
               <div class="tab-pane fade show" id="maklumat-pekerjaan-tab" role="tabpanel">
-                <?php  include __DIR__ . '/form-pekerjaan.php'; ?>
+                <?php  include __DIR__ . '/f-pekerjaan.php'; ?>
               </div>
 
               <!-- Tab 4: Maklumat Kesihatan -->
               <div class="tab-pane fade show" id="maklumat-kesihatan-tab" role="tabpanel"> 
-                <?php  include __DIR__ . '/form-kesihatan.php'; ?>
+                <?php  include __DIR__ . '/f-kesihatan.php'; ?>
               </div>
             </div>
           </div>        
