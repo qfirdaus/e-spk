@@ -58,22 +58,31 @@
                             </div>
                           </div>
 
+                        </div>
+
+                        <div class="col-md-6 gx-4">                    
+
+                          <!-- Status Pengajian -->
+                          <div class="mb-2 row align-items-center">
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pengajian','Status Pengajian')) ?></label>
+                            <div class="col-sm-8">
+                              <input type="text" name="status_pengajian" class="form-control" value="<?= h($status_pengajian ?? '') ?>" readonly>
+                            </div>
+                          </div>
+
                           <!-- Semester Pengajian Terkini -->
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_semester_terkini','Semester Pengajian Terkini')) ?></label>
                             <div class="col-sm-8">
                               <input type="text" name="semester_terkini" class="form-control" value="<?= ucwords(strtolower(h($semester_terkini ?? ''))) ?>" readonly>
                             </div>
-                          </div>
+                          </div>   
 
-                        </div>
-
-                        <div class="col-md-6 gx-4">                    
                           <!-- PNGS -->
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngs','PNGS')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngs" class="form-control" value="<?= h($pngs ?? '') ?>">
+                              <input type="text" name="pngs" class="form-control" value="<?= h($pngs ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
                             </div>                 
                           </div>
 
@@ -81,23 +90,15 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngk','PNGK')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngk" class="form-control" value="<?= h($pngk ?? '') ?>">
+                              <input type="text" name="pngk" class="form-control" value="<?= h($pngk ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
                             </div>
-                          </div>                        
-
-                          <!-- Status Pengajian -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pengajian','Status Pengajian')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="status_pengajian" class="form-control" value="<?= h($status_pengajian ?? '') ?>">
-                            </div>
-                          </div>
+                          </div>  
 
                           <!-- Pembiayaan Pengajian -->
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pembiayaan_pengajian','Pembiayaan Pengajian')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pembiayaan_pengajian" class="form-control" value="<?= h($pembiayaan_pengajian ?? '') ?>">
+                              <input type="text" name="pembiayaan_pengajian" class="form-control" value="<?= h($pembiayaan_pengajian ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
                             </div>
                           </div>                     
                         </div>

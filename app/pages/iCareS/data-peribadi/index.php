@@ -6,13 +6,13 @@
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
 
-  require_once __DIR__ . '/../../includes/init.php';
+  require_once __DIR__ . '/../../../includes/init.php';
   require_login();
-  require_once __DIR__ . '/../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../controllers/PeribadiController.php'; 
-  require_once __DIR__ . '/../../includes/functions-page.php'; 
-  include __DIR__ . '/../../includes/header.php';
-  include __DIR__ . '/../../actions/retrieve-data-peribadi.php';
+  require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
+  require_once __DIR__ . '/../../../controllers/PeribadiController.php'; 
+  require_once __DIR__ . '/../../../includes/functions-page.php'; 
+  include __DIR__ . '/../../../includes/header.php';
+  include __DIR__ . '/../../../actions/retrieve-data-peribadi.php';
 
   // Check active session status
   $isActive = hasActiveSession($loginActivity);
@@ -23,8 +23,8 @@
   data-layout="vertical" data-sidebar-size="default" class="loading">
 
   <div class="wrapper">
-    <?php include __DIR__ . '/../../includes/topbar.php'; ?>
-    <?php include __DIR__ . '/../../includes/sidebar.php'; ?>
+    <?php include __DIR__ . '/../../../includes/topbar.php'; ?>
+    <?php include __DIR__ . '/../../../includes/sidebar.php'; ?>
 
     <div class="content-page">
       <div class="content">
@@ -57,7 +57,7 @@
 
           <!-- Profile Card with Tabs -->
           <div class="card border-0 shadow-sm profile-card">
-            <?php include __DIR__ . '/../../includes/profile-card.php'; ?>
+            <?php include __DIR__ . '/../../../includes/profile-card.php'; ?>
             
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
@@ -79,6 +79,11 @@
               <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#maklumat-kesihatan-tab" role="tab">
                   <i class="ri-health-book-line me-1"></i> <?= h(tr('tab_maklumat_kesihatan', 'Maklumat Kesihatan')) ?>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-akaun-tab" role="tab">
+                  <i class="ri-money-dollar-box-line me-1"></i> <?= h(tr('tab_maklumat_akaun', 'Maklumat Akaun')) ?>
                 </a>
               </li>
             </ul>
@@ -125,20 +130,26 @@
               <div class="tab-pane fade show" id="maklumat-kesihatan-tab" role="tabpanel"> 
                 <?php  include __DIR__ . '/f-kesihatan.php'; ?>
               </div>
+
+              <!-- Tab 5: Maklumat Akaun -->
+              <div class="tab-pane fade show" id="maklumat-akaun-tab" role="tabpanel"> 
+                <?php  include __DIR__ . '/f-akaun.php'; ?>
+              </div>
+
             </div>
           </div>        
           <!-- /Profile Card with Tabs -->
 
         </div>
       </div>
-      <?php include __DIR__ . '/../../includes/footer.php'; ?>
+      <?php include __DIR__ . '/../../../includes/footer.php'; ?>
     </div>
   </div>
 
   <?php 
-    include __DIR__ . '/../../includes/script.php'; 
-    include __DIR__ . '/../../includes/script-pages.php';  
-    include __DIR__ . '/../../includes/script-custom.php';
+    include __DIR__ . '/../../../includes/script.php'; 
+    include __DIR__ . '/../../../includes/script-pages.php';  
+    include __DIR__ . '/../../../includes/script-custom.php';
   ?>
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

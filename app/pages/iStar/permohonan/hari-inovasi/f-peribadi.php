@@ -113,7 +113,7 @@
                                     class="form-control form-control-sm text-center"
                                     style="max-width: 80px;"
                                     value="<?= h($bilAnugerahDekan) ?>"
-                                    min="1" max="10">
+                                    oninput="if(this.value>10)this.value=10;if(this.value<1)this.value=0;">
 
                               <!-- Upload file -->
                               <input type="file" name="dokumen"

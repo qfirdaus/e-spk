@@ -103,6 +103,8 @@ class PeribadiController
             'alamat3'       => (string)($student['alamat3'] ?? ''),
             'alamat4'       => (string)($student['alamat4'] ?? ''),
             'negeri'       => (string)($student['negeri'] ?? ''),
+            'kategori_kadet'       => (string)($student['kategori_kadet'] ?? ''),
+            'kadet'       => (string)($student['kadet'] ?? ''),
             'avatar_url' => (string)($avatar ?: base_url('assets/images/no-image.jpg')),
         ];        
     }    

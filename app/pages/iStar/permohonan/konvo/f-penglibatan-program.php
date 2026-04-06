@@ -1,5 +1,5 @@
                 <form method="post" action="<?= base_url('profile/update') ?>">
-                  <h5 class="card-title mb-4"><?= h(tr('profile_penglibatan_program','Tambah Penglibatan Program')) ?></h5>
+                  <h5 class="text-h5"><?= h(tr('profile_penglibatan_program','Tambah Penglibatan Program')) ?></h5>
                   <hr>
                   <div class="row">
                     <div class="col-12">
@@ -7,7 +7,7 @@
                         <div class="col-md-6 gx-4">
                           <!-- Nama Program / Nama Pertandingan -->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('nama_program_pertandingan','Nama Program / Nama Pertandingan')) ?></label>
+                            <label class="col-sm-4 col-form-label"><?= h(tr('nama_program_pertandingan','Nama Program / Nama Pertandingan')) ?></label>
                             <div class="col-sm-8">
                               <input type="text" name="nama_penuh" class="form-control" value=" " >
                             </div>                 
@@ -94,7 +94,7 @@
                     </div>
                   </div>
                 </form> 
-                <h5 class="card-title mb-4"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
+                <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
                 <hr>
                 <div class="table-responsive">
                     <table id="groupTable" class="table table-bordered align-middle dataTable no-footer">

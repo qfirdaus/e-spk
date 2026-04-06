@@ -62,6 +62,14 @@
   $poskod         = $userDetails['alamat3'] ?? '';
   $bandar         = $userDetails['alamat4'] ?? '';
   $negeri          = $userDetails['negeri'] ?? '';
+  $kategori_kadet  = $userDetails['kategori_kadet'] ?? '';
+  $kadet           = $userDetails['kadet'] ?? '';
+
+  if($kategori_kadet === 'Pkdt') {
+    $status_pelajar = 'Kadet ' . $kadet;
+  } else {
+    $status_pelajar = $kadet;
+  }
 
 function count_age(DateTime $tarikh_lahir) {
   $today = new DateTime();

@@ -84,7 +84,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#perakauan-pemohon-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
+                <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
               </a>
             </li>
           </ul>

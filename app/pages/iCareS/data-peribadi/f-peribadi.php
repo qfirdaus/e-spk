@@ -60,22 +60,7 @@
                               <input type="text" name="kewarganegaraan" class="form-control" value="<?= ucwords(strtolower(h($warganegara))) ?>"  readonly>
                             </div>
                           </div>                                            
-
-                          <!-- Telefon -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_telefon','No Telefon')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="no_telefon" class="form-control" value="<?= h($notel_terkini) ?>" readonly>
-                            </div>
-                          </div>
-
-                          <!-- Emel -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_emel','Emel')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="email" name="emel" class="form-control" value="<?= h($email) ?>" readonly>
-                            </div>
-                          </div>  
+ 
                         </div>
 
                         <div class="col-md-6 gx-4">
@@ -109,51 +94,43 @@
                             <div class="col-sm-8">
                               <input type="text" name="status_perkahwinan" class="form-control" value="<?= ucwords(strtolower(h($status_kahwin))) ?>" readonly>
                             </div>
-                          </div>         
-
-                          <!-- Bilangan Adik-Beradik -->
+                          </div>  
+                          
+                          <!-- Telefon -->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_adikberadik','Bilangan Adik-Beradik')) ?></label>
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_telefon','No Telefon')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="adik_beradik" class="form-control" value=" " >
-                            </div>
-                          </div>                        
-
-                          <!-- Anak Ke Berapa dalam Keluarga -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_anak_ke','Anak Ke Berapa')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="anak_ke" class="form-control" value=" " >
+                              <input type="text" name="no_telefon" class="form-control" value="<?= h($notel_terkini) ?>" readonly>
                             </div>
                           </div>
 
-                          <!-- Akaun Bank -->
+                          <!-- Emel -->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_akaun_bank','Akaun Bank')) ?></label>
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_emel','Emel')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="akaun_bank" class="form-control" value=" " >
+                              <input type="email" name="emel" class="form-control" value="<?= h($email) ?>" readonly>
                             </div>
+                          </div> 
+
+                          <!-- Status Pelajar -->
+                          <div class="mb-2 row align-items-center">
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pelajar','Status Pelajar')) ?></label>
+                            <div class="col-sm-8">
+                              <input type="status_pelajar" name="status_pelajar" class="form-control" value="<?= ucwords(strtolower(h($status_pelajar))) ?>" readonly>
+                            </div>
+                          </div> 
+
+                        </div>
+
+                        <?php if (empty($hideButton)) { ?> 
+                          <!-- kalau $hideButton tidak diset, paparkan butang simpan hanya di data-peribadi. -->
+                          <!-- Submit Button -->
+                          <div class="col-12 text-center mt-3">
+                            <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
+                            </button>
                           </div>
+                        <?php } ?>
 
-                          <!-- Dokumen Akaun -->
-                          <div class="mb-2 row align-items-center">
-                            <div class="col-sm-4">
-                                <label class="col-form-label text-nowrap"> <?= h(tr('profile_dokumen_akaun','Dokumen Akaun')) ?> </label> 
-                                <i class="ri-information-line ms-1 text-danger extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                aria-label="<?= h(tr('profile_akaun_bank','Akaun Bank')) ?>" data-bs-original-title="<?= h(tr('profile_dokumen_akaun_note','Sila sertakan Penyata No. Akaun Bank (Aktif) dalam format JPG/JPEG/PDF, maks 5MB')) ?>"></i>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="file" name="dokumen" class="form-control" accept=".jpg, .jpeg, .pdf" onchange="checkFileSize(this)" />
-                                <div class="invalid-feedback"><?= h(tr('profile_max_file_size','Max file size 5MB')) ?></div>
-                            </div>
-                          </div>                        
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="col-12 text-center mt-3">
-                          <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
-                          </button>
-                        </div>
                       </div>
                     </div>
                   </div>
