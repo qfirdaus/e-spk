@@ -1,0 +1,19 @@
+/* Global page header spacing */
+.content-page .container-fluid > .row:has(.page-title-box) {
+  margin-bottom: .75rem !important;
+}
+
+.page-title-box {
+  padding: .65rem 1rem !important;
+  margin-bottom: 0 !important;
+}
+
+.page-title-box .page-title {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 575.98px) {
+  .content-page .container-fluid > .row:has(.page-title-box) {
+    margin-bottom: .625rem !important;
+  }
+}

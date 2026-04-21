@@ -3,13 +3,19 @@ services:
     build: .
     container_name: ehepa_web
 
+    # ===============================
+    # Load environment variables
+    # ===============================
+    env_file:
+      - ./.env   # 👉 WAJIB: DB_MYSQL_USER, DB_MYSQL_PASS, etc
+
     ports:
       - "80:80"
       - "443:443"
 
     volumes:
       # Source code
-      - ./app:/var/www/html
+      - ./public:/var/www/html
 
       # Apache vhosts (SEMUA conf)
       - ./docker/apache:/etc/apache2/sites-enabled

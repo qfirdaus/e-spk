@@ -1,0 +1,65 @@
+<?php
+declare(strict_types=1);
+
+if (defined('VERSION_HELPER_INCLUDED')) {
+    return;
+}
+define('VERSION_HELPER_INCLUDED', true);
+
+if (!function_exists('app_current_version')) {
+    function app_current_version(string $fallback = '0.0.0'): string
+    {
+        static $cached = null;
+
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $envVersion = trim((string)($_ENV['APP_VERSION'] ?? $_SERVER['APP_VERSION'] ?? ''));
+        if ($envVersion !== '') {
+            $cached = $envVersion;
+            return $cached;
+        }
+
+        $candidates = [
+            trim((string)($_ENV['APP_VERSION_FILE'] ?? $_SERVER['APP_VERSION_FILE'] ?? '')),
+            __DIR__ . '/../../VERSION',
+            dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'VERSION',
+            realpath(__DIR__ . '/../../VERSION') ?: '',
+            realpath(__DIR__ . '/../../../VERSION') ?: '',
+        ];
+
+        $value = '';
+        foreach ($candidates as $versionFile) {
+            $versionFile = trim((string)$versionFile);
+            if ($versionFile === '' || !is_file($versionFile)) {
+                continue;
+            }
+
+            $readValue = trim((string)@file_get_contents($versionFile));
+            if ($readValue !== '') {
+                $value = $readValue;
+                break;
+            }
+        }
+
+        $cached = $value !== '' ? $value : $fallback;
+
+        return $cached;
+    }
+}
+
+if (!function_exists('app_current_version_label')) {
+    function app_current_version_label(?string $prefix = null): string
+    {
+        $version = app_current_version();
+        $resolvedPrefix = $prefix;
+
+        if ($resolvedPrefix === null) {
+            $translated = function_exists('__') ? (string)__('common_version') : 'Version';
+            $resolvedPrefix = ($translated !== '' && $translated !== 'common_version') ? $translated : 'Version';
+        }
+
+        return trim($resolvedPrefix) . ' ' . $version;
+    }
+}
