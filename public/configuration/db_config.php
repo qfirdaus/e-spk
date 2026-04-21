@@ -112,7 +112,7 @@ return [
         'dsn'    => sprintf(
             'mysql:host=%s;dbname=%s;charset=%s',
             db_env('DB_MYSQL_HOST', '172.16.2.141'),
-            db_env('DB_MYSQL_NAME', 'ebasedb'),
+            db_env('DB_MYSQL_NAME', 'ehepadb'),
             db_env('DB_MYSQL_CHARSET', 'utf8mb4')
         ),
         'user'   => db_env_required('DB_MYSQL_USER'),
