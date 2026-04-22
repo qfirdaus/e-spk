@@ -89,72 +89,6 @@ if (!function_exists('prestasi_normalize_menu_path')) {
     }
 }
 
-if (!function_exists('prestasi_menu_path_without_pages_prefix')) {
-    function prestasi_menu_path_without_pages_prefix(string $path): string {
-        $path = prestasi_normalize_menu_path($path);
-        if (str_starts_with($path, 'pages/')) {
-            return substr($path, 6);
-        }
-        return $path;
-    }
-}
-
-if (!function_exists('prestasi_menu_paths_match')) {
-    function prestasi_menu_paths_match(string $currentPath, string $allowedPath): bool {
-        $currentPath = prestasi_menu_path_without_pages_prefix($currentPath);
-        $allowedPath = prestasi_menu_path_without_pages_prefix($allowedPath);
-
-        if ($currentPath === '' || $allowedPath === '') {
-            return false;
-        }
-
-        if ($currentPath === $allowedPath) {
-            return true;
-        }
-
-        $currentNoIndex = preg_replace('#/index\.php$#i', '', $currentPath) ?? $currentPath;
-        $allowedNoIndex = preg_replace('#/index\.php$#i', '', $allowedPath) ?? $allowedPath;
-
-        if ($currentNoIndex !== '' && $currentNoIndex === $allowedNoIndex) {
-            return true;
-        }
-
-        return $allowedNoIndex !== ''
-            && !str_ends_with($allowedNoIndex, '.php')
-            && str_starts_with($currentNoIndex . '/', $allowedNoIndex . '/');
-    }
-}
-
-if (!function_exists('prestasi_page_path_allowed')) {
-    /**
-     * @param array<string,bool> $allowedPaths
-     */
-    function prestasi_page_path_allowed(string $currentPath, array $allowedPaths): bool {
-        $currentPath = prestasi_normalize_menu_path($currentPath);
-        if ($currentPath === '') {
-            return false;
-        }
-
-        if (isset($allowedPaths[$currentPath])) {
-            return true;
-        }
-
-        $currentWithoutPages = prestasi_menu_path_without_pages_prefix($currentPath);
-        if ($currentWithoutPages !== '' && isset($allowedPaths[$currentWithoutPages])) {
-            return true;
-        }
-
-        foreach (array_keys($allowedPaths) as $allowedPath) {
-            if (prestasi_menu_paths_match($currentPath, (string)$allowedPath)) {
-                return true;
-            }
-        }
-
-        $basename = basename($currentPath);
-        return $basename !== '' && strtolower($basename) !== 'index.php' && isset($allowedPaths[$basename]);
-    }
-}
-
 if (!function_exists('prestasi_current_page_relative_path')) {
     function prestasi_current_page_relative_path(): string {
         return prestasi_current_request_relative_path();
@@ -458,11 +392,6 @@ if (!function_exists('prestasi_load_allowed_page_paths')) {
                             continue;
                         }
                         $paths[$normalized] = true;
-                        $withoutPages = prestasi_menu_path_without_pages_prefix($normalized);
-                        if ($withoutPages !== '') {
-                            $paths[$withoutPages] = true;
-                            $paths['pages/' . $withoutPages] = true;
-                        }
                         $basename = basename($normalized);
                         if ($basename !== '') {
                             $paths[$basename] = true;
@@ -512,7 +441,12 @@ if (!function_exists('prestasi_user_can_access_current_page')) {
             return false;
         }
 
-        return prestasi_page_path_allowed($currentPath, $allowedPaths);
+        if (isset($allowedPaths[$currentPath])) {
+            return true;
+        }
+
+        $basename = basename($currentPath);
+        return $basename !== '' && isset($allowedPaths[$basename]);
     }
 }
 

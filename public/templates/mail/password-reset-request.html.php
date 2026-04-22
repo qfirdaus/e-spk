@@ -3,7 +3,7 @@ $safeDisplayName = htmlspecialchars((string)($displayName ?? ''), ENT_QUOTES, 'U
 $safeLoginId = htmlspecialchars((string)($loginId ?? ''), ENT_QUOTES, 'UTF-8');
 $safeResetUrl = htmlspecialchars((string)($resetUrl ?? ''), ENT_QUOTES, 'UTF-8');
 $safeExpiresAt = htmlspecialchars((string)($expiresAt ?? ''), ENT_QUOTES, 'UTF-8');
-$safeSiteTitle = htmlspecialchars((string)($siteTitle ?? 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'), ENT_QUOTES, 'UTF-8');
+$safeSiteTitle = htmlspecialchars((string)($siteTitle ?? 'e-Prestasi'), ENT_QUOTES, 'UTF-8');
 $safeMinutes = (int)($expiresInMinutes ?? 30);
 ?>
 <!doctype html>

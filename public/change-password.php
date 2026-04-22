@@ -250,7 +250,7 @@ if ($requestMethod === 'POST') {
                                 'displayName' => trim((string)($user['f_nama'] ?? $user['f_nickname'] ?? $pendingLoginId)),
                                 'loginId' => trim((string)($user['f_loginID'] ?? $pendingLoginId)),
                                 'changedAt' => (new DateTimeImmutable('now', new DateTimeZone('Asia/Kuala_Lumpur')))->format('Y-m-d H:i:s'),
-                                'siteTitle' => app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'),
+                                'siteTitle' => app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'),
                             ]);
                             Mailer::quickSend(
                                 $pdo,
@@ -324,8 +324,8 @@ $configModel = class_exists('Config') ? new Config(Database::getInstance('mysql'
 $globalThemeSettings = $configModel ? ($configModel->getTema() ?: []) : [];
 $loginHeaderLogo = app_config('branding.login_header_logo', 'assets/images/logo-upnm.png');
 $loginPanelLogo = app_config('branding.login_panel_logo', 'assets/images/upnm30-logo.png');
-$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Pelajar (e-HEPA)'));
-$siteTitle = trim((string)app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'));
+$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+$siteTitle = trim((string)app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'));
 $organizationName = trim((string)app_config('organization.name', $systemName !== '' ? $systemName : $siteTitle));
 $pageLang = (string)($_SESSION['lang'] ?? 'ms');
 $sidebarTheme = strtolower(trim((string)($globalThemeSettings['sidebarColor'] ?? $_SESSION['theme.menu'] ?? 'light')));
@@ -347,7 +347,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= h(__('password_change_page_title')) ?> | <?= h(app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)')) ?></title>
+  <title><?= h(__('password_change_page_title')) ?> | <?= h(app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)')) ?></title>
   <link rel="icon" href="<?= base_url(app_config('site.favicon', 'assets/images/default.ico')) ?>" type="image/x-icon">
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css?v=' . $version) ?>">
   <link rel="stylesheet" href="<?= base_url('assets/css/app.min.css?v=' . $version) ?>">
@@ -946,7 +946,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
           <img src="<?= base_url($loginHeaderLogo) ?>" alt="UPNM Logo">
           <div class="cp-brand-copy">
             <strong><?= h($systemName !== '' ? $systemName : $siteTitle) ?></strong>
-            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for student records, student administration, and HEPA support services.' : 'Akses digital rasmi untuk rekod pelajar, pentadbiran pelajar, dan perkhidmatan sokongan HEPA.')) ?></span>
+            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for facility operations and support services.' : 'Akses digital rasmi untuk operasi fasiliti dan perkhidmatan sokongan.')) ?></span>
           </div>
         </div>
         <div class="cp-masthead-actions">
@@ -961,13 +961,13 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
       <div class="cp-board">
         <section class="cp-overview">
           <span class="cp-tag"><i class="ri-lock-password-line"></i> <?= h(__('password_change_kicker')) ?></span>
-          <h1 class="cp-title"><?= h($pageLang === 'en' ? 'Forced e-HEPA password renewal within an institutional security control flow.' : 'Pembaharuan kata laluan e-HEPA secara wajib dalam aliran kawalan keselamatan institusi.') ?></h1>
+          <h1 class="cp-title"><?= h($pageLang === 'en' ? 'Forced password renewal within an institutional security control flow.' : 'Pembaruan kata laluan wajib dalam aliran kawalan keselamatan institusi.') ?></h1>
           <p class="cp-subtitle"><?= h(__($reasonTextKey)) ?></p>
 
           <div class="cp-overview-grid">
             <div class="cp-hero">
-              <h2><?= h($pageLang === 'en' ? 'Restore compliant student-management access before continuing to the main workspace.' : 'Pulihkan akses pengurusan pelajar yang patuh sebelum meneruskan ke ruang kerja utama.') ?></h2>
-              <p><?= h($pageLang === 'en' ? 'This enforced password update protects ongoing e-HEPA access by requiring a new password that meets current institutional policy.' : 'Kemaskini kata laluan wajib ini melindungi akses e-HEPA dengan mewajibkan kata laluan baharu yang mematuhi polisi institusi semasa.') ?></p>
+              <h2><?= h($pageLang === 'en' ? 'Restore compliant account access before continuing to the main workspace.' : 'Pulihkan akses akaun yang patuh sebelum meneruskan ke ruang kerja utama.') ?></h2>
+              <p><?= h($pageLang === 'en' ? 'This enforced password update protects ongoing access by requiring a new password that meets current institutional policy.' : 'Kemaskini kata laluan wajib ini melindungi akses berterusan dengan mewajibkan kata laluan baharu yang mematuhi polisi institusi semasa.') ?></p>
             </div>
 
             <aside class="cp-note">
@@ -987,7 +987,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
               <div>
                 <span class="cp-kicker"><i class="ri-lock-password-line"></i> <?= h(__('password_change_kicker')) ?></span>
                 <h2 class="cp-panel-title"><?= h(__('password_change_heading')) ?></h2>
-                <p class="cp-panel-copy"><?= h($pageLang === 'en' ? 'Set a compliant password before re-entering the official Student Management System (e-HEPA) workspace.' : 'Tetapkan kata laluan yang patuh sebelum memasuki semula ruang kerja rasmi Sistem Pengurusan Pelajar (e-HEPA).') ?></p>
+                <p class="cp-panel-copy"><?= h($pageLang === 'en' ? 'Set a compliant password before re-entering the official facility workspace.' : 'Tetapkan kata laluan yang patuh sebelum memasuki semula ruang kerja rasmi fasiliti.') ?></p>
               </div>
             </div>
 

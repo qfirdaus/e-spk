@@ -3,8 +3,8 @@
   // Core init & settings
   require_once __DIR__ . '/init.php';
   $defaultHome = trim((string)app_config('site.default_home', 'pages/dashboard.php'));
-  $metaAuthor = trim((string)app_config('system.meta_author', 'Sistem Pengurusan Fasiliti (e-Facility)'));
-  $siteTitle = trim((string)app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+  $metaAuthor = trim((string)app_config('system.meta_author', 'Base System'));
+  $siteTitle = trim((string)app_config('site.title', 'Base System'));
   $faviconPath = trim((string)app_config('site.favicon', 'assets/images/favicon.ico'));
   $pageTitle = isset($PAGE_TITLE) ? trim((string)$PAGE_TITLE) : '';
   $metaDescription = isset($PAGE_META_DESCRIPTION) ? trim((string)$PAGE_META_DESCRIPTION) : '';
@@ -44,7 +44,7 @@
 
   <!-- Canonical & favicon -->
   <link rel="canonical" href="<?= base_url($defaultHome) ?>" />
-  <link rel="shortcut icon" href="<?= base_url($faviconPath) ?>" />
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
 
   <style>
     #global-loader{
@@ -80,6 +80,7 @@
   <!-- App CSS (asas) -->
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css') ?>?v=<?= time(); ?>" />
   <link id="app-style" rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>?v=<?= time(); ?>" />
+  <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>?v=<?= time(); ?>" />
 
   <!-- Plugin CSS (ikut keperluan page) -->
   <?php if ($NEED_DATERANGE): ?>
@@ -102,9 +103,6 @@
   <?php if ($NEED_SELECT2): ?>
     <link rel="stylesheet" href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>?v=<?= time(); ?>">
   <?php endif; ?>
-
-  <!-- Global project overrides -->
-  <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>?v=<?= time(); ?>">
 
   <!-- i18n: fungsi senyap (tiada console.warn) -->
   <script>

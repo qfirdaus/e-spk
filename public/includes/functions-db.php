@@ -1,7 +1,7 @@
 <?php
 // includes/functions-db.php
 // ======================================
-// ✅ Funksi Database Tambahan - e-Facility
+// ✅ Funksi Database Tambahan - e-Prestasi
 // - Support Sybase: ehrmdb, ehrmdb_dev
 // - Auto pilih DSN vs DBLIB ikut driver tersedia
 // - Fallback + ping connection

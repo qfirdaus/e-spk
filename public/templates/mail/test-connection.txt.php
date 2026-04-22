@@ -6,7 +6,7 @@
 // $mailEncryptionDisplay, $testedAt, $referenceCode
 
 $subject = $subject ?? 'Ujian Sambungan Emel';
-$siteTitle = $siteTitle ?? 'Sistem Pengurusan Fasiliti (e-Facility)';
+$siteTitle = $siteTitle ?? 'Base System';
 $systemName = $systemName ?? $siteTitle;
 $organizationName = $organizationName ?? '';
 $supportEmail = $supportEmail ?? '';

@@ -124,7 +124,7 @@ try {
         'mail_username' => (string)$username,
         'target_email' => (string)$to,
     ]);
-    $siteTitle = trim((string)app_config('site.title', app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)')));
+    $siteTitle = trim((string)app_config('site.title', app_config('system.name', 'Base System')));
     $systemName = trim((string)app_config('system.name', $siteTitle));
     $organizationName = trim((string)app_config('organization.name', ''));
     $supportEmail = trim((string)app_config('system.support', ''));

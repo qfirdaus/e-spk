@@ -22,8 +22,8 @@ function check_rate_limit(string $key, int $maxRequests = 60, int $windowSeconds
     
     // ✅ Create rate limit directory inside project (avoid open_basedir + temp)
     // Support deployments with or without /app folder:
-    // - D:\WWW\e-facility\app\cache\apc_rate
-    // - D:\WWW\e-facility\cache\apc_rate
+    // - D:\WWW\e-prestasi\app\cache\apc_rate
+    // - D:\WWW\e-prestasi\cache\apc_rate
     $candidates = [
         realpath(__DIR__ . '/../../cache'),
         realpath(__DIR__ . '/../../../cache'),

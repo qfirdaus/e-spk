@@ -1,5 +1,5 @@
 <?php
-// pages/list-permohonan.php
+// pages/senarai-borang.php
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/init.php';
@@ -14,11 +14,6 @@ $profile             = $controller->profile ?? [];
 $senaraiPermohonan   = $controller->senaraiPermohonan ?? [];
 $version             = (string)($_ENV['APP_ASSET_VER'] ?? date('ymdHis'));
 
-if (empty($_SESSION['csrf_token'])) {
-  $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
-}
-$csrf = (string) $_SESSION['csrf_token'];
-
 // UI permission guard (use existing backend helper)
 $canManageGroups = false;
 try {
@@ -32,7 +27,9 @@ $permDisabledAttr = $canManageGroups ? '' : 'disabled aria-disabled="true"';
 $permDisabledClass = $canManageGroups ? '' : ' disabled';
 
 // helper escape
-function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+if (!function_exists('h')) {
+  function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+}
 
 ?>
 <!DOCTYPE html>
@@ -44,81 +41,630 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
   <!-- ✅ Standard DataTables CSS (shared) -->
   <link href="<?= base_url('assets/css/datatables-standard.css') ?>?v=<?= h($version ?? date('ymdHis')) ?>" rel="stylesheet">
   <style>
-    #permohonanTable { table-layout: fixed; width: 100%; }
-    .form-access-table { width: 100%; }
-    .form-access-table th, .form-access-table td { vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .form-access-table th.col-bil, .form-access-table td.col-bil { width: 5%; text-align: center; }
-    .form-access-table th.col-no, .form-access-table td.col-no { width: 22%; text-align: left; }
-    .form-access-table th.col-jenis, .form-access-table td.col-jenis { width: 13%; text-align: center; }
-    .form-access-table th.col-servis, .form-access-table td.col-servis { width: 24%; text-align: left; }
-    .form-access-table th.col-status, .form-access-table td.col-status { width: 14%; text-align: center; }
-    .form-access-table th.col-tarikh, .form-access-table td.col-tarikh { width: 12%; text-align: center; }
-    .form-access-table th.col-actions, .form-access-table td.col-actions { width: 10%; text-align: center; }
-    .truncate-1line { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .icon-btn { padding: .25rem .5rem; line-height: 1; }
-    .form-access-table .cell-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: .28rem;
-      max-width: 100%;
-      min-height: 1.4rem;
-    }
-    .form-access-table .group-chip,
-    .form-access-table .access-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: .12rem .34rem;
-      min-height: 1rem;
-      font-size: .64rem;
-      line-height: 1;
-      font-weight: 600;
+    .icon-btn { line-height:1; }
+
+    /* Kolum jadual kumpulan - use percentages to match requested layout */
+    table.table th.th-nowrap { white-space: nowrap; }
+    table.table th.th-color, table.table td.td-color { width: 4%; min-width: 46px; max-width: 56px; }
+    table.table th.th-mod,  table.table td.td-mod  { width: 10%; }
+    table.table th.th-menu, table.table td.td-menu { width: 10%; }
+    table.table th.th-grp,  table.table td.td-grp  { width: 10%; }
+    .group-color-cell { display: flex; justify-content: flex-end; }
+    .group-color-bar {
+      display: inline-block;
+      width: 40px;
+      height: 14px;
       border-radius: 999px;
-      border: 1px solid transparent;
+      border: 1px solid rgba(15, 23, 42, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+    html[data-bs-theme="dark"] .group-color-bar { border-color: rgba(148, 163, 184, 0.55); }
+
+    /* Reorder view */
+    .modul-badge { font-size:.75rem; }
+    .menu-path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:.775rem; opacity:.8; }
+    .menu-row { display:grid; grid-template-columns: 1fr auto; gap:.75rem; padding:.6rem 0; border-bottom:1px dashed var(--bs-border-color); }
+    .menu-row:last-child { border-bottom:0; }
+    .reorder-group .btn { padding:.25rem .55rem; }
+    .menu-row.saving { opacity:.6; pointer-events:none; }
+
+    /* DataTable: top & bottom bars */
+    .dt-topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:.75rem; border-bottom:1px solid var(--bs-border-color); padding-bottom:.5rem; margin-bottom:.75rem;
+    }
+    .dt-topbar .left, .dt-topbar .right{ display:flex; align-items:center; gap:.5rem; }
+    .dt-topbar .right .form-control{ width:260px; max-width:100%; }
+    .dt-bottom-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem; }
+    @media (max-width:575.98px){ .dt-topbar{ flex-wrap:wrap; } .dt-topbar .right{ margin-left:auto; } }
+
+    /* Fix DataTables layout untuk permohonanTable - prevent horizontal scroll */
+    #permohonanTable_wrapper {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    /* ✅ Table styling sama seperti senarai-pengguna.php */
+    #permohonanTable {
+
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+      table-layout: fixed;
+    }
+    #permohonanTable thead {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: #ffffff;
+    }
+    #permohonanTable thead th {
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 1rem 0.75rem;
+      border: none;
+      color: #ffffff;
+    }
+    #permohonanTable tbody tr {
+      transition: all 0.2s ease;
+    }
+    #permohonanTable tbody tr:hover {
+      background: #f8fafc !important;
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+    #permohonanTable tbody td {
+      padding: 0.875rem 0.75rem;
+      border-color: #f1f5f9;
       vertical-align: middle;
     }
-    .form-access-table .group-chip {
-      max-width: 100%;
-      background: rgba(59, 130, 246, .10);
-      color: #1d4ed8;
-      border-color: rgba(59, 130, 246, .16);
+    /* Dark theme support */
+    html[data-bs-theme="dark"] #permohonanTable thead {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     }
-    .form-access-table .access-chip {
-      min-width: 4.1rem;
-      background: rgba(15, 23, 42, .04);
-      color: #334155;
-      border-color: rgba(148, 163, 184, .22);
+    html[data-bs-theme="dark"] #permohonanTable tbody tr:hover {
+      background: #334155 !important;
     }
-    .form-access-table .access-chip.is-allowed {
-      background: rgba(16, 185, 129, .12);
-      color: #0f766e;
-      border-color: rgba(20, 184, 166, .16);
+    /* Top Controls */
+    .dt-top-right {
+      gap: 0.5rem;
     }
-    .form-access-table .access-chip.is-blocked {
-      background: rgba(239, 68, 68, .10);
-      color: #b91c1c;
-      border-color: rgba(239, 68, 68, .14);
+
+    /* Custom Search */
+    .dt-custom-search {
+      height: 36px !important;
+      border: 2px solid #e9ecef !important;
+      border-radius: 0.5rem !important;
+      padding: 0.5rem 0.75rem !important;
+      font-size: 0.875rem !important;
+      transition: all .15s ease;
     }
-    .form-access-table td.col-actions .btn,
-    .form-access-table td.col-actions a.btn {
-      box-shadow: none !important;
-      width: 1.75rem;
-      height: 1.75rem;
-      padding: 0;
-      line-height: 1;
+
+    .dt-custom-search:focus {
+      border-color: #86b7fe !important;
+      box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25) !important;
+    }
+
+    /* Add Button */
+    .btn-add-form {
+      height: 36px;
+      background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0 16px;
+      font-weight: 500;
       display: inline-flex;
       align-items: center;
+      transition: all .2s ease;
+    }
+
+    .btn-add-form:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(16,185,129,.35);
+      color: #fff;
+    }
+    /* Remove stripline effect */
+    #permohonanTable tbody tr,
+    #permohonanTable tbody tr:nth-of-type(odd),
+    #permohonanTable tbody tr:nth-of-type(even) {
+      background-color: transparent !important;
+    }
+    #permohonanTable_wrapper .dataTables_length {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      flex-wrap: nowrap;
+      max-width: 100%;
+    }
+    #permohonanTable_wrapper .dataTables_length label {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      margin-bottom: 0;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #permohonanTable_wrapper .dataTables_length select {
+      margin: 0;
+      width: auto;
+      min-width: 70px;
+      max-width: 100px;
+      display: inline-block;
+    }
+    #permohonanTable_wrapper .dataTables_filter {
+      text-align: right;
+      margin-left: auto;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #permohonanTable_wrapper .dataTables_filter label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 0;
+      width: 100%;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #permohonanTable_wrapper .dataTables_filter input {
+      margin-left: 0.5rem;
+      width: auto;
+      min-width: 150px;
+      max-width: 250px;
+    }
+    #permohonanTable_wrapper .dataTables_info {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    #permohonanTable_wrapper .dataTables_paginate {
+      text-align: right;
+      margin-left: auto;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #permohonanTable_wrapper .dataTables_paginate .pagination {
+      justify-content: flex-end;
+      margin-bottom: 0;
+      flex-wrap: nowrap;
+    }
+    #permohonanTable_wrapper .row {
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    #permohonanTable_wrapper .row > [class*="col-"] {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    /* Fix bottom row layout */
+    #permohonanTable_wrapper .row.mt-3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    #permohonanTable_wrapper .row.mt-3 > [class*="col-md-5"] {
+      display: flex;
+      align-items: center;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #permohonanTable_wrapper .row.mt-3 > [class*="col-md-7"] {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    /* Ensure table container doesn't overflow */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 991.98px) {
+      .table-responsive {
+        overflow-x: auto;
+      }
+    }
+    @media (max-width: 767.98px) {
+      #permohonanTable_wrapper .dataTables_length,
+      #permohonanTable_wrapper .dataTables_filter {
+        margin-bottom: 0.75rem;
+      }
+      #permohonanTable_wrapper .dataTables_filter {
+        text-align: left;
+        margin-left: 0;
+      }
+      #permohonanTable_wrapper .dataTables_filter label {
+        justify-content: flex-start;
+      }
+      #permohonanTable_wrapper .dataTables_info,
+      #permohonanTable_wrapper .dataTables_paginate {
+        text-align: center;
+        margin-top: 0.5rem;
+      }
+      #permohonanTable_wrapper .row.mt-3 {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #permohonanTable_wrapper .row.mt-3 > [class*="col-md-5"],
+      #permohonanTable_wrapper .row.mt-3 > [class*="col-md-7"] {
+        justify-content: center;
+        margin-top: 0.5rem;
+      }
+    }
+
+    /* Buang class lama yang tak digunakan */
+    #menuDT_wrapper .dt-top-right, #grpCnt .dt-top-right { display:none!important; }
+
+    /* Akses Kumpulan – kolum “Menu”: kecil & 1 baris */
+    #groupPermsDT th.col-menu, #groupPermsDT td.col-menu {
+      width: 140px; white-space: nowrap;
+    }
+
+    /* Akses Menu – status & actions kekal sebaris */
+    #menuDT th.col-status, #menuDT td.col-status { width: 200px; white-space: nowrap; }
+    #menuDT th.col-actions, #menuDT td.col-actions { width: 170px; white-space: nowrap; }
+
+    /* Multi-modal stacking */
+    .modal-backdrop.show + .modal-backdrop.show { z-index: 1065; }
+    .modal.show { z-index: 1055; }
+    .modal.show + .modal.show { z-index: 1070; }
+
+    /* Professional Modal Styling */
+    .modal-content {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem 1.75rem;
+      border-bottom: none;
+      position: relative;
+    }
+
+    .modal-header.bg-body-tertiary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .modal-header .modal-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .modal-header .modal-title i {
+      font-size: 1.5rem;
+      opacity: 0.95;
+    }
+
+    .modal-header .btn-close {
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .modal-header .btn-close:hover {
+      opacity: 1;
+    }
+
+    .modal-subtitle {
+      padding: 0.75rem 1.75rem;
+      background: rgba(102, 126, 234, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-size: 0.875rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .modal-body {
+      padding: 1.75rem;
+      background: #fff;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.75rem;
+      background: #f8f9fa;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 0 0 12px 12px;
+    }
+
+    .modal-footer .btn {
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .modal-footer .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .modal-footer .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Loading States */
+    .modal-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
+      padding: 3rem 2rem;
+      text-align: center;
     }
-    .form-access-table td.col-actions .btn + .btn,
-    .form-access-table td.col-actions .btn + a.btn,
-    .form-access-table td.col-actions a.btn + .btn,
-    .form-access-table td.col-actions a.btn + a.btn {
-      margin-left: .25rem !important;
+
+    .modal-loading .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 3px;
+      color: #667eea;
+      margin-bottom: 1rem;
     }
+
+    .modal-loading span {
+      color: #6c757d;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Error States */
+    .modal-error {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      background: #fee;
+      border-left: 4px solid #dc3545;
+      margin-bottom: 1rem;
+    }
+
+    /* Form Styling in Modals */
+    .modal-body .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .modal-body .form-control,
+    .modal-body .form-select {
+      border-radius: 8px;
+      border: 1.5px solid #e0e0e0;
+      padding: 0.625rem 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .modal-body .form-control:focus,
+    .modal-body .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    /* Make module/menu multi-selects in the create modal taller for easier selection */
+    #gc_moduls, #gc_menus {
+      min-height: 200px;
+      height: 200px;
+      overflow: auto;
+    }
+    @media (max-width: 767.98px) {
+      #gc_moduls, #gc_menus { min-height: 140px; height: 140px; }
+    }
+
+    /* Search Input in Modals */
+    .modal-body input[type="search"] {
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e9ecef;
+      transition: all 0.2s ease;
+    }
+
+    .modal-body input[type="search"]:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    /* Themed Modal Accent */
+    .modal-themed .modal-content {
+      position: relative;
+    }
+
+    .modal-themed .modal-content::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    /* Edit Modal Specific */
+    #menuEditModal .modal-header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    #menuEditModal .modal-dialog {
+      max-width: 900px;
+    }
+
+    #menuEditModal .modal-footer .btn-primary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+    }
+
+    #menuEditModal .modal-footer .btn-primary:hover {
+      box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
+    }
+
+    /* Accordion in Modals */
+    .modal-body .accordion {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .modal-body .accordion-item {
+      border: 1px solid #e9ecef;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+    }
+
+    .modal-body .accordion-button {
+      background: #f8f9fa;
+      font-weight: 600;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+    }
+
+    .modal-body .accordion-button:not(.collapsed) {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      color: #667eea;
+    }
+
+    /* Table in Modals */
+    .modal-body .table {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .modal-body .table thead {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    /* Badge Styling */
+    .modal-body .badge {
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    /* Input Group Styling */
+    .modal-body .input-group-text {
+      border-radius: 8px 0 0 8px;
+      background: #f8f9fa;
+      border-color: #e0e0e0;
+    }
+
+    .modal-body .input-group .form-control {
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* Button Group in Forms */
+    .modal-body .btn-group .btn {
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .modal-body .btn-group .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* List Group in Modals */
+    .modal-body .list-group-item {
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      border: 1.5px solid #e9ecef;
+      transition: all 0.2s ease;
+    }
+
+    .modal-body .list-group-item:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+      transform: translateX(4px);
+    }
+
+    /* Smooth Transitions */
+    .modal.fade .modal-dialog {
+      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+      transform: none;
+    }
+
+    /* Content Animation */
+    .modal-body > div:not(.d-none) {
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #groupPermsDT { table-layout: fixed; }
+    #groupPermsDT th.col-check, #groupPermsDT td.col-check { width: 60px; }
+    #groupPermsDT th.col-menu,  #groupPermsDT td.col-menu  { width: 140px; white-space: nowrap; }
+
+    /* Loading indicators */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .btn-loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .btn-loading .btn-text {
+      opacity: 0;
+    }
+
+    /* Undo notification */
+    .undo-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      min-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Controls & buttons: align with senarai-pengguna.php styles */
     .dt-bottom-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem; }
-    .dt-bottom-row .dataTables_info { margin: .25rem 0; white-space: nowrap; line-height: 1.5; }
-    .dt-bottom-row .dataTables_paginate { margin-left: auto; }
     .dataTables_length, #permohonanTable_wrapper .dataTables_length {
       white-space: nowrap !important;
       line-height: 1.4;
@@ -153,9 +699,7 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
       box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25) !important;
       outline: none !important;
     }
-    .dataTables_length label > * { white-space: nowrap !important; display: inline !important; }
     .dt-top-left { white-space: nowrap !important; flex-wrap: nowrap !important; }
-    .dt-top-left .dataTables_length { white-space: nowrap !important; }
     /* Buttons in top-right: sizing, borders and gap consistent with senarai-pengguna */
     .dt-top-right button, #permohonanTable_wrapper .dt-top-right button {
       height: 36px !important;
@@ -180,84 +724,46 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     }
     .dt-top-right { gap: 0.5rem !important; }
     .dt-top-right button + button { margin-left: 0 !important; }
-    #permohonanTable_wrapper .dt-top-right,
-    #permohonanTable_wrapper .dt-top-left {
-      align-items: flex-start !important;
-    }
-    #permohonanTable_wrapper .dt-top-right > * {
-      position: relative !important;
-      top: 0 !important;
-    }
-    .form-access-table {
-      border-radius: .75rem;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
-    }
-    .form-access-table thead th {
-      background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
-      color: #475569;
-      font-size: .82rem;
-      font-weight: 700;
-      letter-spacing: .02em;
-      text-transform: uppercase;
-      padding: .82rem .78rem;
-      border-bottom-color: rgba(148, 163, 184, .18);
-    }
-    .form-access-table tbody tr {
-      height: 3rem;
-      background: #fff;
-      transition: background-color .18s ease;
-    }
-    .form-access-table tbody tr:hover,
-    .form-access-table.table > tbody > tr:hover > *,
-    .form-access-table > tbody > tr:hover > td {
-      background: rgba(59, 130, 246, .045) !important;
-    }
-    .form-access-table tbody td {
-      padding: .5rem .72rem;
-      font-size: .84rem;
-      line-height: 1.22;
-      border-color: rgba(226, 232, 240, .78);
-      background: transparent !important;
-    }
-    .form-access-table td.col-jenis,
-    .form-access-table td.col-status,
-    .form-access-table td.col-tarikh,
-    .form-access-table td.col-actions {
-      white-space: nowrap;
-    }
-    [data-bs-theme="dark"] .form-access-table thead th {
-      background: rgba(30, 41, 59, .92);
-      color: rgba(226, 232, 240, .94);
-    }
-    [data-bs-theme="dark"] .form-access-table tbody td {
-      border-color: rgba(51, 65, 85, .72);
-    }
-    [data-bs-theme="dark"] .form-access-table tbody tr:hover,
-    [data-bs-theme="dark"] .form-access-table.table > tbody > tr:hover > *,
-    [data-bs-theme="dark"] .form-access-table > tbody > tr:hover > td {
-      background: rgba(148, 163, 184, .1) !important;
-    }
-    [data-bs-theme="dark"] .form-access-table .group-chip {
-      background: rgba(59, 130, 246, .18);
-      color: #bfdbfe;
-      border-color: rgba(96, 165, 250, .22);
-    }
-    [data-bs-theme="dark"] .form-access-table .access-chip {
-      background: rgba(148, 163, 184, .10);
-      color: #e2e8f0;
-      border-color: rgba(148, 163, 184, .18);
-    }
-    [data-bs-theme="dark"] .form-access-table .access-chip.is-allowed {
-      background: rgba(16, 185, 129, .18);
-      color: #99f6e4;
-      border-color: rgba(45, 212, 191, .18);
-    }
-    [data-bs-theme="dark"] .form-access-table .access-chip.is-blocked {
-      background: rgba(239, 68, 68, .18);
-      color: #fecaca;
-      border-color: rgba(248, 113, 113, .20);
-    }
+
+    .icon-picker{
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:10px;
+  padding:10px;
+  max-height:180px;
+  overflow-y:auto;
+  background:#fff;
+}
+
+[data-bs-theme="dark"] .icon-picker{
+  background:#0f172a;
+}
+
+.icon-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(40px,1fr));
+  gap:8px;
+}
+
+.icon-item{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:40px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s ease;
+  border:1px solid transparent;
+}
+
+.icon-item:hover{
+  background:rgba(99,102,241,.1);
+  border-color:#6366f1;
+}
+
+.icon-item.active{
+  background:#6366f1;
+  color:#fff;
+}
 
 </style>
 </head>
@@ -304,17 +810,17 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
               <div class="card-body">
                 <p class="text-muted mb-3"><?= __('permohonan_list_intro') ?></p>
 
-                <div class="table-responsive dt-standard">
-                  <table class="table table-bordered align-middle form-access-table" id="permohonanTable">
+                <div class="table-responsive">
+                  <table class="table table-bordered align-middle" id="permohonanTable">
                     <thead>
                        <tr>
-                        <th class="col-bil">#</th>
-                        <th class="col-no"><?= __('permohonan_col_no') ?></th>
-                        <th class="col-jenis"><?= __('permohonan_col_jenis') ?></th>
-                        <th class="col-servis"><?= __('permohonan_col_servis') ?></th>
-                        <th class="col-status"><?= __('permohonan_col_status') ?></th>
-                        <th class="col-tarikh"><?= __('permohonan_col_tarikh') ?></th>
-                        <th class="col-actions"><?= __('permohonan_col_pdf') ?></th>
+                        <th style="width:5%">#</th>
+                        <th><?= __('permohonan_col_no') ?></th>
+                        <th><?= __('permohonan_col_jenis') ?></th>
+                        <th><?= __('permohonan_col_servis') ?></th>
+                        <th><?= __('permohonan_col_status') ?></th>
+                        <th><?= __('permohonan_col_tarikh') ?></th>
+                        <th class="text-center"><?= __('permohonan_col_pdf') ?></th>
                       </tr>
                     </thead>
                   <tbody>
@@ -334,67 +840,45 @@ function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 
                       <tr>
 
-                      <td class="col-bil"></td>
+                      <td><?= $i+1 ?></td>
 
-                      <td class="col-no">
-                        <span class="truncate-1line"><?= h($no) ?></span>
-                      </td>
+                      <td><?= h($no) ?></td>
 
-                      <td class="col-jenis">
+                      <td>
                       <?php if ($jenis == 'EMAIL'): ?>
-                      <span class="cell-inline justify-content-center">
-                        <span class="group-chip"><?= __('permohonan_type_email') ?></span>
-                      </span>
-                      <?php else: ?>
-                      <span class="cell-inline justify-content-center">
-                        <span class="group-chip"><?= h($jenis) ?></span>
-                      </span>
+                      <span class="badge bg-primary"><?= __('permohonan_type_email') ?></span>
                       <?php endif; ?>
                       </td>
 
-                      <td class="col-servis">
-                        <span class="truncate-1line"><?= h($servis) ?></span>
-                      </td>
+                      <td><?= h($servis) ?></td>
 
-                      <td class="col-status">
+                      <td>
 
                       <?php if ($status == 'SUBMITTED'): ?>
-                      <span class="access-chip"><?= __('permohonan_status_submitted') ?></span>
+                      <span class="badge bg-warning"><?= __('permohonan_status_submitted') ?></span>
 
                       <?php elseif ($status == 'APPROVED'): ?>
-                      <span class="access-chip is-allowed"><?= __('permohonan_status_approved') ?></span>
+                      <span class="badge bg-success"><?= __('permohonan_status_approved') ?></span>
 
                       <?php elseif ($status == 'PROCESSING'): ?>
-                      <span class="access-chip"><?= __('permohonan_status_processing') ?></span>
+                      <span class="badge bg-secondary"><?= __('permohonan_status_processing') ?></span>
 
                       <?php elseif ($status == 'REJECTED'): ?>
-                      <span class="access-chip is-blocked"><?= __('permohonan_status_rejected') ?></span>
-
-                      <?php else: ?>
-                      <span class="access-chip"><?= h($status) ?></span>
+                      <span class="badge bg-danger"><?= __('permohonan_status_rejected') ?></span>
 
                       <?php endif; ?>
 
                       </td>
 
-                      <td class="col-tarikh"><?= h($tarikh) ?></td>
+                      <td><?= $tarikh ?></td>
 
-                      <td class="col-actions">
-                      <?php if ($jenis === 'EMAIL'): ?>
-                      <a href="pdf_permohonan_email.php?id=<?= h((string)$id) ?>"
+                      <td class="text-center">
+                      <a href="pdf-permohonan.php?jenis=<?= $jenis ?>&id=<?= $id ?>" 
                       target="_blank"
-                      class="btn btn-outline-danger btn-sm icon-btn"
-                      title="<?= h(__('permohonan_action_pdf_email')) ?>">
+                      class="btn btn-sm btn-outline-danger">
                       <i class="ri-file-pdf-line"></i>
                       </a>
-                      <?php else: ?>
-                      <button type="button"
-                      class="btn btn-outline-secondary btn-sm icon-btn"
-                      title="<?= h(__('permohonan_action_pdf_unavailable')) ?>"
-                      disabled>
-                      <i class="ri-file-pdf-line"></i>
-                      </button>
-                      <?php endif; ?>
+                      
                       </td>
 
                       </tr>
@@ -445,15 +929,19 @@ document.addEventListener('DOMContentLoaded', function () {
      TRANSLATION
   ===================================================== */
   const T = {
-    no_records: <?= json_encode(__('permohonan_dt_no_records')) ?>,
-    search_placeholder: <?= json_encode(__('permohonan_dt_search_label')) ?>,
-    dt_length_menu: <?= json_encode(__('permohonan_dt_length_menu')) ?>,
-    dt_info: <?= json_encode(__('permohonan_dt_info')) ?>,
-    dt_info_empty: <?= json_encode(__('permohonan_dt_info_empty')) ?>,
-    dt_paginate_prev: <?= json_encode(__('permohonan_dt_paginate_prev')) ?>,
-    dt_paginate_next: <?= json_encode(__('permohonan_dt_paginate_next')) ?>,
-    success_title: <?= json_encode(__('permohonan_js_success_title')) ?>,
-    error_title: <?= json_encode(__('permohonan_js_error_title')) ?>
+    no_records: <?= json_encode(__('borang_no_records')) ?>,
+    search_placeholder: <?= json_encode(__('borang_dt_search_label')) ?>,
+    dt_length_menu: <?= json_encode(__('borang_dt_length_menu')) ?>,
+    dt_info: <?= json_encode(__('borang_dt_info')) ?>,
+    dt_info_empty: <?= json_encode(__('borang_dt_info_empty')) ?>,
+    dt_paginate_prev: <?= json_encode(__('borang_dt_paginate_prev')) ?>,
+    dt_paginate_next: <?= json_encode(__('borang_dt_paginate_next')) ?>,
+    add_title: <?= json_encode(__('borang_modal_add_title')) ?>,
+    edit_title: <?= json_encode(__('borang_modal_edit_title')) ?>,
+    btn_save: <?= json_encode(__('borang_modal_btn_save')) ?>,
+    btn_update: <?= json_encode(__('btn_update')) ?>,
+    success_title: "Berjaya",
+    error_title: "Ralat"
   };
 
   /* =====================================================
@@ -461,16 +949,14 @@ document.addEventListener('DOMContentLoaded', function () {
   ===================================================== */
   const table = jQuery('#permohonanTable').DataTable({
     pageLength: 10,
-    lengthChange: true,
-    lengthMenu: [10, 25, 50, 100, 200],
     ordering: true,
     order: [[1, 'asc']],
-    autoWidth: false,
     columnDefs: [
-      { targets: [0, 6], orderable: false }
+      { targets: [0, 5], orderable: false }
     ],
     language: {
       search: "",
+      searchPlaceholder: T.search_placeholder,
       lengthMenu: T.dt_length_menu,
       info: T.dt_info,
       infoEmpty: T.dt_info_empty,
@@ -481,9 +967,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
     dom:
-      '<"row mb-2"<"col-sm-12 col-md-6 dt-top-left"l><"col-sm-12 col-md-6 d-flex justify-content-md-end dt-top-right"f>>' +
+      '<"row mb-3 align-items-center"<"col-md-6 dt-top-left"l><"col-md-6 dt-top-right d-flex justify-content-end align-items-center gap-2">>' +
       't' +
-      '<"dt-bottom-row mt-2 d-flex justify-content-between align-items-center"<"dt-info-left"i><"dt-paging-right d-flex justify-content-end"p>>',
+      '<"row mt-3"<"col-md-6"i><"col-md-6 text-end"p>>',
 
     drawCallback: function () {
       const api = this.api();
@@ -498,18 +984,22 @@ document.addEventListener('DOMContentLoaded', function () {
     },
 
     initComplete: function () {
-      jQuery('#permohonanTable_length select').addClass('form-select w-auto');
-      jQuery('#permohonanTable_length label').addClass('mb-0');
-      const topLeft = jQuery('#permohonanTable_wrapper .dt-top-left').addClass('d-flex align-items-center gap-2 flex-nowrap');
-      const topRight = jQuery('#permohonanTable_wrapper .dt-top-right').addClass('align-items-center gap-2 flex-nowrap');
-      const filter = jQuery('#permohonanTable_filter');
-      const input = filter.find('input');
+      const wrapper = jQuery('#permohonanTable_wrapper');
+      const right = wrapper.find('.dt-top-right');
+      const api = this.api();
 
-      filter.find('label').contents().filter(function () {
-        return this.nodeType === 3;
-      }).remove();
+      const searchInput = `
+        <input type="search"
+          class="form-control dt-custom-search"
+          placeholder="${T.search_placeholder}"
+          style="width:260px;">
+      `;
 
-      input.attr('placeholder', T.search_placeholder);
+      right.append(searchInput) ;
+
+      wrapper.find('.dt-custom-search').on('keyup', function () {
+        api.search(this.value).draw();
+      });
     }
   });
 

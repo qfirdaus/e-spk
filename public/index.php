@@ -195,8 +195,8 @@ $defaultHome      = app_config('site.default_home', 'pages/dashboard.php');
 $loginHeaderLogo  = app_config('branding.login_header_logo', 'assets/images/logo-upnm.png');
 $loginPanelLogo   = app_config('branding.login_panel_logo', 'assets/images/upnm30-logo.png');
 $supportEmail     = trim((string)app_config('system.support', ''));
-$systemName       = trim((string)app_config('system.name', 'Sistem Pengurusan Pelajar (e-HEPA)'));
-$organizationName = trim((string)app_config('organization.name', app_config('system.name', 'Sistem Pengurusan Pelajar (e-HEPA)')));
+$systemName       = trim((string)app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+$organizationName = trim((string)app_config('organization.name', app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)')));
 $organizationWebsite = trim((string)app_config('organization.website', ''));
 $sidebarTheme = strtolower(trim((string)($globalThemeSettings['sidebarColor'] ?? $_SESSION['theme.menu'] ?? 'light')));
 $themeStyleMap = [
@@ -225,7 +225,7 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= __('login_title') ?> | <?= htmlspecialchars(app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)')) ?></title>
+  <title><?= __('login_title') ?> | <?= htmlspecialchars(app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)')) ?></title>
   <link rel="icon" href="<?= base_url(app_config('site.favicon', 'assets/images/default.ico')) ?>" type="image/x-icon">
 
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css?v=' . $version) ?>">
@@ -939,8 +939,8 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
       <div class="facility-brand-lockup">
         <img class="facility-brand-mark" src="<?= base_url($loginHeaderLogo) ?>" alt="UPNM Logo">
         <div class="facility-brand-meta">
-          <strong><?= htmlspecialchars($systemName !== '' ? $systemName : 'Sistem Pengurusan Pelajar (e-HEPA)', ENT_QUOTES, 'UTF-8') ?></strong>
-          <span><?= htmlspecialchars($organizationName !== '' ? $organizationName : ($lang === 'en' ? 'Official digital access for student records, student administration, and HEPA support workflows.' : 'Akses digital rasmi untuk rekod pelajar, pentadbiran pelajar, dan aliran sokongan HEPA.'), ENT_QUOTES, 'UTF-8') ?></span>
+          <strong><?= htmlspecialchars($systemName !== '' ? $systemName : 'Sistem Pengurusan Fasiliti (e-Facility)', ENT_QUOTES, 'UTF-8') ?></strong>
+          <span><?= htmlspecialchars($organizationName !== '' ? $organizationName : ($lang === 'en' ? 'Official digital access for facility operations, service requests, and campus support workflows.' : 'Akses digital rasmi untuk operasi fasiliti, permohonan perkhidmatan, dan aliran sokongan kampus.'), ENT_QUOTES, 'UTF-8') ?></span>
         </div>
       </div>
 
@@ -970,8 +970,8 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
           <div class="facility-visual-content">
             <div class="facility-visual-body">
               <div class="facility-visual-copy">
-                <h2><?= htmlspecialchars($lang === 'en' ? 'Centralized student management access with clearer HEPA governance and service continuity.' : 'Akses pengurusan pelajar berpusat dengan tadbir urus HEPA dan kesinambungan perkhidmatan yang lebih jelas.', ENT_QUOTES, 'UTF-8') ?></h2>
-                <p><?= htmlspecialchars($lang === 'en' ? 'Built to support student records access, welfare administration, and secure sign-in across institutional student workflows.' : 'Dibina untuk menyokong capaian rekod pelajar, pentadbiran kebajikan, dan log masuk selamat merentas aliran kerja pengurusan pelajar institusi.', ENT_QUOTES, 'UTF-8') ?></p>
+                <h2><?= htmlspecialchars($lang === 'en' ? 'Centralized facility access with clearer governance and operational continuity.' : 'Akses fasiliti berpusat dengan tadbir urus dan kesinambungan operasi yang lebih jelas.', ENT_QUOTES, 'UTF-8') ?></h2>
+                <p><?= htmlspecialchars($lang === 'en' ? 'Built to support maintenance coordination, service accountability, and secure sign-in across the institution.' : 'Dibina untuk menyokong penyelarasan penyelenggaraan, akauntabiliti perkhidmatan, dan log masuk selamat merentas institusi.', ENT_QUOTES, 'UTF-8') ?></p>
               </div>
             </div>
           </div>
@@ -980,8 +980,8 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
         <div class="facility-info-grid">
           <article class="facility-info-card">
             <span class="facility-card-label"><i class="ri-layout-masonry-line"></i> <?= $lang === 'en' ? 'Platform' : 'Platform' ?></span>
-            <h3><?= htmlspecialchars($systemName !== '' ? $systemName : 'Sistem Pengurusan Pelajar (e-HEPA)', ENT_QUOTES, 'UTF-8') ?></h3>
-            <p><?= htmlspecialchars($lang === 'en' ? 'Designed to consolidate student references, account access, and HEPA operational workflows within a controlled institutional channel.' : 'Direka untuk menyatukan rujukan pelajar, akses akaun, dan aliran operasi HEPA dalam saluran institusi yang lebih terkawal.', ENT_QUOTES, 'UTF-8') ?></p>
+            <h3><?= htmlspecialchars($systemName !== '' ? $systemName : 'Sistem Pengurusan Fasiliti (e-Facility)', ENT_QUOTES, 'UTF-8') ?></h3>
+            <p><?= htmlspecialchars($lang === 'en' ? 'Designed to consolidate requests, approvals, and service execution within a more controlled institutional channel.' : 'Direka untuk menyatukan permohonan, kelulusan, dan pelaksanaan perkhidmatan dalam saluran institusi yang lebih terkawal.', ENT_QUOTES, 'UTF-8') ?></p>
           </article>
 
           <article class="facility-info-card">
@@ -1013,7 +1013,7 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
             <div>
               <span class="facility-eyebrow"><i class="ri-login-circle-line"></i> <?= __('login_heading') ?></span>
               <h2 class="facility-form-title"><?= __('login_title') ?></h2>
-              <p class="facility-form-subcopy"><?= htmlspecialchars($lang === 'en' ? 'Enter your credentials to proceed to the official Student Management System (e-HEPA) workspace.' : 'Masukkan kelayakan anda untuk meneruskan ke ruang kerja rasmi Sistem Pengurusan Pelajar (e-HEPA).', ENT_QUOTES, 'UTF-8') ?></p>
+              <p class="facility-form-subcopy"><?= htmlspecialchars($lang === 'en' ? 'Enter your credentials to proceed to the official facility management workspace.' : 'Masukkan kelayakan anda untuk meneruskan ke ruang kerja rasmi pengurusan fasiliti.', ENT_QUOTES, 'UTF-8') ?></p>
             </div>
           </div>
 
@@ -1069,7 +1069,7 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
 
         <div class="facility-support-panel">
           <h3><?= htmlspecialchars($lang === 'en' ? 'Official support channels' : 'Saluran sokongan rasmi', ENT_QUOTES, 'UTF-8') ?></h3>
-          <p><?= htmlspecialchars($lang === 'en' ? 'Use the official contact channels below if you require help with student account access or e-HEPA profile matters.' : 'Gunakan saluran hubungan rasmi di bawah jika anda memerlukan bantuan berkaitan akses akaun pelajar atau maklumat profil e-HEPA.', ENT_QUOTES, 'UTF-8') ?></p>
+          <p><?= htmlspecialchars($lang === 'en' ? 'Use the official contact and reference channels below if you require assistance with access or account matters.' : 'Gunakan saluran hubungan dan rujukan rasmi di bawah jika anda memerlukan bantuan berkaitan akses atau akaun.', ENT_QUOTES, 'UTF-8') ?></p>
           <div class="facility-support-links">
             <?php if ($supportEmail !== ''): ?>
               <a href="mailto:<?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?>"><i class="ri-mail-line"></i> <?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?></a>

@@ -1,10 +1,8 @@
-# Student Management System (e-HEPA)
+# e-Base
 
-Student Management System (e-HEPA) is a web-based internal administration platform used to manage identity, access, configuration, documentation, auditability, and selected external-data workflows for institutional student operations. Although this repository originated from a broader reusable base platform, the runtime system currently operates with Student Management System (e-HEPA) branding, Student Management System (e-HEPA) settings, and Student Management System (e-HEPA)-specific operational behavior.
+e-Base is a web-based internal platform used as a secure and reusable foundation for enterprise applications, administration portals, and operational systems. It provides a structured starting point for building organization-specific solutions with consistent authentication, access control, system configuration, auditability, multilingual support, and modular feature management.
 
-The current build functions as a production-oriented administrative system with working modules for user governance, group and menu access management, audit review, runtime system settings, documentation/manual management, email template administration, and controlled access to external staff and student data domains.
-
-In its current functional role, Student Management System (e-HEPA) is used as the active project runtime identity for this repository. For future systems built from the same benchmark, the core platform features should remain consistent, while domain-specific workflows, entities, and reports can change according to the target system.
+The current version has evolved beyond a simple starter template. It now operates as a practical administration platform with production-ready modules for user governance, group and access management, system configuration, reference content, documentation, and controlled access to external data domains.
 
 ## Versioning
 
@@ -17,7 +15,7 @@ Recommended release flow:
 1. Update [VERSION](./VERSION) from `*-dev` to the final release version, for example `1.6.0`.
 2. Move the matching items from `Unreleased` in [CHANGELOG.md](./CHANGELOG.md) into a dated release section such as `## [1.6.0] - 2026-04-07`.
 3. Create a git tag such as `v1.6.0`.
-4. Start the next cycle by updating [VERSION](./VERSION) to the next development version, for example `1.7.2-dev`.
+4. Start the next cycle by updating [VERSION](./VERSION) to the next development version, for example `1.6.1-dev` or `1.7.0-dev`.
 
 Manual command format for release support:
 
@@ -33,23 +31,9 @@ Manual command format for release support:
   Example: `release 1.6.0 then dev 1.6.1-dev`
   Purpose: finalize a release and immediately bump the project back to the next development version.
 
-## Current Runtime Identity
-
-The live runtime configuration currently identifies this system as follows:
-
-- System name: `Student Management System (e-HEPA)`
-- Browser/site title: `Student Management System (e-HEPA)`
-- Organization short name: `e-HEPA`
-- Organization name: `Student Management System (e-HEPA)`
-- Support email: `support@upnm.edu.my`
-- Default home: `pages/dashboard.php`
-- Current version: `1.7.1`
-
-These values are resolved through runtime configuration and application settings. The live runtime setting values are used as the source of truth for this documentation.
-
 ## System Overview
 
-Student Management System (e-HEPA) is designed to support internal institutional workflows where:
+e-Base is designed to support internal institutional workflows where:
 
 - user access must be controlled centrally
 - modules and menus are assigned by group
@@ -64,28 +48,12 @@ At a high level, the platform combines:
 - a public web root structure suitable for safer deployment
 - configurable branding, language, theme, and operational runtime settings
 
-## Feature Benchmark Model
-
-For cross-project reuse, the feature model for this repository should be understood in two layers:
-
-- **Features Utama**  
-  These are the core benchmark capabilities that should remain consistent across other systems built from this platform. They define the administrative, security, configuration, access-control, and operational baseline.
-
-- **Features Tambahan**  
-  These are system-specific capabilities that depend on the business domain of the project. In Student Management System (e-HEPA), the additional layer should follow the active project purpose and runtime identity. In other future systems, this layer can change according to the project purpose while keeping the benchmark core intact.
-
-## Features Utama
+## Main Features
 
 ### Authentication and Session Management
 
 - **Login Portal**  
   Provides a branded login experience with multilingual support, system information, and secure session handling.
-
-- **Unified Pre-Login Experience**  
-  Uses a consistent institutional layout across the main login, forgot-password, reset-password, and forced password change flows so public-facing authentication screens feel aligned before the user enters the protected application area.
-
-- **Theme-Aware Authentication Pages**  
-  Applies the active global sidebar theme from runtime configuration to the pre-login experience, including the main header treatment, primary action buttons, focus states, and supporting visual accents.
 
 - **Hybrid Authentication Flow**  
   Supports standard internal login using user credentials, while also keeping room for SSO-driven authentication flows where user identity may already be trusted upstream.
@@ -113,9 +81,6 @@ For cross-project reuse, the feature model for this repository should be underst
 - **Multilingual Interface**  
   Supports multiple interface languages and allows active/default language settings to be managed centrally.
 
-- **Role Switching / Multi-Role Support**  
-  Supports controlled switching of the active role context when a user has more than one permitted group assignment.
-
 ### User and Access Management
 
 - **User Directory Management**  
@@ -133,6 +98,9 @@ For cross-project reuse, the feature model for this repository should be underst
 - **Access Matrix View**  
   Provides a read-only access matrix to help administrators review which roles can access which menus.
 
+- **Role Switching / Multi-Role Support**  
+  Supports controlled switching of active roles where a user has more than one permitted group context.
+
 ### Profile, Audit, and Accountability
 
 - **User Profile Page**  
@@ -143,9 +111,6 @@ For cross-project reuse, the feature model for this repository should be underst
 
 - **Audit Trail**  
   Records important system actions and access-related events to support accountability, traceability, and troubleshooting.
-
-- **Request Lifecycle Auditing**  
-  Tracks request start and end metadata, including status code and latency, to improve operational traceability for administrative flows.
 
 ### System Configuration
 
@@ -169,33 +134,7 @@ For cross-project reuse, the feature model for this repository should be underst
 - **Manual Management**  
   Supports uploading and maintaining user manuals by group, helping each audience access the right supporting documentation.
 
-- **Role-Aware Manual Shortcut**  
-  Exposes a sidebar shortcut to the currently assigned group manual when a valid manual file exists for the active role.
-
-### Operational Observability and Runtime Safety
-
-- **Request-Scoped General Log Files**  
-  Routes general application log output into request-specific files such as `page_index.log` or `ajax_user-delete.log` so operational debugging is easier than with a single shared log file.
-
-- **Environment-Gated Debug Logs**  
-  Supports explicit environment-flag control for targeted debug logs such as SSO handoff debugging and Tetapan Sistem AJAX diagnostics.
-
-- **AJAX and Fetch Session Guard**  
-  Intercepts terminated-session payloads for both `fetch` and jQuery AJAX flows so the UI can redirect users cleanly without ambiguous failure states.
-
-- **Confirmation-First Logout Flow**  
-  Uses a non-reloading logout confirmation flow in sidebar and topbar navigation so logout only proceeds after the user explicitly confirms the action.
-
-## Features Tambahan (Khusus Student Management System (e-HEPA))
-
-The following capabilities are the current Student Management System (e-HEPA)-specific layer. These reflect the present project identity and runtime naming used by this repository. They are important for Student Management System (e-HEPA), but they are not required to remain identical in other systems that reuse the same benchmark platform.
-
-### Domain Purpose
-
-- **Project-Specific Domain Layer**  
-  Student Management System (e-HEPA) is currently positioned as the active project identity for this repository, with operational pages, role-based access, and administrative controls arranged according to the current system context.
-
-### External Data Access and Domain Integration
+### External Data Access
 
 - **Staff Data Integration**  
   Connects to a Sybase staff domain for staff lookup and related administrative workflows.
@@ -203,28 +142,28 @@ The following capabilities are the current Student Management System (e-HEPA)-sp
 - **Student Data Lookup**  
   Provides controlled student search capability using a dedicated Sybase student domain without mixing student records into internal user management.
 
-### Current Student Management System (e-HEPA) Application Surfaces
+### BDR Distance API
 
-- **Dashboard (`pages/dashboard.php`)**  
-  Used as the operational landing page for Student Management System (e-HEPA) users, including status visibility and role-aware context relevant to the project domain.
+- **Single-Record Distance API**  
+  Provides a secured read-only API endpoint for retrieving staff identity, site context, standardized address, distance result, issue state, and matching metadata for a single staff record based on `staff_no` and optional `site`.
 
-- **Student Lookup (`pages/carian-pelajar.php`)**  
-  Exists as a supporting domain utility based on the current runtime model and may not be needed in every future system.
+- **Multi-Site BDR Distance Context**
+  Supports `upnm_kampus` and `hat_mizan` destination contexts with separate office labels, office addresses, coordinates, cache filtering, exports, email notification context, and API output.
 
-- **Reference/Test Pages**  
-  Internal reference pages such as `data-staf-test.php`, `data-pelajar-tab-test.php`, and `tab-management-test.php` are project-side support surfaces rather than mandatory benchmark features.
+- **BDR Staff-Site Snapshot**
+  Uses `tbl_bdr_staff_site` as the local MySQL staff identity and site assignment snapshot for BDR workflows, allowing HAT Mizan staff assignment to be managed locally even when the Sybase staff view has no official site indicator.
+
+- **BDR Distance Notification Workflow**  
+  Supports review-driven email notifications for address and distance issues, including dynamic issue selection, notification exclusions, SSO-only self-confirmation links, and localized email guidance.
 
 ## Current Application Modules
 
-The current build already includes several working administrative and operational pages. The list below summarizes the feature surfaces that are actively present in Student Management System (e-HEPA) today. Items under the governance, configuration, profile, and audit model should be treated as benchmark-aligned core modules. Items tied to project-specific workflows or domain-specific data usage should be treated as additional project modules.
+The current build already includes several working administrative and operational pages. The list below summarizes the main feature surfaces that are actively present in the system. The `bdr-distance.php` module is intentionally excluded from this summary.
 
 ### Core User-Facing Pages
 
 - **Dashboard (`pages/dashboard.php`)**  
   Provides the main landing page with user identity context, active role display, quick operational visibility, KPI-oriented dashboard data, health indicators, announcements, and optional system resource monitoring for privileged administrators.
-
-- **Topbar Role Switcher (shared include surface)**  
-  Provides role switching for users with extra permitted roles, allowing the active group context to be changed without changing the underlying default account identity.
 
 - **Profile (`pages/profile.php`)**  
   Acts as the user self-service account page with profile details, login activity, audit trail visibility, active session awareness, preference-related context, and audit metadata inspection for Super Admin review.
@@ -238,10 +177,10 @@ The current build already includes several working administrative and operationa
   Serves as the main user governance module for staff, student, and public accounts. It supports listing, searching, adding users, editing user records, assigning groups, updating access flags, managing extra roles, refreshing user data through modal- and AJAX-driven workflows, and identifying SSO auto-provisioned accounts directly from the listing UI.
 
 - **Group Management (`pages/kumpulan-pengguna.php`)**  
-  Centralizes management of user groups, module access, menu access, group identity styling, icon choices, ordering, and the structure used by the platform authorization model.
+  Centralizes management of user groups, module access, menu access, group identity styling, icon choices, ordering, and the structure used by the platform authorization model. The current flow also keeps sidebar navigation state synchronized in the background after relevant access changes, with clearer active-state highlighting for main and child sidebar menus.
 
-- **Access Matrix (`pages/access.php`)**  
-  Provides a read-only matrix view that allows administrators to review which groups or roles have access to which modules and menu paths.
+- **Access Matrix (`pages/access-matrix.php`)**  
+  Provides a read-only matrix view that allows administrators to review which groups or roles have access to which modules and menu paths through the dedicated `access-matrix.php` page.
 
 - **Audit Center (`pages/audit-center.php`)**  
   Functions as a Super Admin audit workspace with AJAX-based navigation across events, requests, sessions, changes, and security views, including filtering, paging, export operations, metadata inspection, and selected administrative actions.
@@ -252,7 +191,7 @@ The current build already includes several working administrative and operationa
   Provides centralized runtime configuration for general settings, authentication policy, email settings and test delivery, database runtime selection, theme configuration, and language configuration. The authentication policy workspace now also includes dedicated SSO auto-provision controls for Staff and Student identities, together with configurable default group code assignment.
 
 - **Email Template Management (`pages/template-emel.php`)**  
-  Provides a structured workspace for maintaining system email templates, including template listing, filters, status management, placeholder usage, seed templates, subject/body content editing, and render-oriented template administration.
+  Provides a structured workspace for maintaining system email templates, including template listing, filters, status management, placeholder usage, seed templates, subject/body content editing, render-oriented template administration, AJAX-based create/update/duplicate/archive/delete actions without page refresh, developer-oriented placeholder guidance, generated integration snippet support, dynamic sample JSON preview data based on placeholders used by the current template, and manual-close SweetAlert feedback flows.
 
 - **System Template Generator (`pages/template-generator.php`)**  
   Provides a scaffold generator for new system pages and related artifacts. It supports a tabbed creation modal for template form input, page icon selection, and access mode definition, together with compact preview output, collision detection, generated artifact tracking, and access policy selection such as `Super Admin Only` or `Group Menu Based`. The current icon picker offers 48 selectable icons for generated pages.
@@ -302,23 +241,6 @@ Compared with older and more tightly coupled approaches, the current version int
 
 - **Theme configuration and personalization**  
   Default theme behavior and user-facing presentation are managed more cleanly than in earlier static approaches.
-
-- **Request-scoped operational logging**  
-  General application logging can now be separated by request entrypoint, making troubleshooting easier for page and AJAX flows.
-
-- **Stabilized confirmation and session UX**  
-  Logout confirmation, idle-session prompting, and terminated-session handling are now more deliberate and less prone to accidental navigation behavior.
-
-## Cross-Project Reuse Guidance
-
-When this repository is used as a benchmark for other systems, the recommended rule is:
-
-- keep all **Features Utama** intact as the mandatory baseline
-- adapt **Features Tambahan** according to the business purpose of the target project
-- allow branding, domain entities, external integrations, and operational workflows to change per system
-- do not remove core governance, access-control, audit, configuration, session, and documentation capabilities from the benchmark baseline
-
-In short, Student Management System (e-HEPA) defines the current project context, but the benchmark platform is the consistent administrative foundation behind it.
 
 - **Sybase multi-domain runtime model**  
   The system now supports a clearer separation between staff and student external database domains instead of relying on a single active Sybase model.
@@ -390,7 +312,7 @@ The system follows a practical layered PHP application structure.
 
 ## Authentication Overview
 
-Authentication in Student Management System (e-HEPA) follows a hybrid approach.
+Authentication in e-Base follows a hybrid approach.
 
 ### Internal Login Logic
 
@@ -407,17 +329,218 @@ Authentication in Student Management System (e-HEPA) follows a hybrid approach.
 ### Authorization Model
 
 - Authentication determines who the user is.
-- Authorization is controlled separately using group assignment, module access, menu access, and active role context.
+- Authorization is controlled separately using:
+  - group assignment
+  - module access
+  - menu access
+  - active role context
 
 This makes the platform suitable for structured internal administration environments.
+
+## BDR Distance API
+
+The platform includes a secured single-record API for exposing BDR staff identity, site context, address, and distance state to internal developer consumers.
+
+### Endpoint
+
+```text
+GET /api/bdr-distance-record.php?staff_no=<staff_no>&site=<site_code>
+```
+
+Example:
+
+```text
+GET /api/bdr-distance-record.php?staff_no=0696-11&site=upnm_kampus
+GET /api/bdr-distance-record.php?staff_no=1295-16&site=hat_mizan
+```
+
+If `site` is omitted, the API defaults to `upnm_kampus`. Invalid site values return `422` instead of silently falling back to another site.
+
+Supported sites:
+
+- `upnm_kampus`
+- `hat_mizan`
+
+### Authentication
+
+The API is protected and does not allow anonymous direct access.
+
+- Send the API key using `X-API-Key`
+- `Authorization: Bearer <key>` is also accepted
+- Optional IP allowlisting is supported through environment configuration
+
+Required environment variables:
+
+- `BDR_DISTANCE_API_KEY`
+- `BDR_DISTANCE_API_ALLOWED_IPS`  
+  Optional comma-separated allowlist such as `127.0.0.1,10.10.10.25`
+
+### Purpose
+
+This endpoint is intended for internal system-to-system consumption where a downstream team needs:
+
+- staff identity data from the local BDR staff-site snapshot
+- site context, office label, office address, and office coordinates
+- the latest standardized mailing address
+- the latest cached distance result
+- issue classification such as `review_location` or `address_changed`
+- matching and provider metadata already derived by the application
+
+The endpoint does not trigger a fresh distance calculation. It returns the latest normalized state already available in the local MySQL distance cache, or staff snapshot data with `distance.state = not_yet_calculated` when the staff exists in `tbl_bdr_staff_site` but no distance cache record exists yet.
+
+Single-record lookup is resolved from `tbl_m_staff_distance_cache` using `staff_no` mapped to `f_stafID` and `site` mapped to `f_siteCode`. Staff identity fields such as name, email, department, department code, and position are hydrated from `tbl_bdr_staff_site`. The API does not depend on a live Sybase lookup during the request.
+
+### Request Example
+
+```bash
+curl -H "X-API-Key: your-secret-key" "https://ebase.dev/api/bdr-distance-record.php?staff_no=0696-11&site=upnm_kampus"
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "staff_no": "0696-11",
+    "name": "Nama Staf",
+    "department": "Bahagian Teknologi Maklumat dan Komunikasi",
+    "department_code": "4100",
+    "position": "Pegawai Teknologi Maklumat",
+    "email": "staf@upnm.edu.my",
+    "site": {
+      "site_code": "upnm_kampus",
+      "office_label": "Kampus UPNM",
+      "office_address": "UNIVERSITI PERTAHANAN NASIONAL MALAYSIA, KEM SUNGAI BESI, 57000 KUALA LUMPUR, WILAYAH PERSEKUTUAN KUALA LUMPUR, MALAYSIA",
+      "office_coords": {
+        "lat": 3.052805,
+        "lon": 101.7233
+      }
+    },
+    "address": {
+      "alamat1": "No 15 Jalan Bunga Cempaka 6",
+      "alamat2": "Taman Muda",
+      "alamat3": "Cheras",
+      "poskod": "56100",
+      "negeri": "Kuala Lumpur",
+      "negara": "Malaysia",
+      "standardized_address": "No 15 Jalan Bunga Cempaka 6, Taman Muda, Cheras, 56100, Kuala Lumpur, Malaysia",
+      "status": "VALID"
+    },
+    "distance": {
+      "state": "calculated",
+      "km": 12.42,
+      "label": "12.42 KM",
+      "source": "route",
+      "route_provider": "google",
+      "direction_url": "https://www.google.com/maps/dir/?api=1&destination=Universiti+Pertahanan+Nasional+Malaysia",
+      "route_points": []
+    },
+    "matching": {
+      "match_quality": "HIGH",
+      "matched_query": "No 15 Jalan Bunga Cempaka 6, Taman Muda, Cheras, 56100, Kuala Lumpur, Malaysia",
+      "provider_display_name": "No 15, Jalan Bunga Cempaka 6, Taman Muda, 56100 Cheras, Kuala Lumpur, Malaysia",
+      "home_coords_label": "3.123456, 101.765432",
+      "office_coords_label": "3.052805, 101.723300"
+    },
+    "issue": {
+      "issue_type": "none",
+      "issue_label": "No Issue",
+      "is_review_location": false,
+      "is_address_changed": false,
+      "debug_reason": "loaded_from_cache"
+    },
+    "cache": {
+      "cache_origin": "db",
+      "distance_attempted": true
+    },
+    "generated_at": "2026-04-09T10:15:00+08:00"
+  }
+}
+```
+
+### Error Behavior
+
+- `401 Unauthorized` when API key is missing or invalid
+- `403 Forbidden` when IP allowlisting is configured and the client IP is not allowed
+- `404 Not Found` when `staff_no` is not found in either `tbl_m_staff_distance_cache` or `tbl_bdr_staff_site` for the requested site
+- `422 Unprocessable Entity` when `staff_no` is missing or `site` is invalid
+- `503 Service Unavailable` when the local cache backend is temporarily unavailable
+
+## BDR Distance Notification Workflow
+
+The BDR distance page includes an email notification workflow for staff address and distance records that require follow-up.
+
+The page supports site-aware BDR operations for Kampus UPNM and HAT Tuanku Mizan. Site tabs keep destination-specific cache lookup, issue handling, export filename context, email text, and self-confirm exclusions separate.
+
+### Issue Categories
+
+The workflow can identify and label these notification issues:
+
+- `address_changed`: the current address no longer matches the stored calculated address state
+- `review_location`: the provider match quality requires manual review
+- `state_mismatch`: the state selected in the staff address record does not match the state detected from the address text
+- `too_close`: the calculated distance is below the configured near-distance review threshold
+- `too_far`: the calculated distance is above the configured far-distance review threshold, currently 100 KM
+- `outside_allowed_region`: the detected address state is outside the normal Selangor, Kuala Lumpur, or Putrajaya review region
+
+### Bulk Email Selection
+
+Bulk email notification supports dynamic issue filtering. The modal only shows issue categories that exist in the current result set, so administrators do not need to send reminders for issue types that are already resolved or absent.
+
+Each email uses point-form reason text and one primary action. If all active issues for the address are self-confirmable, the primary action is the self-confirmation link. Otherwise, the email directs the user to update the address through iMAP.
+
+### Self-Confirmation
+
+Self-confirmation is available only for `outside_allowed_region`, `too_far`, and `too_close`.
+
+The confirmation link routes to `pages/bdr-notification-confirm.php` and requires SSO login. Manual login is intentionally not used for this page so the confirmation can be matched against the authenticated staff identity.
+
+The user declaration shown before confirmation is:
+
+```text
+Saya mengesahkan alamat ini ialah kediaman semasa saya dan digunakan untuk berulang-alik bekerja. Sebarang maklumat palsu boleh dikenakan tindakan.
+```
+
+Confirmed records are stored as active notification exclusions so the same staff/address/issue combination will not keep receiving the same alert.
+
+### Database Objects
+
+The notification workflow uses these MySQL objects:
+
+- `tbl_m_staff_distance_cache` stores the latest local BDR distance cache used by the API and page hydration.
+- `tbl_bdr_staff_site` stores local staff identity and site assignment data used by BDR page scoping and API hydration.
+- `tbl_bdr_email_bulk_job` stores bulk email job headers and processing totals.
+- `tbl_bdr_email_bulk_job_item` stores bulk email recipients and rendered issue/action content, including `f_selfConfirmHtml` and `f_selfConfirmText`.
+- `tbl_bdr_email_notification_exclusion` stores admin-created and self-confirmed notification exclusions per `f_siteCode`, `f_staffNo`, `f_addressHash`, and `f_issueType`.
+
+### Debug Logging
+
+Temporary BDR/API/access/SSO debug logs are disabled by default in production. Enable them only during troubleshooting with these environment flags:
+
+- `BDR_DEBUG_LOGS=1`
+- `BDR_DISTANCE_API_LOG_ENABLED=1`
+- `ACCESS_TRACE_LOG_ENABLED=1`
+- `SSO_DEBUG_LOG_ENABLED=1`
+- `TETAPAN_AJAX_DEBUG_LOG_ENABLED=1`
+
+The `public/log` directory includes an `.htaccess` deny rule so browser access to log files is blocked on Apache deployments.
+
+### Email Testing
+
+For controlled testing, set `BDR_EMAIL_TEST_RECIPIENT` in the environment. When configured, BDR notification delivery can be routed to the test mailbox while retaining the original staff recipient context in the job/debug data.
+
+### Alert Behavior
+
+Standard SweetAlert modal alerts require a user click to close. Toast alerts remain as short-lived top-right notifications and continue to auto-close.
 
 ## Simplified Folder Structure
 
 ```text
-e-hepa/
+e-base/
 ├─ public/
+│  ├─ actions/          # action handlers and task-specific workflows
 │  ├─ ajax/             # asynchronous endpoints
-│  ├─ api/              # API-style endpoints and integrations
 │  ├─ assets/           # CSS, JS, images, vendor libraries
 │  ├─ cache/            # runtime cache and temp storage
 │  ├─ classes/          # reusable core classes and models
@@ -425,7 +548,7 @@ e-hepa/
 │  ├─ controllers/      # page-level controllers
 │  ├─ includes/         # bootstrap, layout includes, shared scripts
 │  ├─ lang/             # translation files
-│  ├─ log/              # application logs
+│  ├─ logs/             # application logs
 │  ├─ pages/            # main application pages
 │  ├─ setting/          # helper and settings-related utilities
 │  ├─ templates/        # reusable content templates
@@ -458,7 +581,7 @@ For Docker setup:
 
 ```bash
 git clone <your-repository-url>
-cd e-hepa
+cd e-base
 ```
 
 ### 2. Prepare Environment Variables
@@ -510,7 +633,6 @@ After setup:
 - sign in with a valid account
 - review dashboard access
 - confirm role-based menus load correctly
-- confirm logout opens a confirmation modal without immediate navigation
 - if required, verify staff and student Sybase connectivity through the relevant administrative features
 
 ## Security Practices
@@ -546,7 +668,6 @@ The current implementation reflects several practical security improvements.
 ### Audit Logging
 
 - Request-level and action-level audit logging helps track critical events such as login activity and administrative operations
-- General runtime logging is now request-scoped under `public/log/` to make page and AJAX troubleshooting easier
 
 ### Safe Runtime Configuration
 
@@ -563,15 +684,8 @@ The current implementation reflects several practical security improvements.
 - Serve only `public/` through the web server
 - Keep role, module, and menu assignments tightly controlled
 - Review audit logs regularly for administrative systems
-- Review request-scoped application logs in `public/log/` when investigating page- or endpoint-specific issues
 - Validate Sybase connectivity separately for staff and student domains after deployment
 - Use Docker for consistent local setup when possible
-
-## Operational Support
-
-- System support email: `support@upnm.edu.my`
-- Default landing page: `pages/dashboard.php`
-- Current runtime identity: `Student Management System (e-HEPA)`
 
 ## Developer Information
 

@@ -6,37 +6,53 @@ This changelog follows a release-style summary based on major project milestones
 
 ## [Unreleased]
 
-### Changed
-- Redesigned the public login page into a cleaner institutional layout while preserving the existing authentication, session, CSRF, language, and SSO-related behavior.
-- Redesigned the forgot-password, reset-password, and forced password change pages so the full pre-login authentication flow now uses a consistent visual system.
-- Updated pre-login pages to follow the global sidebar theme configuration from `tbl_m_config`, including header gradients, primary buttons, focus states, and supporting accent treatments.
-- Simplified pre-login copy and support surfaces by removing selected nonessential text blocks and banner labels from the login and forgot-password pages.
-- Updated README and CHANGELOG naming to use the active runtime identity `Student Management System (e-HEPA)`.
-
-## [1.7.1] - 2026-04-19
-
 ### Added
-- Added request-scoped general application log file routing so runtime logs can be written to entrypoint-specific files such as `page_index.log` and `ajax_user-delete.log` instead of a single shared log file.
+- Added clearer active-state highlighting for main sidebar links, active module parents, and active child menus so the current navigation context is easier to identify.
 
 ### Changed
-- Updated project documentation to use the active runtime project identity `Student Management System (e-HEPA)` instead of the previous mismatched project naming.
-- Updated README to reflect the active `Student Management System (e-HEPA)` runtime identity, current folder structure, and currently implemented feature set.
-- Reorganized README feature documentation into `Features Utama` and `Features Tambahan` so the current Student Management System (e-HEPA) build can be used as a benchmark baseline for future systems.
-- Aligned static sidebar quick-access items such as Dashboard, User Manual, and Logout with the same menu height and spacing used by database-driven module menus.
-- Updated base fallback settings and authentication-page labels so static defaults now match the active Student Management System (e-HEPA) identity when database overrides are unavailable.
-- Finalized the project version source of truth to `1.7.1` and added a web-runtime `public/VERSION` source so shared UI surfaces such as the footer read the correct version consistently.
+- Changed the Access Matrix page path from `pages/access.php` to `pages/access-matrix.php` and removed the legacy page entry after database menu paths were updated.
 
 ### Fixed
-- Fixed logout confirmation handling in sidebar and topbar so opening or cancelling the confirmation dialog no longer triggers page reload or premature navigation.
-- Fixed footer and login-page version rendering so displayed version now uses the shared application version source instead of stale fallback values.
+- Fixed sidebar navigation state so both main menu links and grouped child menu links remain visibly active when the current page is open.
+
+## [1.7.1] - 2026-04-22
+
+### Added
+- Added AJAX-based module creation for `kumpulan-pengguna` through `public/ajax/module-create.php` so module changes can complete without a full page reload.
+
+### Changed
+- Changed `kumpulan-pengguna` group, menu, module, and reorder flows to use a shared silent sidebar sync path instead of mixed reload and reorder-only refresh behavior.
+- Changed `kumpulan-pengguna` table updates so group create, update, delete, and access changes refresh the group listing in place while keeping the current page context.
+- Changed `kumpulan-pengguna` module save behavior to remove the button spinner loader and keep sidebar updates running in the background after save.
+
+### Fixed
+- Fixed stale sidebar state after saving active-group access, menu, and module changes from `kumpulan-pengguna`.
+- Fixed inconsistent sidemenu behavior where some updates required `location.reload()` before access, icon, or structure changes became visible.
 
 ## [1.7.0] - 2026-04-11
 
 ### Added
+- Added BDR distance notification issue handling for `too_close`, `too_far`, `outside_allowed_region`, and `state_mismatch`, including badge/filter support and localized labels.
+- Added dynamic bulk email issue selection so administrators can send notifications only for issue categories that exist in the current BDR distance result set.
+- Added persistent BDR notification exclusions per staff, address hash, and issue type through `tbl_bdr_email_notification_exclusion`.
+- Added SSO-only self-confirmation flow for eligible BDR notification issues through `pages/bdr-notification-confirm.php`, with declaration text, token expiry handling, staff matching, and audit-friendly confirmation metadata.
+- Added bulk email job item support for self-confirm action content through `f_selfConfirmHtml` and `f_selfConfirmText`.
+- Added BDR email template placeholders for `{{primary_action_html}}`, `{{primary_action_text}}`, and `{{guidance_text}}`.
+- Added multi-site BDR distance support for `upnm_kampus` and `hat_mizan`, including site tabs, site-aware office labels, office addresses, office coordinates, cache scoping, export context, email context, and self-confirm exclusions.
+- Added `tbl_bdr_staff_site` as the local MySQL BDR staff identity and site assignment snapshot, enabling manual HAT Mizan staff assignment where the Sybase staff view has no official site indicator.
 - Added HAT Mizan staff mapping SQL scripts and multi-site migration documentation for production rollout.
 - Added `public/log/.htaccess` to block direct browser access to project log files on Apache deployments.
 
 ### Changed
+- Updated BDR bulk and individual notification email content to use point-form reasons and a single primary action link per address.
+- Updated BDR notification email introduction text to adapt to the detected issue category, with a combined introduction for records containing multiple issues.
+- Updated BDR self-confirmation page flow so unauthenticated users review token details before OneID login, declaration is required before confirmation, and used links show a completed/expired state.
+- Updated BDR distance API single-record lookup to read from the local MySQL distance cache instead of requiring a live Sybase lookup during the API request.
+- Updated BDR distance API to support `site`, validate invalid site values, default omitted site values to `upnm_kampus`, return site coordinates, hydrate staff identity from `tbl_bdr_staff_site`, and return `not_yet_calculated` when staff exists but no distance cache record exists yet.
+- Updated BDR distance refresh behavior so recalculated rows can rehydrate table status, issue labels, notification state, and exclusion state without requiring a manual page refresh.
+- Updated BDR distance page switching to load site data through AJAX instead of full page refresh.
+- Updated BDR distance cache lookup, notification exclusions, bulk email jobs, and self-confirm token handling to include `f_siteCode` so Kampus UPNM and HAT Mizan records remain separated.
+- Updated BDR email placeholders and message text to use site-aware destination labels instead of hard-coded UPNM wording.
 - Updated temporary BDR/API/access/SSO/tetapan debug logs to be disabled by default and gated behind explicit environment flags.
 - Updated SweetAlert behavior so standard modal alerts require a user click to close, while toast alerts continue to auto-close.
 - Updated URL helper and login form link generation to handle both subfolder deployment and production root-domain deployment cleanly.
@@ -46,6 +62,8 @@ This changelog follows a release-style summary based on major project milestones
 - Fixed AJAX/access-denied responses so JSON-like requests receive JSON instead of an HTML error response.
 - Fixed duplicate-slash URL generation for production root deployment.
 - Fixed SSO SP client redirects so production root-domain SSO handoff exits immediately after redirect and uses proxy-aware current URL matching.
+- Fixed BDR API staff identity gaps by reading department, department code, position, email, and staff name from the local staff-site snapshot instead of relying on the distance cache table alone.
+- Fixed BDR distance cache collisions for identical addresses shared by multiple staff by keeping site/staff context explicit in cache and hydration flows.
 
 ## [1.6.0] - 2026-04-08
 

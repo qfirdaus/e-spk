@@ -1,6 +1,6 @@
 <?php
 // ===============================================
-// ✅ INIT Sistem e-Facility (header-safe & no-legacy echo)
+// ✅ INIT Sistem e-Prestasi (header-safe & no-legacy echo)
 // ===============================================
 
 // (Opsyen debug sementara; tukar ke false bila siap)

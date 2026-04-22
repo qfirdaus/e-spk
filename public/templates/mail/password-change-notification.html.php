@@ -2,7 +2,7 @@
 $safeDisplayName = htmlspecialchars((string)($displayName ?? ''), ENT_QUOTES, 'UTF-8');
 $safeLoginId = htmlspecialchars((string)($loginId ?? ''), ENT_QUOTES, 'UTF-8');
 $safeChangedAt = htmlspecialchars((string)($changedAt ?? ''), ENT_QUOTES, 'UTF-8');
-$safeSiteTitle = htmlspecialchars((string)($siteTitle ?? 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'), ENT_QUOTES, 'UTF-8');
+$safeSiteTitle = htmlspecialchars((string)($siteTitle ?? 'e-Prestasi'), ENT_QUOTES, 'UTF-8');
 ?>
 <!doctype html>
 <html lang="ms">

@@ -6,7 +6,7 @@ return [
     // - favicon: ikon tab browser
     // - default_home: laluan utama sistem selepas login / untuk canonical dan logo link
     'site' => [
-        'title'        => 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)',
+        'title'        => 'Base System',
         'favicon'      => 'assets/images/favicon.ico',
         'default_home' => 'pages/dashboard.php',
     ],
@@ -26,7 +26,7 @@ return [
     // Teks footer global sistem.
     // Sesuai untuk hak cipta atau organisasi pemilik projek.
     'footer' => [
-        'text' => 'Hak Cipta © ' . date('Y') . ' Sistem Pengurusan Pelajar (e-HEPA)',
+        'text' => 'Hak Cipta © ' . date('Y') . ' Sistem Induk',
     ],
 
     // Metadata dan identiti teknikal sistem:
@@ -36,11 +36,11 @@ return [
     // - meta_author: nilai meta author dalam <head>
     // - support: emel sokongan global
     'system' => [
-        'name'        => 'Sistem Pengurusan Pelajar (e-HEPA)',
-        'version'     => '1.7.0',
-        'author'      => 'UPNM',
-        'meta_author' => 'Sistem Pengurusan Pelajar (e-HEPA)',
-        'support'     => 'support@upnm.edu.my',
+        'name'        => 'Base System',
+        'version'     => '2.0.0',
+        'author'      => 'Sistem Induk',
+        'meta_author' => 'Base System',
+        'support'     => 'support@example.com',
     ],
 
     // Tetapan global untuk kandungan email sistem.
@@ -48,8 +48,8 @@ return [
     // - default_action_url: pautan tindakan utama dalam email (jika berkaitan)
     // - footer_note: nota standard di bahagian bawah email
     'mail' => [
-        'system_name'        => 'Sistem Pengurusan Pelajar (e-HEPA)',
-        'default_action_url' => 'https://www.upnm.edu.my',
+        'system_name'        => 'Base System',
+        'default_action_url' => '#',
         'footer_note'        => 'Emel ini dijana secara automatik. Sila jangan balas emel ini.',
     ],
 
@@ -68,8 +68,8 @@ return [
     // Maklumat organisasi induk / pemilik sistem.
     // Belum digunakan sepenuhnya di semua page, tetapi disediakan untuk kegunaan akan datang.
     'organization' => [
-        'name'    => 'Universiti Pertahanan Nasional Malaysia',
-        'short'   => 'e-HEPA',
-        'website' => 'https://www.upnm.edu.my',
+        'name'    => 'Sistem Induk',
+        'short'   => 'BASE',
+        'website' => '#',
     ],
 ];

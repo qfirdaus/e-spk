@@ -249,7 +249,7 @@ if ($requestMethod === 'POST') {
                             'displayName' => trim((string)($tokenRecord['f_nama'] ?? $tokenRecord['f_nickname'] ?? $loginId)),
                             'loginId' => trim((string)($tokenRecord['f_loginID'] ?? $loginId)),
                             'changedAt' => (new DateTimeImmutable('now', new DateTimeZone('Asia/Kuala_Lumpur')))->format('Y-m-d H:i:s'),
-                            'siteTitle' => app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'),
+                            'siteTitle' => app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'),
                         ]);
                         Mailer::quickSend(
                             $pdo,
@@ -325,8 +325,8 @@ $configModel = class_exists('Config') ? new Config(Database::getInstance('mysql'
 $globalThemeSettings = $configModel ? ($configModel->getTema() ?: []) : [];
 $loginHeaderLogo = app_config('branding.login_header_logo', 'assets/images/logo-upnm.png');
 $loginPanelLogo = app_config('branding.login_panel_logo', 'assets/images/upnm30-logo.png');
-$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Pelajar (e-HEPA)'));
-$siteTitle = trim((string)app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'));
+$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+$siteTitle = trim((string)app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'));
 $organizationName = trim((string)app_config('organization.name', $systemName !== '' ? $systemName : $siteTitle));
 $pageLang = (string)($_SESSION['lang'] ?? 'ms');
 $sidebarTheme = strtolower(trim((string)($globalThemeSettings['sidebarColor'] ?? $_SESSION['theme.menu'] ?? 'light')));
@@ -348,7 +348,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= h(__('reset_password_page_title')) ?> | <?= h(app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)')) ?></title>
+  <title><?= h(__('reset_password_page_title')) ?> | <?= h(app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)')) ?></title>
   <link rel="icon" href="<?= base_url(app_config('site.favicon', 'assets/images/default.ico')) ?>" type="image/x-icon">
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css?v=' . $version) ?>">
   <link rel="stylesheet" href="<?= base_url('assets/css/app.min.css?v=' . $version) ?>">
@@ -983,7 +983,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
           <img src="<?= base_url($loginHeaderLogo) ?>" alt="UPNM Logo">
           <div class="rp-brand-copy">
             <strong><?= h($systemName !== '' ? $systemName : $siteTitle) ?></strong>
-            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for student records, student administration, and HEPA support services.' : 'Akses digital rasmi untuk rekod pelajar, pentadbiran pelajar, dan perkhidmatan sokongan HEPA.')) ?></span>
+            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for facility operations and support services.' : 'Akses digital rasmi untuk operasi fasiliti dan perkhidmatan sokongan.')) ?></span>
           </div>
         </div>
         <div class="rp-masthead-actions">
@@ -998,19 +998,19 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
       <div class="rp-board">
         <section class="rp-overview">
           <span class="rp-tag"><i class="ri-shield-keyhole-line"></i> <?= h(__('reset_password_kicker')) ?></span>
-          <h1 class="rp-title"><?= h($pageLang === 'en' ? 'Reset e-HEPA credentials through a controlled institutional security flow.' : 'Tetapkan semula kelayakan e-HEPA melalui aliran keselamatan institusi yang terkawal.') ?></h1>
+          <h1 class="rp-title"><?= h($pageLang === 'en' ? 'Reset credentials through a controlled institutional security flow.' : 'Tetapkan semula kelayakan melalui aliran keselamatan institusi yang terkawal.') ?></h1>
           <p class="rp-copy"><?= h(__('reset_password_intro')) ?></p>
 
           <div class="rp-overview-grid">
             <div class="rp-hero">
-              <h2><?= h($pageLang === 'en' ? 'Password updates remain governed by policy, validity, and audit controls for student management access.' : 'Kemaskini kata laluan kekal tertakluk kepada polisi, kesahan, dan kawalan audit untuk akses pengurusan pelajar.') ?></h2>
-              <p><?= h($pageLang === 'en' ? 'Only valid reset tokens can continue. New passwords must satisfy the active institutional password policy before e-HEPA access is restored.' : 'Hanya token tetapan semula yang sah boleh diteruskan. Kata laluan baharu mesti mematuhi polisi kata laluan institusi yang aktif sebelum akses e-HEPA dipulihkan.') ?></p>
+              <h2><?= h($pageLang === 'en' ? 'Password updates remain governed by policy, validity, and audit controls.' : 'Kemaskini kata laluan kekal tertakluk kepada polisi, kesahan, dan kawalan audit.') ?></h2>
+              <p><?= h($pageLang === 'en' ? 'Only valid reset tokens can continue. New passwords must satisfy the active institutional password policy before access is restored.' : 'Hanya token tetapan semula yang sah boleh diteruskan. Kata laluan baharu mesti mematuhi polisi kata laluan institusi yang aktif sebelum akses dipulihkan.') ?></p>
             </div>
 
             <aside class="rp-note">
               <span><?= h($pageLang === 'en' ? 'Security Control' : 'Kawalan Keselamatan') ?></span>
-              <strong><?= h($pageLang === 'en' ? 'The reset session remains limited to authorized e-HEPA manual-login identity flows.' : 'Sesi tetapan semula ini terhad kepada aliran identiti log masuk manual e-HEPA yang dibenarkan.') ?></strong>
-              <p><?= h($pageLang === 'en' ? 'Token status, expiry, and policy eligibility are validated before the password is accepted for student-management access.' : 'Status token, tempoh sah, dan kelayakan polisi disahkan sebelum kata laluan diterima untuk akses pengurusan pelajar.') ?></p>
+              <strong><?= h($pageLang === 'en' ? 'The reset session remains limited to authorized manual-login identity flows.' : 'Sesi tetapan semula ini terhad kepada aliran identiti log masuk manual yang dibenarkan.') ?></strong>
+              <p><?= h($pageLang === 'en' ? 'Token status, expiry, and policy eligibility are validated before the password is accepted.' : 'Status token, tempoh sah, dan kelayakan polisi disahkan sebelum kata laluan diterima.') ?></p>
             </aside>
           </div>
         </section>
@@ -1024,7 +1024,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
               <div>
                 <span class="rp-kicker"><i class="ri-refresh-line"></i> <?= h(__('reset_password_kicker')) ?></span>
                 <h2 class="rp-panel-title"><?= h(__('reset_password_heading')) ?></h2>
-                <p class="rp-panel-copy"><?= h($pageLang === 'en' ? 'Set a new password that satisfies the current institutional security policy for e-HEPA access.' : 'Tetapkan kata laluan baharu yang mematuhi polisi keselamatan institusi semasa untuk akses e-HEPA.') ?></p>
+                <p class="rp-panel-copy"><?= h($pageLang === 'en' ? 'Set a new password that satisfies the current institutional security policy.' : 'Tetapkan kata laluan baharu yang mematuhi polisi keselamatan institusi semasa.') ?></p>
               </div>
             </div>
 

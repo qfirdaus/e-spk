@@ -3,7 +3,7 @@ Reset Kata Laluan Akaun
 
 Salam <?= (string)($displayName ?? $loginId ?? '') ?>,
 
-Kami menerima permintaan untuk menetapkan semula kata laluan akaun manual anda di <?= (string)($siteTitle ?? 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)') ?>.
+Kami menerima permintaan untuk menetapkan semula kata laluan akaun manual anda di <?= (string)($siteTitle ?? 'e-Prestasi') ?>.
 
 Login ID: <?= (string)($loginId ?? '') . PHP_EOL ?>
 Pautan ini akan tamat dalam <?= (int)($expiresInMinutes ?? 30) ?> minit, iaitu sehingga <?= (string)($expiresAt ?? '') . PHP_EOL ?>

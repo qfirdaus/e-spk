@@ -5,7 +5,7 @@
  * Handles business logic for sidebar navigation component.
  * Manages user profile, modules, menus, and active page detection.
  * 
- * @package e-facility
+ * @package e-prestasi
  * @author UPNM, Seksyen Aplikasi Digital, BTMK
  */
 
@@ -142,7 +142,7 @@ class SidebarController
      * This method loads user profile, modules, menus, and detects active module.
      * Uses caching to improve performance.
      * 
-     * @param string $currentFile Current page path under pages/ (e.g., 'dashboard.php' or 'iCareS/data-keluarga/index.php')
+     * @param string $currentFile Current page filename (e.g., 'dashboard.php')
      * @return void
      */
     public function loadSidebarData(string $currentFile): void
@@ -310,32 +310,25 @@ class SidebarController
     }
 
     /**
-     * Detect which module is currently active based on current menu path
+     * Detect which module is currently active based on current file
      * 
-     * @param string $currentFile Current page path under pages/
+     * @param string $currentFile Current page filename
      * @return void
      */
     private function detectActiveModul(string $currentFile): void
     {
-        $currentPath = $this->normalizeCurrentPath($currentFile);
-        $bestModulID = null;
-        $bestScore = 0;
-
         foreach ($this->senaraiModul as $modul) {
             $modulID = (int)$modul['f_modulID'];
             $childs = $this->modulMenus[$modulID] ?? [];
             
             foreach ($childs as $menu) {
                 $menuPath = $this->sanitizeMenuPath($menu['f_path'] ?? '');
-                $score = $menuPath ? $this->pathMatchScore($currentPath, $menuPath) : 0;
-                if ($score > $bestScore) {
-                    $bestScore = $score;
-                    $bestModulID = $modulID;
+                if ($menuPath && basename($currentFile) === basename($menuPath)) {
+                    $this->modulAktifID = $modulID;
+                    return; // Found, exit early
                 }
             }
         }
-
-        $this->modulAktifID = $bestModulID;
     }
 
     /**
@@ -478,52 +471,6 @@ class SidebarController
         }
         
         return $path;
-    }
-
-    private function normalizeCurrentPath(string $path): string
-    {
-        $path = str_replace('\\', '/', trim($path));
-        $path = strtok($path, '?') ?: $path;
-        $path = ltrim($path, '/');
-
-        $pagesPos = stripos($path, 'pages/');
-        if ($pagesPos !== false) {
-            $path = substr($path, $pagesPos + strlen('pages/'));
-        }
-
-        return strtolower(rtrim($path, '/'));
-    }
-
-    private function pathsMatch(string $currentPath, string $menuPath): bool
-    {
-        return $this->pathMatchScore($currentPath, $menuPath) > 0;
-    }
-
-    private function pathMatchScore(string $currentPath, string $menuPath): int
-    {
-        $currentPath = $this->normalizeCurrentPath($currentPath);
-        $menuPath = $this->normalizeCurrentPath($menuPath);
-
-        if ($currentPath === $menuPath) {
-            return 100000 + strlen($menuPath);
-        }
-
-        $currentNoIndex = preg_replace('#/index\.php$#i', '', $currentPath);
-        $menuNoIndex = preg_replace('#/index\.php$#i', '', $menuPath);
-
-        if ($currentNoIndex !== '' && $currentNoIndex === $menuNoIndex) {
-            return 90000 + strlen($menuNoIndex);
-        }
-
-        if (
-            $menuNoIndex !== ''
-            && !str_ends_with($menuNoIndex, '.php')
-            && str_starts_with($currentNoIndex . '/', $menuNoIndex . '/')
-        ) {
-            return 10000 + strlen($menuNoIndex);
-        }
-
-        return 0;
     }
 
     /**

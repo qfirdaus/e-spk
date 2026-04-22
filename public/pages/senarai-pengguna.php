@@ -28,6 +28,35 @@ $senaraiUserUmum = [];
 $dbMySQL = Database::getInstance('mysql')->getConnection();
 ensurePageGroupManagePermission($dbMySQL);
 $userModel = new User($dbMySQL);
+$schemaColumnExists = static function (PDO $pdo, string $table, string $column): bool {
+  static $cache = [];
+  $cacheKey = strtolower($table . '.' . $column);
+  if (array_key_exists($cacheKey, $cache)) {
+    return $cache[$cacheKey];
+  }
+
+  try {
+    $databaseName = (string)$pdo->query('SELECT DATABASE()')->fetchColumn();
+    if ($databaseName === '') {
+      return $cache[$cacheKey] = false;
+    }
+
+    $stmt = $pdo->prepare(
+      'SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = :database
+         AND TABLE_NAME = :table
+         AND COLUMN_NAME = :column'
+    );
+    $stmt->execute([
+      ':database' => $databaseName,
+      ':table' => $table,
+      ':column' => $column,
+    ]);
+    return $cache[$cacheKey] = ((int)$stmt->fetchColumn()) > 0;
+  } catch (Throwable $e) {
+    return $cache[$cacheKey] = false;
+  }
+};
 
 // CSRF
 if (empty($_SESSION['csrf_token'])) {
@@ -36,7 +65,9 @@ if (empty($_SESSION['csrf_token'])) {
 $csrf = $_SESSION['csrf_token'];
 
 // helper escape
-function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+if (!function_exists('h')) {
+  function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+}
 
 // format staf id: XXXX-XX jika 6 digit
 function format_stafid(?string $id): string {
@@ -157,7 +188,16 @@ $senaraiGroupStaf = [];
 $senaraiGroupPelajar = [];
 $senaraiGroupUmum = [];
 try {
-    $groupSql = "SELECT f_groupID, f_groupKod, f_groupName, f_categoryUser, f_badge_class, f_row_class, f_color FROM tbl_m_group ORDER BY f_groupName ASC";
+    $groupSelect = [
+      'f_groupID',
+      'f_groupKod',
+      'f_groupName',
+      'f_categoryUser',
+      $schemaColumnExists($dbMySQL, 'tbl_m_group', 'f_badge_class') ? 'f_badge_class' : "'' AS f_badge_class",
+      $schemaColumnExists($dbMySQL, 'tbl_m_group', 'f_row_class') ? 'f_row_class' : "'' AS f_row_class",
+      $schemaColumnExists($dbMySQL, 'tbl_m_group', 'f_color') ? 'f_color' : "'' AS f_color",
+    ];
+    $groupSql = "SELECT " . implode(', ', $groupSelect) . " FROM tbl_m_group ORDER BY f_groupName ASC";
     $groupStmt = $dbMySQL->query($groupSql);
     $senaraiGroup = $groupStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     $senaraiGroupStaf = array_values(array_filter(
@@ -232,6 +272,14 @@ function group_badge_inline_style(array $groupStyle): string {
 }
 
 function load_users_by_category(PDO $pdo, string $category, string $q = ''): array {
+  $userSchema = new User($pdo);
+  $hasNickname = $userSchema->authTableHasColumn('f_nickname');
+  $hasEmail = $userSchema->authTableHasColumn('f_email');
+  $hasHandphone = $userSchema->authTableHasColumn('f_handphone');
+  $hasNokp = $userSchema->authTableHasColumn('f_nokp');
+  $hasAutoProvisioned = $userSchema->authTableHasColumn('f_isAutoProvisioned');
+  $hasIdentitySource = $userSchema->authTableHasColumn('f_identitySource');
+
   $where = [
     "COALESCE(u.f_statusID,0) <> 9",
     "TRIM(COALESCE(u.f_categoryUser, '')) = :category",
@@ -244,27 +292,30 @@ function load_users_by_category(PDO $pdo, string $category, string $q = ''): arr
   }
 
   $whereSql = 'WHERE ' . implode(' AND ', $where);
+  $selectFields = [
+    'u.f_userID',
+    'u.f_loginID',
+    'u.f_stafID',
+    $hasNickname ? 'u.f_nickname' : "'' AS f_nickname",
+    $hasEmail ? 'u.f_email' : "'' AS f_email",
+    $hasHandphone ? 'u.f_handphone' : "'' AS f_handphone",
+    $hasNokp ? 'u.f_nokp' : "'' AS f_nokp",
+    'u.f_nopekerja',
+    'u.f_nama',
+    'u.f_categoryUser',
+    'u.f_namajabatan',
+    'u.f_jawatan',
+    'u.f_status',
+    'u.f_flag',
+    $hasAutoProvisioned ? 'COALESCE(u.f_isAutoProvisioned, 0) AS f_isAutoProvisioned' : '0 AS f_isAutoProvisioned',
+    $hasIdentitySource ? "TRIM(COALESCE(u.f_identitySource, '')) AS f_identitySource" : "'' AS f_identitySource",
+    'u.f_groupID',
+    'TRIM(u.f_groupKod) AS f_groupKod',
+    "COALESCE(NULLIF(TRIM(g.f_groupName), ''), TRIM(u.f_groupKod)) AS f_groupName",
+  ];
   $sql = "
     SELECT
-      u.f_userID,
-      u.f_loginID,
-      u.f_stafID,
-      u.f_nickname,
-      u.f_email,
-      u.f_handphone,
-      u.f_nokp,
-      u.f_nopekerja,
-      u.f_nama,
-      u.f_categoryUser,
-      u.f_namajabatan,
-      u.f_jawatan,
-      u.f_status,
-      u.f_flag,
-      COALESCE(u.f_isAutoProvisioned, 0) AS f_isAutoProvisioned,
-      TRIM(COALESCE(u.f_identitySource, '')) AS f_identitySource,
-      u.f_groupID,
-      TRIM(u.f_groupKod) AS f_groupKod,
-      COALESCE(NULLIF(TRIM(g.f_groupName), ''), TRIM(u.f_groupKod)) AS f_groupName
+      " . implode(",\n      ", $selectFields) . "
     FROM tbl_m_user u
     LEFT JOIN tbl_m_group g
       ON g.f_groupID = u.f_groupID
@@ -1088,11 +1139,11 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       font-size: 1.1rem;
     }
     #userGroupModal .form-select {
-      min-height: 36px;
+      min-height: 50px;
       border: 2px solid #e9ecef;
       border-radius: 8px;
-      padding: 0.375rem 0.75rem;
-      font-size: 0.875rem;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
       transition: all 0.2s ease;
     }
     /* Compact select to match +Peranan button height */
@@ -1259,6 +1310,18 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       padding: 0.375rem 0.75rem;
       font-size: 0.875rem;
       border-radius: 6px;
+    }
+    #userGroupModal #ug_resetPassword,
+    #userGroupModal #ug_resetPasswordConfirm,
+    #userGroupModal #ug_publicPassword,
+    #userGroupModal #ug_publicPasswordConfirm {
+      min-height: 38px !important;
+      height: 38px !important;
+      padding: 0.375rem 0.75rem !important;
+      font-size: 0.875rem !important;
+      line-height: 1.5 !important;
+      border-radius: 6px !important;
+      border-width: 1px !important;
     }
     /* Validation blink effect */
     #userGroupModal .field-invalid {
@@ -1464,9 +1527,40 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     #addUserModal .modal-header .btn-close:hover {
       opacity: 1;
     }
-      #addUserModal .modal-body {
+    #addUserModal .modal-body {
         padding: 1rem 1.35rem;
       }
+    #addUserModal .au-modal-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+    #addUserModal .au-modal-tabs .nav-link {
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      color: #475569;
+      border-radius: 8px;
+      padding: 0.55rem 0.95rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.15s ease-in-out;
+    }
+    #addUserModal .au-modal-tabs .nav-link:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+      color: #334155;
+    }
+    #addUserModal .au-modal-tabs .nav-link.active {
+      color: #fff;
+      border-color: #28a745;
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      box-shadow: 0 8px 20px rgba(32, 201, 151, 0.18);
+    }
+    #addUserModal .au-tab-pane {
+      padding-top: 0.15rem;
+    }
       #addUserModal .modal-footer {
         padding: 0.95rem 1.35rem;
         background-color: #f8f9fa;
@@ -1484,20 +1578,21 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         font-size: 1rem;
       }
       #addUserModal .select2-container--default .select2-selection--single {
-        height: 36px !important;
-        min-height: 36px !important;
-        padding: 0.375rem 0.75rem !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0.35rem 0.75rem !important;
         font-size: 0.875rem !important;
       }
       #addUserModal .select2-container--default .select2-selection--single .select2-selection__rendered {
-        padding-left: 0.25rem !important;
+        padding-left: 0.1rem !important;
         padding-right: 24px !important;
         font-size: 0.875rem !important;
+        line-height: 1.5 !important;
       }
       #addUserModal .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 34px !important;
-        right: 8px !important;
-        width: 26px !important;
+        height: 36px !important;
+        right: 6px !important;
+        width: 24px !important;
       }
       /* ✅ Select2 styling sama seperti senarai-apc-admin.php (untuk semua dropdowns) */
       .select2-container--default {
@@ -1505,12 +1600,11 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         width: 100% !important;
       }
     .select2-container--default .select2-selection--single {
-      height: 36px !important;
-      min-height: 36px !important;
+      height: 50px !important;
       border: 2px solid #e9ecef !important;
       border-radius: 8px !important;
-      padding: 0.375rem 0.75rem !important;
-      font-size: 0.875rem !important;
+      padding: 0.875rem 1rem !important;
+      font-size: 1rem !important;
       display: flex;
       align-items: center;
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -1524,16 +1618,16 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     }
     .select2-container--default .select2-selection--single .select2-selection__rendered {
       line-height: 1.5;
-      padding-left: 0.25rem !important;
-      padding-right: 24px !important;
-      font-size: 0.875rem !important;
+      padding-left: 0.5rem !important;
+      padding-right: 30px !important;
+      font-size: 1rem !important;
       color: #212529;
       font-weight: 600;
     }
     .select2-container--default .select2-selection--single .select2-selection__arrow {
-      height: 34px !important;
-      right: 8px !important;
-      width: 24px !important;
+      height: 48px !important;
+      right: 10px !important;
+      width: 30px !important;
     }
     .select2-container--default .select2-selection--single .select2-selection__arrow b {
       border-color: #6c757d transparent transparent transparent;
@@ -1542,7 +1636,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     }
     .select2-container--default .select2-selection--single .select2-selection__placeholder {
       color: #6c757d;
-      font-size: 0.875rem !important;
+      font-size: 1rem !important;
     }
     /* Select2 dropdown - lebih besar */
     .select2-dropdown {
@@ -1552,8 +1646,8 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
     .select2-results__option {
-      padding: 0.45rem 0.75rem !important;
-      font-size: 0.875rem !important;
+      padding: 0.75rem 1rem !important;
+      font-size: 1rem !important;
       line-height: 1.5 !important;
       transition: background-color 0.15s ease-in-out;
     }
@@ -1576,18 +1670,43 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       #addUserModal .form-select,
       #userGroupModal .form-select,
       .form-select {
-        min-height: 36px;
-        padding: 0.375rem 0.75rem;
-      font-size: 0.875rem;
+        min-height: 50px;
+        padding: 0.875rem 1rem;
+      font-size: 1rem;
       border: 2px solid #e9ecef;
         border-radius: 8px;
         transition: all 0.2s ease;
       }
       #addUserModal .form-select,
       #addUserModal .form-control {
-        min-height: 36px;
+        min-height: 38px;
+        height: 38px;
         padding: 0.375rem 0.75rem;
         font-size: 0.875rem;
+        line-height: 1.5;
+        border-width: 1px;
+      }
+      #addUserModal textarea.form-control {
+        min-height: 38px;
+        height: auto;
+      }
+      #addUserModal .big-select {
+        font-size: 0.875rem !important;
+        padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
+        min-height: 38px !important;
+        height: 38px !important;
+        line-height: 1.5 !important;
+      }
+      #addUserModal .select2-container--default {
+        font-size: 0.875rem !important;
+      }
+      #addUserModal .select2-dropdown {
+        font-size: 0.875rem !important;
+      }
+      #addUserModal .select2-results__option {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.45 !important;
       }
       #addUserModal .form-select:focus,
       #userGroupModal .form-select:focus,
@@ -1597,9 +1716,9 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     }
     /* ✅ Textbox styling sama seperti senarai-apc-admin.php */
     .form-control {
-      min-height: 36px;
-      padding: 0.375rem 0.75rem;
-      font-size: 0.875rem;
+      min-height: 50px;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
       border: 2px solid #e9ecef;
       border-radius: 8px;
       transition: all 0.2s ease;
@@ -2142,6 +2261,22 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       border-color: rgba(255,255,255,.08);
       box-shadow: 0 18px 38px rgba(2,6,23,.22);
     }
+    [data-bs-theme="dark"] #addUserModal .au-modal-tabs {
+      border-bottom-color: rgba(148, 163, 184, 0.18);
+    }
+    [data-bs-theme="dark"] #addUserModal .au-modal-tabs .nav-link {
+      background: rgba(15, 23, 42, 0.78);
+      border-color: rgba(148, 163, 184, 0.22);
+      color: #dbe4f0;
+    }
+    [data-bs-theme="dark"] #addUserModal .au-modal-tabs .nav-link:hover {
+      background: rgba(30, 41, 59, 0.92);
+      color: #f8fafc;
+    }
+    [data-bs-theme="dark"] #addUserModal .au-modal-tabs .nav-link.active {
+      border-color: rgba(32, 201, 151, 0.45);
+      color: #fff;
+    }
   </style>
 </head>
 
@@ -2429,11 +2564,11 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
                   </label>
                   <div class="d-flex flex-wrap align-items-center gap-2">
                     <div class="flex-grow-1">
-                      <select class="form-select" id="ug_groupKod">
+                      <select class="form-select compact-select" id="ug_groupKod">
                         <option value=""><?= __('userList_group_filter_placeholder') ?></option>
                       </select>
                     </div>
-                    <button type="button" class="btn btn-primary" id="ug_addRoleBtn">
+                    <button type="button" class="btn btn-primary compact-btn" id="ug_addRoleBtn">
                       <i class="ri-add-line me-1"></i> <?= h(preg_replace('/^\+\s*/', '', __('userList_modal_add_role'))) ?>
                     </button>
                   </div>
@@ -2442,7 +2577,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
                   <label class="form-label">
                     <i class="ri-shield-check-line"></i> <?= __('userList_modal_label_access') ?>
                   </label>
-                  <select class="form-select" id="ug_flag">
+                  <select class="form-select compact-select" id="ug_flag">
                     <option value="1"><?= __('userList_access_granted') ?></option>
                     <option value="0"><?= __('userList_access_blocked') ?></option>
                   </select>
@@ -2613,170 +2748,190 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       </div>
       <div class="modal-body">
         <form id="addUserForm" autocomplete="off">
-          <!-- Section 1: Pilih Staf -->
-          <div class="form-section">
-            <div class="form-section-title" id="au_sectionTitle">
-              <i class="ri-user-line me-1"></i> <?= __('userList_modal_section_staff_info') ?>
+          <ul class="nav nav-pills au-modal-tabs" id="auModalTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="au-info-tab" data-bs-toggle="tab" data-bs-target="#au-info-pane" type="button" role="tab" aria-controls="au-info-pane" aria-selected="true">
+                <i class="ri-user-line me-1"></i> <span id="au_infoTabLabel"><?= __('userList_modal_section_staff_info') ?></span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="au-settings-tab" data-bs-toggle="tab" data-bs-target="#au-settings-pane" type="button" role="tab" aria-controls="au-settings-pane" aria-selected="false">
+                <i class="ri-settings-3-line me-1"></i> <?= __('userList_modal_section_settings') ?>
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active au-tab-pane" id="au-info-pane" role="tabpanel" aria-labelledby="au-info-tab" tabindex="0">
+              <div class="form-section">
+                <div class="form-section-title" id="au_sectionTitle">
+                  <i class="ri-user-line me-1"></i> <?= __('userList_modal_section_staff_info') ?>
+                </div>
+                <div class="mb-3">
+                  <div id="au_staffSelectWrap">
+                    <label for="au_stafSelect" class="form-label" id="au_selectLabel">
+                      <i class="ri-user-line"></i> <?= __('userList_modal_label_staff') ?> <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select js-staf-select" id="au_stafSelect" data-placeholder="<?= h(__('userList_modal_placeholder_select_staff')) ?>">
+                      <option value=""></option>
+                      <?php if (!empty($senaraiStaf)): ?>
+                        <?php foreach ($senaraiStaf as $s): ?>
+                          <?php
+                            $nopekerja = trim((string)($s['nopekerja'] ?? ''));
+                            $idpekerja = trim((string)($s['idpekerja'] ?? ''));
+                            $nama = trim((string)($s['nama'] ?? ''));
+                            $jawatan = trim((string)($s['jawatan'] ?? ''));
+                            $jabatan = trim((string)($s['jabatan'] ?? ''));
+                            
+                            if ($nopekerja === '') continue;
+                            
+                            $nopekerjaNormalized = str_replace('-', '', $nopekerja);
+                            $isDisabled = in_array($nopekerjaNormalized, $existingStafIDs, true);
+                            
+                            $displayText = $nama;
+                            if ($nopekerja) {
+                              $displayText .= ' (' . $nopekerja . ')';
+                            }
+                            if ($isDisabled) {
+                              $displayText .= ' [' . __('userList_staff_already_exists') . ']';
+                            }
+                          ?>
+                          <option
+                            value="<?= h($nopekerja) ?>"
+                            data-idpekerja="<?= h($idpekerja) ?>"
+                            data-nama="<?= h($nama) ?>"
+                            data-jawatan="<?= h($jawatan) ?>"
+                            data-jabatan="<?= h($jabatan) ?>"
+                            <?= $isDisabled ? 'disabled' : '' ?>
+                          >
+                            <?= h($displayText) ?>
+                          </option>
+                        <?php endforeach; ?>
+                      <?php endif; ?>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="au_infoCard" class="info-card" style="display: block;">
+                  <div class="info-item">
+                    <i class="ri-building-line info-icon"></i>
+                    <div class="info-content">
+                      <div class="info-label" id="au_primaryInfoLabel"><?= __('userList_modal_label_department') ?></div>
+                      <div class="info-value" id="au_jabatan"><?= __('userList_empty_value') ?></div>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <i class="ri-briefcase-line info-icon"></i>
+                    <div class="info-content">
+                      <div class="info-label" id="au_secondaryInfoLabel"><?= __('userList_modal_label_position') ?></div>
+                      <div class="info-value" id="au_jawatan"><?= __('userList_empty_value') ?></div>
+                    </div>
+                  </div>
+                  <div class="info-item" id="au_extraInfo1Wrap" style="display:none;">
+                    <i class="ri-graduation-cap-line info-icon"></i>
+                    <div class="info-content">
+                      <div class="info-label" id="au_extraInfo1Label"><?= __('userList_modal_label_level') ?></div>
+                      <div class="info-value" id="au_extraInfo1"><?= __('userList_empty_value') ?></div>
+                    </div>
+                  </div>
+                  <div class="info-item" id="au_extraInfo2Wrap" style="display:none;">
+                    <i class="ri-shield-user-line info-icon"></i>
+                    <div class="info-content">
+                      <div class="info-label" id="au_extraInfo2Label"><?= __('userList_modal_label_status_category') ?></div>
+                      <div class="info-value" id="au_extraInfo2"><?= __('userList_empty_value') ?></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="au_publicFormSection" class="row g-3 d-none">
+                  <div class="col-md-6">
+                    <label for="au_publicName" class="form-label">
+                      <i class="ri-user-3-line"></i> <?= __('userList_modal_label_public_name') ?> <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="au_publicName" maxlength="150" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicNickname" class="form-label">
+                      <i class="ri-user-smile-line"></i> <?= __('userList_modal_label_public_nickname') ?>
+                    </label>
+                    <input type="text" class="form-control" id="au_publicNickname" maxlength="150" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicEmail" class="form-label">
+                      <i class="ri-mail-line"></i> <?= __('userList_modal_label_public_email') ?> <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" class="form-control" id="au_publicEmail" maxlength="150" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicPhone" class="form-label">
+                      <i class="ri-smartphone-line"></i> <?= __('userList_modal_label_public_phone') ?>
+                    </label>
+                    <input type="text" class="form-control" id="au_publicPhone" maxlength="30" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicUniversity" class="form-label">
+                      <i class="ri-school-line"></i> <?= __('userList_modal_label_public_university') ?>
+                    </label>
+                    <input type="text" class="form-control" id="au_publicUniversity" maxlength="150" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicNoKp" class="form-label">
+                      <i class="ri-fingerprint-line"></i> <?= __('userList_modal_label_public_idno') ?>
+                    </label>
+                    <input type="text" class="form-control" id="au_publicNoKp" maxlength="30" autocomplete="off">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicPassword" class="form-label">
+                      <i class="ri-lock-password-line"></i> <?= __('userList_modal_label_public_password') ?> <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" class="form-control" id="au_publicPassword" maxlength="100" autocomplete="new-password">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="au_publicPasswordConfirm" class="form-label">
+                      <i class="ri-lock-password-line"></i> <?= __('userList_modal_label_public_password_confirm') ?> <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" class="form-control" id="au_publicPasswordConfirm" maxlength="100" autocomplete="new-password">
+                  </div>
+                  <div class="col-12">
+                    <div class="alert alert-warning py-2 px-3 mb-0 small">
+                      <i class="ri-shield-keyhole-line me-1"></i> <?= __('userList_public_password_reset_forces_change') ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="mb-3">
-              <div id="au_staffSelectWrap">
-                <label for="au_stafSelect" class="form-label" id="au_selectLabel">
-                  <i class="ri-user-line"></i> <?= __('userList_modal_label_staff') ?> <span class="text-danger">*</span>
-                </label>
-                <select class="form-select js-staf-select" id="au_stafSelect" data-placeholder="<?= h(__('userList_modal_placeholder_select_staff')) ?>">
-                  <option value=""></option>
-                  <?php if (!empty($senaraiStaf)): ?>
-                    <?php foreach ($senaraiStaf as $s): ?>
-                      <?php
-                        $nopekerja = trim((string)($s['nopekerja'] ?? ''));
-                        $idpekerja = trim((string)($s['idpekerja'] ?? ''));
-                        $nama = trim((string)($s['nama'] ?? ''));
-                        $jawatan = trim((string)($s['jawatan'] ?? ''));
-                        $jabatan = trim((string)($s['jabatan'] ?? ''));
-                        if ($nopekerja === '') continue;
-                        $nopekerjaNormalized = str_replace('-', '', $nopekerja);
-                        $isDisabled = in_array($nopekerjaNormalized, $existingStafIDs, true);
-                        $displayText = $nama;
-                        if ($nopekerja) {
-                          $displayText .= ' (' . $nopekerja . ')';
-                        }
-                        if ($isDisabled) {
-                          $displayText .= ' [' . __('userList_staff_already_exists') . ']';
-                        }
-                      ?>
-                      <option
-                        value="<?= h($nopekerja) ?>"
-                        data-idpekerja="<?= h($idpekerja) ?>"
-                        data-nama="<?= h($nama) ?>"
-                        data-jawatan="<?= h($jawatan) ?>"
-                        data-jabatan="<?= h($jabatan) ?>"
-                        <?= $isDisabled ? 'disabled' : '' ?>
-                      >
-                        <?= h($displayText) ?>
-                      </option>
+
+            <div class="tab-pane fade au-tab-pane" id="au-settings-pane" role="tabpanel" aria-labelledby="au-settings-tab" tabindex="0">
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="ri-settings-3-line me-1"></i> <?= __('userList_modal_section_settings') ?>
+                </div>
+                <div class="mb-3">
+                  <label for="au_groupKod" class="form-label">
+                    <i class="ri-group-line"></i> <?= __('userList_modal_label_group') ?> <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select big-select" id="au_groupKod" required>
+                    <option value=""><?= __('userList_modal_placeholder_select_group') ?></option>
+                    <?php foreach ($senaraiGroup as $g): ?>
+                      <option value="<?= h((string)($g['f_groupID'] ?? '')) ?>"><?= h($g['f_groupName']) ?></option>
                     <?php endforeach; ?>
-                  <?php endif; ?>
-                </select>
-              </div>
-            </div>
-            
-            <!-- Info Card (Jabatan & Jawatan) -->
-            <div id="au_infoCard" class="info-card" style="display: block;">
-              <div class="info-item">
-                <i class="ri-building-line info-icon"></i>
-                <div class="info-content">
-                  <div class="info-label" id="au_primaryInfoLabel"><?= __('userList_modal_label_department') ?></div>
-                  <div class="info-value" id="au_jabatan"><?= __('userList_empty_value') ?></div>
+                  </select>
+                </div>
+                
+                <div class="mb-0">
+                  <label for="au_flag" class="form-label">
+                    <i class="ri-shield-check-line"></i> <?= __('userList_modal_label_access') ?> <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select" id="au_flag" required>
+                    <option value="1"><?= __('userList_access_granted') ?></option>
+                    <option value="0"><?= __('userList_access_blocked') ?></option>
+                  </select>
                 </div>
               </div>
-              <div class="info-item">
-                <i class="ri-briefcase-line info-icon"></i>
-                <div class="info-content">
-                  <div class="info-label" id="au_secondaryInfoLabel"><?= __('userList_modal_label_position') ?></div>
-                  <div class="info-value" id="au_jawatan"><?= __('userList_empty_value') ?></div>
-                </div>
-              </div>
-              <div class="info-item" id="au_extraInfo1Wrap" style="display:none;">
-                <i class="ri-graduation-cap-line info-icon"></i>
-                <div class="info-content">
-                  <div class="info-label" id="au_extraInfo1Label"><?= __('userList_modal_label_level') ?></div>
-                  <div class="info-value" id="au_extraInfo1"><?= __('userList_empty_value') ?></div>
-                </div>
-              </div>
-              <div class="info-item" id="au_extraInfo2Wrap" style="display:none;">
-                <i class="ri-shield-user-line info-icon"></i>
-                <div class="info-content">
-                  <div class="info-label" id="au_extraInfo2Label"><?= __('userList_modal_label_status_category') ?></div>
-                  <div class="info-value" id="au_extraInfo2"><?= __('userList_empty_value') ?></div>
-                </div>
-              </div>
-            </div>
-
-            <div id="au_publicFormSection" class="row g-3 d-none">
-              <div class="col-md-6">
-                <label for="au_publicName" class="form-label">
-                  <i class="ri-user-3-line"></i> <?= __('userList_modal_label_public_name') ?> <span class="text-danger">*</span>
-                </label>
-                <input type="text" class="form-control" id="au_publicName" maxlength="150" autocomplete="off">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicNickname" class="form-label">
-                  <i class="ri-user-smile-line"></i> <?= __('userList_modal_label_public_nickname') ?>
-                </label>
-                <input type="text" class="form-control" id="au_publicNickname" maxlength="150" autocomplete="off">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicEmail" class="form-label">
-                  <i class="ri-mail-line"></i> <?= __('userList_modal_label_public_email') ?> <span class="text-danger">*</span>
-                </label>
-                <input type="email" class="form-control" id="au_publicEmail" maxlength="150" autocomplete="off">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicPhone" class="form-label">
-                  <i class="ri-smartphone-line"></i> <?= __('userList_modal_label_public_phone') ?>
-                </label>
-                <input type="text" class="form-control" id="au_publicPhone" maxlength="30" autocomplete="off">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicUniversity" class="form-label">
-                  <i class="ri-school-line"></i> <?= __('userList_modal_label_public_university') ?>
-                </label>
-                <input type="text" class="form-control" id="au_publicUniversity" maxlength="150" autocomplete="off">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicPassword" class="form-label">
-                  <i class="ri-lock-password-line"></i> <?= __('userList_modal_label_public_password') ?> <span class="text-danger">*</span>
-                </label>
-                <input type="password" class="form-control" id="au_publicPassword" maxlength="100" autocomplete="new-password">
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicPasswordConfirm" class="form-label">
-                  <i class="ri-lock-password-line"></i> <?= __('userList_modal_label_public_password_confirm') ?> <span class="text-danger">*</span>
-                </label>
-                <input type="password" class="form-control" id="au_publicPasswordConfirm" maxlength="100" autocomplete="new-password">
-              </div>
-              <div class="col-12">
-                <div class="alert alert-warning py-2 px-3 mb-0 small">
-                  <i class="ri-shield-keyhole-line me-1"></i> <?= __('userList_public_password_reset_forces_change') ?>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label for="au_publicNoKp" class="form-label">
-                  <i class="ri-fingerprint-line"></i> <?= __('userList_modal_label_public_idno') ?>
-                </label>
-                <input type="text" class="form-control" id="au_publicNoKp" maxlength="30" autocomplete="off">
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Tetapan Pengguna -->
-          <div class="form-section">
-            <div class="form-section-title">
-              <i class="ri-settings-3-line me-1"></i> <?= __('userList_modal_section_settings') ?>
-            </div>
-            <div class="mb-3">
-              <label for="au_groupKod" class="form-label">
-                <i class="ri-group-line"></i> <?= __('userList_modal_label_group') ?> <span class="text-danger">*</span>
-              </label>
-              <select class="form-select" id="au_groupKod" required>
-                <option value=""><?= __('userList_modal_placeholder_select_group') ?></option>
-                <?php foreach ($senaraiGroupStaf as $g): ?>
-                  <option value="<?= h((string)($g['f_groupID'] ?? '')) ?>"><?= h($g['f_groupName']) ?></option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-            <div class="mb-0">
-              <label for="au_flag" class="form-label">
-                <i class="ri-shield-check-line"></i> <?= __('userList_modal_label_access') ?> <span class="text-danger">*</span>
-              </label>
-              <select class="form-select" id="au_flag" required>
-                <option value="1"><?= __('userList_access_granted') ?></option>
-                <option value="0"><?= __('userList_access_blocked') ?></option>
-              </select>
             </div>
           </div>
         </form>
+        <div id="au_error" class="alert alert-danger d-none mt-3 mb-0" role="alert"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -2870,6 +3025,20 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     return true;
   }
 
+  function fireSwal(options) {
+    if (!window.Swal) {
+      return Promise.resolve(null);
+    }
+    const config = (options && typeof options === 'object') ? { ...options } : {};
+    delete config.timer;
+    delete config.timerProgressBar;
+    return Swal.fire({
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      ...config
+    });
+  }
+
   /**
    * Create rate-limited handler
    */
@@ -2877,7 +3046,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     return async function(...args) {
       const handlerKey = handler.name || 'anonymous';
       if (!checkRateLimit(handlerKey, delay)) {
-        await Swal.fire({
+        await fireSwal({
           icon: 'warning',
           title: '<?= h(__('userList_rate_limit_title')) ?>',
           text: '<?= h(__('userList_rate_limit_text')) ?>',
@@ -2950,8 +3119,8 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
           await new Promise(resolve => setTimeout(resolve, delay));
           continue;
         }
-        
-        throw new Error(`<?= h(__('userList_http_status_prefix')) ?> ${response.status}`);
+
+        return response;
       } catch (e) {
         if (i === maxRetries - 1) throw e;
         // Network errors - retry with backoff
@@ -3156,15 +3325,11 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
   /**
    * Update user row in-place (optimized)
    */
-  function updateUserRow(userID, newData, scope = null) {
-    const scopedMeta = scope ? getScopeMeta(scope) : null;
-    const rowSelector = scopedMeta
-      ? `#${scopedMeta.tableId} tbody tr[data-user-id="${userID}"]`
-      : `.user-access-table tbody tr[data-user-id="${userID}"]`;
-    const $row = $(rowSelector).first();
+  function updateUserRow(userID, newData) {
+    const $row = $(`.user-access-table tbody tr[data-user-id="${userID}"]`).first();
     if ($row.length === 0) {
       // Row not visible, trigger full reload
-      return scope ? reloadScopedTable(scope, userID) : reloadUserTable(userID);
+      return reloadUserTable(userID);
     }
     
     // Update row attributes
@@ -3801,7 +3966,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       
       // Show user-friendly error
       const errorMsg = sanitizeError(e);
-      await Swal.fire({
+      await fireSwal({
         icon: 'error',
         title: '<?= h(__('userList_error_title')) ?>',
         text: errorMsg || '<?= h(__('userList_err_load_data')) ?>',
@@ -3814,90 +3979,6 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     }
   }
 
-  async function reloadScopedTable(scope = 'staff', highlightUserID = null) {
-    const meta = getScopeMeta(scope);
-    if (meta.scope === 'staff') {
-      return reloadUserTable(highlightUserID);
-    }
-
-    const selector = `#${meta.tableId}`;
-    const tableEl = document.querySelector(selector);
-    if (!tableEl) return;
-
-    showLoading('<?= h(__('userList_loading_user_list')) ?>');
-    try {
-      const r = await fetchWithRetry(`<?= base_url('ajax/user-list-rows.php') ?>?scope=${encodeURIComponent(meta.scope)}`, {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!r.ok) throw new Error('<?= h(__('userList_http_status_prefix')) ?> ' + r.status);
-      const j = await r.json();
-      if (!j || j.error) throw new Error((j && j.message) || '<?= h(__('userList_err_load_data')) ?>');
-
-      const rowData = Array.isArray(j.rows) ? j.rows : [];
-      const nodes = rowData.map(row => buildRowFromData(row).get(0));
-
-      if ($.fn.DataTable.isDataTable(selector)) {
-        const dt = $(selector).DataTable();
-        const currentPage = dt.page();
-        const currentSearch = dt.search();
-        const currentOrder = dt.order();
-        const currentLength = dt.page.len();
-
-        dt.clear();
-        if (nodes.length) {
-          dt.rows.add(nodes);
-        }
-        dt.order(currentOrder);
-        dt.search(currentSearch);
-        if (currentLength) dt.page.len(currentLength);
-        dt.draw(false);
-
-        const pageInfo = dt.page.info();
-        const targetPage = Math.min(currentPage, Math.max(0, pageInfo.pages - 1));
-        if (targetPage >= 0 && targetPage < pageInfo.pages) {
-          dt.page(targetPage).draw(false);
-        }
-        drawTableRowNumbers(dt);
-
-        if (highlightUserID) {
-          setTimeout(() => {
-            const $targetRow = $(`${selector} tbody tr[data-user-id="${highlightUserID}"]`);
-            if ($targetRow.length > 0) {
-              const rowIndex = dt.rows({ search: 'applied' }).nodes().indexOf($targetRow[0]);
-              if (rowIndex >= 0) {
-                const info = dt.page.info();
-                const target = Math.floor(rowIndex / info.length);
-                if (target !== info.page) dt.page(target).draw(false);
-              }
-              $targetRow.addClass('row-updated-highlight');
-              setTimeout(() => $targetRow.removeClass('row-updated-highlight'), CONFIG.HIGHLIGHT_DURATION);
-            }
-          }, CONFIG.ANIMATION_DELAY);
-        }
-      } else {
-        const $tbody = $(`${selector} tbody`);
-        $tbody.html('');
-        $tbody.append($(nodes));
-        initScopedDataTable(meta.tableId, meta.scope);
-      }
-
-      setupScopedTableControls(meta.tableId, meta.scope, { addLabel: meta.addLabel });
-      initTooltips(tableEl);
-    } catch (e) {
-      const errorMsg = sanitizeError(e);
-      await Swal.fire({
-        icon: 'error',
-        title: '<?= h(__('userList_error_title')) ?>',
-        text: errorMsg || '<?= h(__('userList_err_load_data')) ?>',
-        confirmButtonText: '<?= h(__('userList_btn_ok')) ?>',
-        confirmButtonColor: '#dc3545'
-      });
-      throw e;
-    } finally {
-      hideLoading();
-    }
-  }
-
   // Function untuk setup table controls (buttons, filters, etc)
   function setupTableControls() {
     if (window.DataTableStandard && typeof window.DataTableStandard.decorate === 'function') {
@@ -3906,7 +3987,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       });
     }
     // Styling
-    // Use standard dropdown sizing for table controls.
+    // ✅ Removed form-select-sm untuk besarkan saiz dropdown
     $('#userDT_length select').addClass('form-select w-auto');
     $('#userDT_length label').addClass('mb-0');
     const $topLeft  = $('#userDT_wrapper .dt-top-left').addClass('d-flex align-items-center gap-2 flex-nowrap');
@@ -3961,7 +4042,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             
             trackEvent('user_sync_sybase_success', { updated: j.updated || 0 });
             
-            await Swal.fire({
+            await fireSwal({
               icon: 'success',
               title: '<?= h(__('userList_sync_success_title')) ?>',
               html:
@@ -4014,7 +4095,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             const errorMsg = sanitizeError(e);
             trackEvent('user_sync_sybase_error', { error: errorMsg });
             
-            await Swal.fire({
+            await fireSwal({
               icon: 'error',
               title: '<?= h(__('userList_sync_error_title')) ?>',
               text: errorMsg || '<?= h(__('userList_sync_error')) ?>',
@@ -4185,6 +4266,37 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     $row.remove();
   }
 
+  function appendUserRowToTable(tableId, rowData) {
+    if (!rowData || typeof rowData !== 'object') return null;
+    const selector = `#${tableId}`;
+    const tableEl = document.querySelector(selector);
+    if (!tableEl) return null;
+
+    const rowNode = buildRowFromData(rowData).get(0);
+    if (!rowNode) return null;
+
+    if ($.fn.DataTable.isDataTable(selector)) {
+      const dt = $(selector).DataTable();
+      const expectedColumnCount = $(`${selector} thead th`).length || 6;
+      const tdCount = rowNode.querySelectorAll('td').length;
+      if (tdCount !== expectedColumnCount) {
+        return null;
+      }
+      const inserted = dt.row.add(rowNode).draw(false).node();
+      drawTableRowNumbers(dt);
+      if (inserted) {
+        initTooltips(inserted);
+      }
+      return inserted || rowNode;
+    }
+
+    const tbody = tableEl.querySelector('tbody');
+    if (!tbody) return null;
+    tbody.appendChild(rowNode);
+    initTooltips(rowNode);
+    return rowNode;
+  }
+
   function setupScopedTableControls(tableId, scope, options = {}) {
     const selector = `#${tableId}`;
     const wrapperSelector = `${selector}_wrapper`;
@@ -4257,78 +4369,18 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         : '<?= h(__('userList_sync_button')) ?>';
       const $syncBtn = $(`<button type="button" id="${meta.syncButtonId}" class="btn btn-primary"><i class="ri-refresh-line me-1"></i> ${syncLabel}</button>`);
       $topRight.append($syncBtn);
-      $syncBtn.on('click', createRateLimitedHandler(async function(e) {
+      $syncBtn.on('click', async function(e) {
         e.preventDefault();
-        const $btn = $(this);
-        const originalHtml = $btn.html();
-        const originalDisabled = $btn.prop('disabled');
-
-        $btn.prop('disabled', true);
-        $btn.html('<i class="ri-loader-4-line ri-spin me-1"></i> <?= h(__('userList_sync_processing')) ?>');
-
-        try {
-          trackEvent('user_sync_student', {});
-          const r = await fetchWithRetry('<?= base_url('ajax/user-sync-student.php') ?>', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Token': CSRF,
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({ csrf_token: CSRF })
-          });
-          const j = await r.json();
-          if (!r.ok || !j || j.error) {
-            throw new Error((j && j.message) || '<?= h(__('userList_sync_student_error')) ?>');
-          }
-          trackEvent('user_sync_student_success', { updated: j.updated || 0, inserted: j.inserted || 0 });
-          await reloadScopedTable('student');
-          await Swal.fire({
-            icon: 'success',
-            title: '<?= h(__('userList_sync_student_success_title')) ?>',
-            html:
-              '<div class="sync-swal-wrap">' +
-                '<div class="sync-swal-banner">' +
-                  '<div class="sync-swal-banner-icon"><i class="ri-checkbox-circle-line"></i></div>' +
-                  '<div>' +
-                    '<div class="sync-swal-banner-title"><?= h(__('userList_sync_student_success_title')) ?></div>' +
-                    '<div class="sync-swal-banner-text">' + (j.message || '<?= h(__('userList_sync_student_success_message')) ?>') + '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="sync-swal-card">' +
-                  '<div class="sync-swal-card-title"><i class="ri-bar-chart-box-line"></i><?= h(__('userList_sync_summary_title')) ?></div>' +
-                  '<div class="sync-swal-stats">' +
-                    '<div class="sync-swal-stat"><div class="sync-swal-stat-label"><?= h(__('userList_sync_inserted')) ?></div><div class="sync-swal-stat-value is-success">' + (j.inserted || 0) + '</div></div>' +
-                    '<div class="sync-swal-stat"><div class="sync-swal-stat-label"><?= h(__('userList_sync_updated')) ?></div><div class="sync-swal-stat-value is-primary">' + (j.updated || 0) + '</div></div>' +
-                    '<div class="sync-swal-stat"><div class="sync-swal-stat-label"><?= h(__('userList_sync_skipped')) ?></div><div class="sync-swal-stat-value is-warning">' + (j.skipped || 0) + '</div></div>' +
-                    '<div class="sync-swal-stat"><div class="sync-swal-stat-label"><?= h(__('userList_sync_errors')) ?></div><div class="sync-swal-stat-value is-danger">' + (j.errors || 0) + '</div></div>' +
-                  '</div>' +
-                '</div>' +
-              '</div>',
-            confirmButtonText: '<i class="ri-check-line me-1"></i><?= h(__('userList_btn_ok')) ?>',
-            confirmButtonColor: '#198754',
-            width: '480px',
-            customClass: {
-              popup: 'swal2-popup-custom',
-              title: 'swal2-title-custom',
-              confirmButton: 'swal2-confirm-custom'
-            }
-          });
-        } catch (e) {
-          const errorMsg = sanitizeError(e);
-          trackEvent('user_sync_student_error', { error: errorMsg });
-          await Swal.fire({
-            icon: 'error',
-            title: '<?= h(__('userList_sync_student_error_title')) ?>',
-            text: errorMsg || '<?= h(__('userList_sync_student_error')) ?>',
+        if (window.Swal) {
+          await fireSwal({
+            icon: 'info',
+            title: '<?= h(__('userList_sync_student_pending_title')) ?>',
+            text: '<?= h(__('userList_sync_student_pending_text')) ?>',
             confirmButtonText: '<?= h(__('userList_btn_ok')) ?>',
-            confirmButtonColor: '#dc3545'
+            confirmButtonColor: '#0d6efd'
           });
-        } finally {
-          $btn.prop('disabled', originalDisabled);
-          $btn.html(originalHtml);
         }
-      }, 2000));
+      });
     }
 
     if (isSuperAdmin && !document.getElementById(meta.addButtonId)) {
@@ -4475,7 +4527,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
     dtInstance = dt;
 
     // === Styling & susun kiri/kanan (sebaris, tak berbalut) ===
-    // Use standard dropdown sizing for table controls.
+    // ✅ Removed form-select-sm untuk besarkan saiz dropdown
     $('#userDT_length select')
       .addClass('form-select w-auto');
 
@@ -4762,7 +4814,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         if (deleteBtn) {
           e.preventDefault();
           if (!isSuperAdmin) {
-            await Swal.fire({
+            await fireSwal({
               icon: 'info',
               title: '<?= h(__('userList_error_title')) ?>',
               text: '<?= h(__('userList_err_no_permission')) ?>',
@@ -4774,7 +4826,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
           
           // Rate limiting check
           if (!checkRateLimit('user_delete', 2000)) {
-            await Swal.fire({
+            await fireSwal({
               icon: 'warning',
               title: '<?= h(__('userList_rate_limit_title')) ?>',
               text: '<?= h(__('userList_rate_limit_text')) ?>',
@@ -4791,7 +4843,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
           const displayId = deleteBtn.getAttribute('data-displayid') || stafID;
           const sourceTableId = deleteBtn.closest('table')?.id || 'userDT';
           if (isProtectedStaffAccountClient(stafID)) {
-            await Swal.fire({
+            await fireSwal({
               icon: 'info',
               title: '<?= h(__('userList_error_title')) ?>',
               text: '<?= h(__('userList_protected_delete_denied')) ?>',
@@ -4801,10 +4853,10 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             return;
           }
           if (isCurrentLoggedInUserTarget(userID, stafID)) {
-            await Swal.fire({
+            await fireSwal({
               icon: 'info',
               title: '<?= h(__('userList_error_title')) ?>',
-              text: '<?= h(__('userList_err_delete_self')) ?>',
+              text: 'Anda tidak boleh memadam akaun yang sedang anda gunakan sekarang.',
               confirmButtonText: '<?= h(__('userList_btn_ok')) ?>',
               confirmButtonColor: '#0d6efd'
             });
@@ -4812,7 +4864,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
           }
           
           // Confirmation dialog
-          const result = await Swal.fire({
+          const result = await fireSwal({
             icon: 'warning',
             title: '<?= h(__('userList_delete_confirm_title')) ?>',
             html: `<p><?= h(__('userList_delete_confirm_message')) ?></p>
@@ -4890,7 +4942,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             }
             
             // Show success message
-            await Swal.fire({
+            await fireSwal({
               icon: 'success',
               title: '<?= h(__('userList_success_title')) ?>',
               text: (j.message || '<?= h(__('userList_success_delete')) ?>'),
@@ -4903,7 +4955,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             const errorMsg = sanitizeError(e);
             trackEvent('user_delete_error', { userID, error: errorMsg });
             
-            await Swal.fire({
+            await fireSwal({
               icon: 'error',
               title: '<?= h(__('userList_error_title')) ?>',
               text: errorMsg || '<?= h(__('userList_err_delete_failed')) ?>',
@@ -4922,7 +4974,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         const btn = e.target.closest('.btn-edit-group'); 
         if (!btn || !modal) return;
         if (!isSuperAdmin) {
-          await Swal.fire({
+          await fireSwal({
             icon: 'info',
             title: '<?= h(__('userList_error_title')) ?>',
             text: '<?= h(__('userList_err_no_permission')) ?>',
@@ -4939,7 +4991,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         const displayId = btn.getAttribute('data-displayid') || stafid;
         const nopekerja = btn.getAttribute('data-nopekerja') || '';
         if (isProtectedStaffAccountClient(stafid) && !canSelfManageProtectedStaffAccountClient(stafid)) {
-          await Swal.fire({
+          await fireSwal({
             icon: 'info',
             title: '<?= h(__('userList_error_title')) ?>',
             text: '<?= h(__('userList_protected_self_manage_only')) ?>',
@@ -5078,13 +5130,13 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         const selectedNames = Array.from(roleListEl?.querySelectorAll('input[type="checkbox"]:checked') || [])
           .map(el => el.parentElement?.querySelector('.role-label')?.textContent?.trim() || '')
           .filter(Boolean);
-        updateUserRow(userID, { extraRoles: selectedNames }, currentUserScope);
+        updateUserRow(userID, { extraRoles: selectedNames });
         setRoleButton(selectedNames.length, selectedNames);
         restoreParentAfterRoleAlert = restoreParentUserGroupModal;
         restoreParentUserGroupModal = false;
         roleModal?.hide();
         if (window.Swal) {
-          await Swal.fire({
+          await fireSwal({
             icon: 'success',
             title: '<?= h(__('userList_success_title')) ?>',
             text: j.message || '<?= h(__('userList_success_update_roles')) ?>',
@@ -5345,15 +5397,15 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
             rowUpdateData.nokp = j.user?.nokp || requestBody.nokp || '';
             rowUpdateData.jabatan = j.user?.university || requestBody.university || '';
           }
-          updateUserRow(userID, rowUpdateData, editScope);
+          updateUserRow(userID, rowUpdateData);
         } catch (e) {
           // Fallback to full reload if in-place update fails
-          await reloadScopedTable(editScope, userID);
+          await reloadUserTable(userID);
         }
         
         // Show success message with SweetAlert
         if (window.Swal) {
-          await Swal.fire({
+          await fireSwal({
             icon: 'success',
             title: '<?= h(__('userList_success_title')) ?>',
             text: (j.message || (editScope === 'public' ? '<?= h(__('userList_success_update_public')) ?>' : '<?= h(__('userList_success_update_group')) ?>')),
@@ -5435,6 +5487,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       const normalized = String(scope || 'staff').trim().toLowerCase() || 'staff';
       const titleEl = document.getElementById('addUserModalTitle');
       const saveBtn = document.getElementById('au_saveBtn');
+      const infoTabLabelEl = document.getElementById('au_infoTabLabel');
       const sectionTitleEl = document.getElementById('au_sectionTitle');
       const selectLabelEl = document.getElementById('au_selectLabel');
       const primaryInfoLabelEl = document.getElementById('au_primaryInfoLabel');
@@ -5454,6 +5507,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       if (normalized === 'student') {
         if (titleEl) titleEl.innerHTML = '<i class="ri-user-add-line me-2"></i> <?= h(__('userList_modal_add_student_title')) ?>';
         if (saveBtn) saveBtn.innerHTML = '<i class="ri-user-add-line me-1"></i> <?= h(__('userList_modal_add_student_title')) ?>';
+        if (infoTabLabelEl) infoTabLabelEl.textContent = '<?= h(__('userList_modal_section_student_info')) ?>';
         if (sectionTitleEl) sectionTitleEl.innerHTML = '<i class="ri-user-star-line me-1"></i> <?= h(__('userList_modal_section_student_info')) ?>';
         if (selectLabelEl) selectLabelEl.innerHTML = '<i class="ri-graduation-cap-line"></i> <?= h(__('userList_modal_label_student')) ?> <span class="text-danger">*</span>';
         if (primaryInfoLabelEl) primaryInfoLabelEl.textContent = '<?= h(__('userList_modal_label_faculty')) ?>';
@@ -5472,6 +5526,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       if (normalized === 'public') {
         if (titleEl) titleEl.innerHTML = '<i class="ri-user-add-line me-2"></i> <?= h(__('userList_modal_add_public_title')) ?>';
         if (saveBtn) saveBtn.innerHTML = '<i class="ri-user-add-line me-1"></i> <?= h(__('userList_modal_btn_add')) ?>';
+        if (infoTabLabelEl) infoTabLabelEl.textContent = '<?= h(__('userList_modal_section_public_info')) ?>';
         if (sectionTitleEl) sectionTitleEl.innerHTML = '<i class="ri-user-star-line me-1"></i> <?= h(__('userList_modal_section_public_info')) ?>';
         if (staffSelectWrap) staffSelectWrap.classList.add('d-none');
         if (infoCard) infoCard.classList.add('d-none');
@@ -5482,6 +5537,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
 
       if (titleEl) titleEl.innerHTML = '<i class="ri-user-add-line me-2"></i> <?= h(__('userList_modal_add_title')) ?>';
       if (saveBtn) saveBtn.innerHTML = '<i class="ri-user-add-line me-1"></i> <?= h(__('userList_modal_btn_add')) ?>';
+      if (infoTabLabelEl) infoTabLabelEl.textContent = '<?= h(__('userList_modal_section_staff_info')) ?>';
       if (sectionTitleEl) sectionTitleEl.innerHTML = '<i class="ri-user-line me-1"></i> <?= h(__('userList_modal_section_staff_info')) ?>';
       if (selectLabelEl) selectLabelEl.innerHTML = '<i class="ri-user-line"></i> <?= h(__('userList_modal_label_staff')) ?> <span class="text-danger">*</span>';
       if (primaryInfoLabelEl) primaryInfoLabelEl.textContent = '<?= h(__('userList_modal_label_department')) ?>';
@@ -5549,6 +5605,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
 
       const modal = bootstrap.Modal.getOrCreateInstance(modalTarget);
       modal.show();
+      showAddModalTab('#au-info-tab');
 
       window.setTimeout(function() {
         prepareAddUserModalForScope(normalized).catch(function() {
@@ -5561,6 +5618,14 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       return openAddUserModalForScope(scope);
     };
     window.openAddUserModalForScope = openAddUserModalForScope;
+
+    function showAddModalTab(tabSelector) {
+      const tabTrigger = document.querySelector(tabSelector);
+      if (!tabTrigger || !window.bootstrap || !bootstrap.Tab) {
+        return;
+      }
+      bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+    }
     
     // Handle focus + reset when modal hides
     if (addUserModalEl) {
@@ -5606,6 +5671,7 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         document.getElementById('au_groupKod').value = '';
         document.getElementById('au_flag').value = '1';
         configureAddModalForScope('staff');
+        showAddModalTab('#au-info-tab');
         resetAddModalInfoCard();
         resetPublicFormFields();
         hideAuErr();
@@ -6070,9 +6136,14 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
       }
       
       if (!isValid) {
-        if (currentAddScope === 'public') {
-          showAuErr('<?= h(__('userList_err_add_public_validation')) ?>');
+        if (!groupID || groupID === '' || !validateGroupId(groupID)) {
+          showAddModalTab('#au-settings-tab');
+        } else {
+          showAddModalTab('#au-info-tab');
         }
+        showAuErr(currentAddScope === 'public'
+          ? 'Sila lengkapkan semua maklumat wajib dan pastikan emel serta kata laluan adalah sah.'
+          : 'Sila lengkapkan maklumat pengguna dan tetapan akses sebelum simpan.');
         return; // Stop submission if validation fails
       }
       
@@ -6160,27 +6231,25 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
           try {
             sessionStorage.setItem('userListActiveTab', '#tab-student-access');
           } catch (e) { /* ignore */ }
-          const studentTab = document.getElementById('tab-student-access-tab');
-          if (studentTab && window.bootstrap && bootstrap.Tab) {
-            bootstrap.Tab.getOrCreateInstance(studentTab).show();
-          }
-          await reloadScopedTable('student', j.userID || null);
+          appendUserRowToTable('userDTStudent', j.row || null);
+          setupScopedTableControls('userDTStudent', 'student', {
+            addLabel: '<?= h(__('userList_add_student_button')) ?>'
+          });
         } else if (isPublicScope) {
           try {
             sessionStorage.setItem('userListActiveTab', '#tab-public-access');
           } catch (e) { /* ignore */ }
-          const publicTab = document.getElementById('tab-public-access-tab');
-          if (publicTab && window.bootstrap && bootstrap.Tab) {
-            bootstrap.Tab.getOrCreateInstance(publicTab).show();
-          }
-          await reloadScopedTable('public', j.userID || null);
+          appendUserRowToTable('userDTPublic', j.row || null);
+          setupScopedTableControls('userDTPublic', 'public', {
+            addLabel: '<?= h(__('userList_add_public_button')) ?>'
+          });
         } else {
           await reloadUserTable(j.userID || null);
           await refreshStafDropdown();
         }
         
         // Show success message
-        await Swal.fire({
+        await fireSwal({
           icon: 'success',
           title: '<?= h(__('userList_success_title')) ?>',
           text: (j.message || (isStudentScope ? '<?= h(__('userList_success_add_student')) ?>' : '<?= h(__('userList_success_add')) ?>')),
@@ -6205,3 +6274,4 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
 
 </body>
 </html>
+

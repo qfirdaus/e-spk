@@ -23,7 +23,7 @@ function mail_send(array|string $to, string $subject, string $html, ?string $tex
  */
 function mail_send_reminder(string $to, string $role, string $stafNama, string $stafNopek, string $tahun, ?string $targetNama=null): bool {
     $mailActionUrl = (string)app_config('mail.default_action_url', '#');
-    $mailSystemName = (string)app_config('mail.system_name', app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+    $mailSystemName = (string)app_config('mail.system_name', app_config('system.name', 'Base System'));
     $mailFooterNote = (string)app_config_localized('mail.footer_note', 'Emel ini dijana secara automatik. Sila jangan balas emel ini.');
 
     [$html, $text] = Mailer::render('reminder', [

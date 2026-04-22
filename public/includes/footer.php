@@ -8,7 +8,7 @@
  * - Alert/Toast rendering logic
  * - JavaScript helper functions (confirm modals, theme preview)
  * 
- * @package e-Facility
+ * @package e-Prestasi
  * @version 2.0
  */
 // Load constants for theme validation
@@ -17,23 +17,18 @@ if (!class_exists('SystemConfigConstants')) {
 }
 
 $footerText = trim((string)app_config_localized('footer.text', __('footer_it')));
-$organizationName = trim((string)app_config('organization.name', app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)')));
+$organizationName = trim((string)app_config('organization.name', app_config('system.name', 'Base System')));
 $organizationShort = trim((string)app_config('organization.short', ''));
 $organizationWebsite = trim((string)app_config('organization.website', ''));
 $supportEmail = trim((string)app_config('system.support', ''));
 $systemVersion = app_current_version();
-$footerDisplayText = $footerText !== '' ? $footerText : (string)__('footer_it');
-
-if ($footerDisplayText === '' || preg_match('/\b\d{4}\b/u', $footerDisplayText) !== 1) {
-  $footerDisplayText = date('Y') . ' © ' . trim($footerDisplayText);
-}
 ?>
 <!-- Footer Start -->
 <footer class="footer">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-6">
-        <?= h($footerDisplayText) ?> <span class="small text-muted ms-2"><?= h(app_current_version_label()) ?></span>
+        <?= date('Y') ?> © <?= h($footerText !== '' ? $footerText : (string)__('footer_it')) ?> <span class="small text-muted ms-2"><?= h(app_current_version_label()) ?></span>
       </div>
       <div class="col-md-6">
         <div class="text-md-end footer-links d-none d-md-block">
@@ -597,7 +592,7 @@ function confirmLogout(event) {
 document.addEventListener('DOMContentLoaded', function() {
   const aboutLink = document.getElementById('footer-about-link');
   const contactLink = document.getElementById('footer-contact-link');
-  const orgName = <?= json_encode($organizationName !== '' ? $organizationName : app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'), JSON_UNESCAPED_UNICODE) ?>;
+  const orgName = <?= json_encode($organizationName !== '' ? $organizationName : app_config('system.name', 'Base System'), JSON_UNESCAPED_UNICODE) ?>;
   const orgShort = <?= json_encode($organizationShort, JSON_UNESCAPED_UNICODE) ?>;
   const orgWebsite = <?= json_encode($organizationWebsite, JSON_UNESCAPED_UNICODE) ?>;
   const supportEmail = <?= json_encode($supportEmail, JSON_UNESCAPED_UNICODE) ?>;

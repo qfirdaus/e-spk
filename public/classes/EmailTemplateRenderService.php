@@ -138,10 +138,10 @@ final class EmailTemplateRenderService
         $timezone = (string)($context['timezone'] ?? date_default_timezone_get() ?: 'Asia/Kuala_Lumpur');
         $now = new DateTimeImmutable('now', new DateTimeZone($timezone));
 
-        $organizationName = $this->configValue('organization.name', 'Sistem Pengurusan Fasiliti (e-Facility)');
+        $organizationName = $this->configValue('organization.name', 'Base Organization');
         $organizationShort = $this->configValue('organization.short', '');
-        $systemName = $this->configValue('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)');
-        $supportEmail = $this->configValue('system.support', 'support@upnm.edu.my');
+        $systemName = $this->configValue('system.name', 'Base System');
+        $supportEmail = $this->configValue('system.support', 'support@example.com');
         $senderName = $this->configValue('mail.from_name', 'System Administrator');
 
         return [

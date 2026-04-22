@@ -199,7 +199,7 @@ if ($requestMethod === 'POST') {
                         'resetUrl' => $resetUrl,
                         'expiresAt' => $expiresAt,
                         'expiresInMinutes' => $resetTokenMinutes,
-                        'siteTitle' => app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'),
+                        'siteTitle' => app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'),
                     ]);
 
                     $subject = (string)(__('forgot_password_mail_subject') ?: 'Reset kata laluan akaun anda');
@@ -289,8 +289,8 @@ $configModel = class_exists('Config') ? new Config(Database::getInstance('mysql'
 $globalThemeSettings = $configModel ? ($configModel->getTema() ?: []) : [];
 $loginHeaderLogo = app_config('branding.login_header_logo', 'assets/images/logo-upnm.png');
 $loginPanelLogo = app_config('branding.login_panel_logo', 'assets/images/upnm30-logo.png');
-$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Pelajar (e-HEPA)'));
-$siteTitle = trim((string)app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)'));
+$systemName = trim((string)app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'));
+$siteTitle = trim((string)app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'));
 $organizationName = trim((string)app_config('organization.name', $systemName !== '' ? $systemName : $siteTitle));
 $pageLang = (string)($_SESSION['lang'] ?? 'ms');
 $sidebarTheme = strtolower(trim((string)($globalThemeSettings['sidebarColor'] ?? $_SESSION['theme.menu'] ?? 'light')));
@@ -312,7 +312,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= h(__('forgot_password_page_title')) ?> | <?= h(app_config('site.title', 'UPNM | Sistem Pengurusan Pelajar (e-HEPA)')) ?></title>
+  <title><?= h(__('forgot_password_page_title')) ?> | <?= h(app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)')) ?></title>
   <link rel="icon" href="<?= base_url(app_config('site.favicon', 'assets/images/default.ico')) ?>" type="image/x-icon">
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css?v=' . $version) ?>">
   <link rel="stylesheet" href="<?= base_url('assets/css/app.min.css?v=' . $version) ?>">
@@ -915,7 +915,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
           <img src="<?= base_url($loginHeaderLogo) ?>" alt="UPNM Logo">
           <div class="fp-brand-copy">
             <strong><?= h($systemName !== '' ? $systemName : $siteTitle) ?></strong>
-            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for student records, student administration, and HEPA support services.' : 'Akses digital rasmi untuk rekod pelajar, pentadbiran pelajar, dan perkhidmatan sokongan HEPA.')) ?></span>
+            <span><?= h($organizationName !== '' ? $organizationName : ($pageLang === 'en' ? 'Official digital access for facility operations and support services.' : 'Akses digital rasmi untuk operasi fasiliti dan perkhidmatan sokongan.')) ?></span>
           </div>
         </div>
         <div class="fp-masthead-actions">
@@ -930,19 +930,19 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
       <div class="fp-board">
         <section class="fp-overview">
           <span class="fp-tag"><i class="ri-government-line"></i> <?= h(__('forgot_password_kicker')) ?></span>
-          <h1 class="fp-title"><?= h($pageLang === 'en' ? 'Password recovery for e-HEPA through an official and controlled workflow.' : 'Pemulihan kata laluan e-HEPA melalui aliran kerja rasmi dan terkawal.') ?></h1>
+          <h1 class="fp-title"><?= h($pageLang === 'en' ? 'Password recovery through an official and controlled workflow.' : 'Pemulihan kata laluan melalui aliran kerja rasmi dan terkawal.') ?></h1>
           <p class="fp-copy"><?= h(__('forgot_password_intro')) ?></p>
 
           <div class="fp-overview-grid">
             <div class="fp-hero">
-              <h2><?= h($pageLang === 'en' ? 'Maintain secure access to student management functions without weakening institutional controls.' : 'Kekalkan akses selamat ke fungsi pengurusan pelajar tanpa menjejaskan kawalan institusi.') ?></h2>
-              <p><?= h($pageLang === 'en' ? 'Submit your login identifier to receive a controlled reset link through the registered communication channel for your e-HEPA account.' : 'Hantar pengenal log masuk anda untuk menerima pautan tetapan semula terkawal melalui saluran komunikasi berdaftar bagi akaun e-HEPA anda.') ?></p>
+              <h2><?= h($pageLang === 'en' ? 'Maintain secure access without breaking institutional controls.' : 'Kekalkan akses yang selamat tanpa menjejaskan kawalan institusi.') ?></h2>
+              <p><?= h($pageLang === 'en' ? 'Submit your login identifier to receive a controlled reset link using the registered communication channel for your account.' : 'Hantar pengenal log masuk anda untuk menerima pautan tetapan semula terkawal melalui saluran komunikasi berdaftar bagi akaun anda.') ?></p>
             </div>
 
             <aside class="fp-note">
               <span><?= h($pageLang === 'en' ? 'Recovery Note' : 'Nota Pemulihan') ?></span>
-              <strong><?= h($pageLang === 'en' ? 'Only eligible e-HEPA manual-login accounts can receive reset instructions.' : 'Hanya akaun log masuk manual e-HEPA yang layak akan menerima arahan tetapan semula.') ?></strong>
-              <p><?= h($pageLang === 'en' ? 'Availability follows the current authentication policy and the registered student or staff account profile.' : 'Ketersediaan tertakluk kepada polisi autentikasi semasa dan profil akaun pelajar atau staf yang berdaftar.') ?></p>
+              <strong><?= h($pageLang === 'en' ? 'Only eligible manual-login accounts can receive reset instructions.' : 'Hanya akaun log masuk manual yang layak akan menerima arahan tetapan semula.') ?></strong>
+              <p><?= h($pageLang === 'en' ? 'Availability follows the current authentication policy and the registered account profile.' : 'Ketersediaan tertakluk kepada polisi autentikasi semasa dan profil akaun berdaftar.') ?></p>
             </aside>
           </div>
         </section>
@@ -955,7 +955,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
               </div>
               <div>
                 <span class="fp-kicker"><i class="ri-key-2-line"></i> <?= h(__('forgot_password_kicker')) ?></span>
-                <p class="fp-panel-copy"><?= h($pageLang === 'en' ? 'Enter the Login ID associated with your e-HEPA account to continue the recovery process.' : 'Masukkan Login ID yang dikaitkan dengan akaun e-HEPA anda untuk meneruskan proses pemulihan.') ?></p>
+                <p class="fp-panel-copy"><?= h($pageLang === 'en' ? 'Enter the login ID associated with your account to continue the recovery process.' : 'Masukkan ID log masuk yang dikaitkan dengan akaun anda untuk meneruskan proses pemulihan.') ?></p>
               </div>
             </div>
 
@@ -1003,7 +1003,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
           </div>
 
           <div class="fp-panel-footer">
-            <p><?= h($pageLang === 'en' ? 'If you do not receive a reset message, verify your Login ID and the registered communication channel for your e-HEPA account.' : 'Jika anda tidak menerima mesej tetapan semula, semak semula Login ID dan saluran komunikasi berdaftar bagi akaun e-HEPA anda.') ?></p>
+            <p><?= h($pageLang === 'en' ? 'If you do not receive a reset message, verify your login identifier and the registered communication channel for the account.' : 'Jika anda tidak menerima mesej tetapan semula, semak semula ID log masuk dan saluran komunikasi berdaftar bagi akaun tersebut.') ?></p>
             <div class="fp-footer-row">
               <a class="fp-back" href="<?= h(base_path('index.php')) ?>"><?= h(__('forgot_password_back_to_login')) ?></a>
             </div>

@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/BaseModel.php';
 
 /**
- * ✅ Model untuk pengurusan pengguna sistem e-Facility (MySQL)
+ * ✅ Model untuk pengurusan pengguna sistem e-Prestasi (MySQL)
  */
 class User extends BaseModel
 {

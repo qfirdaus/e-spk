@@ -5,7 +5,7 @@ declare(strict_types=1);
  * =====================================================
  * URL Helper (robust + proxy-aware)
  * -----------------------------------------------------
- * - Stabil pada root / subfolder (cth: /staf/e-facility)
+ * - Stabil pada root / subfolder (cth: /staf/e-prestasi)
  * - Auto kesan /pages & /ajax (entry points)
  * - Support HTTPS via reverse proxy (X-Forwarded-Proto/Host)
  * - Disemak untuk elak kehilangan '/' selepas host:port
@@ -83,9 +83,9 @@ if (!function_exists('detect_host')) {
 /**
  * ---------- Kesan base path projek ----------
  * Contoh:
- *  - /staf/e-facility/pages/tetapan-sistem.php → /staf/e-facility
+ *  - /staf/e-prestasi/pages/tetapan-sistem.php → /staf/e-prestasi
  *  - /pages/tetapan-sistem.php                  → "" (root)
- *  - /ajax/whatever.php                         → "" atau "/staf/e-facility" (ikut folder)
+ *  - /ajax/whatever.php                         → "" atau "/staf/e-prestasi" (ikut folder)
  */
 if (!function_exists('detect_base_path')) {
     function detect_base_path(): string {
@@ -236,9 +236,9 @@ if (!function_exists('inject_base_meta')) {
  *  - base_url()                      → http://localhost:8000
  *  - asset_url('images/x.png')       → http://localhost:8000/assets/images/x.png
  *
- * Dev (subfolder /staf/e-facility):
- *  - base_url()                      → http://localhost:8000/staf/e-facility
- *  - asset_url('images/x.png')       → http://localhost:8000/staf/e-facility/assets/images/x.png
+ * Dev (subfolder /staf/e-prestasi):
+ *  - base_url()                      → http://localhost:8000/staf/e-prestasi
+ *  - asset_url('images/x.png')       → http://localhost:8000/staf/e-prestasi/assets/images/x.png
  *
  * Production (root):
  *  - base_url()                      → https://eprestasi.upnm.edu.my

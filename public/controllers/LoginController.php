@@ -162,7 +162,6 @@ class LoginController
         $_SESSION['f_nickname']  = $user['f_nickname'] ?? '';
         $_SESSION['f_groupID']   = (int)($user['f_groupID'] ?? 0);
         $_SESSION['f_groupKod']  = $user['f_groupKod'] ?? '';
-        $_SESSION['f_categoryUser'] = strtoupper(trim((string)($user['f_categoryUser'] ?? '')));
         $_SESSION['auth_login_method'] = $attemptedMethod;
 
         // Tambah payload standard untuk kegunaan umum
@@ -185,7 +184,6 @@ class LoginController
             'f_groupID'    => $_SESSION['f_groupID'],
             'f_groupKod'   => $_SESSION['f_groupKod'],
             'f_groupName'  => $user['f_groupName'] ?? null,
-            'f_categoryUser' => $_SESSION['f_categoryUser'],
             'auth_login_method' => $attemptedMethod,
         ];
 

@@ -276,7 +276,7 @@ if ($roleSwitchFlash !== null) {
                   <h5 class="noti-item-title fw-medium fs-14">Contoh Notifikasi
                     <small class="float-end text-muted ms-1">1 min ago</small>
                   </h5>
-                  <small class="text-muted"><?= h('Notifikasi sistem ' . trim((string)app_config('system.name', 'Sistem Pengurusan Fasiliti (e-Facility)'))) ?></small>
+                  <small class="text-muted">Notifikasi sistem e-Prestasi</small>
                 </div>
               </div>
             </a>

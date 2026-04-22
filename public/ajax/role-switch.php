@@ -167,7 +167,9 @@ try {
                 $currentPageAllowed = true;
             } else {
                 $allowedPaths = prestasi_load_allowed_page_paths($pdo, $groupID);
-                $currentPageAllowed = prestasi_page_path_allowed($currentPagePath, $allowedPaths);
+                $basename = basename($currentPagePath);
+                $currentPageAllowed = isset($allowedPaths[$currentPagePath])
+                    || ($basename !== '' && isset($allowedPaths[$basename]));
             }
         }
     }
@@ -249,7 +251,7 @@ try {
     $ui = buildAccessUiPayload($pdo, [
         'activeGroupId' => $groupID,
         'roleName' => $newGroupName,
-        'currentFile' => $currentPagePath,
+        'currentFile' => basename($currentPagePath),
         'currentPagePath' => $currentPagePath,
         'currentPageAllowed' => $currentPageAllowed,
         'redirectUrl' => $redirectUrl,

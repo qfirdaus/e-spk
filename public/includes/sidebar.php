@@ -5,7 +5,7 @@
  * Displays user profile, modules, and menu items based on user access.
  * Uses SidebarController for business logic and implements security validations.
  * 
- * @package e-facility
+ * @package e-prestasi
  * @author UPNM, Seksyen Aplikasi Digital, BTMK
  */
 
@@ -76,52 +76,11 @@ function is_menu_active(string $currentFile, string $menuPath): bool {
     if (!$sanitizedPath) {
         return false;
     }
-    $currentPath = normalize_sidebar_current_path($currentFile);
-    return sidebar_paths_match($currentPath, $sanitizedPath);
+    return basename($currentFile) === basename($sanitizedPath);
 }
 
-function normalize_sidebar_current_path(string $path): string {
-    $path = str_replace('\\', '/', trim($path));
-    $path = strtok($path, '?') ?: $path;
-    $path = ltrim($path, '/');
-
-    $pagesPos = stripos($path, 'pages/');
-    if ($pagesPos !== false) {
-        $path = substr($path, $pagesPos + strlen('pages/'));
-    }
-
-    return strtolower(rtrim($path, '/'));
-}
-
-function detect_sidebar_current_path(): string {
-    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
-    if ($script !== '') {
-        return normalize_sidebar_current_path($script);
-    }
-
-    $uri = str_replace('\\', '/', (string)($_SERVER['REQUEST_URI'] ?? ''));
-    $path = parse_url($uri, PHP_URL_PATH);
-    return normalize_sidebar_current_path((string)($path ?: ''));
-}
-
-function sidebar_paths_match(string $currentPath, string $menuPath): bool {
-    $currentPath = normalize_sidebar_current_path($currentPath);
-    $menuPath = normalize_sidebar_current_path($menuPath);
-
-    if ($currentPath === $menuPath) {
-        return true;
-    }
-
-    $currentNoIndex = preg_replace('#/index\.php$#i', '', $currentPath);
-    $menuNoIndex = preg_replace('#/index\.php$#i', '', $menuPath);
-
-    if ($currentNoIndex !== '' && $currentNoIndex === $menuNoIndex) {
-        return true;
-    }
-
-    return $menuNoIndex !== ''
-        && !str_ends_with($menuNoIndex, '.php')
-        && str_starts_with($currentNoIndex . '/', $menuNoIndex . '/');
+function sidebar_link_active_class(string $currentFile, string $menuPath): string {
+    return is_menu_active($currentFile, $menuPath) ? ' active' : '';
 }
 
 function sanitize_sidebar_user_image(?string $path): string {
@@ -159,8 +118,8 @@ function is_profile_empty(array $profile): bool {
 
 // Initialize controller and load sidebar data
 $currentFile = isset($currentFile) && is_string($currentFile) && $currentFile !== ''
-    ? normalize_sidebar_current_path($currentFile)
-    : detect_sidebar_current_path();
+    ? basename($currentFile)
+    : basename($_SERVER['PHP_SELF'] ?? '');
 $sidebarController = new SidebarController();
 $sidebarController->loadSidebarData($currentFile);
 
@@ -404,6 +363,37 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
     color: var(--ct-menu-item-active-color);
     background-color: rgba(255, 255, 255, 0.06);
 }
+.side-nav .side-nav-item.menuitem-active > .side-nav-toggle-btn {
+    color: var(--ct-menu-item-active-color);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+.side-nav .side-nav-item > .side-nav-primary-link.active {
+    color: var(--ct-menu-item-active-color);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+.side-nav .side-nav-item.menuitem-active > .side-nav-primary-link {
+    color: var(--ct-menu-item-active-color);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+.side-nav .side-nav-item.menuitem-active > .side-nav-toggle-btn .sidebar-parent-arrow {
+    opacity: 1;
+}
+.side-nav .side-nav-second-level li > a {
+    border-radius: 8px;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.side-nav .side-nav-second-level li > a:hover {
+    transform: translateX(2px);
+}
+.side-nav .side-nav-second-level li.menuitem-active > a,
+.side-nav .side-nav-second-level li > a.active {
+    color: var(--ct-menu-item-active-color);
+    background-color: rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+}
 </style>
 <div class="sidebar-loading-overlay">
     <div class="sidebar-loading-spinner"></div>
@@ -472,8 +462,9 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
 
             <!-- Dashboard -->
             <li class="side-nav-title mt-1"><?= __('sidebar_main') ?></li>
-            <li class="side-nav-item">
-                <a href="<?= base_path($defaultHome) ?>" class="side-nav-link side-nav-primary-link">
+            <?php $dashboardActive = is_menu_active($currentFile, $defaultHome); ?>
+            <li class="side-nav-item<?= $dashboardActive ? ' menuitem-active' : '' ?>">
+                <a href="<?= base_path($defaultHome) ?>" class="side-nav-link side-nav-primary-link<?= $dashboardActive ? ' active' : '' ?>">
                     <i class="ri-dashboard-fill"></i>
                     <span><?= __('sidebar_dashboard') ?></span>
                     <i class="ri-bar-chart-line sidebar-chart-icon" title="<?= __('sidebar_dashboard_stats') ?: 'Statistik' ?>"></i>
@@ -508,11 +499,11 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
                 $linkCls      = 'side-nav-link' . ($isActive ? '' : ' collapsed');
                 $ariaExpanded = $isActive ? 'true' : 'false';
             ?>
-                <li class="side-nav-item">
+                <li class="side-nav-item<?= $isActive ? ' menuitem-active' : '' ?>">
                     <button type="button"
                        data-sidebar-toggle="true"
                        data-sidebar-target="#<?= $modulId ?>"
-                       class="<?= $linkCls ?> side-nav-toggle-btn"
+                       class="<?= $linkCls ?> side-nav-toggle-btn<?= $isActive ? ' active' : '' ?>"
                        aria-expanded="<?= $ariaExpanded ?>"
                        aria-controls="<?= $modulId ?>">
                         <i class="<?= htmlspecialchars($icon, ENT_QUOTES, 'UTF-8') ?>"></i>
@@ -531,7 +522,7 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
                                 $menuHref = base_path('pages/' . $menuPath);
                                 $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
                             ?>
-                                <li>
+                                <li class="<?= $menuActive ? 'menuitem-active' : '' ?>">
                                     <a class="<?= $menuActive ? 'active' : '' ?>"
                                        href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
                                         <?= $menuName ?>

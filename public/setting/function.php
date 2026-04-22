@@ -1,6 +1,6 @@
 <?php
 // ==================================================
-// ✅ Fungsi & Helper Global untuk e-Facility
+// ✅ Fungsi & Helper Global untuk e-Prestasi
 // ==================================================
 
 // Mula sesi jika belum
