@@ -134,12 +134,65 @@ try {
         ORDER BY nama ASC
     ";
 
-    $stmt = $pdoSybase->prepare($sql);
-    foreach ($params as $key => $value) {
-        $stmt->bindValue($key, $value);
+    $executeQuery = static function (PDO $pdoSybase, string $sqlToRun, array $sqlParams): array {
+        $stmt = $pdoSybase->prepare($sqlToRun);
+        foreach ($sqlParams as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    };
+
+    try {
+        $allResults = $executeQuery($pdoSybase, $sql, $params);
+    } catch (Throwable $primaryQueryError) {
+        studentManagementDiagnosticLog('student_list', 'primary_query_failed', [
+            'query' => $q,
+            'page' => $page,
+            'error' => $primaryQueryError->getMessage(),
+        ]);
+
+        $fallbackWhere = [];
+        $fallbackParams = [];
+        $fallbackLimit = $perPage + 1;
+        $normalizedQuery = strtoupper($q);
+
+        $fallbackWhere[] = "upper(convert(varchar(20), statuskategori)) = 'AKTIF'";
+        $fallbackWhere[] = "(
+            upper(convert(varchar(50), matrik)) LIKE :q_prefix
+            OR upper(convert(varchar(255), nama)) LIKE :q_name
+        )";
+        $fallbackParams[':q_prefix'] = $normalizedQuery . '%';
+        $fallbackParams[':q_name'] = '%' . $normalizedQuery . '%';
+
+        $fallbackSql = "
+            SELECT TOP {$fallbackLimit}
+                matrik,
+                nama,
+                '' AS program,
+                '' AS fakulti,
+                '' AS tahap_pengajian,
+                statuskategori
+            FROM v210
+            WHERE " . implode(' AND ', $fallbackWhere) . "
+            ORDER BY matrik ASC
+        ";
+
+        try {
+            $allResults = $executeQuery($pdoSybase, $fallbackSql, $fallbackParams);
+            $page = 1;
+            studentManagementDiagnosticLog('student_list', 'fallback_query_success', [
+                'query' => $q,
+                'result_count' => count($allResults),
+            ]);
+        } catch (Throwable $fallbackQueryError) {
+            studentManagementDiagnosticLog('student_list', 'fallback_query_failed', [
+                'query' => $q,
+                'error' => $fallbackQueryError->getMessage(),
+            ]);
+            throw $fallbackQueryError;
+        }
     }
-    $stmt->execute();
-    $allResults = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     $startIndex = ($page - 1) * $perPage;
     $hasMore = count($allResults) > ($perPage * $page);
