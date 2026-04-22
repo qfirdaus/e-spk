@@ -5614,11 +5614,11 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
         return;
       }
 
-      const hasCoreDetails = !!(
-        String(selection?.fakulti || '').trim() ||
-        String(selection?.program || '').trim() ||
-        String(selection?.tahap_pengajian || '').trim() ||
-        String(selection?.statuskategori || '').trim()
+      const hasCoreDetails = (
+        String(selection?.fakulti || '').trim() !== '' &&
+        String(selection?.program || '').trim() !== '' &&
+        String(selection?.tahap_pengajian || '').trim() !== '' &&
+        String(selection?.statuskategori || '').trim() !== ''
       );
 
       if (hasCoreDetails) {
