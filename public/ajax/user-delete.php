@@ -216,6 +216,14 @@ try {
     $payload = $readPayload();
     $userID = $payload['userID'];
     $userData = $fetchTargetUser($pdo, $userID);
+    if (strtoupper(trim((string)($userData['f_categoryUser'] ?? ''))) === 'PELAJAR') {
+        studentManagementDiagnosticLog('student_delete', 'request_received', [
+            'userID' => $userID,
+            'stafID' => (string)($userData['f_stafID'] ?? ''),
+            'loginID' => (string)($userData['f_loginID'] ?? ''),
+            'name' => (string)($userData['f_nama'] ?? ''),
+        ]);
+    }
     if (strtoupper(trim((string)($userData['f_categoryUser'] ?? ''))) === 'PELAJAR' && function_exists('is_student_mode_enabled') && !is_student_mode_enabled()) {
         jsonErrorResponse((string)__('studentSearch_mode_disabled'), 403);
     }
@@ -278,8 +286,20 @@ try {
 
 } catch (PDOException $e) {
     error_log('[user-delete] PDO Error: ' . $e->getMessage());
+    studentManagementDiagnosticLog('student_delete', 'request_error', [
+        'userID' => $userID ?? 0,
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+    ]);
     jsonErrorResponse((string)__('userList_ajax_system_error'), 500);
 } catch (Throwable $e) {
     error_log('[user-delete] Error: ' . $e->getMessage());
+    studentManagementDiagnosticLog('student_delete', 'request_error', [
+        'userID' => $userID ?? 0,
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+    ]);
     jsonErrorResponse((string)__('userList_ajax_system_error'), 500);
 }

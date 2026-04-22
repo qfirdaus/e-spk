@@ -23,7 +23,13 @@ try {
     $pdo = Database::getInstance('mysql')->getConnection();
     ensureAjaxGroupManagePermission($pdo);
 
-    if (!isValidCsrfToken((string)($_POST['csrf_token'] ?? ''))) {
+    if (!isValidCsrfToken()) {
+        studentManagementDiagnosticLog('student_list', 'csrf_invalid', [
+            'post_has_csrf' => isset($_POST['csrf_token']),
+            'post_csrf_length' => strlen((string)($_POST['csrf_token'] ?? '')),
+            'header_csrf_length' => strlen((string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '')),
+            'session_csrf_length' => strlen((string)($_SESSION['csrf_token'] ?? '')),
+        ]);
         http_response_code(400);
         echo json_encode([
             'error' => true,
@@ -60,8 +66,19 @@ try {
     if ($page > $maxPage) {
         $page = $maxPage;
     }
+    $requestStartedAt = microtime(true);
+    studentManagementDiagnosticLog('student_list', 'request_received', [
+        'query' => $q,
+        'query_length' => mb_strlen($q),
+        'page' => $page,
+        'per_page' => $perPage,
+    ]);
 
     if (mb_strlen($q) < 2) {
+        studentManagementDiagnosticLog('student_list', 'request_short_query', [
+            'query' => $q,
+            'query_length' => mb_strlen($q),
+        ]);
         echo json_encode([
             'error' => false,
             'results' => [],
@@ -167,8 +184,23 @@ try {
         'results' => $formattedResults,
         'pagination' => ['more' => $hasMore],
     ], JSON_UNESCAPED_UNICODE);
+    studentManagementDiagnosticLog('student_list', 'request_success', [
+        'query' => $q,
+        'page' => $page,
+        'raw_result_count' => count($allResults),
+        'formatted_result_count' => count($formattedResults),
+        'has_more' => $hasMore,
+        'duration_ms' => (int)round((microtime(true) - $requestStartedAt) * 1000),
+    ]);
 } catch (Throwable $e) {
     error_log('[user-list-student-options] Error: ' . $e->getMessage() . ' | q=' . json_encode($q ?? '', JSON_UNESCAPED_UNICODE) . ' | page=' . json_encode($page ?? 1));
+    studentManagementDiagnosticLog('student_list', 'request_error', [
+        'query' => $q ?? '',
+        'page' => $page ?? 1,
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+    ]);
     http_response_code(500);
     echo json_encode([
         'error' => true,

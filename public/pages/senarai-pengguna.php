@@ -5761,6 +5761,10 @@ $PAGE_TITLE = (string)__('userList_page_heading_main');
                   type: 'POST',
                   dataType: 'json',
                   delay: 250,
+                  headers: {
+                    'X-CSRF-Token': CSRF,
+                    'Accept': 'application/json'
+                  },
                   data: function(params) {
                     return {
                       q: params.term || '',
