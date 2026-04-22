@@ -330,21 +330,9 @@ try {
 
     $payload = $readPayload();
     $matrik = $payload['matrik'];
-    studentManagementDiagnosticLog('student_add', 'request_received', [
-        'matrik' => $matrik,
-        'groupID' => $payload['groupID'],
-        'flag' => $payload['flag'],
-    ]);
     $group = $resolveGroup($pdo, $payload['groupID']);
     $ensureUserNotExists($pdo, $matrik);
     $student = $fetchStudent($matrik);
-    studentManagementDiagnosticLog('student_add', 'student_source_loaded', [
-        'matrik' => $matrik,
-        'student_name' => (string)($student['nama'] ?? ''),
-        'student_status' => (string)($student['statuskategori'] ?? ''),
-        'groupID' => $group['groupID'],
-        'groupKod' => $group['groupKod'],
-    ]);
 
     $loggedInStafID = $_SESSION['f_stafID'] ?? null;
     $newUserId = $insertStudent($pdo, $student, $group['groupID'], $group['groupKod'], $payload['flag'], $loggedInStafID, $derivePhone, $userSchema);
@@ -365,12 +353,6 @@ try {
     ]);
 } catch (PDOException $e) {
     error_log('[user-add-student] PDO Error: ' . $e->getMessage());
-    studentManagementDiagnosticLog('student_add', 'request_error', [
-        'matrik' => $matrik ?? '',
-        'error' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-    ]);
     if (isset($sql)) {
         error_log('[user-add-student] Last SQL: ' . $sql);
     }
@@ -383,11 +365,5 @@ try {
     jsonErrorResponse('Ralat database: ' . $e->getMessage(), 500);
 } catch (Throwable $e) {
     error_log('[user-add-student] Error: ' . $e->getMessage());
-    studentManagementDiagnosticLog('student_add', 'request_error', [
-        'matrik' => $matrik ?? '',
-        'error' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-    ]);
     jsonErrorResponse('Ralat sistem semasa menambah pelajar.', 500);
 }

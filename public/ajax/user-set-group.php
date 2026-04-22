@@ -489,19 +489,6 @@ try {
     $hasGroupKod = $schema['hasGroupKod'];
 
     $userContext = fetchUserGroupContext($db, $userID, $hasGroupID, $hasGroupKod);
-    if (($userContext['userCategory'] ?? '') === 'PELAJAR') {
-        studentManagementDiagnosticLog('student_edit', 'request_received', [
-            'userID' => $userID,
-            'groupID' => $groupID,
-            'hasGroup' => $hasGroup,
-            'hasFlag' => $hasFlag,
-            'flag' => $flag,
-            'hasPassword' => $hasPassword,
-            'current_group_id' => $userContext['oldID'],
-            'current_group_kod' => $userContext['oldKod'],
-            'current_flag' => $userContext['oldFlag'],
-        ]);
-    }
     if (($userContext['userCategory'] ?? '') === 'PELAJAR' && function_exists('is_student_mode_enabled') && !is_student_mode_enabled()) {
         json_fail((string)__('studentSearch_mode_disabled'), 403);
     }
@@ -547,14 +534,6 @@ try {
     $metaCommon = buildCommonAuditMeta($user);
 
     if ($same) {
-        if (($userContext['userCategory'] ?? '') === 'PELAJAR') {
-            studentManagementDiagnosticLog('student_edit', 'request_noop', [
-                'userID' => $userID,
-                'groupID' => $gid,
-                'groupKod' => $gkod,
-                'flag' => $flag,
-            ]);
-        }
         $eventId = auditUserSetGroupNoop(
             $user,
             $metaCommon,
@@ -640,14 +619,6 @@ try {
         }
     }
     error_log('[user-set-group] Error: '.$e->getMessage().' | File: '.$e->getFile().' | Line: '.$e->getLine().' | Trace: '.$e->getTraceAsString());
-    studentManagementDiagnosticLog('student_edit', 'request_error', [
-        'userID' => $userID ?? 0,
-        'groupID' => $groupID ?? 0,
-        'flag' => $flag ?? null,
-        'error' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-    ]);
     $errorMsg = (string)__('userList_ajax_system_error');
     if (defined('APP_DEBUG') && APP_DEBUG) {
         $errorMsg = 'Ralat server: '.$e->getMessage().' (File: '.basename($e->getFile()).', Line: '.$e->getLine().')';
