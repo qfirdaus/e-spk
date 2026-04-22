@@ -56,6 +56,10 @@ try {
     $q = trim((string)($_POST['q'] ?? ''));
     $page = max(1, (int)($_POST['page'] ?? 1));
     $perPage = 20;
+    $maxPage = 5;
+    if ($page > $maxPage) {
+        $page = $maxPage;
+    }
 
     if (mb_strlen($q) < 2) {
         echo json_encode([
@@ -92,42 +96,21 @@ try {
     $where[] = "(
         upper(convert(varchar(50), matrik)) LIKE :q
         OR upper(convert(varchar(255), nama)) LIKE :q
-        OR upper(convert(varchar(255), fakulti)) LIKE :q
-        OR upper(convert(varchar(255), program)) LIKE :q
     )";
     $params[':q'] = '%' . strtoupper($q) . '%';
 
     $whereSql = 'WHERE ' . implode(' AND ', $where);
 
-    $countSql = "SELECT COUNT(*) AS total FROM v210 {$whereSql}";
-    $countStmt = $pdoSybase->prepare($countSql);
-    foreach ($params as $key => $value) {
-        $countStmt->bindValue($key, $value);
-    }
-    $countStmt->execute();
-    $total = (int)($countStmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-
-    $limit = $perPage * $page;
+    // Avoid COUNT(*) on v210. On some ASE environments the full count plus
+    // repeated TOP scans can trigger process termination for this request.
+    $limit = ($perPage * $page) + 1;
     $sql = "
         SELECT TOP {$limit}
             matrik,
             nama,
-            email,
-            nokp,
-            hpno,
-            telno,
-            telno_terkini,
-            notel_terkini,
-            kdprogram,
             program,
-            kdfakulti,
             fakulti,
-            kdtahap,
             tahap_pengajian,
-            kadet,
-            kategori_kadet,
-            status,
-            statusketerangan,
             statuskategori
         FROM v210
         {$whereSql}
@@ -142,6 +125,7 @@ try {
     $allResults = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     $startIndex = ($page - 1) * $perPage;
+    $hasMore = count($allResults) > ($perPage * $page);
     $results = array_slice($allResults, $startIndex, $perPage);
 
     $formattedResults = [];
@@ -170,28 +154,13 @@ try {
             'text' => $display,
             'matrik' => $matrik,
             'nama' => $nama,
-            'email' => trim((string)($row['email'] ?? '')),
-            'nokp' => trim((string)($row['nokp'] ?? '')),
-            'hpno' => trim((string)($row['hpno'] ?? '')),
-            'telno' => trim((string)($row['telno'] ?? '')),
-            'telno_terkini' => trim((string)($row['telno_terkini'] ?? '')),
-            'notel_terkini' => trim((string)($row['notel_terkini'] ?? '')),
-            'kdprogram' => trim((string)($row['kdprogram'] ?? '')),
             'program' => $program,
-            'kdfakulti' => trim((string)($row['kdfakulti'] ?? '')),
             'fakulti' => $fakulti,
-            'kdtahap' => trim((string)($row['kdtahap'] ?? '')),
             'tahap_pengajian' => $tahap,
-            'kategori_kadet' => trim((string)($row['kategori_kadet'] ?? '')),
-            'kadet' => trim((string)($row['kadet'] ?? '')),
-            'status' => trim((string)($row['status'] ?? '')),
-            'statusketerangan' => trim((string)($row['statusketerangan'] ?? '')),
             'statuskategori' => $statuskategori,
             'disabled' => $isDisabled,
         ];
     }
-
-    $hasMore = ($startIndex + count($results)) < $total && count($allResults) >= $limit;
 
     echo json_encode([
         'error' => false,
@@ -199,7 +168,7 @@ try {
         'pagination' => ['more' => $hasMore],
     ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
-    error_log('[user-list-student-options] Error: ' . $e->getMessage());
+    error_log('[user-list-student-options] Error: ' . $e->getMessage() . ' | q=' . json_encode($q ?? '', JSON_UNESCAPED_UNICODE) . ' | page=' . json_encode($page ?? 1));
     http_response_code(500);
     echo json_encode([
         'error' => true,
