@@ -179,7 +179,26 @@ try {
         ";
 
         try {
-            $allResults = $executeQuery($pdoSybase, $fallbackSql, $fallbackParams);
+            $fallbackPdo = $pdoSybase;
+            try {
+                if (function_exists('get_sybase_student_key')) {
+                    Database::clearInstance(get_sybase_student_key());
+                } else {
+                    Database::clearInstance('sybase_student_prod');
+                    Database::clearInstance('sybase_student_dev');
+                }
+                $fallbackPdo = Database::pdoSybaseStudent();
+                studentManagementDiagnosticLog('student_list', 'fallback_reconnect_success', [
+                    'query' => $q,
+                ]);
+            } catch (Throwable $reconnectError) {
+                studentManagementDiagnosticLog('student_list', 'fallback_reconnect_failed', [
+                    'query' => $q,
+                    'error' => $reconnectError->getMessage(),
+                ]);
+            }
+
+            $allResults = $executeQuery($fallbackPdo, $fallbackSql, $fallbackParams);
             $page = 1;
             studentManagementDiagnosticLog('student_list', 'fallback_query_success', [
                 'query' => $q,
