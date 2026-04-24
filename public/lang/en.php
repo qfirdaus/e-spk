@@ -337,6 +337,7 @@ return [
 // Maklumat Asas
 // =========================
 'profile_no_staf'               => 'Staff No.',
+'profile_no_matrik'             => 'Matrix No.',
 'profile_no_pekerja'            => 'Employee No.',
 'profile_jabatan'               => 'Department',
 'profile_emel'                  => 'Email',
@@ -354,6 +355,7 @@ return [
 // Butang & Quick Actions
 // =========================
 'profile_btn_copy_no_staf'      => 'Copy Staff No.',
+'profile_btn_copy_no_matrik'    => 'Copy Matrix No.',
 'profile_btn_copy_email'        => 'Copy Email',
 'profile_identity_summary'      => 'Identity Summary',
 'profile_panel_subtitle'        => 'Account and identity information for the active user in the system.',
