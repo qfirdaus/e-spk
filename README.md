@@ -1,4 +1,4 @@
-# e-Base
+# e-Base a
 
 e-Base is a web-based internal platform used as a secure and reusable foundation for enterprise applications, administration portals, and operational systems. It provides a structured starting point for building organization-specific solutions with consistent authentication, access control, system configuration, auditability, multilingual support, and modular feature management.
 
@@ -6,16 +6,30 @@ The current version has evolved beyond a simple starter template. It now operate
 
 ## Versioning
 
-- Current version: `1.7.1`
+- Current version: `1.7.2`
 - Release history: [CHANGELOG.md](./CHANGELOG.md)
 - Version source of truth: [VERSION](./VERSION)
+  Runtime note: Docker mounts this file into the container so the application version label reads from the same source.
+
+## Runtime Baseline
+
+- PHP baseline: `8.3.30`
+- Docker PHP image: `php:8.3.30-apache`
+- MySQL baseline: `8.0.41`
+
+Current support position:
+
+- required team/server baseline now: `PHP 8.3.30`
+- required application database baseline now: `MySQL 8.0.41`
+- next planned runtime target under review: `PHP 8.4.x`
 
 Recommended release flow:
 
 1. Update [VERSION](./VERSION) from `*-dev` to the final release version, for example `1.6.0`.
-2. Move the matching items from `Unreleased` in [CHANGELOG.md](./CHANGELOG.md) into a dated release section such as `## [1.6.0] - 2026-04-07`.
-3. Create a git tag such as `v1.6.0`.
-4. Start the next cycle by updating [VERSION](./VERSION) to the next development version, for example `1.6.1-dev` or `1.7.0-dev`.
+2. Update the fallback value in [public/configuration/settings.php](./public/configuration/settings.php) only if you intentionally want a non-file fallback for non-Docker/public-only runtime paths.
+3. Move the matching items from `Unreleased` in [CHANGELOG.md](./CHANGELOG.md) into a dated release section such as `## [1.6.0] - 2026-04-07`.
+4. Create a git tag such as `v1.6.0`.
+5. Start the next cycle by updating [VERSION](./VERSION) to the next development version, for example `1.6.1-dev` or `1.7.0-dev`.
 
 Manual command format for release support:
 
@@ -255,10 +269,10 @@ Compared with older and more tightly coupled approaches, the current version int
 
 ### Backend
 
-- PHP 8.2
+- PHP 8.3.30
 - Apache HTTP Server
 - PDO-based database access
-- MySQL for core application data
+- MySQL 8.0.41 for core application data
 - Sybase access through `pdo_dblib` and ODBC-based connection options
 
 ### Frontend

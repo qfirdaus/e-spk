@@ -242,6 +242,7 @@ if ($requestMethod === 'POST') {
             if (!$updated) {
                 $errors[] = __('password_change_error_update_failed');
             } else {
+                $notificationSent = false;
                 $notificationEmail = strtolower(trim((string)($tokenRecord['f_email'] ?? $tokenRecord['f_loginID'] ?? '')));
                 if ($notificationEmail !== '' && filter_var($notificationEmail, FILTER_VALIDATE_EMAIL)) {
                     try {
@@ -251,13 +252,17 @@ if ($requestMethod === 'POST') {
                             'changedAt' => (new DateTimeImmutable('now', new DateTimeZone('Asia/Kuala_Lumpur')))->format('Y-m-d H:i:s'),
                             'siteTitle' => app_config('site.title', 'Sistem Pengurusan Fasiliti (e-Facility)'),
                         ]);
-                        Mailer::quickSend(
-                            $pdo,
+                        $mailer = Mailer::fromConfig($pdo);
+                        $notificationSent = $mailer->send(
                             $notificationEmail,
                             (string)(__('password_change_notification_subject') ?: 'Kata laluan anda telah dikemas kini'),
                             $mailHtml,
                             $mailText
                         );
+                        if (!$notificationSent) {
+                            $mailError = trim($mailer->getLastError());
+                            error_log('[reset-password] Notification mail failed for ' . $notificationEmail . ($mailError !== '' ? ' | ' . $mailError : ''));
+                        }
                     } catch (Throwable $mailError) {
                         error_log('[reset-password] Notification mail failed: ' . $mailError->getMessage());
                     }
@@ -299,6 +304,8 @@ if ($requestMethod === 'POST') {
                                 'user_agent' => trim((string)($_SERVER['HTTP_USER_AGENT'] ?? '')) ?: null,
                                 'source' => 'reset_password_public_page',
                                 'password_expiry_at' => $expiresAt,
+                                'notification_email' => $notificationEmail !== '' ? $notificationEmail : null,
+                                'notification_sent' => $notificationSent,
                             ],
                         ]);
                     } catch (Throwable $auditError) {
@@ -534,9 +541,9 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 
     .rp-title {
       margin: 0;
-      font-size: clamp(32px, 4vw, 48px);
-      line-height: 1.02;
-      letter-spacing: -0.05em;
+      font-size: clamp(26px, 3.2vw, 38px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
       font-weight: 800;
       color: var(--rp-ink);
     }
@@ -563,6 +570,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
     }
 
     .rp-hero {
+      grid-column: 1 / -1;
       min-height: 340px;
       padding: 28px;
       display: flex;
@@ -584,13 +592,13 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 
     .rp-hero p {
       margin: 0;
-      max-width: 460px;
       font-size: 13px;
       line-height: 1.8;
       color: rgba(241, 245, 249, 0.9);
     }
 
     .rp-note {
+      grid-column: 1 / -1;
       padding: 20px;
       background: linear-gradient(145deg, #f7fafc, #eef4fa);
       border: 1px solid var(--rp-line);
@@ -679,9 +687,9 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 
     .rp-panel-title {
       margin: 0 0 8px;
-      font-size: 30px;
-      line-height: 1.04;
-      letter-spacing: -0.04em;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
       font-weight: 800;
       color: var(--rp-ink);
     }
@@ -909,16 +917,6 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
       box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
     }
 
-    .rp-footer-note {
-      padding: 20px 22px;
-      border-radius: 24px;
-      background: var(--rp-card-soft);
-      border: 1px solid var(--rp-line);
-      color: var(--rp-muted);
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
     @media (max-width: 1024px) {
       .rp-shell {
         padding: 18px;
@@ -968,8 +966,7 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
 
       .rp-hero,
       .rp-note,
-      .rp-auth-card,
-      .rp-footer-note {
+      .rp-auth-card {
         border-radius: 22px;
       }
     }
@@ -1024,7 +1021,6 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
               <div>
                 <span class="rp-kicker"><i class="ri-refresh-line"></i> <?= h(__('reset_password_kicker')) ?></span>
                 <h2 class="rp-panel-title"><?= h(__('reset_password_heading')) ?></h2>
-                <p class="rp-panel-copy"><?= h($pageLang === 'en' ? 'Set a new password that satisfies the current institutional security policy.' : 'Tetapkan kata laluan baharu yang mematuhi polisi keselamatan institusi semasa.') ?></p>
               </div>
             </div>
 
@@ -1108,9 +1104,6 @@ $activeThemeStyle = $themeStyleMap[$sidebarTheme] ?? $themeStyleMap['light'];
             <?php endif; ?>
           </div>
 
-          <div class="rp-footer-note">
-            <?= h($pageLang === 'en' ? 'This reset flow enforces token validity, password policy, and audit tracking before restoring access.' : 'Aliran tetapan semula ini menguatkuasakan kesahan token, polisi kata laluan, dan jejak audit sebelum akses dipulihkan.') ?>
-          </div>
         </aside>
       </div>
     </div>

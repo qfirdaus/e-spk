@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3.30-apache
 
 # ===============================
 # System & PHP extensions
@@ -29,16 +29,14 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # ===============================
-# Apache modules (INI KUNCI)
+# Apache modules
 # ===============================
 RUN a2enmod ssl rewrite headers deflate
 
 # ===============================
-# Document root
-# (NOTE: akan dioverride oleh volume)
+# Set working dir (optional but nice)
 # ===============================
-COPY ./app /var/www/html/
-RUN chown -R www-data:www-data /var/www/html
+WORKDIR /var/www/html
 
 # ===============================
 # Expose ports
