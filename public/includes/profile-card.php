@@ -17,9 +17,16 @@ $categoryUser = strtoupper(trim((string)(
   ?? ''
 )));
 $isStudentProfile = in_array($categoryUser, ['PELAJAR', 'STUDENT'], true) || !empty($_SESSION['student_profile']);
-$copyIdLabel = $isStudentProfile
+$copyIdLabel = isset($copyIdLabel) && is_string($copyIdLabel) && trim($copyIdLabel) !== ''
+  ? trim($copyIdLabel)
+  : ($isStudentProfile
   ? h(tr('profile_btn_copy_no_matrik', 'Salin No. Matrik'))
-  : h(tr('profile_btn_copy_no_staf', 'Salin No. Staf'));
+  : h(tr('profile_btn_copy_no_staf', 'Salin No. Staf')));
+$profileCardLabel = isset($profileCardLabel) && is_string($profileCardLabel) && trim($profileCardLabel) !== ''
+  ? trim($profileCardLabel)
+  : ($isStudentProfile
+      ? tr('profile_student_card_label', 'Profil Pelajar')
+      : tr('profile_user_card_label', 'Profil Pengguna'));
 ?>
 <div class="profile-hero">
   <div class="profile-hero-shell">
@@ -32,7 +39,7 @@ $copyIdLabel = $isStudentProfile
             title="<?= h($isActive ? tr('profile_status_active', 'Aktif') : tr('profile_status_inactive', 'Tidak Aktif')) ?>"></span>
     </div>
     <div class="profile-hero-main">
-      <div class="profile-hero-eyebrow"><?= h($isStudentProfile ? tr('profile_student_card_label', 'Profil Pelajar') : tr('profile_user_card_label', 'Profil Pengguna')) ?></div>
+      <div class="profile-hero-eyebrow"><?= h($profileCardLabel) ?></div>
       <div class="profile-hero-heading">
         <span class="display-name"><?= h($namaPenuh !== '' ? $namaPenuh : '—') ?></span>
       </div>

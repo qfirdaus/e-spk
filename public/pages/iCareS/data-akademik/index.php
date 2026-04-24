@@ -5,6 +5,9 @@
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
+  $pageHeading     = 'Profil Akademik';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel      = 'Salin No. Matrik';
 
   require_once __DIR__ . '/../../../includes/init.php';
   require_login();
@@ -36,7 +39,7 @@
             <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap">
               <h4 class="page-title">
                 <i class="ri-user-3-line me-1"></i>
-                <?= h(tr('profile_title','Profil Pengguna')) ?>
+                <?= h($pageHeading) ?>
               </h4>
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -47,7 +50,7 @@
                     </a>
                   </li>
                   <li class="breadcrumb-item active">
-                    <?= h(tr('profile_breadcrumb','Profil')) ?>
+                    <?= h($pageHeading) ?>
                   </li>
                 </ol>
               </div>

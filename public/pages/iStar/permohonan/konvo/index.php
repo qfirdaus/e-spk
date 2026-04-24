@@ -11,6 +11,9 @@
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
   require_once __DIR__ . '/../../../../controllers/KeluargaController.php'; 
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
+  $pageHeading = 'Anugerah Pingat Graduan';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel = 'Salin No. Matrik';
   $PAGE_TITLE = tr('istar_title', 'iStar');
   include __DIR__ . '/../../../../includes/header.php';
   include __DIR__ . '/../../../../actions/retrieve-data-keluarga.php';
@@ -38,7 +41,7 @@
             <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap">
               <h4 class="page-title">
                 <i class="ri-user-3-line me-1"></i>
-                <?= h(tr('profile_title','Profil Pengguna')) ?>
+                <?= h($pageHeading) ?>
               </h4>
               <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -49,7 +52,7 @@
                     </a>
                   </li>
                   <li class="breadcrumb-item active">
-                    <?= h(tr('profile_breadcrumb','Profil')) ?>
+                    <?= h($pageHeading) ?>
                   </li>
                 </ol>
               </div>
