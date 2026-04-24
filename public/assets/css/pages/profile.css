@@ -520,8 +520,266 @@
       background: transparent;
       border-bottom-color:#3b82f6;
     }
-    .profile-card .tab-content{
-      padding: 1.1rem !important;
+    .profile-card > .tab-content{
+      padding: .95rem !important;
+      background:linear-gradient(180deg, rgba(248,250,252,.76), rgba(255,255,255,.84));
+    }
+    .profile-card > .tab-content > .tab-pane{
+      padding:1.15rem;
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:18px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,.05), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.99), rgba(248,250,252,.97));
+      box-shadow:0 18px 34px rgba(15,23,42,.06);
+    }
+    .icares-address-layout{
+      display:grid;
+      grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
+      gap: .9rem;
+      align-items:start;
+    }
+    .icares-address-nav{
+      position:sticky;
+      top: 0;
+      align-self:start;
+      display:flex;
+      flex-direction:column;
+      gap:.55rem;
+      padding:.85rem;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:16px;
+      background:
+        linear-gradient(180deg, rgba(248,250,252,.98), rgba(255,255,255,.98));
+      box-shadow:0 16px 32px rgba(15,23,42,.06);
+    }
+    .icares-address-nav__item{
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      width:100%;
+      padding:.85rem .95rem;
+      border:1px solid transparent;
+      border-radius:12px;
+      background:transparent;
+      color:#334155;
+      text-align:left;
+      font-size:.9rem;
+      font-weight:600;
+      line-height:1.35;
+      transition:background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    .icares-address-nav__item i{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:2rem;
+      height:2rem;
+      border-radius:10px;
+      background:rgba(37,99,235,.08);
+      color:#2563eb;
+      font-size:1rem;
+      flex:0 0 auto;
+      transition:background-color .18s ease, color .18s ease;
+    }
+    .icares-address-nav__item:hover{
+      border-color:rgba(59,130,246,.2);
+      background:rgba(239,246,255,.9);
+      color:#1d4ed8;
+      transform:translateX(2px);
+    }
+    .icares-address-nav__item:hover i{
+      background:rgba(37,99,235,.14);
+      color:#1d4ed8;
+    }
+    .icares-address-nav__item.active,
+    .icares-address-nav__item[aria-selected="true"]{
+      border-color:rgba(37,99,235,.22);
+      background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(14,165,233,.08));
+      color:#1e40af;
+      box-shadow:0 12px 24px rgba(37,99,235,.12);
+    }
+    .icares-address-nav__item.active i,
+    .icares-address-nav__item[aria-selected="true"] i{
+      background:linear-gradient(135deg, #2563eb, #0ea5e9);
+      color:#fff;
+      box-shadow:0 10px 18px rgba(37,99,235,.22);
+    }
+    .icares-address-content{
+      min-width:0;
+      padding:0 !important;
+      margin:0 !important;
+    }
+    .icares-address-content > .tab-pane{
+      padding:1.05rem 1.1rem;
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:18px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,.08), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.99), rgba(248,250,252,.97));
+      box-shadow:0 18px 36px rgba(15,23,42,.07);
+    }
+    .icares-address-panel-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:1rem;
+      margin-bottom:1rem;
+      padding-bottom:.9rem;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+    .icares-address-panel-header h5{
+      margin:0;
+      font-size:1rem;
+      font-weight:800;
+      color:#0f172a;
+      letter-spacing:.01em;
+    }
+    .icares-address-panel-header span{
+      display:inline-flex;
+      align-items:center;
+      padding:.35rem .65rem;
+      border-radius:999px;
+      background:rgba(37,99,235,.08);
+      color:#1d4ed8;
+      font-size:.74rem;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .icares-address-content .text-h5{
+      margin-bottom:.65rem;
+      font-size:.88rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#64748b;
+    }
+    .icares-address-content hr{
+      margin:.2rem 0 1rem;
+      border-color:rgba(148,163,184,.16);
+      opacity:1;
+    }
+    .icares-address-content .row{
+      row-gap:.2rem;
+    }
+    .icares-address-content .col-form-label,
+    .icares-address-content .form-label{
+      color:#475569;
+      font-size:.86rem;
+      font-weight:700;
+    }
+    .icares-address-content .form-control,
+    .icares-address-content .form-select{
+      min-height:44px;
+      border-radius:12px;
+      border-color:rgba(148,163,184,.22);
+      background:rgba(255,255,255,.96);
+      box-shadow:none;
+    }
+    .icares-address-content textarea.form-control{
+      min-height:96px;
+    }
+    .icares-address-content .form-control:focus,
+    .icares-address-content .form-select:focus{
+      border-color:rgba(59,130,246,.42);
+      box-shadow:0 0 0 .2rem rgba(59,130,246,.12);
+    }
+    .icares-address-content .btn.btn-primary{
+      border-radius:999px;
+      padding:.72rem 1.35rem;
+      font-weight:700;
+      box-shadow:0 14px 24px rgba(37,99,235,.16);
+    }
+    [data-bs-theme="dark"] .icares-address-nav{
+      border-color:rgba(148,163,184,.16);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(17,24,39,.96));
+      box-shadow:0 20px 40px rgba(2,6,23,.28);
+    }
+    [data-bs-theme="dark"] .profile-card > .tab-content{
+      background:linear-gradient(180deg, rgba(15,23,42,.72), rgba(15,23,42,.56));
+    }
+    [data-bs-theme="dark"] .profile-card > .tab-content > .tab-pane{
+      border-color:rgba(148,163,184,.14);
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,.14), transparent 32%),
+        linear-gradient(180deg, rgba(15,23,42,.96), rgba(17,24,39,.94));
+      box-shadow:0 20px 38px rgba(2,6,23,.28);
+    }
+    [data-bs-theme="dark"] .icares-address-nav__item{
+      color:#cbd5e1;
+    }
+    [data-bs-theme="dark"] .icares-address-nav__item i{
+      background:rgba(59,130,246,.16);
+      color:#bfdbfe;
+    }
+    [data-bs-theme="dark"] .icares-address-nav__item:hover{
+      background:rgba(30,41,59,.92);
+      border-color:rgba(96,165,250,.24);
+      color:#dbeafe;
+    }
+    [data-bs-theme="dark"] .icares-address-nav__item.active,
+    [data-bs-theme="dark"] .icares-address-nav__item[aria-selected="true"]{
+      border-color:rgba(96,165,250,.28);
+      background:linear-gradient(135deg, rgba(30,64,175,.35), rgba(14,116,144,.28));
+      color:#dbeafe;
+      box-shadow:none;
+    }
+    [data-bs-theme="dark"] .icares-address-content > .tab-pane{
+      border-color:rgba(148,163,184,.14);
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,.16), transparent 30%),
+        linear-gradient(180deg, rgba(15,23,42,.96), rgba(17,24,39,.94));
+      box-shadow:0 22px 40px rgba(2,6,23,.3);
+    }
+    [data-bs-theme="dark"] .icares-address-panel-header{
+      border-bottom-color:rgba(148,163,184,.14);
+    }
+    [data-bs-theme="dark"] .icares-address-panel-header h5{
+      color:#f8fafc;
+    }
+    [data-bs-theme="dark"] .icares-address-panel-header span{
+      background:rgba(59,130,246,.14);
+      color:#bfdbfe;
+    }
+    [data-bs-theme="dark"] .icares-address-content .text-h5{
+      color:#94a3b8;
+    }
+    [data-bs-theme="dark"] .icares-address-content hr{
+      border-color:rgba(148,163,184,.14);
+    }
+    [data-bs-theme="dark"] .icares-address-content .col-form-label,
+    [data-bs-theme="dark"] .icares-address-content .form-label{
+      color:#cbd5e1;
+    }
+    [data-bs-theme="dark"] .icares-address-content .form-control,
+    [data-bs-theme="dark"] .icares-address-content .form-select{
+      border-color:rgba(148,163,184,.16);
+      background:rgba(15,23,42,.72);
+      color:#f8fafc;
+    }
+    @media (max-width: 991.98px){
+      .icares-address-layout{
+        grid-template-columns:1fr;
+      }
+      .icares-address-nav{
+        position:static;
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      }
+    }
+    @media (max-width: 767.98px){
+      .icares-address-nav{
+        grid-template-columns:1fr;
+        padding:.75rem;
+      }
+      .icares-address-content > .tab-pane{
+        padding:1rem;
+        border-radius:14px;
+      }
+      .icares-address-panel-header{
+        flex-direction:column;
+        align-items:flex-start;
+      }
     }
     [data-bs-theme="dark"] .profile-tabs{
       border-bottom-color: rgba(148,163,184,.16);
