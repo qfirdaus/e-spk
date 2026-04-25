@@ -1119,7 +1119,7 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
                   <span class="facility-oneid-badge">ID</span>
                   <span class="facility-oneid-copy">
                     <strong><?= h(__('login_btnOneId') ?: 'OneID Login') ?></strong>
-                    <span><?= htmlspecialchars($lang === 'en' ? 'Use central identity authentication when your framework access path requires single sign-on.' : 'Gunakan autentikasi identiti pusat apabila laluan akses framework anda memerlukan single sign-on.', ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($lang === 'en' ? 'Use OneID UPNM for SSO authentication' : 'Gunakan OneID UPNM untuk pengesahan SSO.', ENT_QUOTES, 'UTF-8') ?></span>
                   </span>
                 </span>
                 <i class="ri-arrow-right-up-line"></i>
@@ -1128,15 +1128,6 @@ if ($organizationWebsite !== '' && $organizationWebsite !== '#') {
           <?php endif; ?>
         </div>
 
-        <div class="facility-support-panel">
-          <h3><?= htmlspecialchars($lang === 'en' ? 'Core platform support channels' : 'Saluran sokongan platform teras', ENT_QUOTES, 'UTF-8') ?></h3>
-          <p><?= htmlspecialchars($lang === 'en' ? 'Use the channels below if you need help with framework access, shared modules, or core account services used by connected systems.' : 'Gunakan saluran di bawah jika anda memerlukan bantuan berkaitan akses framework, modul bersama, atau servis akaun teras yang digunakan oleh sistem-sistem berkaitan.', ENT_QUOTES, 'UTF-8') ?></p>
-          <div class="facility-support-links">
-            <?php if ($supportEmail !== ''): ?>
-              <a href="mailto:<?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?>"><i class="ri-mail-line"></i> <?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?></a>
-            <?php endif; ?>
-          </div>
-        </div>
       </aside>
     </div>
   </div>
