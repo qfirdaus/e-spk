@@ -76,6 +76,12 @@ return [
 
 // Status & mesej masa
 'login_locked_msg'         => 'Your account has been locked. Please try again after',
+'login_locked_msg_login_id'
+                          => 'Your account has been temporarily locked. Please try again after',
+'login_locked_msg_login_ip'
+                          => 'Too many attempts for this Login ID from the current IP. Please try again after',
+'login_locked_msg_ip'
+                          => 'Too many attempts from the current IP. Please try again after',
 'login_seconds'            => 'seconds',
 
 // Gagal / ralat log masuk
@@ -337,7 +343,6 @@ return [
 // Maklumat Asas
 // =========================
 'profile_no_staf'               => 'Staff No.',
-'profile_no_matrik'             => 'Matrix No.',
 'profile_no_pekerja'            => 'Employee No.',
 'profile_jabatan'               => 'Department',
 'profile_emel'                  => 'Email',
@@ -355,7 +360,6 @@ return [
 // Butang & Quick Actions
 // =========================
 'profile_btn_copy_no_staf'      => 'Copy Staff No.',
-'profile_btn_copy_no_matrik'    => 'Copy Matrix No.',
 'profile_btn_copy_email'        => 'Copy Email',
 'profile_identity_summary'      => 'Identity Summary',
 'profile_panel_subtitle'        => 'Account and identity information for the active user in the system.',
