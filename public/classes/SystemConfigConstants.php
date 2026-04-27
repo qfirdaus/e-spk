@@ -194,6 +194,12 @@ class SystemConfigConstants {
     'ri-folder-chart-line',
     'ri-folder-user-fill',
     'ri-folder-user-line',
+    'ri-bard-line',
+    'ri-bard-fill',
+    'ri-heart-2-line',
+    'ri-heart-2-fill',
+    'ri-hand-heart-line',
+    'ri-hand-heart-fill',    
   ];
   
   // Audit Event Types

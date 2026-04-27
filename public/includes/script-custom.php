@@ -15,4 +15,17 @@ function checkFileSize(input) {
 
   input.setCustomValidity('');
 }
+
+const checkboxes = document.querySelectorAll('.chk');
+const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix) ?>');
+
+checkboxes.forEach(chk => {
+    chk.addEventListener('change', () => {
+        let allChecked = true;
+        checkboxes.forEach(c => {
+            if (!c.checked) allChecked = false;
+        });
+        button.disabled = !allChecked;
+    });
+});
 </script>

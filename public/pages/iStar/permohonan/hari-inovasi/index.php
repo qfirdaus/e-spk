@@ -78,17 +78,17 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#jawatan-disandang-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_jawatan_disandang','Jawatan Yang Disandang')) ?>
+                <i class="ri-shield-user-line me-1"></i> <?= h(tr('tab_jawatan_disandang','Jawatan Yang Disandang')) ?>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#anugerah-pengiktirafan-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_anugerah_pengiktirafan','Anugerah dan Pengiktirafan')) ?>
+                <i class="ri-medal-line me-1"></i> <?= h(tr('tab_anugerah_pengiktirafan','Anugerah dan Pengiktirafan')) ?>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#perakuan-pemohon-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
+                <i class="ri-todo-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
               </a>
             </li>
           </ul>
@@ -116,9 +116,11 @@
               </div>
             <?php endif; ?>
 
+            <?php $hideButton = true; // hide button simpan & readonly ?>
+
             <!-- Tab 1: Maklumat Peribadi -->
             <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel">
-                <?php include __DIR__ . '/f-peribadi.php'; ?>
+                <?php include __DIR__ . '/../../../iCares/data-peribadi/f-peribadi.php'; ?>
             </div>
 
             <!-- Tab 2: Penglibatan Program -->
