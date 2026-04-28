@@ -46,7 +46,8 @@ class Modul extends BaseModel
                     f_menuID, 
                     {$nameField} AS menuName, 
                     f_path, 
-                    f_flag, 
+                    f_flag,
+                    f_grouped_label, 
                     f_order
                 FROM tbl_m_menu
                 WHERE f_modulID = :modulID
@@ -141,6 +142,7 @@ class Modul extends BaseModel
                     COALESCE(f_domain, 'SHARED') AS f_domain,
                     COALESCE(f_show_staff_only, 1) AS f_show_staff_only,
                     f_flag, 
+                    f_grouped_label,
                     f_order
                 FROM tbl_m_menu
                 {$where}

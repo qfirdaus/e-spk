@@ -50,3 +50,7 @@
     margin-top: 15px;
     border-radius: 5px;
 }
+
+.pl-8 {
+    padding-left: 8px !important;
+}

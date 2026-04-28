@@ -67,11 +67,14 @@ class PeribadiController
             return $this->studentprofile = $this->emptyProfile($this->userModel->getAvatarUrl(null));
         }
 
-        $sql = "SELECT a.*, b.f015keterangan as warganegara_desc, c.f015keterangan as negeri_lahir, d.f021keterangan as status_kahwin 
+        $sql = "SELECT a.*, b.f015keterangan as warganegara_desc, c.f015keterangan as negeri_lahir, d.f021keterangan as status_kahwin,  e.f005sesi as semester_terkini, f.f005sesi as semester_masuk, g.f005sesi as semester_tamat
                 FROM v210 a
                 LEFT JOIN t015kewarganegaraan b ON a.kewarganegaraan = b.f015kdnegeri
                 LEFT JOIN t015negeri c ON a.neglahir = c.f015kdnegeri
                 LEFT JOIN t021kahwin d ON a.kdkahwin = d.f021kdkahwin
+                LEFT JOIN v005term e ON a.semsemasa = e.f005term
+                LEFT JOIN v005term f ON a.sesimasuk = f.f005term
+                LEFT JOIN v005term g ON a.sesitamat = g.f005term                
                 WHERE convert(varchar(50), a.matrik) = :matrik
                   AND upper(convert(varchar(20), a.statuskategori)) = 'AKTIF'";
         $stmt = $this->pdoStudent->prepare($sql);
@@ -92,7 +95,7 @@ class PeribadiController
         return $this->studentprofile = [
             'matrik'     => (string)($student['matrik'] ?? ''),
             'nokp'    => (string)($student['nokp'] ?? ''),
-            'email'       => (string)($student['email'] ?? $student['alfateh'] ?? ''),
+            'email'       => (string)($student['alfateh'] ?? $student['email'] ?? ''),
             'notel_terkini'       => (string)($student['notel_terkini'] ?? $student['telno_terkini'] ?? $student['hpno'] ?? $student['telno'] ?? ''),
             'hpno'       => (string)($student['hpno'] ?? ''),
             'telno'       => (string)($student['telno'] ?? ''),
@@ -117,6 +120,8 @@ class PeribadiController
             'sesi_akademik_masuk'       => (string)($student['sesi_akademik_masuk'] ?? $student['sesiakademikmasuk'] ?? ''),
             'sesi_akademik_tamat'       => (string)($student['sesi_akademik_tamat'] ?? $student['sesiakademiktamat'] ?? ''),
             'semester_terkini'       => (string)($student['semester_terkini'] ?? $student['semester'] ?? ''),
+            'semester_masuk'       => (string)($student['semester_masuk'] ?? ''),
+            'semester_tamat'       => (string)($student['semester_tamat'] ?? ''),
             'pngs'       => (string)($student['pngs'] ?? ''),
             'pngk'       => (string)($student['pngk'] ?? ''),
             'pembiayaan_pengajian'       => (string)($student['pembiayaan_pengajian'] ?? $student['pembiayaan'] ?? ''),
