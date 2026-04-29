@@ -5,7 +5,7 @@
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
-  $pageHeading     = 'Profil Kokurikulum';
+  $pageHeading     = 'Maklumat Kokurikulum';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel      = 'Salin No. Matrik';
 

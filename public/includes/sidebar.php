@@ -658,7 +658,7 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
 
                             <?php foreach ($groupedMenus as $groupName => $menus): 
                                 if ($groupName !== '__ungrouped'): ?>
-                                    <li class="side-nav-title mt-2 pl-8">
+                                    <li class="side-nav-title mt-2 pl-8 pt-2">
                                         <?= htmlspecialchars($groupName, ENT_QUOTES, 'UTF-8') ?>
                                     </li>
                                 <?php endif; ?>

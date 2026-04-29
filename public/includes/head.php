@@ -80,7 +80,6 @@
   <!-- App CSS (asas) -->
   <link rel="stylesheet" href="<?= base_url('assets/css/icons.min.css') ?>?v=<?= time(); ?>" />
   <link id="app-style" rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>?v=<?= time(); ?>" />
-  <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>?v=<?= time(); ?>" />
 
   <!-- Plugin CSS (ikut keperluan page) -->
   <?php if ($NEED_DATERANGE): ?>
@@ -104,6 +103,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/vendor/select2/css/select2.min.css') ?>?v=<?= time(); ?>">
   <?php endif; ?>
 
+  <link rel="stylesheet" href="<?= base_url('assets/css/custom.css') ?>?v=<?= time(); ?>" />
   <!-- i18n: fungsi senyap (tiada console.warn) -->
   <script>
     (function () {

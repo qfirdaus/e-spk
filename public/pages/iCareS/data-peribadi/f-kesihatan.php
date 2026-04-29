@@ -18,7 +18,7 @@
                           <div class="mb-2 row align-items-center">
                             <div class="col-sm-4">
                                 <label class="col-form-label text-nowrap">  <?= h(tr('profile_dokumen_oku','Dokumen OKU')) ?> </label> 
-                                <i class="ri-information-line ms-1 text-danger extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                <i class="ri-information-line ms-1 text-info extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
                                 aria-label="<?= h(tr('profile_dokumen_oku','Dokumen OKU')) ?>" data-bs-original-title="<?= h(tr('profile_dokumen_oku_note','(Sila sertakan Kad OKU / Dokumen OKU / No. Pendaftaran dalam format JPG/JPEG/PDF, maks 5MB)')) ?>"></i>
                             </div>
                             <div class="col-sm-8">

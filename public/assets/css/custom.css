@@ -54,3 +54,14 @@
 .pl-8 {
     padding-left: 8px !important;
 }
+
+.pt-2 {
+    padding-top: 0.02rem !important;
+}
+
+.form-control[readonly] {
+    background-color: #e0e0e0 !important;
+    color: #495057 !important;
+    border-color: #ced4da !important;
+    opacity: 1 !important;
+}

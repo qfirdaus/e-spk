@@ -52,7 +52,7 @@
                           <div class="mb-2 row align-items-center">
                             <div class="col-sm-4">
                                 <label class="col-form-label text-nowrap"> <?= h(tr('profile_jenis_pekerjaan_sambilan','Jenis Pekerjaan Sambilan')) ?> </label> 
-                                <i class="ri-information-line ms-1 text-danger extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                <i class="ri-information-line ms-1 text-info extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
                                 aria-label="<?= h(tr('profile_jenis_pekerjaan','Jenis Pekerjaan Sambilan')) ?>" data-bs-original-title="<?= h(tr('profile_jenis_pekerjaan','Sila nyatakan jenis pekerjaan sambilan, jika ada')) ?>"></i>
                             </div>
                             <div class="col-sm-8">

@@ -122,16 +122,6 @@
                           </div> 
 
                         </div>
-
-                        <?php if (empty($hideButton)) { ?> 
-                          <!-- kalau $hideButton tidak diset, paparkan butang simpan hanya di data-peribadi. -->
-                          <!-- Submit Button -->
-                          <div class="col-12 text-end mt-3">
-                            <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
-                            </button>
-                          </div>
-                        <?php } ?>
-
                       </div>
                     </div>
                   </div>
