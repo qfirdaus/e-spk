@@ -6,8 +6,43 @@ This changelog follows a release-style summary based on major project milestones
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [1.7.4] - 2026-05-02
+
 ### Added
-- Added PHP 8.4 readiness audit documentation in `docs/php84-readiness-audit-2026-04-23.md`.
+- Added core/custom language folder structure under `public/lang/core/` and `public/lang/custom/`.
+- Added compatibility wrappers for `public/lang/ms.php` and `public/lang/en.php` so direct legacy includes still return merged translations.
+- Added `tools/language-split-tool.php` for validating language parity, duplicate keys, custom overrides, and legacy language migration.
+- Added language core/custom split audit documentation in `docs/language-core-custom-split-audit-2026-05-02.md`.
+
+### Changed
+- Changed the global language helper to load core translations first and project custom translations second.
+- Changed bootstrap and System Settings JavaScript translation loading to use merged core/custom language data.
+- Changed generated page language entries so project-specific keys are written to `public/lang/custom/`.
+- Changed update and sync scripts to protect `public/lang/custom/*` while still distributing core language files, release metadata, and language tooling.
+- Changed project release metadata to lock the application version at `1.7.4`.
+
+### Fixed
+- Fixed duplicate core translation keys reported by the language validation tool.
+
+## [1.7.3] - 2026-05-01
+
+### Added
+- Added explicit `.env` sections for main MySQL production and development runtime targets while keeping legacy `DB_MYSQL_*` values as fallback compatibility configuration.
+- Added MySQL runtime diagnostics in `tetapan-sistem.php`, including resolved key, production/development targets, dedicated/fallback indicators, and same-target warning.
+- Added tabbed Additional Connections sample-code guidance for programmers, covering Service, Repository, Controller, Transaction, Read-only, Ajax Endpoint, DataTables, Dropdown, Insert Update, and Batch Sync patterns.
+
+### Changed
+- Changed main MySQL bootstrap handling so `MAIN_DB_ENVIRONMENT` can be resolved earlier and MySQL runtime caches are cleared when production/development settings change.
+- Changed database settings AJAX behavior so MySQL and Sybase runtime summaries update in place after save instead of requiring a full page refresh.
+- Changed Additional Connections sample-code modal layout to use compact tabs with per-example copy actions.
+- Changed legacy MySQL `.env` comments to clearly mark `DB_MYSQL_*` as temporary fallback values.
+
+### Fixed
+- Fixed stale MySQL runtime information in the Database settings UI after switching between production and development.
+- Fixed stale Sybase runtime summary values after changing Sybase environment or operational mode.
+- Fixed database settings UI sync paths so fallback AJAX handlers also refresh runtime summary values.
 
 ## [1.7.2] - 2026-04-23
 
