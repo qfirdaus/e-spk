@@ -18,7 +18,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tarikh','Tarikh')) ?></label>
                             <div class="col-sm-8">
-                              <input type="date" name="tarikh" class="form-control" value=" "  >
+                              <!-- <input type="date" name="tarikh" class="form-control" value="<?= h($tarikh ?? '') ?>"  > -->
                             </div>
                           </div>  
 
@@ -95,10 +95,13 @@
                     </div>
                   </div>
                 </form> 
+                  <button type="button" id="btnSampleAction" class="btn btn-primary sync-groups-btn">
+                    <i class="ri-add-line"></i><span><?= h(tr('template_senarai_crud_btn_sample', 'Add New')) ?></span>
+                  </button>                
                 <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
                 <hr>
-                <div class="table-responsive">
-                    <table id="groupTable" class="table table-bordered align-middle dataTable no-footer">
+                <div class="table-responsive dt-standard">
+                    <!-- <table id="groupTable" class="table table-bordered align-middle w-100">
                     <thead>
                         <tr>
                         <th class="small w-25"><?= h(tr('nama_program_pertandingan','Nama Program / Nama Pertandingan')) ?></th>
@@ -106,7 +109,6 @@
                         <th class="small"><?= h(tr('wakil','Wakil')) ?></th>
                         <th class="small"><?= h(tr('peringkat','Peringkat')) ?></th>
                         <th class="small"><?= h(tr('pencapaian','Pencapaian')) ?></th>
-                        <th class="small text-center"><?= h(tr('istar_col_document','Dokumen')) ?></th>
                         <th class="small text-center"><?= h(tr('istar_col_action','Tindakan')) ?></th>
                         </tr>
                     </thead>
@@ -117,15 +119,16 @@
                         <td></td>
                         <td><?= h(tr('istar_option_university','Universiti')) ?></td>
                         <td><?= h(tr('istar_result_third_place','Tempat Ketiga')) ?></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary" type="button">
-                            <i class="ri-eye-line me-1"></i>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger" type="button">
-                            <i class="ri-pencil-line me-1"></i>
-                            </button>
+                        <td class="col-actions">
+                          <button type="button" class="btn btn-outline-warning btn-sm js-view-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_view', 'View')) ?>">
+                            <i class="ri-eye-line"></i>
+                          </button>   
+                          <button type="button" class="btn btn-outline-primary btn-sm js-edit-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_edit', 'Edit')) ?>">
+                            <i class="ri-pencil-line"></i>
+                          </button>
+                          <button type="button" class="btn btn-outline-danger btn-sm js-delete-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_delete', 'Delete')) ?>">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>                                              
                         </td>
                         </tr>
                         <tr>
@@ -134,17 +137,19 @@
                         <td></td>
                         <td><?= h(tr('istar_option_university','Universiti')) ?></td>
                         <td><?= h(tr('istar_result_participant','Peserta')) ?></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary" type="button">
-                            <i class="ri-eye-line me-1"></i>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger" type="button">
-                            <i class="ri-pencil-line me-1"></i>
-                            </button>
+                        <td class="col-actions">
+                          <button type="button" class="btn btn-outline-warning btn-sm js-view-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_view', 'View')) ?>">
+                            <i class="ri-eye-line"></i>
+                          </button>   
+                          <button type="button" class="btn btn-outline-primary btn-sm js-edit-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_edit', 'Edit')) ?>">
+                            <i class="ri-pencil-line"></i>
+                          </button>
+                          <button type="button" class="btn btn-outline-danger btn-sm js-delete-row" data-row='<?= h((string)$rowJson) ?>' title="<?= h(tr('template_senarai_crud_btn_delete', 'Delete')) ?>">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>                                              
                         </td>
                         </tr>
                     </tbody>
-                    </table>               
-                </div> 
+                    </table>                -->
+                </div>              
+                

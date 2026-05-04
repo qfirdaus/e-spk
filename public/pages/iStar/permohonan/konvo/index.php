@@ -9,14 +9,15 @@
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/KeluargaController.php'; 
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
+  include __DIR__ . '/../../../../includes/header.php';
+  include __DIR__ . '/../../../../actions/retrieve-data-peribadi.php';
+
   $pageHeading = 'Anugerah Pingat Graduan';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel = 'Salin No. Matrik';
   $PAGE_TITLE = tr('istar_title', 'iStar');
-  include __DIR__ . '/../../../../includes/header.php';
-  include __DIR__ . '/../../../../actions/retrieve-data-keluarga.php';
 
   // Check active session status
   $isActive = hasActiveSession($loginActivity);
@@ -120,7 +121,7 @@
             
             <!-- Tab 1: Maklumat Peribadi -->
             <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel">
-                <?php include __DIR__ . '/../../../iCares/data-peribadi/f-peribadi.php'; ?>
+                <?php include __DIR__ . '/../../../rekod-utama/data-peribadi/f-peribadi.php'; ?>
             </div>
 
             <!-- Tab 2: Penglibatan Program -->
@@ -130,17 +131,17 @@
 
             <!-- Tab 3: Jawatan Yang Disandang -->
             <div class="tab-pane fade" id="jawatan-disandang-tab" role="tabpanel">
-                <?php include __DIR__ . '/f-jawatan-disandang.php'; ?> 
+                <?php //include __DIR__ . '/f-jawatan-disandang.php'; ?> 
             </div>
 
             <!-- Tab 4: Anugerah dan Pengiktirafan -->
             <div class="tab-pane fade" id="anugerah-pengiktirafan-tab" role="tabpanel">
-                <?php include __DIR__ . '/f-anugerah-pengiktirafan.php'; ?>
+                <?php //include __DIR__ . '/f-anugerah-pengiktirafan.php'; ?>
             </div>
 
             <!-- Tab 5: Perakauan Pemohon -->
             <div class="tab-pane fade" id="perakuan-pemohon-tab" role="tabpanel">
-                <?php include __DIR__ . '/f-perakuan.php'; ?>
+                <?php //include __DIR__ . '/f-perakuan.php'; ?>
             </div>
 
           </div>
@@ -157,8 +158,36 @@
   include __DIR__ . '/../../../../includes/script.php'; 
   include __DIR__ . '/../../../../includes/script-pages.php';  
   include __DIR__ . '/../../../../includes/script-custom.php';
+  include __DIR__ . '/modal.php';
 ?>
 
+<script>
+// document.addEventListener('DOMContentLoaded', function () {
+
+//   const btn = document.getElementById('btnSampleAction');
+//   const addModalEl = document.getElementById('sampleAddModal');
+
+//   if (!btn) {
+//     console.log('Button btnSampleAction tak jumpa dalam DOM');
+//     return;
+//   }
+
+//   const addModal = (window.bootstrap && addModalEl)
+//     ? new bootstrap.Modal(addModalEl)
+//     : null;
+
+//   btn.addEventListener('click', function () {
+//     console.log('BUTTON CLICKED');
+
+//     if (addModal) {
+//       addModal.show();
+//     } else {
+//       console.log('Modal tak jumpa / bootstrap tak load');
+//     }
+//   });
+
+// });
+</script>
 <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

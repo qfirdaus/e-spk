@@ -114,12 +114,12 @@
               
               <!-- Tab 1: Maklumat Peribadi -->
               <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/../../data-peribadi/f-peribadi.php'; ?>
+                <?php include __DIR__ . '/../../../rekod-utama/data-peribadi/f-peribadi.php'; ?>
               </div>
 
               <!-- Tab 2: Maklumat Akademik -->
               <div class="tab-pane fade show" id="maklumat-akademik-tab" role="tabpanel">                
-                <?php include __DIR__ . '/../../data-akademik/f-akademik.php'; ?>
+                <?php include __DIR__ . '/../../../rekod-utama/data-akademik/f-akademik.php'; ?>
               </div>    
 
               <!-- Tab 3: Maklumat Bantuan -->
