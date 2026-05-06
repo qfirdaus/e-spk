@@ -146,6 +146,10 @@ function sanitize_sidebar_user_image(?string $path): string {
         return $default;
     }
 
+    $path = str_replace('\\', '/', $path);
+    $path = ltrim($path, '/');
+    $path = preg_replace('#^public/#i', '', $path);
+
     if (!preg_match('#^assets/images/small/[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp|gif)$#i', $path)) {
         return $default;
     }
@@ -615,28 +619,6 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
                 $childs = $modulMenus[$modulID] ?? [];
                 if (empty($childs)) continue;
 
-                // 🔥 GROUPING LOGIC (UNIVERSAL)
-                $groupedMenus = [];
-                $hasGroup = false;
-
-                foreach ($childs as $menu) {
-                    $group = trim($menu['f_grouped_label'] ?? '');
-
-                    if ($group !== '') {
-                        $hasGroup = true;
-                        $groupedMenus[$group][] = $menu;
-                    } else {
-                        $groupedMenus['__ungrouped'][] = $menu;
-                    }
-                }
-
-                // kalau tak ada langsung group → fallback normal
-                if (!$hasGroup) {
-                    $groupedMenus = [
-                        '__ungrouped' => $childs
-                    ];
-                }
-
                 $isActive     = ($modulID === $modulAktifID);
                 $collapseCls  = $isActive ? 'collapse show' : 'collapse';
                 $linkCls      = 'side-nav-link' . ($isActive ? '' : ' collapsed');
@@ -655,35 +637,23 @@ html[data-bs-theme="dark"] .sidebar-loading-text {
                     </button>
                     <div class="<?= $collapseCls ?>" id="<?= $modulId ?>">
                         <ul class="side-nav-second-level">
-
-                            <?php foreach ($groupedMenus as $groupName => $menus): 
-                                if ($groupName !== '__ungrouped'): ?>
-                                    <li class="side-nav-title mt-2 pl-8 pt-2">
-                                        <?= htmlspecialchars($groupName, ENT_QUOTES, 'UTF-8') ?>
-                                    </li>
-                                <?php endif; ?>
-
-                                <?php foreach ($menus as $menu):  
-                                    // sanitize menu path
-                                    $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
-                                    if (!$menuPath) continue;
-
-                                    $menuActive = is_menu_active($currentFile, $menuPath);
-                                    $menuHref = base_path('pages/' . $menuPath);
-                                    $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
-                                ?>
-
-                                    <li class="<?= $menuActive ? 'menuitem-active' : '' ?>">
-                                        <a class="<?= $menuActive ? 'active' : '' ?>"
-                                        href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
-                                            <?= $menuName ?>
-                                        </a>
-                                    </li>
-
-                                <?php endforeach; ?>
-
-                            <?php endforeach; ?>
-
+                            <?php foreach ($childs as $menu): 
+                                // ✅ SANITIZE MENU PATH
+                                $menuPath = sanitize_menu_path($menu['f_path'] ?? '');
+                                if (!$menuPath) continue; // Skip invalid paths
+                                
+                                // ✅ USE HELPER FUNCTION FOR ACTIVE DETECTION
+                                $menuActive = is_menu_active($currentFile, $menuPath);
+                                $menuHref = base_path('pages/' . $menuPath);
+                                $menuName = htmlspecialchars($menu['menuName'] ?? '-', ENT_QUOTES, 'UTF-8');
+                            ?>
+                                <li class="<?= $menuActive ? 'menuitem-active' : '' ?>">
+                                    <a class="<?= $menuActive ? 'active' : '' ?>"
+                                       href="<?= htmlspecialchars($menuHref, ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= $menuName ?>
+                                    </a>
+                                </li>
+                            <?php endforeach ?>
                         </ul>
                     </div>
                 </li>
