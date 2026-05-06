@@ -9,7 +9,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_nama','Nama Pemohon')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="nama_penuh" class="form-control" value="<?= h($namaPenuh) ?>" readonly>
+                              <input type="text" name="nama_penuh" class="form-control" value="<?= h($peribadi['nama_penuh'] ?? '') ?>" readonly>
                             </div>                 
                           </div>
 
@@ -17,7 +17,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_no_kad_pengenalan','No Kad Pengenalan')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="no_kad_pengenalan" class="form-control" value="<?= h($nokp) ?>" readonly>
+                              <input type="text" name="no_kad_pengenalan" class="form-control" value="<?= h($peribadi['nokp'] ?? '') ?>" readonly>
                             </div>
                           </div>         
 
@@ -25,7 +25,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_no_matrik','No. Matrik')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="no_matrik" class="form-control" value="<?= h($nomatrik) ?>" readonly>
+                              <input type="text" name="no_matrik" class="form-control" value="<?= h($peribadi['matrik'] ?? '') ?>" readonly>
                             </div>
                           </div>                        
                           
@@ -34,7 +34,7 @@
                             <label class="col-sm-4 col-form-label text-nowrap">Tarikh Lahir</label>
                             <div class="col-sm-8">
                               <input type="text" id="tarikh_lahir" name="tarikh_lahir" class="form-control" 
-                              value="<?= !empty($tarikh_lahir) ? date('d/m/Y', strtotime($tarikh_lahir)) : '' ?>" readonly>
+                              value="<?= !empty($peribadi['tarikh_lahir'] ?? '') ? date('d/m/Y', strtotime($peribadi['tarikh_lahir'] ?? '')) : '' ?>" readonly>
                             </div>
                           </div>
 
@@ -42,7 +42,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_umur','Umur')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="umur" class="form-control" value="<?= h($age) ?>" readonly>
+                              <input type="text" name="umur" class="form-control" value="<?= h($peribadi['age'] ?? '') ?>" readonly>
                             </div>
                           </div>  
 
@@ -50,15 +50,15 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_negeri_kelahiran','Negeri Kelahiran')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="negeri_kelahiran" class="form-control" value="<?= ucwords(strtolower(h($negeri_lahir))) ?>" readonly>
+                              <input type="text" name="negeri_kelahiran" class="form-control" value="<?= ucwords(strtolower(h($peribadi['negeri_lahir'] ?? ''))) ?>" readonly>
                             </div>
                           </div>    
 
                           <!-- Kewarganegaraan -->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_kewarganegaraan','Kewarganegaraan')) ?></label>
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_warganegara','Kewarganegaraan')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="kewarganegaraan" class="form-control" value="<?= ucwords(strtolower(h($warganegara))) ?>"  readonly>
+                              <input type="text" name="warganegara" class="form-control" value="<?= ucwords(strtolower(h($peribadi['warganegara'] ?? ''))) ?>"  readonly>
                             </div>
                           </div>                                            
  
@@ -69,7 +69,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_jantina','Jantina')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="jantina" class="form-control" value="<?= ucwords(strtolower(h($jantina))) ?>" readonly>
+                              <input type="text" name="jantina" class="form-control" value="<?= ucwords(strtolower(h($peribadi['jantina'] ?? ''))) ?>" readonly>
                             </div>                 
                           </div>
 
@@ -77,7 +77,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_bangsa','Bangsa')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="bangsa" class="form-control" value="<?= ucwords(strtolower(h($bangsa))) ?>" readonly>
+                              <input type="text" name="bangsa" class="form-control" value="<?= ucwords(strtolower(h($peribadi['bangsa'] ?? ''))) ?>" readonly>
                             </div>
                           </div>                        
                           
@@ -85,7 +85,7 @@
                           <div class="mb-2 row">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_agama','Agama')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="agama" class="form-control" value="<?= ucwords(strtolower(h($agama))) ?>" readonly>
+                              <input type="text" name="agama" class="form-control" value="<?= ucwords(strtolower(h($peribadi['agama'] ?? ''))) ?>" readonly>
                             </div>
                           </div>
 
@@ -93,15 +93,15 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_perkahwinan','Status Perkahwinan')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="status_perkahwinan" class="form-control" value="<?= ucwords(strtolower(h($status_kahwin))) ?>" readonly>
+                              <input type="text" name="status_perkahwinan" class="form-control" value="<?= ucwords(strtolower(h($peribadi['status_kahwin'] ?? ''))) ?>" readonly>
                             </div>
                           </div>  
-                          
-                          <!-- Telefon -->
+
+                          <!-- Telefon Terkini-->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_telefon','No Telefon')) ?></label>
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_telefon_terkini','No Telefon Terkini')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="no_telefon" class="form-control" value="<?= h($notel_terkini) ?>" readonly>
+                              <input type="text" name="no_telefon_terkini" class="form-control" value="<?= h($peribadi['telno_terkini'] ?? '') ?>" readonly>
                             </div>
                           </div>
 
@@ -109,7 +109,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_emel','Emel')) ?></label>
                             <div class="col-sm-8">
-                              <input type="email" name="emel" class="form-control" value="<?= h($email) ?>" readonly>
+                              <input type="email" name="emel" class="form-control" value="<?= h($peribadi['email'] ?? '') ?>" readonly>
                             </div>
                           </div> 
 
@@ -117,7 +117,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pelajar','Status Pelajar')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="status_pelajar" class="form-control" value="<?= ucwords(strtolower(h($status_pelajar))) ?>" readonly>
+                              <input type="text" name="status_pelajar" class="form-control" value="<?= ucwords(strtolower(h($peribadi['status_pelajar'] ?? ''))) ?>" readonly>
                             </div>
                           </div> 
 
