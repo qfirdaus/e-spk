@@ -15,10 +15,17 @@
   require_once __DIR__ . '/../../../controllers/PeribadiController.php'; 
   require_once __DIR__ . '/../../../includes/functions-page.php'; 
   include __DIR__ . '/../../../includes/header.php';
-  include __DIR__ . '/../../../actions/retrieve-data-peribadi.php';
 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"

@@ -3,36 +3,36 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="sampleAddModalTitle">
-          <i class="ri-add-circle-line"></i> <?= h(t('template_senarai_crud_modal_add_title', 'Add Record')) ?>
+          <i class="ri-add-circle-line"></i> <?= h(tr('template_senarai_crud_modal_add_title', 'Add Record')) ?>
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= h(t('template_senarai_crud_btn_close', 'Close')) ?>"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= h(tr('template_senarai_crud_btn_close', 'Close')) ?>"></button>
       </div>
       <div class="modal-body">
         <form class="sample-form-shell" id="sampleAddForm">
           <div>
-            <label for="sampleAddName" class="form-label"><?= h(t('template_senarai_crud_field_name', 'Name')) ?></label>
+            <label for="sampleAddName" class="form-label"><?= h(tr('template_senarai_crud_field_name', 'Name')) ?></label>
             <input type="text" class="form-control" id="sampleAddName" value="">
           </div>
           <div>
-            <label for="sampleAddDepartment" class="form-label"><?= h(t('template_senarai_crud_field_department', 'Department')) ?></label>
+            <label for="sampleAddDepartment" class="form-label"><?= h(tr('template_senarai_crud_field_department', 'Department')) ?></label>
             <input type="text" class="form-control" id="sampleAddDepartment" value="">
           </div>
           <div>
-            <label for="sampleAddGroup" class="form-label"><?= h(t('template_senarai_crud_field_group', 'Group')) ?></label>
+            <label for="sampleAddGroup" class="form-label"><?= h(tr('template_senarai_crud_field_group', 'Group')) ?></label>
             <input type="text" class="form-control" id="sampleAddGroup" value="">
           </div>
           <div>
-            <label for="sampleAddAccess" class="form-label"><?= h(t('template_senarai_crud_field_access', 'Access')) ?></label>
+            <label for="sampleAddAccess" class="form-label"><?= h(tr('template_senarai_crud_field_access', 'Access')) ?></label>
             <select class="form-select" id="sampleAddAccess">
-              <option value="1"><?= h(t('template_senarai_crud_access_allowed', 'Allowed')) ?></option>
-              <option value="0"><?= h(t('template_senarai_crud_access_blocked', 'Blocked')) ?></option>
+              <option value="1"><?= h(tr('template_senarai_crud_access_allowed', 'Allowed')) ?></option>
+              <option value="0"><?= h(tr('template_senarai_crud_access_blocked', 'Blocked')) ?></option>
             </select>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= h(t('template_senarai_crud_btn_cancel', 'Cancel')) ?></button>
-        <button type="button" class="btn btn-success" id="sampleAddSaveBtn"><?= h(t('template_senarai_crud_btn_save', 'Save')) ?></button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= h(tr('template_senarai_crud_btn_cancel', 'Cancel')) ?></button>
+        <button type="button" class="btn btn-success" id="sampleAddSaveBtn"><?= h(tr('template_senarai_crud_btn_save', 'Save')) ?></button>
       </div>
     </div>
   </div>

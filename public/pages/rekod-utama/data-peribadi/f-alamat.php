@@ -36,26 +36,26 @@
                         <div class="row g-3">
                           <div class="col-12">
                             <label class="form-label"><?= h(tr('profile_alamat1', 'Alamat')) ?></label>
-                            <input type="text" name="alamat_tetap_1" class="form-control" value="<?= ucwords(strtolower(h($alamat1 ?? ''))) ?>" readonly>
+                            <input type="text" name="alamat_tetap_1" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat1'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-12">
-                            <input type="text" name="alamat_tetap_2" class="form-control" value="<?= ucwords(strtolower(h($alamat2 ?? ''))) ?>" readonly>
+                            <input type="text" name="alamat_tetap_2" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat2'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_poskod', 'Poskod')) ?></label>
-                            <input type="text" name="alamat_tetap_poskod" class="form-control" value="<?= h($poskod ?? '') ?>" readonly>
+                            <input type="text" name="alamat_tetap_poskod" class="form-control" value="<?= h($peribadi['alamat3'] ?? '') ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_bandar', 'Bandar')) ?></label>
-                            <input type="text" name="alamat_tetap_bandar" class="form-control" value="<?= ucwords(strtolower(h($bandar ?? ''))) ?>" readonly>
+                            <input type="text" name="alamat_tetap_bandar" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat4'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_negeri', 'Negeri')) ?></label>
-                            <input type="text" name="alamat_tetap_negeri" class="form-control" value="<?= ucwords(strtolower(h($negeri ?? ''))) ?>" readonly>
+                            <input type="text" name="alamat_tetap_negeri" class="form-control" value="<?= ucwords(strtolower(h($peribadi['negeri'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-6">
                             <label class="form-label"><?= h(tr('profile_negara', 'Negara')) ?></label>
-                            <input type="text" name="alamat_tetap_negara" class="form-control" value="<?= h($negara ?? 'Malaysia') ?>" readonly>
+                            <input type="text" name="alamat_tetap_negara" class="form-control" value="<?= h($peribadi['negara'] ?? 'Malaysia') ?>" readonly>
                           </div>
                         </div>
                       </div>
