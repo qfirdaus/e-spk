@@ -169,8 +169,9 @@
     include __DIR__ . '/../../../../includes/script-custom.php';
     include __DIR__ . '/modal.php';
   ?>
+  <script src="<?= base_url('assets/js/pages/penglibatan.js') ?>"></script>
 
-<script>
+<!-- <script>
 (function(){
   document.addEventListener('DOMContentLoaded', function(){
     if (!window.jQuery || !jQuery.fn || !jQuery.fn.DataTable) {
@@ -336,7 +337,7 @@
     }
   });
 })();
-</script>
+</script> -->
 
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

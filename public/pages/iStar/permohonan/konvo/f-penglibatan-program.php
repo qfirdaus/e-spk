@@ -96,34 +96,41 @@
   </div>
 </form> 
 <div class="col-12 text-end mt-3">
-  <button type="button" id="btnSampleAction" class="btn btn-primary sync-groups-btn">
-    <i class="ri-add-line"></i><span><?= h(tr('template_senarai_crud_btn_sample', 'Add New')) ?></span>
+  <button type="button" id="penglibatanBtnAdd" class="btn btn-primary sync-groups-btn">
+    <i class="ri-add-line"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
   </button>                
 </div>
 <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
 <hr>
 <div class="table-responsive dt-standard">
-    <table id="groupTable" class="table table-bordered align-middle w-100">
+  <table id="penglibatanDT" class="table table-bordered align-middle w-100">
     <thead>
-        <tr>
-        <th class="small w-25"><?= h(tr('nama_program_pertandingan','Nama Program / Nama Pertandingan')) ?></th>
-        <th class="small"><?= h(tr('profile_tarikh','Tarikh')) ?></th> 
-        <th class="small"><?= h(tr('wakil','Wakil')) ?></th>
-        <th class="small"><?= h(tr('peringkat','Peringkat')) ?></th>
-        <th class="small"><?= h(tr('pencapaian','Pencapaian')) ?></th>
-        <th class="small text-center"><?= h(tr('istar_col_action','Tindakan')) ?></th>
-        </tr>
+      <tr>
+        <th class="col-bil"><?= h(tr('template_senarai_crud_col_no', 'No.')) ?></th>
+        <th class="small w-25">Nama Program / Pertandingan</th>
+        <th class="small">Tarikh</th>
+        <th class="small">Wakil</th>
+        <th class="small">Peringkat</th>
+        <th class="small">Pencapaian</th>
+        <th class="small text-center">Tindakan</th>
+      </tr>
     </thead>
+
     <tbody>
       <?php foreach ($penglibatanData as $row): ?>
         <?php $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); ?>
 
         <tr>
-          <td><?= h($row['nama_program'] ?? '') ?></td>
-          <td><?= h(date('d/m/Y', strtotime($row['tarikh_mula']) ?? '') ?? '') ?></td>
-          <td><?= h($row['lokasi'] ?? '') ?></td>
-          <td><?= h($row['no_staf_penyelaras'] ?? '') ?></td>
-          <td><?= h($row['nostaf_matrik_setiausaha'] ?? '') ?></td>
+          <td class="col-bil"></td>
+          <td><?= h($row['nama_program'] ?? '-') ?></td>
+          <td>
+            <?= !empty($row['tarikh_mula'])
+              ? h(date('d/m/Y', strtotime($row['tarikh_mula'])))
+              : '-' ?>
+          </td>
+          <td><?= h($row['wakil'] ?? '-') ?></td>
+          <td><?= h($row['peringkat'] ?? '-') ?></td>
+          <td><?= h($row['pencapaian'] ?? '-') ?></td>
 
           <td class="text-center">
             <button class="btn btn-sm btn-outline-warning js-view-row" data-row='<?= $rowJson ?>'>
@@ -139,11 +146,10 @@
             </button>
           </td>
         </tr>
-      <?php endforeach; ?>  
+      <?php endforeach; ?>
     </tbody>
-    </table>               
-</div>         
-                
+  </table>
+</div>     
 
 
                 
