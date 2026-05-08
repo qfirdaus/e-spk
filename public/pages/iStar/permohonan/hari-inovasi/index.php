@@ -5,21 +5,27 @@
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
+  $pageHeading     = 'Anugerah Pingat Graduan';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel      = 'Salin No. Matrik';
 
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
-  require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/KeluargaController.php'; 
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
-  $pageHeading = 'Anugerah Kualiti TNC HEPA';
-  $profileCardLabel = 'Profil Pelajar';
-  $copyIdLabel = 'Salin No. Matrik';
-  $PAGE_TITLE = tr('istar_title', 'iStar');
   include __DIR__ . '/../../../../includes/header.php';
-  include __DIR__ . '/../../../../actions/retrieve-data-keluarga.php';
+
+  require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();  
 ?>
 
 <body
