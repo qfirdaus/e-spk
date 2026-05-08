@@ -1,124 +1,195 @@
-                <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
-                  <input type="hidden" name="icares_form" value="istar_konvo_anugerah_pengiktirafan">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="row">
-                        <div class="col-md-6 gx-4">
-                          <!-- Nama Anugerah / Pengiktirafan -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('nama_anugerah_pengiktirafan','Nama Anugerah / Pengiktirafan')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="nama_penuh" class="form-control" value=" " >
-                            </div>                 
-                          </div>
+<div class="col-12 text-end mt-3">
 
-                          <!-- Tahun -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('tahun_pengiktirafan','Tahun')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="tahun" class="form-control" value=" "  >
-                            </div>
-                          </div>  
+  <button type="button"
+          id="anugerahBtnAdd"
+          class="btn btn-success">
 
-                          <!-- Kurniaan / Pemberian -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('kurniaan_pemberian','Kurniaan / Pemberian')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="kurniaan_pemberian" class="form-control" value=" "  >
-                            </div>
-                          </div>  
+    <i class="ri-add-line"></i>
 
-                        </div>
+    <span>
+      <?= h(tr('button_add_new', 'Tambah Baru')) ?>
+    </span>
 
-                        <div class="col-md-6 gx-4">  
-                          <!-- Peringkat -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('peringkat','Peringkat')) ?></label>
-                            <div class="col-sm-8">
-                                <select name="peringkat" class="form-select">
-                                <option value=""><?= h(tr('istar_common_select','-- Sila Pilih --')) ?></option>
-                                <option value="Lelaki" <?= $peringkat=='Lelaki'?'selected':'' ?>><?= h(tr('istar_option_residential_college','Kolej Kediaman')) ?></option>
-                                <option value="Perempuan" <?= $peringkat=='Perempuan'?'selected':'' ?>><?= h(tr('istar_option_student_body','Badan Pelajar')) ?></option>
-                                <option value="Perempuan" <?= $peringkat=='Perempuan'?'selected':'' ?>><?= h(tr('istar_option_faculty','Fakulti')) ?></option> 
-                                <option value="Perempuan" <?= $peringkat=='Perempuan'?'selected':'' ?>><?= h(tr('istar_option_university','Universiti')) ?></option>
-                                <option value="Perempuan" <?= $peringkat=='Perempuan'?'selected':'' ?>><?= h(tr('istar_option_state','Negeri')) ?></option>
-                                <option value="Perempuan" <?= $peringkat=='Perempuan'?'selected':'' ?>><?= h(tr('istar_option_national','Kebangsaan')) ?></option>
-                                </select>
-                            </div>                 
-                          </div>                                                                                   
-                          
-                          <!-- Dokumen Sokongan -->
-                          <div class="mb-2 row align-items-center">
-                            <div class="col-sm-4">
-                                <label class="col-form-label text-nowrap"> <?= h(tr('profile_dokumen_sokongan','Dokumen Sokongan')) ?> </label> 
-                                <i class="ri-information-line ms-1 text-danger extra-roles-info" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                aria-label="<?= h(tr('profile_dokumen_sokongan','Dokumen Sokongan')) ?>" data-bs-original-title="<?= h(tr('profile_dokumen_sokongan_note','Sila sertakan Dokumen Sokongan dalam format JPG/JPEG/PDF, maks 5MB')) ?>"></i>
-                            </div>
-                            <div class="col-sm-8">
-                                <input type="file" name="dokumen" class="form-control" accept=".jpg, .jpeg, .pdf" onchange="checkFileSize(this)" />
-                                <div class="invalid-feedback"><?= h(tr('profile_max_file_size','Max file size 5MB')) ?></div>
-                            </div>
-                          </div>                        
-                        </div>   
-                                                
-                        <!-- Submit Button -->
-                        <div class="col-12 text-end mt-3">
-                          <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </form>       
-                <hr>
-                <div class="table-responsive">
-                    <table id="groupTable" class="table table-bordered align-middle dataTable no-footer">
-                    <thead>
-                        <tr>
-                        <th class="small w-25"><?= h(tr('nama_anugerah_pengiktirafan','Nama Anugerah / Pengiktirafan')) ?></th>
-                        <th class="small"><?= h(tr('tahun_pengiktirafan','Tahun')) ?></th> 
-                        <th class="small"><?= h(tr('wakil','Wakil')) ?></th>
-                        <th class="small"><?= h(tr('peringkat','Peringkat')) ?></th>
-                        <th class="small"><?= h(tr('pencapaian','Pencapaian')) ?></th>
-                        <th class="small text-center"><?= h(tr('istar_col_document','Dokumen')) ?></th>
-                        <th class="small text-center"><?= h(tr('istar_col_action','Tindakan')) ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <td>PERSEMBAHAN TAEKWONDO SEMPENA SAMBUTAN HARI WANITA SEDUNIA PERINGKAT UPNM</td>
-                        <td>14-03-2025 - 14-03-2025</td>
-                        <td></td>
-                        <td><?= h(tr('istar_option_university','Universiti')) ?></td>
-                        <td><?= h(tr('istar_result_third_place','Tempat Ketiga')) ?></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary" type="button">
-                            <i class="ri-eye-line me-1"></i>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger" type="button">
-                            <i class="ri-pencil-line me-1"></i>
-                            </button>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>PENGANJURAN HAWK INTENSE CHALLENGE 2025</td>
-                        <td>31-05-2025 - 31-05-2025</td>
-                        <td></td>
-                        <td><?= h(tr('istar_option_university','Universiti')) ?></td>
-                        <td><?= h(tr('istar_result_participant','Peserta')) ?></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary" type="button">
-                            <i class="ri-eye-line me-1"></i>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-danger" type="button">
-                            <i class="ri-pencil-line me-1"></i>
-                            </button>
-                        </td>
-                        </tr>
-                    </tbody>
-                    </table>               
-                </div>              
+  </button>
+
+</div>
+
+
+<h5 class="text-h5">
+
+  <?= h(tr(
+      'profile_senarai_anugerah_pengiktirafan',
+      'Senarai Anugerah dan Pengiktirafan'
+  )) ?>
+
+</h5>
+
+<hr>
+
+
+<div class="table-responsive dt-standard">
+
+  <table id="anugerahDT"
+         class="table table-bordered align-middle w-100">
+
+    <thead>
+
+      <tr>
+
+        <th class="col-bil">
+          <?= h(tr('template_senarai_crud_col_no', 'No.')) ?>
+        </th>
+
+        <th class="small w-25">
+          <?= h(tr(
+              'nama_anugerah_pengiktirafan',
+              'Nama Anugerah / Pengiktirafan'
+          )) ?>
+        </th>
+
+        <th class="small">
+          <?= h(tr('tahun_pengiktirafan', 'Tahun')) ?>
+        </th>
+
+        <th class="small">
+          <?= h(tr('kurniaan_pemberian', 'Kurniaan / Pemberian')) ?>
+        </th>
+
+        <th class="small">
+          <?= h(tr('peringkat', 'Peringkat')) ?>
+        </th>
+
+        <th class="small text-center">
+          <?= h(tr('istar_col_document', 'Dokumen')) ?>
+        </th>
+
+        <th class="small text-center">
+          <?= h(tr('istar_col_action', 'Tindakan')) ?>
+        </th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <?php foreach ($anugerahData as $row): ?>
+
+        <?php
+          $rowJson = json_encode(
+              $row,
+              JSON_HEX_APOS | JSON_HEX_QUOT
+          );
+        ?>
+
+        <tr>
+
+          <!-- BIL -->
+          <td class="col-bil"></td>
+
+          <!-- NAMA -->
+          <td>
+
+            <?= h($row['nama_anugerah'] ?? '-') ?>
+
+            <!-- OPTIONAL BADGE -->
+            <!--
+            <span class="access-chip is-allowed truncate-1line"
+                  data-bs-toggle="tooltip"
+                  data-bs-custom-class="template-tooltip"
+                  data-bs-original-title="IStAD">
+
+                IStAD
+
+            </span>
+            -->
+
+          </td>
+
+          <!-- TAHUN -->
+          <td>
+
+            <?= h($row['tahun'] ?? '-') ?>
+
+          </td>
+
+          <!-- KURNIAAN -->
+          <td>
+
+            <?= h($row['kurniaan_pemberian'] ?? '-') ?>
+
+          </td>
+
+          <!-- PERINGKAT -->
+          <td>
+
+            <?= h($row['peringkat'] ?? '-') ?>
+
+          </td>
+
+          <!-- DOKUMEN -->
+          <td class="text-center">
+
+            <?php if (!empty($row['dokumen'])): ?>
+
+              <a href="<?= base_url($row['dokumen']) ?>"
+                 target="_blank"
+                 class="btn btn-sm btn-outline-info">
+
+                <i class="ri-file-pdf-line"></i>
+
+              </a>
+
+            <?php else: ?>
+
+              -
+
+            <?php endif; ?>
+
+          </td>
+
+          <!-- TINDAKAN -->
+          <td class="text-center">
+
+            <div class="d-flex justify-content-center gap-1 flex-nowrap">
+
+              <!-- VIEW -->
+              <button type="button"
+                      class="btn btn-sm btn-outline-warning js-view-row"
+                      data-row='<?= $rowJson ?>'>
+
+                <i class="ri-eye-line"></i>
+
+              </button>
+
+              <!-- EDIT -->
+              <button type="button"
+                      class="btn btn-sm btn-outline-primary js-edit-row"
+                      data-row='<?= $rowJson ?>'>
+
+                <i class="ri-pencil-line"></i>
+
+              </button>
+
+              <!-- DELETE -->
+              <button type="button"
+                      class="btn btn-sm btn-outline-danger js-delete-row"
+                      data-row='<?= $rowJson ?>'>
+
+                <i class="ri-delete-bin-line"></i>
+
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      <?php endforeach; ?>
+
+    </tbody>
+
+  </table>
+
+</div>

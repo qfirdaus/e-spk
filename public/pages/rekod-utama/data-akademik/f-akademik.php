@@ -35,11 +35,11 @@
                             </div>
                           </div>
 
-                          <!-- Tempoh Pengajian -->
+                          <!-- Tempoh Program -->
                           <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tempoh_pengajian','Tempoh Pengajian')) ?></label>
+                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tempoh_program','Tempoh Program')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="tempoh_pengajian" class="form-control" value="<?= ucwords(strtolower(h($tempoh_pengajian ?? ''))) ?>" readonly>
+                              <input type="text" name="tempoh_program" class="form-control" value="<?= ucwords(strtolower(h($tempoh_program ?? ''))) ?>" readonly>
                             </div>
                           </div>
 
