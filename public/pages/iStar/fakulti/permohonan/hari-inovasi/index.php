@@ -1,19 +1,19 @@
 <?php
-// pages/iStar/fakulti/permohonan/anugerah/konvo/index.php
+// pages/iStar/fakulti/permohonan/anugerah/hari-inovasi/index.php
   declare(strict_types=1);
   $NEED_DATERANGE  = false;
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
 
-  require_once __DIR__ . '/../../../../../../includes/init.php';
+  require_once __DIR__ . '/../../../../../includes/init.php';
   require_login();
-  require_once __DIR__ . '/../../../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../../../controllers/KeluargaController.php'; 
-  require_once __DIR__ . '/../../../../../../includes/functions-page.php'; 
+  require_once __DIR__ . '/../../../../../controllers/ProfileController.php'; 
+  require_once __DIR__ . '/../../../../../controllers/KeluargaController.php'; 
+  require_once __DIR__ . '/../../../../../includes/functions-page.php'; 
   $PAGE_TITLE = tr('istar_title', 'iStar');
-  include __DIR__ . '/../../../../../../includes/header.php';
-  include __DIR__ . '/../../../../../../actions/retrieve-data-keluarga.php';
+  include __DIR__ . '/../../../../../includes/header.php';
+  include __DIR__ . '/../../../../../actions/retrieve-data-keluarga.php';
 
   // Check active session status
   $isActive = hasActiveSession($loginActivity);
@@ -25,8 +25,8 @@
   data-layout="vertical" data-sidebar-size="default" class="loading">
 
 <div class="wrapper">
-  <?php include __DIR__ . '/../../../../../../includes/topbar.php'; ?>
-  <?php include __DIR__ . '/../../../../../../includes/sidebar.php'; ?>
+  <?php include __DIR__ . '/../../../../../includes/topbar.php'; ?>
+  <?php include __DIR__ . '/../../../../../includes/sidebar.php'; ?>
 
   <div class="content-page">
     <div class="content">
@@ -59,18 +59,18 @@
 
         <!-- Profile Card with Tabs -->
         <div class="card border-0 shadow-sm profile-card">
-          <?php include __DIR__ . '/../../../../../../includes/profile-card.php'; ?>
+          <?php include __DIR__ . '/../../../../../includes/profile-card.php'; ?>
 
           <!-- Tab Navigasi -->
           <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
             <li class="nav-item">
-              <a class="nav-link active" data-bs-toggle="tab" href="#pelajar-diraja-tab" role="tab">
-                <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_pelajar_diraja','Pelajar Diraja')) ?>
+              <a class="nav-link active" data-bs-toggle="tab" href="#kepimpinan-siswa-tab" role="tab">
+                <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_kepimpinan_siswa','Kepimpinan Siswa')) ?>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#pingat-emas-canselor-tab" role="tab">
-                <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_pingat_emas_canselor','Pingat Emas Canselor')) ?>
+              <a class="nav-link" data-bs-toggle="tab" href="#kesukarelawan-siswa-tab" role="tab">
+                <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_kesukarelawan_siswa','Kesukarelawan Siswa')) ?>
               </a>
             </li>
             <li class="nav-item">
@@ -99,18 +99,8 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#tokoh-keusahawanan-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_tokoh_keusahawanan','Tokoh Keusahawanan')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#khas-bem-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_khas_bem','Khas BEM')) ?>
-              </a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#senarai-pencalonan-tab" role="tab">
-                <i class="ri-user-line me-1"></i> <?= h(tr('tab_senarai_akhir_pencalonan','Senarai Akhir Pencalonan')) ?>
+                <i class="ri-user-line me-1"></i> <?= h(tr('tab_senarai_pencalonan','Senarai Pencalonan')) ?>
               </a>
             </li>
           </ul>
@@ -138,52 +128,42 @@
               </div>
             <?php endif; ?>
 
-            <!-- Tab 1: Anugerah  -->
-            <div class="tab-pane fade show active" id="pelajar-diraja-tab" role="tabpanel">
-                <?php include __DIR__ . '/f-pelajar-diraja.php'; ?>
+            <!-- Tab 1: Kepimpinan Siswa  -->
+            <div class="tab-pane fade show active" id="kepimpinan-siswa-tab" role="tabpanel">
+                <?php include __DIR__ . '/f-kepimpinan-siswa.php'; ?>
             </div>
 
-            <!-- Tab 2: Pingat Emas Canselor -->
-            <div class="tab-pane fade" id="pingat-emas-canselor-tab" role="tabpanel">    
-                <?php include __DIR__ . '/../../../../permohonan/konvo/f-penglibatan-program.php'; ?>        
+            <!-- Tab 2: Kesukarelawan Siswa -->
+            <div class="tab-pane fade" id="kesukarelawan-siswa-tab" role="tabpanel">    
+                <?php include __DIR__ . '/f-kesukarelawan-siswa.php'; ?>        
             </div>
 
             <!-- Tab 3: Pingat Emas LPU -->
             <div class="tab-pane fade" id="pingat-emas-lpu-tab" role="tabpanel">
-                <?php include __DIR__ . '/../../../../permohonan/konvo/f-jawatan-disandang.php'; ?> 
+                <?php include __DIR__ . '/../../../../permohonan/hari-inovasi/f-jawatan-disandang.php'; ?> 
             </div>
 
             <!-- Tab 4: Pingat Emas Naib Canselor -->
             <div class="tab-pane fade" id="pingat-emas-nc-tab" role="tabpanel">
-                <?php include __DIR__ . '/../../../../permohonan/konvo/f-anugerah-pengiktirafan.php'; ?>
+                <?php include __DIR__ . '/../../../../permohonan/hari-inovasi/f-anugerah-pengiktirafan.php'; ?>
             </div>
 
             <!-- Tab 5: Buku Ijazah Sarjana Muda -->
             <div class="tab-pane fade" id="buku-degree-tab" role="tabpanel">
-                <?php $istarPerakuanIdPrefix = 'konvo-buku-degree'; include __DIR__ . '/../../../../permohonan/konvo/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
+                <?php $istarPerakuanIdPrefix = 'hari-inovasi-buku-degree'; include __DIR__ . '/../../../../permohonan/hari-inovasi/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
             </div>
 
             <!-- Tab 6: Diploma Terbaik -->
             <div class="tab-pane fade" id="diploma-terbaik-tab" role="tabpanel">
-                <?php $istarPerakuanIdPrefix = 'konvo-diploma-terbaik'; include __DIR__ . '/../../../../permohonan/konvo/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
+                <?php $istarPerakuanIdPrefix = 'hari-inovasi-diploma-terbaik'; include __DIR__ . '/../../../../permohonan/hari-inovasi/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
             </div>
 
             <!-- Tab 7: Buku Diploma -->
             <div class="tab-pane fade" id="buku-diploma-tab" role="tabpanel">
-                <?php $istarPerakuanIdPrefix = 'konvo-buku-diploma'; include __DIR__ . '/../../../../permohonan/konvo/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
+                <?php $istarPerakuanIdPrefix = 'hari-inovasi-buku-diploma'; include __DIR__ . '/../../../../permohonan/hari-inovasi/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
             </div>
 
-            <!-- Tab 8: Tokoh Keusahawanan -->
-            <div class="tab-pane fade" id="tokoh-keusahawanan-tab" role="tabpanel">
-                <?php $istarPerakuanIdPrefix = 'konvo-tokoh-keusahawanan'; include __DIR__ . '/../../../../permohonan/konvo/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
-            </div>
-
-            <!-- Tab 9: Khas BEM -->
-            <div class="tab-pane fade" id="khas-bem-tab" role="tabpanel">
-                <?php $istarPerakuanIdPrefix = 'konvo-khas-bem'; include __DIR__ . '/../../../../permohonan/konvo/f-perakuan.php'; unset($istarPerakuanIdPrefix); ?>
-            </div>
-
-            <!-- Tab 10: Senarai Pencalonan -->
+            <!-- Tab 8: Senarai Pencalonan -->
             <div class="tab-pane fade" id="senarai-pencalonan-tab" role="tabpanel">
                 <?php include __DIR__ . '/f-senarai-pencalonan.php'; ?>
             </div>
@@ -194,14 +174,14 @@
 
       </div>
     </div>
-    <?php include __DIR__ . '/../../../../../../includes/footer.php'; ?>
+    <?php include __DIR__ . '/../../../../../includes/footer.php'; ?>
   </div>
 </div>
 
 <?php 
-  include __DIR__ . '/../../../../../../includes/script.php'; 
-  include __DIR__ . '/../../../../../../includes/script-pages.php';  
-  include __DIR__ . '/../../../../../../includes/script-custom.php';
+  include __DIR__ . '/../../../../../includes/script.php'; 
+  include __DIR__ . '/../../../../../includes/script-pages.php';  
+  include __DIR__ . '/../../../../../includes/script-custom.php';
 ?>
 
 <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

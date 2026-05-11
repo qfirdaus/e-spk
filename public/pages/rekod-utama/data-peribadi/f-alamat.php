@@ -11,7 +11,7 @@
                     <div class="icares-address-nav" role="tablist" aria-label="<?= h(tr('tab_maklumat_alamat', 'Maklumat Alamat')) ?>">
                       <button class="icares-address-nav__item active" id="alamat-tetap-tab" data-bs-toggle="pill" data-bs-target="#alamat-tetap-panel" type="button" role="tab" aria-controls="alamat-tetap-panel" aria-selected="true">
                         <i class="ri-home-4-line"></i>
-                        <span><?= h(tr('profile_alamat_permanent', 'Alamat Tetap')) ?></span>
+                        <span><?= h(tr('alamat_permanent', 'Alamat Tetap')) ?></span>
                       </button>
                       <button class="icares-address-nav__item" id="alamat-tinggal-tab" data-bs-toggle="pill" data-bs-target="#alamat-tinggal-panel" type="button" role="tab" aria-controls="alamat-tinggal-panel" aria-selected="false">
                         <i class="ri-map-pin-user-line"></i>
@@ -30,7 +30,7 @@
                     <div class="icares-address-content tab-content">
                       <div class="tab-pane fade show active" id="alamat-tetap-panel" role="tabpanel" aria-labelledby="alamat-tetap-tab" tabindex="0">
                         <div class="icares-address-panel-header">
-                          <h5><?= h(tr('profile_alamat_permanent', 'Alamat Tetap')) ?></h5>
+                          <h5><?= h(tr('alamat_permanent', 'Alamat Tetap')) ?></h5>
                           <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
                         </div>
                         <div class="row g-3">

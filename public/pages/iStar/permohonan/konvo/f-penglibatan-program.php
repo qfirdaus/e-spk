@@ -3,9 +3,11 @@
     <i class="ri-add-line"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
   </button>                
 </div>
-<h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
+<div class="icares-address-panel-header">
+  <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
+</div>
 <hr>
-<div class="table-responsive dt-standard">
+<div class="table-responsive dt-standard p-3">
   <table id="penglibatanDT" class="table table-bordered align-middle w-100">
     <thead>
       <tr>
@@ -16,7 +18,7 @@
         <th class="small"><?= h(tr('wakil', 'Wakil')) ?></th>
         <th class="small"><?= h(tr('peringkat', 'Peringkat')) ?></th>
         <th class="small"><?= h(tr('pencapaian', 'Pencapaian')) ?></th>
-        <th class="small text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th>
+        <!-- <th class="small text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th> -->
       </tr>
     </thead>
 
@@ -26,15 +28,9 @@
             $wakil     = $row['wakil'] ?? null;
             $peringkat = $row['peringkat'] ?? null;
             $pencapaian = $row['pencapaian'] ?? null;
-            $sumber = $row['sumber'] ?? 'Tambahan';
-
-            // IStAD fallback
-            if ($sumber === 'IStAD') {
-                $wakil = null;
-                $peringkat = null;
-            }        
+            $sumber = $row['sumber'] ?? 'Tambahan';   
     ?>
-            <tr data-type="istad" data-index="<?= $i ?>">
+            <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
 
                 <td class="col-bil text-center"></td>
                 <td>
@@ -91,28 +87,6 @@
                     <?php endforeach; ?>
                 </select>
                 </td>
-
-                <td class="text-center">
-                    <div class="d-flex justify-content-center gap-1 flex-nowrap">
-                        <button type="button"
-                                class="btn btn-sm btn-outline-warning js-view-row"
-                                data-row='<?= json_encode($row) ?>'>
-                            <i class="ri-eye-line"></i>
-                        </button>
-
-                        <button type="button"
-                                class="btn btn-sm btn-outline-primary js-edit-row"
-                                data-row='<?= json_encode($row) ?>'>
-                            <i class="ri-pencil-line"></i>
-                        </button>
-
-                        <button type="button"
-                                class="btn btn-sm btn-outline-danger js-delete-row"
-                                data-row='<?= json_encode($row) ?>'>
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                </td>        
             </tr>
     <?php endforeach; ?>
     </tbody>

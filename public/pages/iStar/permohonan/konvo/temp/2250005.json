@@ -1,0 +1,241 @@
+{
+    "updated_at": "2026-05-11 10:35:36",
+    "rows": [
+        {
+            "id": "row_69fd63e8c8de8",
+            "id_kegiatan_pelajar": 1925,
+            "sumber": "IStAD",
+            "nama": "BICARA SUMUD FORTILLA",
+            "tarikh": "2025-12-02",
+            "wakil": "NEG",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "BICARA SUMUD FORTILLA",
+                "tarikh": "2025-12-02"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8def",
+            "id_kegiatan_pelajar": 1928,
+            "sumber": "IStAD",
+            "nama": "KONSERT MALAM BUDAYA UPNM 2025",
+            "tarikh": "2025-12-05",
+            "wakil": "BP",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "KONSERT MALAM BUDAYA UPNM 2025",
+                "tarikh": "2025-12-05"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df0",
+            "id_kegiatan_pelajar": 1859,
+            "sumber": "IStAD",
+            "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
+            "tarikh": "2025-11-08",
+            "wakil": "UNI",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
+                "tarikh": "2025-11-08"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df1",
+            "id_kegiatan_pelajar": 1964,
+            "sumber": "IStAD",
+            "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
+            "tarikh": "2025-12-23",
+            "wakil": "KOL",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
+                "tarikh": "2025-12-23"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df2",
+            "id_kegiatan_pelajar": 2018,
+            "sumber": "IStAD",
+            "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
+            "tarikh": "2026-01-14",
+            "wakil": "NEG",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
+                "tarikh": "2026-01-14"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df3",
+            "id_kegiatan_pelajar": 1848,
+            "sumber": "IStAD",
+            "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
+            "tarikh": "2025-11-04",
+            "wakil": "IND",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
+                "tarikh": "2025-11-04"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df4",
+            "id_kegiatan_pelajar": 1927,
+            "sumber": "IStAD",
+            "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
+            "tarikh": "2025-12-03",
+            "wakil": "IND",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
+                "tarikh": "2025-12-03"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df5",
+            "id_kegiatan_pelajar": 1965,
+            "sumber": "IStAD",
+            "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
+            "tarikh": "2025-12-24",
+            "wakil": "UNI",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
+                "tarikh": "2025-12-24"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8df6",
+            "id_kegiatan_pelajar": 2131,
+            "sumber": "IStAD",
+            "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
+            "tarikh": "2026-04-23",
+            "wakil": "BP",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
+                "tarikh": "2026-04-23"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8e01",
+            "id_kegiatan_pelajar": 1915,
+            "sumber": "IStAD",
+            "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
+            "tarikh": "2025-12-10",
+            "wakil": "IND",
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": true,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
+                "tarikh": "2025-12-10"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8e02",
+            "id_kegiatan_pelajar": 2022,
+            "sumber": "IStAD",
+            "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
+            "tarikh": "2026-01-15",
+            "wakil": null,
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": false,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
+                "tarikh": "2026-01-15"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8e03",
+            "id_kegiatan_pelajar": 1901,
+            "sumber": "IStAD",
+            "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
+            "tarikh": "2025-11-17",
+            "wakil": null,
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": false,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
+                "tarikh": "2025-11-17"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8e04",
+            "id_kegiatan_pelajar": 2119,
+            "sumber": "IStAD",
+            "nama": "UPNM COMMUNITY RUN 2.0",
+            "tarikh": "2026-04-16",
+            "wakil": null,
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": false,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "UPNM COMMUNITY RUN 2.0",
+                "tarikh": "2026-04-16"
+            }
+        },
+        {
+            "id": "row_69fd63e8c8e05",
+            "id_kegiatan_pelajar": 1994,
+            "sumber": "IStAD",
+            "nama": "UPNM RUNNING COMMUNITY (URC)",
+            "tarikh": "2026-01-08",
+            "wakil": null,
+            "peringkat": null,
+            "pencapaian": "PESERTA",
+            "is_dirty": false,
+            "conflict": false,
+            "original_snapshot": {
+                "nama": "UPNM RUNNING COMMUNITY (URC)",
+                "tarikh": "2026-01-08"
+            }
+        },
+        {
+            "id": "new_6a0194d17da38",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "Test",
+            "tarikh": "2026-02-03",
+            "wakil": "fakulti",
+            "peringkat": "universiti",
+            "pencapaian": "emas",
+            "is_dirty": true,
+            "conflict": false
+        }
+    ]
+}

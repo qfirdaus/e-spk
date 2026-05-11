@@ -1,0 +1,21 @@
+#penglibatanDT tbody tr.row-saving > td {
+    background-color: #fff3cd !important;
+    transition: background-color 0.3s ease;
+}
+
+#penglibatanDT tbody tr.row-success > td {
+    background-color: #d1e7dd !important;
+    transition: background-color 0.3s ease;
+}
+
+#penglibatanDT tbody tr.row-error > td {
+    background-color: #f8d7da !important;
+    transition: background-color 0.3s ease;
+}
+
+#penglibatanDT tbody select.border-warning,
+#penglibatanDT tbody input.border-warning,
+#penglibatanDT tbody textarea.border-warning {
+    border: 2px solid #ffc107 !important;
+    box-shadow: none !important;
+}
