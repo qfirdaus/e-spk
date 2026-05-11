@@ -15,8 +15,8 @@
   include __DIR__ . '/../../../../includes/header.php';
 
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
-  require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';     
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php';       
+  // require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';     
 
   // Check active session status
   $profile_controller = new ProfileController();
@@ -28,12 +28,8 @@
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
 
-  $penglibatanController = new PenglibatanController();
-  $penglibatanData = $penglibatanController->getAllPenglibatan();
-  $jawatanData = $penglibatanController->getAllJawatanDisandang();
-  $lookupPencapaian = $penglibatanController->getLookupPencapaian();
-  $lookupPeringkat = $penglibatanController->getLookupPeringkat();
-  $lookupWakil = $penglibatanController->getLookupWakil();
+  // $penglibatanController = new PenglibatanController();
+  // $jawatanData = $penglibatanController->getAllJawatanDisandang();
 
   //print_r($lookupWakil);
 ?>
@@ -141,7 +137,10 @@
 
               <!-- Tab 2: Penglibatan Program -->
               <div class="tab-pane fade" id="penglibatan-program-tab" role="tabpanel">    
-                  <?php include __DIR__ . '/f-penglibatan-program.php'; ?>        
+                  <div id="penglibatan-content" class="text-center py-3">
+                      Memuatkan Data...
+                  </div>
+                  <?php // include __DIR__ . '/f-penglibatan-program.php'; ?>        
               </div>
 
               <!-- Tab 3: Jawatan Yang Disandang -->
@@ -175,7 +174,10 @@
     include __DIR__ . '/../../../../includes/script-custom.php';
     include __DIR__ . '/modal.php';
   ?>
-  <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script>
+
+  <script> const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; </script> 
+  <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script> 
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/penglibatan.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>

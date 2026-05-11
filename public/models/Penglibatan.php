@@ -16,15 +16,18 @@ class Penglibatan
         //peserta kegiatan pelajar
         $sql = "
             SELECT
+                id_kegiatan_pelajar,
                 matrik,
                 'PESERTA' AS pencapaian,
                 'IStAD' AS sumber,
                 nama_kegiatan_pelajar AS nama,
                 tarikh_mula AS tarikh,
                 tarikh_tamat,
-                kod_sesi
+                kod_sesi,
+                NULL AS wakil,
+                NULL AS peringkat                
             FROM v_kehadiran_kegiatan_pelajar
-            WHERE nama_kegiatan_pelajar is not null AND matrik = :matrik
+            WHERE nama_kegiatan_pelajar IS NOT NULL AND matrik = :matrik
         ";
 
         $stmt = $this->istad->prepare($sql);
