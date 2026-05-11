@@ -10,7 +10,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
+      <form id="penglibatanForm" method="post" enctype="multipart/form-data">
         <input type="hidden" name="icares_form" value="istar_konvo_penglibatan_program">
 
         <div class="modal-body">

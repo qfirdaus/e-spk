@@ -406,3 +406,13 @@
     min-width:0;
   }
 }
+
+.custom-panel-header {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    margin-bottom: 1rem !important;
+    padding-bottom: .9rem !important;
+    border-bottom: 1px solid rgba(148,163,184,.18) !important;
+}
