@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-05-11 10:35:36",
+    "updated_at": "2026-05-11 10:46:35",
     "rows": [
         {
             "id": "row_69fd63e8c8de8",
@@ -226,13 +226,13 @@
             }
         },
         {
-            "id": "new_6a0194d17da38",
+            "id": "new_6a0197647d6f0",
             "id_kegiatan_pelajar": null,
             "sumber": "Tambahan",
             "nama": "Test",
             "tarikh": "2026-02-03",
-            "wakil": "fakulti",
-            "peringkat": "universiti",
+            "wakil": "UNI",
+            "peringkat": "negeri",
             "pencapaian": "emas",
             "is_dirty": true,
             "conflict": false
