@@ -34,7 +34,7 @@
 
                 <td class="col-bil text-center"></td>
                 <td>
-                    <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-success' : 'bg-warning'; ?>">
+                    <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-success' : 'bg-info'; ?>">
                         <?= h($sumber) ?>
                     </span>
                 </td>

@@ -36,14 +36,13 @@
               <!-- Wakil -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('wakil','Wakil')) ?></label>
-                <select name="wakil" class="form-select">
-                  <option value=""><?= h(tr('istar_common_select','-- Sila Pilih --')) ?></option>
-                  <option value="individu"><?= h(tr('istar_option_individual_residential_college','Individu / Kolej Kediaman')) ?></option>
-                  <option value="badan_pelajar"><?= h(tr('istar_option_student_body','Badan Pelajar')) ?></option>
-                  <option value="fakulti"><?= h(tr('istar_option_faculty','Fakulti')) ?></option>
-                  <option value="universiti"><?= h(tr('istar_option_university','Universiti')) ?></option>
-                  <option value="negeri"><?= h(tr('istar_option_state','Negeri')) ?></option>
-                  <option value="negara"><?= h(tr('profile_negara','Negara')) ?></option>
+                <select name="wakil" class="form-select form-select-sm">
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupWakil as $opt): ?>
+                        <option value="<?= h($opt['wakil_code']) ?>">
+                            <?= h($opt['wakil_my']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
               </div>
 

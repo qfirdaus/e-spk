@@ -16,7 +16,7 @@
 
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
   require_once __DIR__ . '/../../../../controllers/PeribadiController.php';       
-  // require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';     
+  require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';     
 
   // Check active session status
   $profile_controller = new ProfileController();
@@ -28,7 +28,8 @@
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
 
-  // $penglibatanController = new PenglibatanController();
+  $penglibatanController = new PenglibatanController();
+  $lookupWakil = $penglibatanController->getLookupWakil();
   // $jawatanData = $penglibatanController->getAllJawatanDisandang();
 
   //print_r($lookupWakil);
