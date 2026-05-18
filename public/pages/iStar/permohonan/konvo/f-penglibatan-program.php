@@ -1,12 +1,15 @@
-<div class="col-12 text-end mt-3">
-  <button type="button" id="penglibatanBtnAdd" class="btn btn-success sync-groups-btn">
-    <i class="ri-add-line"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
-  </button>                
+<div class="col-sm-12 col-md-12 d-flex justify-content-md-end dt-top-right align-items-center gap-2 flex-nowrap ">
+    <button type="button" id="syncIstadBtn" class="btn btn-primary rounded-3">
+        <i class="ri-refresh-line me-1"></i> Sync IStAD
+    </button>    
+    <button type="button" id="penglibatanBtnAdd" class="btn btn-success sync-groups-btn">
+        <i class="ri-add-line me-1"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
+    </button>                
 </div>
 <div class="icares-address-panel-header">
   <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
 </div>
-<hr>
+<!-- <hr> -->
 <div class="table-responsive dt-standard p-3">
   <table id="penglibatanDT" class="table table-bordered align-middle w-100">
     <thead>
@@ -18,12 +21,17 @@
         <th class="small"><?= h(tr('wakil', 'Wakil')) ?></th>
         <th class="small"><?= h(tr('peringkat', 'Peringkat')) ?></th>
         <th class="small"><?= h(tr('pencapaian', 'Pencapaian')) ?></th>
-        <!-- <th class="small text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th> -->
+        <th class="small text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
     <tbody>
     <?php 
+        //$lookupAll call from ajax/load-penglibatan.php
+        $lookupWakil = $lookupAll['wakil'] ?? [];
+        $lookupPeringkat = $lookupAll['peringkat'] ?? [];
+        $lookupPencapaian = $lookupAll['pencapaian'] ?? [];   
+
         foreach ($penglibatanData as $i => $row): 
             $wakil     = $row['wakil'] ?? null;
             $peringkat = $row['peringkat'] ?? null;
@@ -34,12 +42,12 @@
 
                 <td class="col-bil text-center"></td>
                 <td>
-                    <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-success' : 'bg-info'; ?>">
+                    <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                         <?= h($sumber) ?>
                     </span>
                 </td>
 
-                <td>
+                <td align="left">
                     <?= h($row['nama'] ?? '-') ?>
                 </td>
 
@@ -51,48 +59,70 @@
 
                 <!-- WAKIL (editable text OR dropdown kalau lookup) -->
                 <td>
-                <select name="wakil" class="form-select form-select-sm">
-                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
-                    <?php foreach ($lookupWakil as $opt): ?>
-                        <option value="<?= h($opt['wakil_code']) ?>"
-                            <?= $wakil == $opt['wakil_code'] ? 'selected' : '' ?>>
-                            <?= h($opt['wakil_my']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="wakil" class="form-select form-select-sm">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupWakil as $opt): ?>
+                            <option value="<?= h($opt['wakil_code']) ?>"
+                                <?= $wakil == $opt['wakil_code'] ? 'selected' : '' ?>>
+                                <?= h($opt['wakil_my']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
 
                 <!-- PERINGKAT -->
                 <td>
-                <select name="peringkat" class="form-select form-select-sm">
-                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
-                    <?php foreach ($lookupPeringkat as $opt): ?>
-                    <option value="<?= h($opt['peringkat_code']) ?>"
-                        <?= $peringkat == $opt['peringkat_code'] ? 'selected' : '' ?>>
-                        <?= h($opt['peringkat_my']) ?>
-                    </option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="peringkat" class="form-select form-select-sm">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupPeringkat as $opt): ?>
+                        <option value="<?= h($opt['peringkat_code']) ?>"
+                            <?= $peringkat == $opt['peringkat_code'] ? 'selected' : '' ?>>
+                            <?= h($opt['peringkat_my']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
 
                 <!-- PENCAPAIAN -->
                 <td>
-                <select name="pencapaian" class="form-select form-select-sm">
-                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
-                    <?php foreach ($lookupPencapaian as $opt): ?>
-                        <option value="<?= h($opt['pencapaian_code']) ?>"
-                            <?= $pencapaian == $opt['pencapaian_code'] ? 'selected' : '' ?>>
-                            <?= h($opt['pencapaian_my']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                    <select name="pencapaian" class="form-select form-select-sm">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupPencapaian as $opt): ?>
+                            <option value="<?= h($opt['pencapaian_code']) ?>"
+                                <?= $pencapaian == $opt['pencapaian_code'] ? 'selected' : '' ?>>
+                                <?= h($opt['pencapaian_my']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
+                <td>
+
+                    <?php 
+                    if (
+                        ($row['sumber'] ?? '') === 'Tambahan'
+                        && !empty($row['dokumen']['path'])
+                    ):  ?>
+
+                        <a href="<?= base_url($row['dokumen']['path']) ?>"
+                        target="_blank"
+                        class="btn btn-sm btn-outline-warning">
+                            <i class="ri-eye-line"></i>
+                        </a>
+
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
+
+                    <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger btn-delete-penglibatan"
+                                data-id="<?= h($row['id']) ?>">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    <?php endif; ?>                 
+                </td>   
             </tr>
     <?php endforeach; ?>
     </tbody>
   </table>
 </div>     
-
-
-
-                

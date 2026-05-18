@@ -15,9 +15,11 @@
   include __DIR__ . '/../../../../includes/header.php';
 
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/PeribadiController.php';       
-  require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';     
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php';        
+  require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';
 
+  $penglibatanController = new PenglibatanController();
+  $lookupAll = $penglibatanController->getAllLookup();
   // Check active session status
   $profile_controller = new ProfileController();
   $profile = $profile_controller->getCurrentUserProfile();
@@ -28,8 +30,6 @@
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
 
-  $penglibatanController = new PenglibatanController();
-  $lookupWakil = $penglibatanController->getLookupWakil();
   // $jawatanData = $penglibatanController->getAllJawatanDisandang();
 
   //print_r($lookupWakil);
@@ -141,7 +141,6 @@
                   <div id="penglibatan-content" class="text-center py-3">
                       Memuatkan Data...
                   </div>
-                  <?php // include __DIR__ . '/f-penglibatan-program.php'; ?>        
               </div>
 
               <!-- Tab 3: Jawatan Yang Disandang -->
@@ -178,7 +177,7 @@
 
   <script> const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; </script> 
   <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script> 
-  <link rel="stylesheet" href="<?= base_url('assets/css/pages/penglibatan.css') ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>

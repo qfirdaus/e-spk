@@ -1,168 +1,292 @@
 {
-    "updated_at": "2026-05-11 10:46:35",
+    "draft_initialized": true,
+    "updated_at": "2026-05-15 05:02:30",
     "rows": [
         {
-            "id": "row_69fd63e8c8de8",
+            "id": "new_6a03ec2bc0372",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN",
+            "tarikh": "2026-01-05",
+            "wakil": "IND",
+            "peringkat": "UNI",
+            "pencapaian": "PERAK",
+            "dokumen": {
+                "filename": "2250005-dok_6a03ec2bbf38e.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a03ec2bbf38e.pdf",
+                "uploaded_at": "2026-05-13 05:12:43"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a03ec6450477",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN2",
+            "tarikh": "2026-05-05",
+            "wakil": "BP",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
+            "dokumen": {
+                "filename": "2250005-dok_6a03ec644f688.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a03ec644f688.pdf",
+                "uploaded_at": "2026-05-13 05:13:40"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a04217faadf9",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "Badan Pelajar",
+            "tarikh": "2026-03-18",
+            "wakil": "NEG",
+            "peringkat": "KBG",
+            "pencapaian": "GANGSA",
+            "dokumen": {
+                "filename": "2250005-dok_6a04217fa9eac.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a04217fa9eac.pdf",
+                "uploaded_at": "2026-05-13 09:00:15"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a0421f51b29f",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN3",
+            "tarikh": "2026-02-06",
+            "wakil": "FK",
+            "peringkat": "UNI",
+            "pencapaian": "PERAK",
+            "dokumen": {
+                "filename": "2250005-dok_6a0421f51ab50.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0421f51ab50.pdf",
+                "uploaded_at": "2026-05-13 09:02:13"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a04238313aaf",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN",
+            "tarikh": "2026-05-12",
+            "wakil": "IND",
+            "peringkat": "UNI",
+            "pencapaian": "GANGSA",
+            "dokumen": {
+                "filename": "2250005-dok_6a0423831316b.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0423831316b.pdf",
+                "uploaded_at": "2026-05-13 09:08:51"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a042743d832d",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "Test2 BP",
+            "tarikh": "2026-04-28",
+            "wakil": "FK",
+            "peringkat": "BP",
+            "pencapaian": "GANGSA",
+            "dokumen": {
+                "filename": "2250005-dok_6a042743d7631.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a042743d7631.pdf",
+                "uploaded_at": "2026-05-13 09:24:51"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a042807eef81",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN2",
+            "tarikh": "2026-04-28",
+            "wakil": "IND",
+            "peringkat": "KBG",
+            "pencapaian": "PERAK",
+            "dokumen": {
+                "filename": "2250005-dok_6a042807ee11f.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a042807ee11f.pdf",
+                "uploaded_at": "2026-05-13 09:28:07"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a0428a06de18",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "Program",
+            "tarikh": "2026-04-27",
+            "wakil": "KOL",
+            "peringkat": "KOL",
+            "pencapaian": "PERAK",
+            "dokumen": {
+                "filename": "2250005-dok_6a0428a06cfde.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0428a06cfde.pdf",
+                "uploaded_at": "2026-05-13 09:30:40"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a042da8061a0",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "SUKAN TAHUNAN",
+            "tarikh": "2026-04-30",
+            "wakil": "KOL",
+            "peringkat": "UNI",
+            "pencapaian": "EMAS",
+            "dokumen": {
+                "filename": "2250005-dok_6a042da80546e.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a042da80546e.pdf",
+                "uploaded_at": "2026-05-13 09:52:08"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "ISTAD_1925",
             "id_kegiatan_pelajar": 1925,
             "sumber": "IStAD",
             "nama": "BICARA SUMUD FORTILLA",
             "tarikh": "2025-12-02",
-            "wakil": "NEG",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "BICARA SUMUD FORTILLA",
-                "tarikh": "2025-12-02"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8def",
+            "id": "ISTAD_1928",
             "id_kegiatan_pelajar": 1928,
             "sumber": "IStAD",
             "nama": "KONSERT MALAM BUDAYA UPNM 2025",
             "tarikh": "2025-12-05",
-            "wakil": "BP",
-            "peringkat": "UNI",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "KONSERT MALAM BUDAYA UPNM 2025",
-                "tarikh": "2025-12-05"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df0",
+            "id": "ISTAD_1859",
             "id_kegiatan_pelajar": 1859,
             "sumber": "IStAD",
             "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
             "tarikh": "2025-11-08",
-            "wakil": "UNI",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
-                "tarikh": "2025-11-08"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df1",
+            "id": "ISTAD_1964",
             "id_kegiatan_pelajar": 1964,
             "sumber": "IStAD",
             "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
             "tarikh": "2025-12-23",
-            "wakil": "KOL",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
-                "tarikh": "2025-12-23"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df2",
+            "id": "ISTAD_2018",
             "id_kegiatan_pelajar": 2018,
             "sumber": "IStAD",
             "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
             "tarikh": "2026-01-14",
-            "wakil": "NEG",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
-                "tarikh": "2026-01-14"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df3",
+            "id": "ISTAD_1848",
             "id_kegiatan_pelajar": 1848,
             "sumber": "IStAD",
             "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
             "tarikh": "2025-11-04",
-            "wakil": "IND",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
-                "tarikh": "2025-11-04"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df4",
+            "id": "ISTAD_1927",
             "id_kegiatan_pelajar": 1927,
             "sumber": "IStAD",
             "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
             "tarikh": "2025-12-03",
-            "wakil": "IND",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
-                "tarikh": "2025-12-03"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df5",
+            "id": "ISTAD_1965",
             "id_kegiatan_pelajar": 1965,
             "sumber": "IStAD",
             "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
             "tarikh": "2025-12-24",
-            "wakil": "UNI",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
-                "tarikh": "2025-12-24"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8df6",
+            "id": "ISTAD_2131",
             "id_kegiatan_pelajar": 2131,
             "sumber": "IStAD",
             "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
             "tarikh": "2026-04-23",
-            "wakil": "BP",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
-                "tarikh": "2026-04-23"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8e01",
+            "id": "ISTAD_1915",
             "id_kegiatan_pelajar": 1915,
             "sumber": "IStAD",
             "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
             "tarikh": "2025-12-10",
-            "wakil": "IND",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
-            "is_dirty": true,
+            "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
-                "tarikh": "2025-12-10"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8e02",
+            "id": "ISTAD_2022",
             "id_kegiatan_pelajar": 2022,
             "sumber": "IStAD",
             "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
@@ -172,13 +296,10 @@
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
-                "tarikh": "2026-01-15"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8e03",
+            "id": "ISTAD_1901",
             "id_kegiatan_pelajar": 1901,
             "sumber": "IStAD",
             "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
@@ -188,13 +309,10 @@
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
-                "tarikh": "2025-11-17"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8e04",
+            "id": "ISTAD_2119",
             "id_kegiatan_pelajar": 2119,
             "sumber": "IStAD",
             "nama": "UPNM COMMUNITY RUN 2.0",
@@ -204,13 +322,10 @@
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "UPNM COMMUNITY RUN 2.0",
-                "tarikh": "2026-04-16"
-            }
+            "source_override": false
         },
         {
-            "id": "row_69fd63e8c8e05",
+            "id": "ISTAD_1994",
             "id_kegiatan_pelajar": 1994,
             "sumber": "IStAD",
             "nama": "UPNM RUNNING COMMUNITY (URC)",
@@ -220,22 +335,7 @@
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "original_snapshot": {
-                "nama": "UPNM RUNNING COMMUNITY (URC)",
-                "tarikh": "2026-01-08"
-            }
-        },
-        {
-            "id": "new_6a0197647d6f0",
-            "id_kegiatan_pelajar": null,
-            "sumber": "Tambahan",
-            "nama": "Test",
-            "tarikh": "2026-02-03",
-            "wakil": "UNI",
-            "peringkat": "negeri",
-            "pencapaian": "emas",
-            "is_dirty": true,
-            "conflict": false
+            "source_override": false
         }
     ]
 }

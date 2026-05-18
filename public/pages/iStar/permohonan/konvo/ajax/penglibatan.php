@@ -20,6 +20,16 @@ if ($action === 'addDraft') {
     exit;
 }
 
+if ($action === 'deleteDraft') {
+    $controller->deleteDraft();
+    exit;
+}
+
+if ($action === 'syncIstad') {
+    $controller->syncIstad();
+    exit;
+}
+
 echo json_encode([
     'status' => 'error',
     'message' => 'Invalid action'

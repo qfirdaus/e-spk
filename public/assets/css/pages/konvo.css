@@ -19,3 +19,13 @@
     border: 2px solid #ffc107 !important;
     box-shadow: none !important;
 }
+
+.bg-salmon {
+    background-color: #e87461 !important;
+    color: #fff !important;
+}
+
+.bg-darkgreen {
+    background-color: #338c62 !important;
+    color: #fff !important;
+}

@@ -1,3 +1,9 @@
+<?php
+  //$lookupAll call from index.php
+  $lookupWakil = $lookupAll['wakil'] ?? [];
+  $lookupPeringkat = $lookupAll['peringkat'] ?? [];
+  $lookupPencapaian = $lookupAll['pencapaian'] ?? [];
+?>
 <div class="modal fade" id="penglibatanAddModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
@@ -54,39 +60,39 @@
               <!-- Peringkat -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
-                <select name="peringkat" class="form-select">
-                  <option value=""><?= h(tr('istar_common_select','-- Sila Pilih --')) ?></option>
-                  <option value="kolej"><?= h(tr('istar_option_residential_college','Kolej Kediaman')) ?></option>
-                  <option value="badan_pelajar"><?= h(tr('istar_option_student_body','Badan Pelajar')) ?></option>
-                  <option value="fakulti"><?= h(tr('istar_option_faculty','Fakulti')) ?></option>
-                  <option value="universiti"><?= h(tr('istar_option_university','Universiti')) ?></option>
-                  <option value="negeri"><?= h(tr('istar_option_state','Negeri')) ?></option>
-                  <option value="kebangsaan"><?= h(tr('istar_option_national','Kebangsaan')) ?></option>
+                <select name="peringkat" class="form-select form-select-sm">
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupPeringkat as $opt): ?>
+                        <option value="<?= h($opt['peringkat_code']) ?>">
+                            <?= h($opt['peringkat_my']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
               </div>
 
               <!-- Pencapaian -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('pencapaian','Pencapaian')) ?></label>
-                <select name="pencapaian" class="form-select">
-                  <option value=""><?= h(tr('istar_common_select','-- Sila Pilih --')) ?></option>
-                  <option value="emas"><?= h(tr('istar_result_gold','Johan / Emas')) ?></option>
-                  <option value="perak"><?= h(tr('istar_result_silver','Naib Johan / Perak')) ?></option>
-                  <option value="gangsa"><?= h(tr('istar_result_bronze','Tempat Ketiga / Gangsa')) ?></option>
-                  <option value="peserta"><?= h(tr('istar_result_participant','Peserta')) ?></option>
+                <select name="pencapaian" class="form-select form-select-sm">
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupPencapaian as $opt): ?>
+                        <option value="<?= h($opt['pencapaian_code']) ?>">
+                            <?= h($opt['pencapaian_my']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
               </div>
 
               <!-- Dokumen -->
               <div class="mb-3">
                 <label class="form-label">
-                  <?= h(tr('profile_dokumen_sokongan','Dokumen Sokongan')) ?>
+                  <?= h(tr('dokumen_penglibatan','Dokumen Sokongan')) ?>
                 </label>
-                <input type="file" name="dokumen" class="form-control"
+                <input type="file" name="dokumen-penglibatan" class="form-control"
                        accept=".jpg,.jpeg,.pdf"
                        onchange="checkFileSize(this)">
                 <small class="text-danger">
-                  <?= h(tr('profile_dokumen_sokongan_note','Max 5MB (JPG/JPEG/PDF)')) ?>
+                  <?= h(tr('dokumen_penglibatan_note','Max 5MB (JPG/JPEG/PDF)')) ?>
                 </small>
               </div>
 

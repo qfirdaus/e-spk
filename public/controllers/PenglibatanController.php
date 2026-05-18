@@ -13,14 +13,7 @@ class PenglibatanController
     public function __construct()
     {                
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-        $action = $_GET['action'] ?? '';
-
-        if ($action === 'updateDraft') {
-            $this->updateDraft();
-            exit; // penting supaya stop execution
-        }
-
+        
         $pdoIStAD = Database::pdoAdditional('dbx_mysql_istaddb', 'production');
         $pdoIStAD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -29,42 +22,48 @@ class PenglibatanController
         $pdoEhepa->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->model = new Penglibatan($pdoIStAD, $pdoEhepa);
+
+        $action = $_GET['action'] ?? '';
+
+        if ($action === 'updateDraft') {
+            $this->updateDraft();
+            exit; 
+        }
+
+        if ($action === 'deleteDraft') {
+            $this->deleteDraft();
+            exit;
+        }
+
+        if ($action === 'syncIstad') {
+            $this->syncIstad();
+            exit;
+        }
     }
 
     public function getAllPenglibatan(): array
     {
         $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
 
-        $istad = $this->model->getAllKegiatan($matrik);
-
         require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/PenglibatanDraftHelper.php';
 
-        $draft = getPenglibatanDraft($matrik);
-        $map = [];
+        $wrapper = getPenglibatanDraft($matrik);
 
-        /** MAP EXISTING DRAFT  */
-        foreach ($draft as &$d) {
-            if (!empty($d['id_kegiatan_pelajar'])) {
-                $map[$d['id_kegiatan_pelajar']] = &$d;
-            }
-        }
-        unset($d);
+        // FIRST TIME → create from IStAD 
+        // pertama kali buka, belum ada draft, baru generate dari IStAD. Lepas tu save sebagai draft utk next time load terus dari draft
+        if (!$wrapper['draft_initialized']) {
 
-        /** SYNC IStAD */
-        foreach ($istad as $row) {
+            $istad = $this->model->getAllKegiatan($matrik);
 
-            $istadId = $row['id_kegiatan_pelajar'] ?? null;
+            $data = [];
 
-            if ($istadId && isset($map[$istadId])) {
-                if (empty($map[$istadId]['source_override'])){
-                    $map[$istadId]['nama'] = $row['nama'] ?? '';
-                    $map[$istadId]['tarikh'] = $row['tarikh'] ?? null;
-                    $map[$istadId]['pencapaian'] = $row['pencapaian'] ?? 'PESERTA';
-                }
-            } else {
-                $draft[] = [
-                    'id' => $istadId ? 'ISTAD_' . $istadId : uniqid('DRAFT_'),
-                    'id_kegiatan_pelajar' => $istadId,
+            foreach ($istad as $row) {
+
+                $id = $row['id_kegiatan_pelajar'] ?? null;
+
+                $data[] = [
+                    'id' => $id ? 'ISTAD_' . $id : uniqid('DRAFT_'),
+                    'id_kegiatan_pelajar' => $id,
                     'sumber' => 'IStAD',
                     'nama' => $row['nama'] ?? '',
                     'tarikh' => $row['tarikh'] ?? null,
@@ -73,33 +72,19 @@ class PenglibatanController
                     'pencapaian' => $row['pencapaian'] ?? 'PESERTA',
                     'is_dirty' => false,
                     'conflict' => false,
-                    'original_snapshot' => [
-                        'nama' => $row['nama'] ?? '',
-                        'tarikh' => $row['tarikh'] ?? null,
-                    ]
+                    'source_override' => false
                 ];
             }
+
+            saveDraft($matrik, $data);
+
+            return $data;
         }
 
-        savePenglibatanDraft($matrik, $draft);
-        return $draft;
-    }
-
-    public function getPenglibatanDraft(): array
-    {
-        try {
-
-            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
-
-            $istad = $this->model->getAllKegiatan($matrik);
-
-            return loadPenglibatanDraft($matrik, $istad);
-
-        } catch (Throwable $e) {
-
-            return [];
-        }
-    }    
+        //error_log('TOTAL ROWS: ' . count($wrapper['rows']));
+        //error_log(print_r($wrapper['rows'], true)); //apache log
+        return array_values($wrapper['rows'] ?? []);
+    } 
 
     public function updateDraft()
     {
@@ -112,7 +97,8 @@ class PenglibatanController
         $field = $_POST['field'] ?? '';
         $value = $_POST['value'] ?? '';
 
-        $rows = getPenglibatanDraft($matrik);
+        $wrapper = getPenglibatanDraft($matrik);
+        $rows = $wrapper['rows'];
 
         if (!$id || !$field) {
             echo json_encode([
@@ -146,7 +132,7 @@ class PenglibatanController
             }
         }
 
-        savePenglibatanDraft($matrik, $rows);
+        saveDraft($matrik, $rows);
 
         echo json_encode([
             'status' => 'ok',
@@ -167,32 +153,203 @@ class PenglibatanController
 
         $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
 
-        $rows = getPenglibatanDraft($matrik);
+        $wrapper = getPenglibatanDraft($matrik);
+        $rows = $wrapper['rows'];        
 
+        // validate input
+        $nama = trim($_POST['nama_penuh'] ?? '');
+        $tarikh = trim($_POST['tarikh'] ?? '');
+        $wakil = $_POST['wakil'] ?? '';
+        $peringkat = $_POST['peringkat'] ?? '';
+        $pencapaian = $_POST['pencapaian'] ?? '';
+
+        if ($nama === '' || $tarikh === '' || $wakil === '' || $peringkat === '' || $pencapaian === '') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Sila lengkapkan semua maklumat'
+            ]);
+            exit;
+        }
+
+        //upload file utk sumber tambahan
+        if (!isset($_FILES['dokumen-penglibatan']) || $_FILES['dokumen-penglibatan']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Dokumen sokongan wajib dimuat naik'
+            ]);
+            exit;
+        }
+
+        $file = $_FILES['dokumen-penglibatan'];
+
+        $allowed = ['pdf', 'jpg', 'jpeg'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Format fail tidak dibenarkan. Hanya PDF, JPG, JPEG dibenarkan.'
+            ]);
+            exit;
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Saiz fail maksimum 5MB'
+            ]);
+            exit;
+        }
+
+        // folder simpan
+        $path = 'pages/iStar/permohonan/konvo/uploads/penglibatan/';
+        $uploadDir = dirname(__DIR__) . '/' . $path;
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        $newFileName = $matrik . '-' . uniqid('dok_') . '.' . $ext;
+        $fullPath = $uploadDir . $newFileName;
+
+        move_uploaded_file($file['tmp_name'], $fullPath);
+
+        //  CREATE ROW
         $newRow = [
             'id' => uniqid('new_'),
             'id_kegiatan_pelajar' => null,
             'sumber' => 'Tambahan',
-            'nama' => $_POST['nama_penuh'] ?? '',
-            'tarikh' => $_POST['tarikh'] ?? '',
-            'wakil' => $_POST['wakil'] ?? '',
-            'peringkat' => $_POST['peringkat'] ?? '',
-            'pencapaian' => $_POST['pencapaian'] ?? '',
+
+            'nama' => $nama,
+            'tarikh' => $tarikh,
+            'wakil' => $wakil,
+            'peringkat' => $peringkat,
+            'pencapaian' => $pencapaian,
+            'dokumen' => [
+                'filename' => $newFileName,
+                'path' => $path . $newFileName,
+                'uploaded_at' => date('Y-m-d H:i:s')
+            ],
+
             'is_dirty' => true,
             'conflict' => false
         ];
 
         $rows[] = $newRow;
 
-        savePenglibatanDraft($matrik, $rows);
+        saveDraft($matrik, $rows);
+        $lookup = $this->getAllLookup();
 
         echo json_encode([
             'status' => 'ok',
             'message' => 'Rekod berjaya ditambah',
-            'data' => $newRow
-        ]);
+            'data' => $newRow,
+            'lookup' => $lookup
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
+
+    public function deleteDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/PenglibatanDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $id = trim($_POST['id'] ?? '');
+
+        if ($id === '') {
+
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID tidak sah'
+            ]);
+
+            exit;
+        }
+
+        $wrapper = getPenglibatanDraft($matrik);
+
+        $rows = $wrapper['rows'] ?? [];
+
+        $filtered = [];
+
+        foreach ($rows as $row) {
+
+            // skip row yg nak delete
+            if (
+                ($row['id'] ?? '') === $id
+                && ($row['sumber'] ?? '') === 'Tambahan'
+            ) {
+                continue;
+            }
+
+            $filtered[] = $row;
+        }
+
+        saveDraft($matrik, $filtered);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Rekod berjaya dipadam'
+        ]);
+
+        exit;
+    }
+
+    public function syncIstad()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/PenglibatanDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $wrapper = getPenglibatanDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+
+        // ambil fresh dari IStAD
+        $istad = $this->model->getAllKegiatan($matrik);
+
+        $newIstadRows = [];
+
+        foreach ($istad as $row) {
+
+            $id = $row['id_kegiatan_pelajar'] ?? null;
+
+            $newIstadRows[] = [
+                'id' => $id ? 'ISTAD_' . $id : uniqid('ISTAD_'),
+                'id_kegiatan_pelajar' => $id,
+                'sumber' => 'IStAD',
+
+                'nama' => $row['nama'] ?? '',
+                'tarikh' => $row['tarikh'] ?? null,
+
+                'wakil' => null,
+                'peringkat' => null,
+                'pencapaian' => $row['pencapaian'] ?? 'PESERTA',
+
+                'is_dirty' => false,
+                'conflict' => false,
+                'source_override' => false
+            ];
+        }
+
+        // KEEP Tambahan, REPLACE ONLY IStAD
+        $filtered = array_values(array_filter($rows, function ($r) {
+            return ($r['sumber'] ?? '') !== 'IStAD';
+        }));
+
+        $merged = array_merge($filtered, $newIstadRows);
+
+        saveDraft($matrik, $merged);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'IStAD berjaya disync'
+        ]);
+        exit;
+    }    
 
     public function getAllJawatanDisandang(): array
     {
@@ -208,6 +365,15 @@ class PenglibatanController
     }
 
     /** Get lookup data */
+    public function getAllLookup(): array
+    {
+        return [
+            'wakil' => $this->getLookupWakil(),
+            'peringkat' => $this->getLookupPeringkat(),
+            'pencapaian' => $this->getLookupPencapaian(),
+        ];
+    }    
+    
     public function getLookupWakil(): array
     {
         try {

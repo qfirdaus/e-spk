@@ -21,17 +21,26 @@ function getPenglibatanDraft(string $matrik): array
     $path = penglibatanDraftPath($matrik);
 
     if (!file_exists($path)) {
-        return [];
+        return [
+            'draft_initialized' => false,
+            'rows' => []
+        ];
     }
 
     $json = file_get_contents($path);
     $data = json_decode($json, true);
 
     if (!is_array($data)) {
-        return [];
+        return [
+            'draft_initialized' => false,
+            'rows' => []
+        ];
     }
 
-    return $data['rows'] ?? [];
+    return [
+        'draft_initialized' => $data['draft_initialized'] ?? false,
+        'rows' => $data['rows'] ?? []
+    ];
 }
 
 /*
@@ -45,32 +54,41 @@ function loadPenglibatanDraft(string $matrik, array $istadRows = []): array
 
     if (!file_exists($path)) {
 
-        // convert IStAD → draft awal
         $rows = [];
 
         foreach ($istadRows as $i => $row) {
 
             $rows[] = [
-                'id'          => 'istad_' . $i,
+                'id' => 'ISTAD_' . ($row['id_kegiatan_pelajar'] ?? $i),
                 'id_kegiatan_pelajar' => $row['id_kegiatan_pelajar'] ?? null,
-                'sumber'      => 'IStAD',
-                'nama'        => $row['nama'] ?? '',
-                'tarikh'      => $row['tarikh'] ?? '',
-                'wakil'       => null,
-                'peringkat'   => null,
-                'pencapaian'  => 'PESERTA'
+                'sumber' => 'IStAD',
+                'nama' => $row['nama'] ?? '',
+                'tarikh' => $row['tarikh'] ?? '',
+                'wakil' => null,
+                'peringkat' => null,
+                'pencapaian' => 'PESERTA',
+                'source_override' => false
             ];
         }
 
-        savePenglibatanDraft($matrik, $rows);
+        $payload = [
+            'draft_initialized' => true,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'rows' => $rows
+        ];
 
-        return $rows;
+        saveDraft($matrik, $rows);
+
+        return $payload;
     }
 
     $json = file_get_contents($path);
     $data = json_decode($json, true);
 
-    return $data['rows'] ?? [];
+    return [
+        'draft_initialized' => $data['draft_initialized'] ?? false,
+        'rows' => $data['rows'] ?? []
+    ];
 }
 
 /*
@@ -78,7 +96,7 @@ function loadPenglibatanDraft(string $matrik, array $istadRows = []): array
 | SAVE DRAFT
 |--------------------------------------------------------------------------
 */
-function savePenglibatanDraft(string $matrik, array $rows): bool
+function savePenglibatanDraft(string $matrik, array $payload): bool
 {
     $path = penglibatanDraftPath($matrik);
 
@@ -86,19 +104,19 @@ function savePenglibatanDraft(string $matrik, array $rows): bool
         mkdir(dirname($path), 0775, true);
     }
 
-    foreach ($rows as $row) {
-        if (!isset($row['id']) || !isset($row['sumber']) || !array_key_exists('nama', $row)) {
-            throw new Exception("Invalid draft structure");
-        }
-    }
-
-    $payload = [
-        'updated_at' => date('Y-m-d H:i:s'),
-        'rows' => array_values($rows)
-    ];
-
     return (bool) file_put_contents(
         $path,
         json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
+}
+
+function saveDraft(string $matrik, array $rows): bool
+{
+    $payload = [
+        'draft_initialized' => true,
+        'updated_at' => date('Y-m-d H:i:s'),
+        'rows' => array_values($rows)
+    ];
+
+    return savePenglibatanDraft($matrik, $payload);
 }
