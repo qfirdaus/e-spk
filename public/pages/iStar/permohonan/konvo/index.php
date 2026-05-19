@@ -145,7 +145,9 @@
 
               <!-- Tab 3: Jawatan Yang Disandang -->
               <div class="tab-pane fade" id="jawatan-disandang-tab" role="tabpanel">
-                  <?php include __DIR__ . '/f-jawatan-disandang.php'; ?> 
+                  <div id="jawatan-content" class="text-center py-3">
+                      Memuatkan Data...
+                  </div>
               </div>
 
               <!-- Tab 4: Anugerah dan Pengiktirafan -->
@@ -175,7 +177,14 @@
     include __DIR__ . '/modal.php';
   ?>
 
-  <script> const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; </script> 
+  <script> 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
+      const msg_load = {
+          processing: "<?= h(tr('data_processing','Sedang diproses...n')) ?>",
+          loading: "<?= h(tr('data_loading','Anugerah dan Pengiktirafan'), 'Sedang memuatkan...') ?>",
+          syncronizing: "<?= h(tr('data_synchronizing','Anugerah dan Pengiktirafan'), 'Menyelaraskan data...') ?>"
+      };
+  </script> 
   <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
 

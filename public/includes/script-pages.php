@@ -210,4 +210,30 @@
     initPageEnhancements();
   }
 })();
+
+  function showLoading(messageKey = 'processing') {
+    const message = msg_load[messageKey] || msg_load.processing; 
+    
+    hideLoading();
+    if (window.AppLoader && typeof window.AppLoader.show === 'function') {
+      window.__userListLoaderToken = window.AppLoader.show(message);
+      return;
+    }
+
+    if (window.IQSLoader && typeof window.IQSLoader.show === 'function') {
+      window.__userListLoaderToken = window.IQSLoader.show(message);
+    }
+  }
+
+  function hideLoading() {
+    if (!window.__userListLoaderToken) {
+      return;
+    }
+    if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
+      window.AppLoader.hide(window.__userListLoaderToken);
+    } else if (window.IQSLoader && typeof window.IQSLoader.hide === 'function') {
+      window.IQSLoader.hide(window.__userListLoaderToken);
+    }
+    window.__userListLoaderToken = null;
+  }
 </script>

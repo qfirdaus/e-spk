@@ -1,5 +1,6 @@
 const saveTimers = {};
 let penglibatanLoaded = false;
+let jawatanLoaded = false;
 
 function showToast(message, type = 'success') {
 
@@ -53,6 +54,7 @@ function loadPenglibatan() {
     console.log('LOADING PENGLIBATAN...');
 
     box.innerHTML = '<div class="text-center py-3">Memuatkan Data...</div>';
+    showLoading('loading');
 
     fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-penglibatan.php')
         .then(res => res.text())
@@ -61,10 +63,11 @@ function loadPenglibatan() {
             box.innerHTML = html;
 
             console.log('PENGLIBATAN LOADED');
+            hideLoading();
 
-            requestAnimationFrame(() => {
+            setTimeout(() => {
                 initStandardDataTable('#penglibatanDT');
-            });
+            }, 0);
 
             penglibatanLoaded = true;
         })
@@ -74,7 +77,40 @@ function loadPenglibatan() {
         });
 }
 
+function loadJawatan() {
 
+    if (jawatanLoaded) return;
+
+    const box = document.getElementById('jawatan-content');
+
+    if (!box) return;
+
+    box.innerHTML = 'Loading...';
+    showLoading('loading');
+
+    fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-jawatan.php')
+
+        .then(res => res.text())
+        .then(html => {
+
+            box.innerHTML = html;
+            hideLoading();
+            
+            requestAnimationFrame(() => {
+                initStandardDataTable('#jawatanDT');
+            });
+
+            jawatanLoaded = true;
+        })
+        .catch(err => {
+            console.log(err);
+            box.innerHTML = '<div class="text-danger">Gagal load data</div>';
+            hideLoading();
+        });
+
+}
+
+// tab listener to load content on demand when tab is shown
 document.addEventListener('shown.bs.tab', function (event) {
     console.log('BOOTSTRAP TAB LISTENER READY');
     const target = event.target.getAttribute('href');
@@ -86,6 +122,14 @@ document.addEventListener('shown.bs.tab', function (event) {
             loadPenglibatan();
         }
     }
+
+    if (target === '#jawatan-disandang-tab') {
+
+        if (!jawatanLoaded) {
+            loadJawatan();
+        }
+
+    }    
 
 });
 
@@ -107,18 +151,53 @@ function initStandardDataTable(tableId) {
         scrollX: false,
         responsive: true,
         dom:
-            '<"row mb-2"' +
-                '<"col-sm-12 col-md-6"l>' +
-                '<"col-sm-12 col-md-6 d-flex justify-content-end"f>' +
-            '>' +
+        "<'row mb-2 align-items-center dt-header'" +
+            "<'col-md-6 d-flex align-items-center dt-left'l>" +
+            "<'col-md-6 d-flex justify-content-end align-items-center gap-2 dt-right'f>" +
+        ">" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
+        initComplete: function () {
 
-            't' +
+            let toolbar = '';
 
-            '<"row mt-2"' +
-                '<"col-sm-12 col-md-6"i>' +
-                '<"col-sm-12 col-md-6 d-flex justify-content-end"p>' +
-            '>',
+            if (tableId === '#penglibatanDT') {
 
+                toolbar = `
+                    <div class="d-flex gap-2 ms-2">
+                        <button type="button"
+                                id="syncIstadBtn"
+                                class="btn btn-primary rounded-3">
+                            <i class="ri-refresh-line me-1"></i>
+                            Sync IStAD
+                        </button>
+
+                        <button type="button"
+                                id="penglibatanBtnAdd"
+                                class="btn btn-success rounded-3">
+                            <i class="ri-add-line me-1"></i>
+                            Tambah Baru
+                        </button>
+                    </div>
+                `;
+            }
+
+            if (tableId === '#jawatanDT') {
+
+                toolbar = `
+                    <div class="d-flex gap-2 ms-2">
+                        <button type="button"
+                                id="jawatanBtnAdd"
+                                class="btn btn-success rounded-3">
+                            <i class="ri-add-line me-1"></i>
+                            Tambah Baru
+                        </button>
+                    </div>
+                `;
+            }
+
+            jQuery(tableId + '_filter').parent().append(toolbar);
+        },
         language: {
             search: "",
             searchPlaceholder: "Search",
@@ -141,12 +220,11 @@ function initStandardDataTable(tableId) {
                 searchable: false,
                 width: 60
             },
-
-            {
+            {  // Tindakan 
                 targets: -1,
                 orderable: false,
                 searchable: false,
-                width: 120
+                width: 150
             }
 
         ],
@@ -197,10 +275,10 @@ jQuery(document).on('click', '#anugerahBtnAdd', function () {
 });
 
 jQuery(function () {
-    // Update
+    // Update Penglibatan
     jQuery(document).on(
         'change',
-        '#penglibatanDT tbody select, #penglibatanDT tbody input, #penglibatanDT tbody textarea',
+        '#penglibatanDT tbody select, #penglibatanDT tbody textarea, #penglibatanDT tbody input:not([type=file])',
         function () {
 
             let el = jQuery(this);
@@ -270,7 +348,99 @@ jQuery(function () {
         }
     );
 
-    // Delete
+    // Update Document Penglibatan - kemaskini dokumen secara inline bila file dipilih
+    jQuery(document).on('change', '.dokumen-inline', function () {
+
+        const input = this;
+
+        if (!input.files.length) return;
+
+        const file = input.files[0];
+
+        const rowId = jQuery(this).data('id');
+
+        const tr = jQuery(this).closest('tr');
+
+        const formData = new FormData();
+
+        formData.append('id', rowId);
+        formData.append('dokumen', file);
+
+        tr.removeClass('row-success row-error');
+        tr.addClass('row-saving');
+
+        jQuery.ajax({
+
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=updateDokumen',
+
+            method: 'POST',
+
+            data: formData,
+
+            processData: false,
+            contentType: false,
+
+            dataType: 'json',
+
+            success: function (res) {
+
+                tr.removeClass('row-saving');
+
+                if (res.status === 'ok') {
+
+                    tr.addClass('row-success');
+
+                    showToast(res.message || 'Dokumen berjaya dikemaskini');
+
+                    // UPDATE LINK VIEW BUTTON
+                    const filePath = res.path; // <-- kena return dari backend
+
+                    if (filePath) {
+                        tr.find('a.btn-outline-warning').attr('href', base_url + filePath);
+                    }
+
+                    setTimeout(() => {
+                        tr.removeClass('row-success');
+                    }, 1500);
+
+                } else {
+
+                    tr.addClass('row-error');
+
+                    showToast(res.message || 'Gagal update dokumen', 'error');
+
+                }
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr.responseText);
+
+                tr.removeClass('row-saving');
+                tr.addClass('row-error');
+
+                showToast('Ralat sistem', 'error');
+
+            }
+
+        });
+
+    });    
+
+    // button trigger for upload document penglibatan
+    jQuery(document).on('click', '.upload-btn', function () {
+        const tr = jQuery(this).closest('tr');
+        const input = tr.find('.dokumen-inline')[0];
+
+        if (input) {
+            input.click();
+        } else {
+            console.log('FILE INPUT NOT FOUND');
+        }
+    });
+
+    // Delete penglibatan
     jQuery(document).on('click', '.btn-delete-penglibatan', function () {
 
         const btn = jQuery(this);
@@ -352,7 +522,7 @@ jQuery(function () {
 
     });   
 
-    // Add New
+    // Add New Penglibatan
     jQuery(document).on('submit', '#penglibatanForm', function (e) {
 
         console.log('PENGLIBATAN FORM SUBMIT TRIGGERED');
@@ -428,6 +598,8 @@ jQuery(function () {
 
             const btn = jQuery(this);
             btn.prop('disabled', true);
+          
+            showLoading('syncronizing');
 
             jQuery.ajax({
                 url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=syncIstad',
@@ -435,14 +607,14 @@ jQuery(function () {
                 dataType: 'json',
 
                 success: function (res) {
-
+                    hideLoading(); 
                     btn.prop('disabled', false);
 
                     if (res.status === 'ok') {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Sync Berjaya',
+                            title: 'Penyelarasan Data Berjaya',
                             html: `
                                 <b> ${res.message || ''} </b>
                             `,
@@ -459,7 +631,7 @@ jQuery(function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal',
-                            text: res.message || 'Sync gagal'
+                            text: res.message || 'Penyelarasan data gagal'
                         });
                     }
                 },
@@ -480,4 +652,29 @@ jQuery(function () {
         });
 
     });    
+
+    //Update Jawatan Disandang
+    jQuery(document).on(
+        'change',
+        '#jawatanDT tbody input, #jawatanDT tbody select, #jawatanDT tbody textarea',
+        function () {
+            let el = jQuery(this);
+            let tr = el.closest('tr');
+            let rowId = tr.data('id');
+            let field = this.name;
+            let value = el.val();
+
+            jQuery.ajax({
+                url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateDraft',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    id: rowId,
+                    field: field,
+                    value: value
+                }
+            });
+
+        }
+    );        
 });

@@ -46,6 +46,7 @@ class Penglibatan
                 id_jawatan,
                 jawatan,
                 'IStAD' AS sumber,
+                id_kegiatan_pelajar AS id_kegiatan_badan,
                 nama_kegiatan_pelajar AS nama_bp_program,
                 tarikh_mula,
                 tarikh_tamat,
@@ -60,6 +61,7 @@ class Penglibatan
                 id_jawatan,
                 jawatan,
                 'IStAD' AS sumber,
+                id_ahli_bp AS id_kegiatan_bp,
                 nama_badan_pelajar AS nama_bp_program,
                 tarikh_mula,
                 tarikh_tamat,
@@ -110,6 +112,19 @@ class Penglibatan
             SELECT pencapaian_code, pencapaian_my
             FROM lp_achievement
             ORDER BY pencapaian_my, pencapaian_en ASC
+        ";
+
+        $stmt = $this->ehepa->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getJawatanLookup(): array
+    {
+        $sql = "
+            SELECT jawatan_code, jawatan_my
+            FROM lp_position
+            ORDER BY jawatan_my, jawatan_en ASC
         ";
 
         $stmt = $this->ehepa->prepare($sql);

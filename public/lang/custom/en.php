@@ -296,4 +296,10 @@ return [
 'template_senarai_crud_sample_add_success_text' => 'The sample add flow completed without sending any data to the backend.',
 'template_senarai_crud_sample_add_success_title' => 'Sample Add Complete',
 // ===== END Generated Template: Template Senarai CRUD [template_senarai_crud] =====
+
+// ===== BEGIN Pages Loading =====
+'data_processing' => 'Processing...',
+'data_loading' => 'Loading...',
+'data_synchronizing' => 'Synchronizing data...',
+// ===== END Pages Loading =====
 ];

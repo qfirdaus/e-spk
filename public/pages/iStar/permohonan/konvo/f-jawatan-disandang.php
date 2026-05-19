@@ -1,10 +1,6 @@
-<div class="col-12 text-end mt-3">
-  <button type="button" id="jawatanBtnAdd" class="btn btn-success sync-groups-btn">
-    <i class="ri-add-line"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
-  </button>                
+<div class="icares-address-panel-header">
+  <h5 class="text-h5"><?= h(tr('profile_senarai_jawatan_disandang','Senarai Jawatan Disandang')) ?></h5>
 </div>
-<h5 class="text-h5"><?= h(tr('profile_senarai_jawatan_disandang','Senarai Jawatan Disandang')) ?></h5>
-<hr>
 <div class="table-responsive dt-standard">
   <table id="jawatanDT" class="table table-bordered align-middle w-100">
     <thead>
@@ -24,7 +20,7 @@
 
         <tr>
           <td class="col-bil"></td>
-          <td>
+          <td align="left">
             <?= h($row['nama_bp_program'] ?? '-') ?>
             <!-- <span class="access-chip is-allowed truncate-1line" data-bs-toggle="tooltip" data-bs-custom-class="template-tooltip" data-bs-original-title="IStAD">IStAD</span> -->
           </td>

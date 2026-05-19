@@ -30,7 +30,7 @@
                 <label class="form-label">
                   <?= h(tr('nama_program_pertandingan','Nama Program / Nama Pertandingan')) ?>
                 </label>
-                <input type="text" name="nama_penuh" class="form-control">
+                <input type="text" name="nama_penuh" class="form-control" oninput="this.value = this.value.toUpperCase()">
               </div>
 
               <!-- Tarikh -->

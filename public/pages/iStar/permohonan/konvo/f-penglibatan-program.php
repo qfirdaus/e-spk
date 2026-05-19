@@ -1,11 +1,3 @@
-<div class="col-sm-12 col-md-12 d-flex justify-content-md-end dt-top-right align-items-center gap-2 flex-nowrap ">
-    <button type="button" id="syncIstadBtn" class="btn btn-primary rounded-3">
-        <i class="ri-refresh-line me-1"></i> Sync IStAD
-    </button>    
-    <button type="button" id="penglibatanBtnAdd" class="btn btn-success sync-groups-btn">
-        <i class="ri-add-line me-1"></i><span><?= h(tr('button_add_new', 'Tambah Baru')) ?></span>
-    </button>                
-</div>
 <div class="icares-address-panel-header">
   <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
 </div>
@@ -95,8 +87,9 @@
                         <?php endforeach; ?>
                     </select>
                 </td>
-                <td>
 
+                <!-- TINDAKAN -->
+                <td>
                     <?php 
                     if (
                         ($row['sumber'] ?? '') === 'Tambahan'
@@ -105,10 +98,21 @@
 
                         <a href="<?= base_url($row['dokumen']['path']) ?>"
                         target="_blank"
-                        class="btn btn-sm btn-outline-warning">
+                        class="btn btn-sm btn-outline-warning"
+                        title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                             <i class="ri-eye-line"></i>
-                        </a>
+                        </a>                     
+                        <button type="button"
+                                class="btn btn-sm btn-outline-info upload-btn"
+                                title="<?= h(tr('kemaskini_dokumen', 'Kemaskini Dokumen Sokongan')) ?>"
+                                data-id="<?= h($row['id']) ?>">
+                            <i class="bi bi-upload"></i>
+                        </button>
 
+                        <input type="file"
+                            class="dokumen-inline d-none"
+                            data-id="<?= h($row['id']) ?>"
+                            accept=".pdf,.jpg,.jpeg">
                     <?php else: ?>
                         -
                     <?php endif; ?>
@@ -116,6 +120,7 @@
                     <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
                         <button type="button"
                                 class="btn btn-sm btn-outline-danger btn-delete-penglibatan"
+                                title = "<?= h(tr('delete', 'Hapus Rekod')) ?>"
                                 data-id="<?= h($row['id']) ?>">
                             <i class="ri-delete-bin-line"></i>
                         </button>
