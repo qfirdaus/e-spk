@@ -47,7 +47,7 @@ class PeribadiController
                 );
             }
 
-            $avatar = $this->model->getAvatar($student['matrik'], base_url('assets/images/no-image.jpg'));
+            $avatar = $this->model->getAvatar((string)($student['matrik'] ?? ''), base_url('assets/images/no-image.jpg'));
             return $this->model->formatStudent($student, $avatar);
 
         } catch (Throwable $e) {

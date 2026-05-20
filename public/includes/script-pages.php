@@ -102,6 +102,64 @@
     return pane && pane.id ? '#' + pane.id : (window.location.hash || '');
   }
 
+  function shouldUseLocalSubmitFeedback() {
+    const currentPath = String(window.location.pathname || '').replace(/\\/g, '/');
+    return /\/pages\/(?:iStar|rekod-utama|iCareS)\//.test(currentPath);
+  }
+
+  function findRelatedSkeleton(form) {
+    let sibling = form.previousElementSibling;
+    while (sibling) {
+      if (sibling.classList && sibling.classList.contains('skeleton-loader')) {
+        return sibling;
+      }
+      sibling = sibling.previousElementSibling;
+    }
+
+    return form.parentElement ? form.parentElement.querySelector('.skeleton-loader') : null;
+  }
+
+  function resolveSubmitButton(form, submitEvent) {
+    if (submitEvent && submitEvent.submitter instanceof HTMLElement) {
+      return submitEvent.submitter;
+    }
+
+    return form.querySelector('button[type="submit"], input[type="submit"]');
+  }
+
+  function setLocalSubmitFeedback(form, submitEvent) {
+    if (!shouldUseLocalSubmitFeedback()) return;
+    if (form.dataset.localSubmitPending === '1') return;
+
+    const method = String(form.getAttribute('method') || 'get').toLowerCase();
+    const action = String(form.getAttribute('action') || '').trim();
+    if (method !== 'post' || action === '' || action === '#') return;
+
+    form.dataset.localSubmitPending = '1';
+    form.setAttribute('aria-busy', 'true');
+
+    const skeleton = findRelatedSkeleton(form);
+    if (skeleton) {
+      skeleton.style.display = 'block';
+    }
+
+    form.style.opacity = '0.55';
+    form.style.pointerEvents = 'none';
+
+    const submitButton = resolveSubmitButton(form, submitEvent);
+    if (!submitButton) return;
+
+    if (submitButton.tagName === 'BUTTON') {
+      submitButton.dataset.originalHtml = submitButton.innerHTML;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' + <?= json_encode(tr('profile_js_processing', 'Sedang diproses...'), JSON_UNESCAPED_UNICODE) ?>;
+    } else {
+      submitButton.dataset.originalValue = submitButton.value;
+      submitButton.value = <?= json_encode(tr('profile_js_processing', 'Sedang diproses...'), JSON_UNESCAPED_UNICODE) ?>;
+    }
+
+    submitButton.disabled = true;
+  }
+
   function showTabFromHash() {
     const hash = window.location.hash || '';
     if (!hash || hash === '#') return;
@@ -175,6 +233,9 @@
   document.addEventListener('submit', function (event) {
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
+
+    setLocalSubmitFeedback(form, event);
+
     const action = form.getAttribute('action') || '';
     if (!/\/actions\/profile-update\.php(?:$|[?#])/.test(action)) return;
 

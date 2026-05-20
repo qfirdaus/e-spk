@@ -73,6 +73,16 @@
 
     <tbody>
 
+      <?php if ($anugerahData === []): ?>
+
+        <tr>
+          <td colspan="7" class="text-center text-muted py-4">
+            <?= h(tr('icares_empty_records', 'Tiada rekod anugerah disimpan lagi.')) ?>
+          </td>
+        </tr>
+
+      <?php endif; ?>
+
       <?php foreach ($anugerahData as $row): ?>
 
         <?php
@@ -173,7 +183,8 @@
 
               <!-- DELETE -->
               <button type="button"
-                      class="btn btn-sm btn-outline-danger js-delete-row"
+                      class="btn btn-sm btn-outline-danger btn-delete-anugerah"
+                      data-id="<?= h((string)($row['id'] ?? '')) ?>"
                       data-row='<?= $rowJson ?>'>
 
                 <i class="ri-delete-bin-line"></i>

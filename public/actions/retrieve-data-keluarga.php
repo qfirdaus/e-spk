@@ -1,16 +1,18 @@
 <?php
 require_once __DIR__ . '/../controllers/PeribadiController.php';
 
-const PROFILE_CONFIG = [
-  'LOGIN_ACTIVITY_LIMIT' => 50,
-  'AUDIT_EVENTS_LIMIT' => 100,
-  'DATATABLES_PAGE_LENGTH' => 10,
-  'DATATABLES_INIT_DELAY' => 300,
-  'TOAST_DURATION' => 1400,
-  'POLLING_INTERVAL' => 100,
-  'POLLING_MAX_ATTEMPTS' => 50,
-  'COPY_RATE_LIMIT' => 1000
-];
+if (!defined('PROFILE_CONFIG')) {
+  define('PROFILE_CONFIG', [
+    'LOGIN_ACTIVITY_LIMIT' => 50,
+    'AUDIT_EVENTS_LIMIT' => 100,
+    'DATATABLES_PAGE_LENGTH' => 10,
+    'DATATABLES_INIT_DELAY' => 300,
+    'TOAST_DURATION' => 1400,
+    'POLLING_INTERVAL' => 100,
+    'POLLING_MAX_ATTEMPTS' => 50,
+    'COPY_RATE_LIMIT' => 1000
+  ]);
+}
 
 $errorMessage = null;
 $userDetails = [];

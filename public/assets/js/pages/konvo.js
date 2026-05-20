@@ -2,6 +2,66 @@ const saveTimers = {};
 let penglibatanLoaded = false;
 let jawatanLoaded = false;
 
+function resolveLoadMessage(messageKey) {
+    if (typeof msg_load !== 'undefined' && msg_load && msg_load[messageKey]) {
+        return msg_load[messageKey];
+    }
+
+    if (typeof msg_load !== 'undefined' && msg_load && msg_load.processing) {
+        return msg_load.processing;
+    }
+
+    return 'Sedang diproses...';
+}
+
+function renderInlineLoader(message) {
+    return `
+        <div class="konvo-inline-loader" role="status" aria-live="polite">
+            <div class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></div>
+            <span>${message}</span>
+        </div>
+    `;
+}
+
+function setSectionLoading(container, messageKey = 'loading') {
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = renderInlineLoader(resolveLoadMessage(messageKey));
+}
+
+function setButtonBusy(button, isBusy, messageKey = 'processing') {
+    const btn = button && button.jquery ? button : jQuery(button);
+
+    if (!btn.length) {
+        return;
+    }
+
+    if (isBusy) {
+        if (!btn.data('original-html')) {
+            btn.data('original-html', btn.html());
+        }
+
+        btn.prop('disabled', true);
+        btn.addClass('is-busy');
+        btn.html(`
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+            <span>${resolveLoadMessage(messageKey)}</span>
+        `);
+        return;
+    }
+
+    const originalHtml = btn.data('original-html');
+    if (originalHtml) {
+        btn.html(originalHtml);
+        btn.removeData('original-html');
+    }
+
+    btn.prop('disabled', false);
+    btn.removeClass('is-busy');
+}
+
 function showToast(message, type = 'success') {
 
     let bgClass = 'bg-success';
@@ -53,17 +113,21 @@ function loadPenglibatan() {
 
     console.log('LOADING PENGLIBATAN...');
 
-    box.innerHTML = '<div class="text-center py-3">Memuatkan Data...</div>';
-    showLoading('loading');
+    setSectionLoading(box, 'loading');
 
     fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-penglibatan.php')
-        .then(res => res.text())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Gagal load penglibatan');
+            }
+
+            return res.text();
+        })
         .then(html => {
 
             box.innerHTML = html;
 
             console.log('PENGLIBATAN LOADED');
-            hideLoading();
 
             setTimeout(() => {
                 initStandardDataTable('#penglibatanDT');
@@ -85,16 +149,19 @@ function loadJawatan() {
 
     if (!box) return;
 
-    box.innerHTML = 'Loading...';
-    showLoading('loading');
+    setSectionLoading(box, 'loading');
 
     fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-jawatan.php')
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Gagal load jawatan');
+            }
 
-        .then(res => res.text())
+            return res.text();
+        })
         .then(html => {
 
             box.innerHTML = html;
-            hideLoading();
             
             requestAnimationFrame(() => {
                 initStandardDataTable('#jawatanDT');
@@ -105,7 +172,6 @@ function loadJawatan() {
         .catch(err => {
             console.log(err);
             box.innerHTML = '<div class="text-danger">Gagal load data</div>';
-            hideLoading();
         });
 
 }
@@ -582,6 +648,109 @@ jQuery(function () {
 
     });    
 
+    jQuery(document).on('submit', '#anugerahForm', function (e) {
+
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        jQuery.ajax({
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=addDraft',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+
+            success: function (res) {
+
+                if (res.status === 'ok') {
+
+                    showToast(res.message || 'Rekod anugerah berjaya ditambah');
+
+                    form.reset();
+
+                    bootstrap.Modal.getInstance(
+                        document.getElementById('anugerahAddModal')
+                    ).hide();
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 150);
+
+                    return;
+                }
+
+                showToast(res.message || 'Gagal simpan rekod anugerah', 'error');
+            },
+
+            error: function (xhr) {
+
+                console.log('ANUGERAH AJAX ERROR:', xhr.responseText);
+
+                let msg = 'Ralat sistem. Cuba lagi.';
+
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.message) msg = res.message;
+                } catch (e) {}
+
+                showToast(msg, 'error');
+            }
+        });
+    });
+
+    jQuery(document).on('click', '.btn-delete-anugerah', function () {
+
+        const btn = jQuery(this);
+        const rowId = btn.data('id');
+
+        if (!rowId) {
+            showToast('ID rekod anugerah tidak sah', 'error');
+            return;
+        }
+
+        Swal.fire({
+            title: 'Padam rekod anugerah ini?',
+            text: 'Tindakan ini tidak boleh dibatalkan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, padam',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+
+            if (!result.isConfirmed) return;
+
+            jQuery.ajax({
+                url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=deleteDraft',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    id: rowId
+                },
+
+                success: function (res) {
+
+                    if (res.status === 'ok') {
+                        showToast(res.message || 'Rekod anugerah berjaya dipadam');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 150);
+                        return;
+                    }
+
+                    showToast(res.message || 'Gagal padam rekod anugerah', 'error');
+                },
+
+                error: function (xhr) {
+                    console.log('ANUGERAH DELETE ERROR:', xhr.responseText);
+                    showToast('Ralat sistem', 'error');
+                }
+            });
+        });
+    });
+
     //Sync IStAD
     jQuery(document).on('click', '#syncIstadBtn', function () {
 
@@ -597,9 +766,7 @@ jQuery(function () {
             if (!result.isConfirmed) return;
 
             const btn = jQuery(this);
-            btn.prop('disabled', true);
-          
-            showLoading('syncronizing');
+            setButtonBusy(btn, true, 'syncronizing');
 
             jQuery.ajax({
                 url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=syncIstad',
@@ -607,8 +774,7 @@ jQuery(function () {
                 dataType: 'json',
 
                 success: function (res) {
-                    hideLoading(); 
-                    btn.prop('disabled', false);
+                    setButtonBusy(btn, false);
 
                     if (res.status === 'ok') {
 
@@ -639,7 +805,7 @@ jQuery(function () {
                 error: function (xhr) {
                     console.log('AJAX ERROR:', xhr.responseText);
 
-                    btn.prop('disabled', false);
+                    setButtonBusy(btn, false);
 
                     Swal.fire({
                         icon: 'error',
