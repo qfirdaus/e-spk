@@ -490,7 +490,151 @@ class PenglibatanController
             'message' => 'Data IStAD berjaya diselaraskan'
         ]);
         exit;
-    }    
+    }
+
+    public function getAllAnugerah(): array
+    {
+        try {
+            require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/AnugerahDraftHelper.php';
+
+            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+            $wrapper = getAnugerahDraft($matrik);
+
+            return array_values($wrapper['rows'] ?? []);
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }
+
+    public function addAnugerahDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/AnugerahDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+        $wrapper = getAnugerahDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+
+        $namaAnugerah = trim((string)($_POST['nama_anugerah'] ?? ''));
+        $tahun = trim((string)($_POST['tahun'] ?? ''));
+        $kurniaanPemberian = trim((string)($_POST['kurniaan_pemberian'] ?? ''));
+        $peringkat = trim((string)($_POST['peringkat'] ?? ''));
+
+        if ($namaAnugerah === '' || $tahun === '' || $kurniaanPemberian === '' || $peringkat === '') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Sila lengkapkan semua maklumat anugerah',
+            ]);
+            exit;
+        }
+
+        if (!isset($_FILES['dokumen-anugerah']) || $_FILES['dokumen-anugerah']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Dokumen sokongan anugerah wajib dimuat naik',
+            ]);
+            exit;
+        }
+
+        $file = $_FILES['dokumen-anugerah'];
+        $allowed = ['pdf', 'jpg', 'jpeg'];
+        $ext = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed, true)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Format fail tidak dibenarkan. Hanya PDF, JPG, JPEG dibenarkan.',
+            ]);
+            exit;
+        }
+
+        if ((int)($file['size'] ?? 0) > 5 * 1024 * 1024) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Saiz fail maksimum 5MB',
+            ]);
+            exit;
+        }
+
+        $path = 'pages/iStar/permohonan/konvo/uploads/anugerah/';
+        $uploadDir = dirname(__DIR__) . '/' . $path;
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        $newFileName = $matrik . '-' . uniqid('award_') . '.' . $ext;
+        $fullPath = $uploadDir . $newFileName;
+
+        move_uploaded_file($file['tmp_name'], $fullPath);
+
+        $newRow = [
+            'id' => uniqid('anugerah_'),
+            'nama_anugerah' => $namaAnugerah,
+            'tahun' => $tahun,
+            'kurniaan_pemberian' => $kurniaanPemberian,
+            'peringkat' => $peringkat,
+            'dokumen' => $path . $newFileName,
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+
+        $rows[] = $newRow;
+
+        saveAnugerahRows($matrik, $rows);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Rekod anugerah berjaya ditambah',
+            'data' => $newRow,
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function deleteAnugerahDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/AnugerahDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+        $id = trim((string)($_POST['id'] ?? ''));
+
+        if ($id === '') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID tidak sah',
+            ]);
+            exit;
+        }
+
+        $wrapper = getAnugerahDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+        $filtered = [];
+
+        foreach ($rows as $row) {
+            if (($row['id'] ?? '') === $id) {
+                $dokumenPath = trim((string)($row['dokumen'] ?? ''));
+                if ($dokumenPath !== '') {
+                    $fullPath = dirname(__DIR__) . '/' . $dokumenPath;
+                    if (file_exists($fullPath)) {
+                        unlink($fullPath);
+                    }
+                }
+                continue;
+            }
+
+            $filtered[] = $row;
+        }
+
+        saveAnugerahRows($matrik, $filtered);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Rekod anugerah berjaya dipadam',
+        ]);
+        exit;
+    }
 
     public function getAllJawatanDisandang(): array
     {

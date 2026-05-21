@@ -29,6 +29,12 @@
   
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $errorMessage = $peribadiController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+  $anugerahData = $penglibatanController->getAllAnugerah();
+  $namaPenuh = (string)($peribadi['nama_penuh'] ?? ($profileView['nama_penuh'] ?? ''));
+  $nokp = (string)($peribadi['nokp'] ?? '');
+  $istarPerakuanIdPrefix = 'istar-konvo';
 
   // $jawatanData = $penglibatanController->getAllJawatanDisandang();
 
@@ -180,9 +186,9 @@
   <script> 
       const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
       const msg_load = {
-          processing: "<?= h(tr('data_processing','Sedang diproses...n')) ?>",
-          loading: "<?= h(tr('data_loading','Anugerah dan Pengiktirafan'), 'Sedang memuatkan...') ?>",
-          syncronizing: "<?= h(tr('data_synchronizing','Anugerah dan Pengiktirafan'), 'Menyelaraskan data...') ?>"
+        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
+        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
+        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
       };
   </script> 
   <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script> 
