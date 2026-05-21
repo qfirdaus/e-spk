@@ -25,6 +25,8 @@
 
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $errorMessage = $peribadiController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
 
 ?>
 <body

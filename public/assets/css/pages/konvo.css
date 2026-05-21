@@ -32,6 +32,21 @@ table.dataTable tbody textarea.border-warning {
     color: #fff !important;
 }
 
+.konvo-inline-loader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    min-height: 72px;
+    width: 100%;
+    color: #495057;
+    font-weight: 500;
+}
+
+#syncIstadBtn.is-busy {
+    pointer-events: none;
+}
+
 /* Samakan height search & button DataTable */
 .dt-right .dataTables_filter input {
     height: 34px;        /* sama macam btn-sm bootstrap */
