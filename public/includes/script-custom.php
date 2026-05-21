@@ -16,16 +16,49 @@ function checkFileSize(input) {
   input.setCustomValidity('');
 }
 
-const checkboxes = document.querySelectorAll('.chk');
-const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix) ?>');
+document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('.chk');
+    const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix) ?>');
 
-checkboxes.forEach(chk => {
-    chk.addEventListener('change', () => {
-        let allChecked = true;
-        checkboxes.forEach(c => {
-            if (!c.checked) allChecked = false;
+    checkboxes.forEach(chk => {
+        chk.addEventListener('change', () => {
+            let allChecked = true;
+            checkboxes.forEach(c => {
+                if (!c.checked) allChecked = false;
+            });
+            button.disabled = !allChecked;
         });
-        button.disabled = !allChecked;
+    });  
+    initDatePicker();
+});
+
+function initDatePicker(parent = document) {
+
+    jQuery(parent).find('.datepicker').each(function () {
+
+        // prevent duplicate init
+        if (jQuery(this).data('daterangepicker')) {
+            return;
+        }
+
+        jQuery(this).daterangepicker({
+            singleDatePicker: true,
+            autoApply: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY'
+            }
+        });
+
     });
+
+}
+
+document.addEventListener('shown.bs.modal', function (event) {
+
+    const modal = event.target;
+
+    initDatePicker(modal);
+
 });
 </script>

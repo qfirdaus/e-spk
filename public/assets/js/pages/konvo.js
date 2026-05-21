@@ -2,105 +2,10 @@ const saveTimers = {};
 let penglibatanLoaded = false;
 let jawatanLoaded = false;
 
-<<<<<<< HEAD
-console.log('KONVO sJS LOADED');
-=======
-function resolveLoadMessage(messageKey) {
-    if (typeof msg_load !== 'undefined' && msg_load && msg_load[messageKey]) {
-        return msg_load[messageKey];
-    }
-
-    if (typeof msg_load !== 'undefined' && msg_load && msg_load.processing) {
-        return msg_load.processing;
-    }
-
-    return 'Sedang diproses...';
-}
-
-function renderInlineLoader(message) {
-    return `
-        <div class="konvo-inline-loader" role="status" aria-live="polite">
-            <div class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></div>
-            <span>${message}</span>
-        </div>
-    `;
-}
-
-function setSectionLoading(container, messageKey = 'loading') {
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = renderInlineLoader(resolveLoadMessage(messageKey));
-}
-
-function setButtonBusy(button, isBusy, messageKey = 'processing') {
-    const btn = button && button.jquery ? button : jQuery(button);
-
-    if (!btn.length) {
-        return;
-    }
-
-    if (isBusy) {
-        if (!btn.data('original-html')) {
-            btn.data('original-html', btn.html());
-        }
-
-        btn.prop('disabled', true);
-        btn.addClass('is-busy');
-        btn.html(`
-            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-            <span>${resolveLoadMessage(messageKey)}</span>
-        `);
-        return;
-    }
-
-    const originalHtml = btn.data('original-html');
-    if (originalHtml) {
-        btn.html(originalHtml);
-        btn.removeData('original-html');
-    }
-
-    btn.prop('disabled', false);
-    btn.removeClass('is-busy');
-}
-
-function showToast(message, type = 'success') {
-
-    let bgClass = 'bg-success';
-
-    if (type === 'error') {
-        bgClass = 'bg-danger';
-    }
-
-    const toast = `
-
-        <div class="toast align-items-center text-white ${bgClass} border-0 show mb-2">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button"
-                        class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast">
-                </button>
-            </div>
-        </div>
-
-    `;
-
-    jQuery('.toast-lite').append(toast);
-
-    setTimeout(() => {
-        jQuery('.toast-lite .toast').first().remove();
-    }, 2500);
-
-}
-
 console.log('KONVO JS LOADED');
->>>>>>> da55344bf0e0020eb4d947e027592bef1ed9b0ea
 
 function loadPenglibatan() {
+
     if (penglibatanLoaded){
         //console.log('ALREADY LOADED - SKIP');
         return; // stop if already loaded
@@ -116,7 +21,7 @@ function loadPenglibatan() {
     }
 
     //console.log('LOADING PENGLIBATAN...');
-
+    //showLoading('loading');
     setSectionLoading(box, 'loading');
 
     fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-penglibatan.php')
@@ -131,12 +36,8 @@ function loadPenglibatan() {
 
             box.innerHTML = html;
 
-<<<<<<< HEAD
             //console.log('PENGLIBATAN LOADED');
             hideLoading();
-=======
-            console.log('PENGLIBATAN LOADED');
->>>>>>> da55344bf0e0020eb4d947e027592bef1ed9b0ea
 
             setTimeout(() => {
                 initStandardDataTable('#penglibatanDT');

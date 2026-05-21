@@ -1,5 +1,3 @@
-
-                <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
                   <input type="hidden" name="icares_form" value="data_peribadi">
                   <div class="row">
                     <div class="col-12">
@@ -124,5 +122,4 @@
                         </div>
                       </div>
                     </div>
-                  </div>
-                </form>       
+                  </div>    

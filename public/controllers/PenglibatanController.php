@@ -21,35 +21,7 @@ class PenglibatanController
         $pdoEhepa = Database::pdoMysql();
         $pdoEhepa->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->model = new Penglibatan($pdoIStAD, $pdoEhepa);
-
-        $action = $_GET['action'] ?? '';
-
-        // if ($action === 'updateDraft') {
-        //     $this->updateDraft();
-        //     exit; 
-        // }
-
-        // if ($action === 'deleteDraft') {
-        //     $this->deleteDraft();
-        //     exit;
-        // }
-
-        // if ($action === 'syncIstad') {
-        //     $this->syncIstad();
-        //     exit;
-        // }
-
-        // if ($action === 'updateDokumen') {
-        //     $this->updateDokumen();
-        //     exit;
-        // }    
-        
-        // //jawatan
-        // if ($action === 'updateJawatanDraft') {
-        //     $this->updateJawatanDraft();
-        //     exit; 
-        // }        
+        $this->model = new Penglibatan($pdoIStAD, $pdoEhepa);      
     }
 
     public function getAllPenglibatan(): array
@@ -726,7 +698,8 @@ class PenglibatanController
             'wakil' => $this->getLookupWakil(),
             'peringkat' => $this->getLookupPeringkat(),
             'pencapaian' => $this->getLookupPencapaian(),
-            'jawatan' => $this->getJawatanLookup()
+            'jawatan' => $this->getLookupJawatan(),
+            'kategori_perjawatan' => $this->getLookupKategoriPerjawatan(),
         ];
     }    
     
@@ -760,7 +733,7 @@ class PenglibatanController
         }
     }        
 
-    public function getJawatanLookup(): array
+    public function getLookupJawatan(): array
     {
         try {
             return $this->model->getJawatanLookup();
@@ -768,7 +741,17 @@ class PenglibatanController
             $this->errorMessage = $e->getMessage();
             return [];
         }
-    }        
+    }      
+    
+    public function getLookupKategoriPerjawatan(): array
+    {
+        try {
+            return $this->model->getKategoriPerjawatanLookup();
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }  
     
     /** Get lookup data */
 

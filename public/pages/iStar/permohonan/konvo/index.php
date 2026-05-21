@@ -1,7 +1,7 @@
 <?php
   // pages/data-peribadi.php
   declare(strict_types=1);
-  $NEED_DATERANGE  = false;
+  $NEED_DATERANGE  = true;
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;

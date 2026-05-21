@@ -139,6 +139,19 @@ class Penglibatan
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
         
+    public function getKategoriPerjawatanLookup(): array
+    {
+        $sql = "
+            SELECT id, kod_kategori_aktiviti, kategori_aktiviti
+            FROM lp_kategori_aktiviti
+            ORDER BY id ASC
+        ";
+
+        $stmt = $this->istad->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     /**  Get lookup data   */
 
     public function testConnection(): bool

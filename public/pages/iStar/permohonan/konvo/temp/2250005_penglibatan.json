@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-21 02:50:42",
+    "updated_at": "2026-05-21 06:27:06",
     "rows": [
         {
             "id": "ISTAD_1925",
@@ -8,12 +8,12 @@
             "sumber": "IStAD",
             "nama": "BICARA SUMUD FORTILLA",
             "tarikh": "2025-12-02",
-            "wakil": "IND",
-            "peringkat": "KOL",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1928",
@@ -21,12 +21,12 @@
             "sumber": "IStAD",
             "nama": "KONSERT MALAM BUDAYA UPNM 2025",
             "tarikh": "2025-12-05",
-            "wakil": "BP",
-            "peringkat": "BP",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1859",
@@ -34,12 +34,12 @@
             "sumber": "IStAD",
             "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
             "tarikh": "2025-11-08",
-            "wakil": 0,
-            "peringkat": "NEG",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1964",
@@ -47,12 +47,12 @@
             "sumber": "IStAD",
             "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
             "tarikh": "2025-12-23",
-            "wakil": "NEG",
-            "peringkat": "UNI",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_2018",
@@ -60,12 +60,12 @@
             "sumber": "IStAD",
             "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
             "tarikh": "2026-01-14",
-            "wakil": 0,
-            "peringkat": "NEG",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1848",
@@ -73,12 +73,12 @@
             "sumber": "IStAD",
             "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
             "tarikh": "2025-11-04",
-            "wakil": 0,
-            "peringkat": "KOL",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1927",
@@ -86,7 +86,7 @@
             "sumber": "IStAD",
             "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
             "tarikh": "2025-12-03",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -99,7 +99,7 @@
             "sumber": "IStAD",
             "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
             "tarikh": "2025-12-24",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -112,7 +112,7 @@
             "sumber": "IStAD",
             "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
             "tarikh": "2026-04-23",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -125,7 +125,7 @@
             "sumber": "IStAD",
             "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
             "tarikh": "2025-12-10",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -138,7 +138,7 @@
             "sumber": "IStAD",
             "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
             "tarikh": "2026-01-15",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -151,7 +151,7 @@
             "sumber": "IStAD",
             "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
             "tarikh": "2025-11-17",
-            "wakil": 0,
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
@@ -164,12 +164,12 @@
             "sumber": "IStAD",
             "nama": "UPNM COMMUNITY RUN 2.0",
             "tarikh": "2026-04-16",
-            "wakil": 0,
-            "peringkat": "FK",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1994",
@@ -177,12 +177,29 @@
             "sumber": "IStAD",
             "nama": "UPNM RUNNING COMMUNITY (URC)",
             "tarikh": "2026-01-08",
-            "wakil": 0,
-            "peringkat": "BP",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
+        },
+        {
+            "id": "new_6a0e899acb73f",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "PROGRAM TESS2",
+            "tarikh": "2026-05-12",
+            "wakil": "2",
+            "peringkat": "UNI",
+            "pencapaian": "EMAS",
+            "dokumen": {
+                "filename": "2250005-dok_6a0e899aca55f.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0e899aca55f.pdf",
+                "uploaded_at": "2026-05-21 06:27:06"
+            },
+            "is_dirty": true,
+            "conflict": false
         }
     ]
 }
