@@ -10,8 +10,8 @@ $action = $_GET['action'] ?? '';
 
 header('Content-Type: application/json; charset=utf-8');
 
-if ($action === 'updateDraft') {
-    $controller->updateDraft();
+if ($action === 'updateJawatanDraft') {
+    $controller->updateJawatanDraft();
     exit;
 }
 

@@ -1,25 +1,27 @@
-#penglibatanDT tbody tr.row-saving > td {
+/* Warna custom untuk row saving, success, error */ 
+table.dataTable tbody tr.row-saving td {
     background-color: #fff3cd !important;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
 }
 
-#penglibatanDT tbody tr.row-success > td {
+table.dataTable tbody tr.row-success td {
     background-color: #d1e7dd !important;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
 }
 
-#penglibatanDT tbody tr.row-error > td {
+table.dataTable tbody tr.row-error td {
     background-color: #f8d7da !important;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
 }
 
-#penglibatanDT tbody select.border-warning,
-#penglibatanDT tbody input.border-warning,
-#penglibatanDT tbody textarea.border-warning {
+table.dataTable tbody select.border-warning,
+table.dataTable tbody input.border-warning,
+table.dataTable tbody textarea.border-warning {
     border: 2px solid #ffc107 !important;
     box-shadow: none !important;
 }
 
+/* Warna custom untuk button */
 .bg-salmon {
     background-color: #e87461 !important;
     color: #fff !important;

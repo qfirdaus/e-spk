@@ -31,7 +31,6 @@
             $sumber = $row['sumber'] ?? 'Tambahan';   
     ?>
             <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
-
                 <td class="col-bil text-center"></td>
                 <td>
                     <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
@@ -49,7 +48,7 @@
                         : '-' ?>
                 </td>
 
-                <!-- WAKIL (editable text OR dropdown kalau lookup) -->
+                <!-- WAKIL (dropdown lookup) -->
                 <td>
                     <select name="wakil" class="form-select form-select-sm">
                         <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
@@ -69,7 +68,7 @@
                         <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>"
                             <?= $peringkat == $opt['peringkat_code'] ? 'selected' : '' ?>>
-                            <?= h($opt['peringkat_my']) ?>
+                            <?= h(strtoupper($opt['peringkat_my'])) ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
@@ -82,7 +81,7 @@
                         <?php foreach ($lookupPencapaian as $opt): ?>
                             <option value="<?= h($opt['pencapaian_code']) ?>"
                                 <?= $pencapaian == $opt['pencapaian_code'] ? 'selected' : '' ?>>
-                                <?= h($opt['pencapaian_my']) ?>
+                                <?= h(strtoupper($opt['pencapaian_my'])) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

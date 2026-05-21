@@ -1,0 +1,54 @@
+{
+    "draft_initialized": true,
+    "updated_at": "2026-05-21 02:52:07",
+    "rows": [
+        {
+            "id": "ISTAD_1994",
+            "id_kegiatan_badan": 1994,
+            "sumber": "IStAD",
+            "id_kategori_kegiatan": 4,
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM RUNNING COMMUNITY (URC)",
+            "id_jawatan": 6,
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "2026-01-08",
+            "peringkat": "KBG",
+            "is_dirty": false,
+            "source_override": true,
+            "conflict": false
+        },
+        {
+            "id": "ISTAD_2119",
+            "id_kegiatan_badan": 2119,
+            "sumber": "IStAD",
+            "id_kategori_kegiatan": 4,
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM COMMUNITY RUN 2.0",
+            "id_jawatan": 6,
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "2026-04-16",
+            "peringkat": "KBG",
+            "is_dirty": false,
+            "source_override": true,
+            "conflict": false
+        },
+        {
+            "id": "ISTAD_8564",
+            "id_kegiatan_badan": 8564,
+            "sumber": "IStAD",
+            "id_kategori_kegiatan": 3,
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "PERSATUAN ANAK SARAWAK",
+            "id_jawatan": 5,
+            "jawatan": "AHLI",
+            "tarikh_lantikan": "2025-10-06",
+            "peringkat": "KBG",
+            "is_dirty": false,
+            "source_override": true,
+            "conflict": false
+        }
+    ]
+}

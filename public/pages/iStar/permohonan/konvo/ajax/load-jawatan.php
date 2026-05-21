@@ -27,6 +27,8 @@ if (!function_exists('base_url')) {
 require_once __DIR__ . '/../../../../../controllers/PenglibatanController.php'; 
 
 $penglibatanController = new PenglibatanController();
+
 $jawatanData = $penglibatanController->getAllJawatanDisandang();
+$lookupAll = $penglibatanController->getAllLookup();
 
 include __DIR__ . '/../f-jawatan-disandang.php';

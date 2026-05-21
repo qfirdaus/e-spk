@@ -3,7 +3,9 @@
   $lookupWakil = $lookupAll['wakil'] ?? [];
   $lookupPeringkat = $lookupAll['peringkat'] ?? [];
   $lookupPencapaian = $lookupAll['pencapaian'] ?? [];
+  $lookupJawatan = $lookupAll['jawatan'] ?? [];
 ?>
+<!-- // Modal: Add Penglibatan Program -->
 <div class="modal fade" id="penglibatanAddModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
@@ -45,8 +47,8 @@
                 <select name="wakil" class="form-select form-select-sm">
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupWakil as $opt): ?>
-                        <option value="<?= h($opt['wakil_code']) ?>">
-                            <?= h($opt['wakil_my']) ?>
+                        <option value="<?= h($opt['idwakil']) ?>">
+                            <?= h(strtoupper($opt['wakil_my'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -64,7 +66,7 @@
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>">
-                            <?= h($opt['peringkat_my']) ?>
+                            <?= h(strtoupper($opt['peringkat_my'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -77,7 +79,7 @@
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPencapaian as $opt): ?>
                         <option value="<?= h($opt['pencapaian_code']) ?>">
-                            <?= h($opt['pencapaian_my']) ?>
+                            <?= h(strtoupper($opt['pencapaian_my'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -116,3 +118,104 @@
     </div>
   </div>
 </div>
+
+<!-- MODAL: Add Jawatan Disandang -->
+<div class="modal fade" id="jawatanAddModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-add-circle-line"></i>
+          <?= h(tr('profile_jawatan_disandang','Tambah Jawatan Disandang')) ?>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form id="jawatanForm" method="post" enctype="multipart/form-data">
+        <!-- <input type="hidden" name="icares_form" value="istar_konvo_jawatan_disandang"> -->
+
+        <div class="modal-body">
+          <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-md-6">
+
+              <!-- Nama Program -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('nama_badan_pelajar_program','Nama Badan Pelajar / Program')) ?>
+                </label>
+                <input type="text" name="nama_penuh" class="form-control" oninput="this.value = this.value.toUpperCase()">
+              </div>
+
+              <!-- Tarikh -->
+              <div class="mb-3">
+                <label class="form-label"><?= h(tr('profile_tarikh','Tarikh')) ?></label>
+                <input type="date" name="tarikh" class="form-control">
+              </div>
+
+              <!-- Jawatan -->
+              <div class="mb-3">
+                <label class="form-label"><?= h(tr('jawatan','Jawatan')) ?></label>
+                <select name="jawatan" class="form-select form-select-sm">
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupJawatan as $opt): ?>
+                        <option value="<?= h($opt['id_jawatan']) ?>">
+                            <?= h(strtoupper($opt['keterangan']))  . ' / ' . h(strtoupper($opt['keteranganBP'])) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-md-6">
+
+              <!-- Peringkat -->
+              <div class="mb-3">
+                <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
+                <select name="peringkat" class="form-select form-select-sm">
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupPeringkat as $opt): ?>
+                        <option value="<?= h($opt['peringkat_code']) ?>">
+                            <?= h(strtoupper($opt['peringkat_my'])) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+              </div>
+
+              <!-- Dokumen -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('dokumen_penglibatan','Dokumen Sokongan')) ?>
+                </label>
+                <input type="file" name="dokumen-penglibatan" class="form-control"
+                       accept=".jpg,.jpeg,.pdf"
+                       onchange="checkFileSize(this)">
+                <small class="text-danger">
+                  <?= h(tr('dokumen_penglibatan_note','Max 5MB (JPG/JPEG/PDF)')) ?>
+                </small>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <?= h(tr('template_senarai_crud_btn_cancel','Cancel')) ?>
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ri-save-3-line me-1"></i>
+            <?= h(tr('profile_save_button','Simpan')) ?>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div> 

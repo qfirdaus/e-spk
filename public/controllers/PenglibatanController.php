@@ -25,25 +25,31 @@ class PenglibatanController
 
         $action = $_GET['action'] ?? '';
 
-        if ($action === 'updateDraft') {
-            $this->updateDraft();
-            exit; 
-        }
+        // if ($action === 'updateDraft') {
+        //     $this->updateDraft();
+        //     exit; 
+        // }
 
-        if ($action === 'deleteDraft') {
-            $this->deleteDraft();
-            exit;
-        }
+        // if ($action === 'deleteDraft') {
+        //     $this->deleteDraft();
+        //     exit;
+        // }
 
-        if ($action === 'syncIstad') {
-            $this->syncIstad();
-            exit;
-        }
+        // if ($action === 'syncIstad') {
+        //     $this->syncIstad();
+        //     exit;
+        // }
 
-        if ($action === 'updateDokumen') {
-            $this->updateDokumen();
-            exit;
-        }        
+        // if ($action === 'updateDokumen') {
+        //     $this->updateDokumen();
+        //     exit;
+        // }    
+        
+        // //jawatan
+        // if ($action === 'updateJawatanDraft') {
+        //     $this->updateJawatanDraft();
+        //     exit; 
+        // }        
     }
 
     public function getAllPenglibatan(): array
@@ -488,15 +494,85 @@ class PenglibatanController
 
     public function getAllJawatanDisandang(): array
     {
-        try {
-            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
 
-            return $this->model->getAllJawatan($matrik);
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
 
-        } catch (Throwable $e) {
-            $this->errorMessage = $e->getMessage();
-            return [];
+        $wrapper = getJawatanDraft($matrik);
+
+        if (!$wrapper['draft_initialized']) {
+
+            $istad = $this->model->getAllJawatan($matrik);
+
+            initJawatanDraft($matrik, $istad);
+
+            // reload semula dari file (IMPORTANT)
+            $wrapper = getJawatanDraft($matrik);
         }
+
+        return $wrapper['rows'];
+    }
+
+    public function updateJawatanDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $id    = trim($_POST['id'] ?? '');
+        $field = trim($_POST['field'] ?? '');
+        $value = $_POST['value'] ?? '';
+
+        $wrapper = getJawatanDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+
+        if ($id === '' || $field === '') {
+
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Invalid request'
+            ]);
+
+            exit;
+        }
+
+        foreach ($rows as &$row) {
+            $isIstad = str_starts_with($row['id'], 'ISTAD_');
+            if ($row['id'] === $id) {
+                // check if field is editable for IStAD source
+                if ($isIstad && !canEditFieldJawatan($row, $field)) {
+
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Field ini tidak dibenarkan dikemaskini untuk data IStAD'
+                    ]);
+                    exit;
+                }
+
+                $row[$field] = $value;
+                if ($isIstad) {
+                    $row['source_override'] = true;
+                } else {
+                    $row['is_dirty'] = true;
+                }
+
+                break;
+            }
+        }
+
+        // save balik
+        saveJawatanDraftRows($matrik, $rows);
+
+        echo json_encode([
+            'status' => 'ok',
+            'id' => $id,
+            'field' => $field,
+            'value' => $value,
+            'next_step' => 'sync_to_ehepa_ready'
+        ]);
+
+        exit;
     }
 
     /** Get lookup data */
@@ -506,6 +582,7 @@ class PenglibatanController
             'wakil' => $this->getLookupWakil(),
             'peringkat' => $this->getLookupPeringkat(),
             'pencapaian' => $this->getLookupPencapaian(),
+            'jawatan' => $this->getJawatanLookup()
         ];
     }    
     
@@ -538,6 +615,17 @@ class PenglibatanController
             return [];
         }
     }        
+
+    public function getJawatanLookup(): array
+    {
+        try {
+            return $this->model->getJawatanLookup();
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }        
+    
     /** Get lookup data */
 
     public function testConnection()

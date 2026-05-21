@@ -46,6 +46,9 @@ class Penglibatan
                 id_jawatan,
                 jawatan,
                 'IStAD' AS sumber,
+                id_kategori_aktiviti,
+                kod_kategori_aktiviti,
+                kategori_aktiviti,
                 id_kegiatan_pelajar AS id_kegiatan_badan,
                 nama_kegiatan_pelajar AS nama_bp_program,
                 tarikh_mula,
@@ -61,6 +64,9 @@ class Penglibatan
                 id_jawatan,
                 jawatan,
                 'IStAD' AS sumber,
+                id_kategori_aktiviti,
+                kod_kategori_aktiviti,
+                kategori_aktiviti,                
                 id_ahli_bp AS id_kegiatan_bp,
                 nama_badan_pelajar AS nama_bp_program,
                 tarikh_mula,
@@ -81,9 +87,9 @@ class Penglibatan
     public function getWakilLookup(): array
     {
         $sql = "
-            SELECT wakil_code, wakil_my
+            SELECT idwakil, wakil_code, wakil_my
             FROM lp_representative
-            ORDER BY wakil_my, wakil_en ASC
+            ORDER BY idwakil ASC
         ";
 
         $stmt = $this->ehepa->prepare($sql);
@@ -95,9 +101,9 @@ class Penglibatan
     public function getPeringkatLookup(): array
     {
         $sql = "
-            SELECT peringkat_code, peringkat_my
+            SELECT idperingkat, peringkat_code, peringkat_my
             FROM lp_level
-            ORDER BY peringkat_my, peringkat_en ASC
+            ORDER BY idperingkat ASC
         ";
 
         $stmt = $this->ehepa->prepare($sql);
@@ -109,9 +115,9 @@ class Penglibatan
     public function getPencapaianLookup(): array
     {
         $sql = "
-            SELECT pencapaian_code, pencapaian_my
+            SELECT idpencapaian, pencapaian_code, pencapaian_my
             FROM lp_achievement
-            ORDER BY pencapaian_my, pencapaian_en ASC
+            ORDER BY idpencapaian ASC
         ";
 
         $stmt = $this->ehepa->prepare($sql);
@@ -122,12 +128,12 @@ class Penglibatan
     public function getJawatanLookup(): array
     {
         $sql = "
-            SELECT jawatan_code, jawatan_my
-            FROM lp_position
-            ORDER BY jawatan_my, jawatan_en ASC
+            SELECT id_jawatan, keterangan, keteranganBP
+            FROM tbl_jawatan
+            ORDER BY sort ASC
         ";
 
-        $stmt = $this->ehepa->prepare($sql);
+        $stmt = $this->istad->prepare($sql);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

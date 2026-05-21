@@ -2,48 +2,16 @@ const saveTimers = {};
 let penglibatanLoaded = false;
 let jawatanLoaded = false;
 
-function showToast(message, type = 'success') {
-
-    let bgClass = 'bg-success';
-
-    if (type === 'error') {
-        bgClass = 'bg-danger';
-    }
-
-    const toast = `
-
-        <div class="toast align-items-center text-white ${bgClass} border-0 show mb-2">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button"
-                        class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast">
-                </button>
-            </div>
-        </div>
-
-    `;
-
-    jQuery('.toast-lite').append(toast);
-
-    setTimeout(() => {
-        jQuery('.toast-lite .toast').first().remove();
-    }, 2500);
-
-}
-
-console.log('KONVO JS LOADED');
+console.log('KONVO sJS LOADED');
 
 function loadPenglibatan() {
     if (penglibatanLoaded){
-        console.log('ALREADY LOADED - SKIP');
+        //console.log('ALREADY LOADED - SKIP');
         return; // stop if already loaded
     } 
 
-    console.log('TAB EVENT FIRED');
-    console.log('base_url:', base_url);
+    //console.log('TAB EVENT FIRED');
+    //console.log('base_url:', base_url);
     const box = document.getElementById('penglibatan-content');
 
     if (!box) {
@@ -51,7 +19,7 @@ function loadPenglibatan() {
         return;
     }
 
-    console.log('LOADING PENGLIBATAN...');
+    //console.log('LOADING PENGLIBATAN...');
 
     box.innerHTML = '<div class="text-center py-3">Memuatkan Data...</div>';
     showLoading('loading');
@@ -62,7 +30,7 @@ function loadPenglibatan() {
 
             box.innerHTML = html;
 
-            console.log('PENGLIBATAN LOADED');
+            //console.log('PENGLIBATAN LOADED');
             hideLoading();
 
             setTimeout(() => {
@@ -275,6 +243,7 @@ jQuery(document).on('click', '#anugerahBtnAdd', function () {
 });
 
 jQuery(function () {
+    
     // Update Penglibatan
     jQuery(document).on(
         'change',
@@ -309,13 +278,11 @@ jQuery(function () {
                     },
                     success: function (res) {
 
-                        console.log('AUTO SAVE SUCCESS:', res);
+                        //console.log('AUTO SAVE SUCCESS:', res);
 
                         el.removeClass('border-warning');
                         tr.removeClass('row-saving row-error');
                         tr.addClass('row-success');
-
-                        showToast('Wakil berjaya dikemaskini');
 
                         setTimeout(() => {
 
@@ -331,8 +298,6 @@ jQuery(function () {
                         el.removeClass('border-warning');
                         tr.removeClass('row-saving row-success');
                         tr.addClass('row-error');
-
-                        showToast('Gagal simpan data', 'error');
 
                         setTimeout(() => {
 
@@ -356,11 +321,8 @@ jQuery(function () {
         if (!input.files.length) return;
 
         const file = input.files[0];
-
         const rowId = jQuery(this).data('id');
-
         const tr = jQuery(this).closest('tr');
-
         const formData = new FormData();
 
         formData.append('id', rowId);
@@ -372,14 +334,10 @@ jQuery(function () {
         jQuery.ajax({
 
             url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=updateDokumen',
-
             method: 'POST',
-
             data: formData,
-
             processData: false,
             contentType: false,
-
             dataType: 'json',
 
             success: function (res) {
@@ -389,8 +347,7 @@ jQuery(function () {
                 if (res.status === 'ok') {
 
                     tr.addClass('row-success');
-
-                    showToast(res.message || 'Dokumen berjaya dikemaskini');
+                    //console.log('FILE UPLOAD SUCCESS:', res);
 
                     // UPDATE LINK VIEW BUTTON
                     const filePath = res.path; // <-- kena return dari backend
@@ -406,8 +363,7 @@ jQuery(function () {
                 } else {
 
                     tr.addClass('row-error');
-
-                    showToast(res.message || 'Gagal update dokumen', 'error');
+                    //console.log('FILE UPLOAD FAILED:', res);
 
                 }
 
@@ -415,13 +371,10 @@ jQuery(function () {
 
             error: function (xhr) {
 
-                console.log(xhr.responseText);
-
                 tr.removeClass('row-saving');
                 tr.addClass('row-error');
 
-                showToast('Ralat sistem', 'error');
-
+                console.log('FILE UPLOAD ERROR:', xhr.responseText);
             }
 
         });
@@ -542,12 +495,11 @@ jQuery(function () {
 
             success: function (res) {
 
-                console.log('RESPONSE:', res);
+                //console.log('RESPONSE:', res);
 
                 if (res.status === 'ok') {
                     penglibatanLoaded = true;
-
-                    showToast(res.message || 'Berjaya tambah rekod');
+                    //console.log('RELOAD PENGLIBATAN TABLE');
 
                     form.reset();
 
@@ -561,12 +513,12 @@ jQuery(function () {
                     }, 150);                
 
                 } else {
-                    showToast(res.message || 'Gagal simpan data', 'error');
+                    //console.log('FAILED TO ADD:', res);
                 }
             },
 
             error: function (xhr) {
-                console.log('AJAX ERROR:', xhr.responseText);
+                //console.log('AJAX ERROR:', xhr.responseText);
 
                 let msg = 'Ralat sistem. Cuba lagi.';
 
@@ -575,7 +527,7 @@ jQuery(function () {
                     if (res.message) msg = res.message;
                 } catch (e) {}
 
-                showToast(msg, 'error');
+                //console.log('AJAX ERROR:', xhr.responseText);
             }
 
         });
@@ -656,25 +608,71 @@ jQuery(function () {
     //Update Jawatan Disandang
     jQuery(document).on(
         'change',
-        '#jawatanDT tbody input, #jawatanDT tbody select, #jawatanDT tbody textarea',
-        function () {
+        '#jawatanDT tbody select, #jawatanDT tbody textarea, #jawatanDT tbody input:not([type=file])',
+        function () {           
+            //console.log('SELECT CHANGED');
             let el = jQuery(this);
             let tr = el.closest('tr');
             let rowId = tr.data('id');
             let field = this.name;
             let value = el.val();
 
-            jQuery.ajax({
-                url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateDraft',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    id: rowId,
-                    field: field,
-                    value: value
-                }
-            });
+            if (!rowId || !field) return;
+
+            const timerKey = rowId + '_' + field;
+            clearTimeout(saveTimers[timerKey]);
+            //console.log('FIELD CHANGED:', field, 'VALUE:', value);
+
+            tr.removeClass('row-success row-error');
+            tr.addClass('row-saving');
+            el.addClass('border-warning');
+
+            saveTimers[timerKey] = setTimeout(() => {
+
+                jQuery.ajax({
+                    url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateJawatanDraft',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id: rowId,
+                        field: field,
+                        value: value
+                    },
+                    success: function (res) {
+
+                        //console.log('AUTO SAVE SUCCESS:', res);
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-error');
+                        tr.addClass('row-success');
+
+                        setTimeout(() => {
+
+                            tr.removeClass('row-success');
+
+                        }, 1500);
+
+                    },
+                    error: function (xhr) {
+
+                        console.log('SAVE ERROR:', xhr.responseText);
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-success');
+                        tr.addClass('row-error');
+
+                        setTimeout(() => {
+
+                            tr.removeClass('row-error');
+
+                        }, 2000);
+
+                    }
+                });
+
+            }, 600);
 
         }
-    );        
+    );  
+          
 });
