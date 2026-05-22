@@ -15,23 +15,23 @@ if ($action === 'updateJawatanDraft') {
     exit;
 }
 
-if ($action === 'addDraft') {
-    $controller->addDraft();
+if ($action === 'addJawatanDraft') {
+    $controller->addJawatanDraft();
     exit;
 }
 
-if ($action === 'deleteDraft') {
-    $controller->deleteDraft();
+if ($action === 'deleteJawatanDraft') {
+    $controller->deleteJawatanDraft();
     exit;
 }
 
-if ($action === 'syncIstad') {
-    $controller->syncIstad();
+if ($action === 'syncIstadJawatan') {
+    $controller->syncIstadJawatan();
     exit;
 }
 
-if ($action === 'updateDokumen') {
-    $controller->updateDokumen();
+if ($action === 'updateDokumenJawatan') {
+    $controller->updateDokumenJawatan();
     exit;
 }
 

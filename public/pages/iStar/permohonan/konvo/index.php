@@ -191,7 +191,7 @@
         syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
       };
   </script> 
-  <script src="<?= base_url('assets/js/pages/konvo.js') ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/konvo.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

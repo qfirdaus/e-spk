@@ -163,6 +163,13 @@ function initStandardDataTable(tableId) {
                 toolbar = `
                     <div class="d-flex gap-2 ms-2">
                         <button type="button"
+                                id="syncIstadJawatanBtn"
+                                class="btn btn-primary rounded-3">
+                            <i class="ri-refresh-line me-1"></i>
+                            Sync IStAD
+                        </button>
+
+                        <button type="button"
                                 id="jawatanBtnAdd"
                                 class="btn btn-success rounded-3">
                             <i class="ri-add-line me-1"></i>
@@ -251,6 +258,178 @@ jQuery(document).on('click', '#anugerahBtnAdd', function () {
 });
 
 jQuery(function () {
+
+    // Add New Penglibatan
+    jQuery(document).on('submit', '#penglibatanForm', function (e) {
+
+        console.log('PENGLIBATAN FORM SUBMIT TRIGGERED');
+
+        e.preventDefault();
+
+        let form = this;
+        let formData = new FormData(form);
+
+        jQuery.ajax({
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=addDraft',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+
+            success: function (res) {
+
+                //console.log('RESPONSE:', res);
+
+                if (res.status === 'ok') {
+                    penglibatanLoaded = true;
+                    //console.log('RELOAD PENGLIBATAN TABLE');
+
+                    form.reset();
+
+                    bootstrap.Modal.getInstance(
+                        document.getElementById('penglibatanAddModal')
+                    ).hide();
+
+                    //reload page to reflect new data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 150);                
+
+                } else {
+                    //console.log('FAILED TO ADD:', res);
+                }
+            },
+
+            error: function (xhr) {
+                //console.log('AJAX ERROR:', xhr.responseText);
+
+                let msg = 'Ralat sistem. Cuba lagi.';
+
+                try {
+                    let res = JSON.parse(xhr.responseText);
+                    if (res.message) msg = res.message;
+                } catch (e) {}
+
+                //console.log('AJAX ERROR:', xhr.responseText);
+            }
+
+        });
+
+    });    
+
+    // Add New Jawatan
+    jQuery(document).on('submit', '#jawatanForm', function (e) {
+
+        //console.log('JAWATAN FORM SUBMIT TRIGGERED');
+
+        e.preventDefault();
+
+        let form = this;
+        let formData = new FormData(form);
+
+        jQuery.ajax({
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=addJawatanDraft',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+
+            success: function (res) {
+
+                //console.log('RESPONSE:', res);
+
+                if (res.status === 'ok') {
+                    jawatanLoaded = true;
+                    //console.log('RELOAD JAWATAN TABLE');
+
+                    form.reset();
+
+                    bootstrap.Modal.getInstance(
+                        document.getElementById('jawatanAddModal')
+                    ).hide();
+
+                    //reload page to reflect new data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 150);                
+
+                } else {
+                    //console.log('FAILED TO ADD:', res);
+                }
+            },
+
+            error: function (xhr) {
+                //console.log('AJAX ERROR:', xhr.responseText);
+
+                let msg = 'Ralat sistem. Cuba lagi.';
+
+                try {
+                    let res = JSON.parse(xhr.responseText);
+                    if (res.message) msg = res.message;
+                } catch (e) {}
+
+                //console.log('AJAX ERROR:', xhr.responseText);
+            }
+
+        });
+
+    });  
+
+    //Add New Anugerah
+    jQuery(document).on('submit', '#anugerahForm', function (e) {
+
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        jQuery.ajax({
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=addDraft',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+
+            success: function (res) {
+
+                if (res.status === 'ok') {
+
+                    showToast(res.message || 'Rekod anugerah berjaya ditambah');
+
+                    form.reset();
+
+                    bootstrap.Modal.getInstance(
+                        document.getElementById('anugerahAddModal')
+                    ).hide();
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 150);
+
+                    return;
+                }
+
+                showToast(res.message || 'Gagal simpan rekod anugerah', 'error');
+            },
+
+            error: function (xhr) {
+
+                console.log('ANUGERAH AJAX ERROR:', xhr.responseText);
+
+                let msg = 'Ralat sistem. Cuba lagi.';
+
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.message) msg = res.message;
+                } catch (e) {}
+
+                showToast(msg, 'error');
+            }
+        });
+    });
     
     // Update Penglibatan
     jQuery(document).on(
@@ -400,6 +579,76 @@ jQuery(function () {
             console.log('FILE INPUT NOT FOUND');
         }
     });
+        
+    //Update Jawatan Disandang
+    jQuery(document).on(
+        'change',
+        '#jawatanDT tbody select, #jawatanDT tbody textarea, #jawatanDT tbody input:not([type=file])',
+        function () {           
+            //console.log('SELECT CHANGED');
+            let el = jQuery(this);
+            let tr = el.closest('tr');
+            let rowId = tr.data('id');
+            let field = this.name;
+            let value = el.val();
+
+            if (!rowId || !field) return;
+
+            const timerKey = rowId + '_' + field;
+            clearTimeout(saveTimers[timerKey]);
+            //console.log('FIELD CHANGED:', field, 'VALUE:', value);
+
+            tr.removeClass('row-success row-error');
+            tr.addClass('row-saving');
+            el.addClass('border-warning');
+
+            saveTimers[timerKey] = setTimeout(() => {
+
+                jQuery.ajax({
+                    url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateJawatanDraft',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id: rowId,
+                        field: field,
+                        value: value
+                    },
+                    success: function (res) {
+
+                        //console.log('AUTO SAVE SUCCESS:', res);
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-error');
+                        tr.addClass('row-success');
+
+                        setTimeout(() => {
+
+                            tr.removeClass('row-success');
+
+                        }, 1500);
+
+                    },
+                    error: function (xhr) {
+
+                        console.log('SAVE ERROR:', xhr.responseText);
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-success');
+                        tr.addClass('row-error');
+
+                        setTimeout(() => {
+
+                            tr.removeClass('row-error');
+
+                        }, 2000);
+
+                    }
+                });
+
+            }, 600);
+
+        }
+    );  
 
     // Delete penglibatan
     jQuery(document).on('click', '.btn-delete-penglibatan', function () {
@@ -483,117 +732,86 @@ jQuery(function () {
 
     });   
 
-    // Add New Penglibatan
-    jQuery(document).on('submit', '#penglibatanForm', function (e) {
+    // Delete jawatan
+    jQuery(document).on('click', '.btn-delete-jawatan', function () {
 
-        console.log('PENGLIBATAN FORM SUBMIT TRIGGERED');
+        const btn = jQuery(this);
+        const rowId = btn.data('id');
 
-        e.preventDefault();
+        if (!rowId) {
+            console.log('NO ROW ID');
+            return;
+        }
 
-        let form = this;
-        let formData = new FormData(form);
+        Swal.fire({
+            title: 'Padam rekod ini?',
+            text: "Tindakan ini tidak boleh dibatalkan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, padam',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
 
-        jQuery.ajax({
-            url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=addDraft',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
+            if (!result.isConfirmed) return;
 
-            success: function (res) {
+            btn.prop('disabled', true);
 
-                //console.log('RESPONSE:', res);
+            jQuery.ajax({
+                url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=deleteJawatanDraft',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    id: rowId
+                },
 
-                if (res.status === 'ok') {
-                    penglibatanLoaded = true;
-                    //console.log('RELOAD PENGLIBATAN TABLE');
+                success: function (res) {
 
-                    form.reset();
+                    if (res.status === 'ok') {
 
-                    bootstrap.Modal.getInstance(
-                        document.getElementById('penglibatanAddModal')
-                    ).hide();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berjaya',
+                            text: res.message || 'Rekod berjaya dipadam',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
 
-                    //reload page to reflect new data
-                    setTimeout(() => {
-                        location.reload();
-                    }, 150);                
+                        const table = jQuery('#jawatanDT').DataTable();
 
-                } else {
-                    //console.log('FAILED TO ADD:', res);
+                        table
+                            .row(btn.closest('tr'))
+                            .remove()
+                            .draw(false);
+
+                    } else {
+
+                        btn.prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: res.message || 'Gagal padam rekod'
+                        });
+                    }
+                },
+
+                error: function (xhr) {
+
+                    btn.prop('disabled', false);
+                    console.log(xhr.responseText);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat Sistem',
+                        text: 'Cuba lagi sebentar lagi'
+                    });
                 }
-            },
 
-            error: function (xhr) {
-                //console.log('AJAX ERROR:', xhr.responseText);
-
-                let msg = 'Ralat sistem. Cuba lagi.';
-
-                try {
-                    let res = JSON.parse(xhr.responseText);
-                    if (res.message) msg = res.message;
-                } catch (e) {}
-
-                //console.log('AJAX ERROR:', xhr.responseText);
-            }
+            });
 
         });
 
-    });    
-
-    jQuery(document).on('submit', '#anugerahForm', function (e) {
-
-        e.preventDefault();
-
-        const form = this;
-        const formData = new FormData(form);
-
-        jQuery.ajax({
-            url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=addDraft',
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-
-            success: function (res) {
-
-                if (res.status === 'ok') {
-
-                    showToast(res.message || 'Rekod anugerah berjaya ditambah');
-
-                    form.reset();
-
-                    bootstrap.Modal.getInstance(
-                        document.getElementById('anugerahAddModal')
-                    ).hide();
-
-                    setTimeout(() => {
-                        location.reload();
-                    }, 150);
-
-                    return;
-                }
-
-                showToast(res.message || 'Gagal simpan rekod anugerah', 'error');
-            },
-
-            error: function (xhr) {
-
-                console.log('ANUGERAH AJAX ERROR:', xhr.responseText);
-
-                let msg = 'Ralat sistem. Cuba lagi.';
-
-                try {
-                    const res = JSON.parse(xhr.responseText);
-                    if (res.message) msg = res.message;
-                } catch (e) {}
-
-                showToast(msg, 'error');
-            }
-        });
-    });
+    });   
 
     jQuery(document).on('click', '.btn-delete-anugerah', function () {
 
@@ -660,8 +878,16 @@ jQuery(function () {
             if (!result.isConfirmed) return;
 
             const btn = jQuery(this);
-            setButtonBusy(btn, true, 'syncronizing');
+            const box = document.getElementById('penglibatanDT');
 
+            if (!box) {
+                console.log('BOX NOT FOUND');
+                return;
+            }            
+
+            setButtonBusy(btn, true, 'syncronizing');
+            setSectionLoading(box, 'syncronizing');
+            
             jQuery.ajax({
                 url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=syncIstad',
                 method: 'POST',
@@ -713,74 +939,107 @@ jQuery(function () {
 
     });    
 
-    //Update Jawatan Disandang
-    jQuery(document).on(
-        'change',
-        '#jawatanDT tbody select, #jawatanDT tbody textarea, #jawatanDT tbody input:not([type=file])',
-        function () {           
-            //console.log('SELECT CHANGED');
-            let el = jQuery(this);
-            let tr = el.closest('tr');
-            let rowId = tr.data('id');
-            let field = this.name;
-            let value = el.val();
+    //Sync IStAD - Jawatan Disandang
+    jQuery(document).on('click', '#syncIstadJawatanBtn', function () {
 
-            if (!rowId || !field) return;
+        Swal.fire({
+            title: 'Sync data IStAD?',
+            text: 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, sync',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
 
-            const timerKey = rowId + '_' + field;
-            clearTimeout(saveTimers[timerKey]);
-            //console.log('FIELD CHANGED:', field, 'VALUE:', value);
+            if (!result.isConfirmed) return;
 
-            tr.removeClass('row-success row-error');
-            tr.addClass('row-saving');
-            el.addClass('border-warning');
+            const btn = jQuery(this);            
+            const box = document.getElementById('jawatanDT');
 
-            saveTimers[timerKey] = setTimeout(() => {
+            if (!box) {
+                console.log('BOX NOT FOUND');
+                return;
+            }            
 
-                jQuery.ajax({
-                    url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateJawatanDraft',
-                    method: 'POST',
-                    dataType: 'json',
-                    data: {
-                        id: rowId,
-                        field: field,
-                        value: value
-                    },
-                    success: function (res) {
+            setButtonBusy(btn, true, 'syncronizing');
+            setSectionLoading(box, 'syncronizing');
 
-                        //console.log('AUTO SAVE SUCCESS:', res);
+            jQuery.ajax({
+                url: base_url + 'pages/iStar/permohonan/konvo/ajax/jawatan.php?action=syncIstadJawatan',
+                method: 'POST',
+                dataType: 'json',
 
-                        el.removeClass('border-warning');
-                        tr.removeClass('row-saving row-error');
-                        tr.addClass('row-success');
+                success: function (res) {
+                    setButtonBusy(btn, false);
+                    
+                    if (res.status === 'ok') {
 
-                        setTimeout(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Penyelarasan Data Berjaya',
+                            html: `
+                                <b> ${res.message || ''} </b>
+                            `,
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // reload table shj
+                            jawatanLoaded = false;
+                            loadJawatan();
+                        });
 
-                            tr.removeClass('row-success');
+                    } else {
 
-                        }, 1500);
-
-                    },
-                    error: function (xhr) {
-
-                        console.log('SAVE ERROR:', xhr.responseText);
-
-                        el.removeClass('border-warning');
-                        tr.removeClass('row-saving row-success');
-                        tr.addClass('row-error');
-
-                        setTimeout(() => {
-
-                            tr.removeClass('row-error');
-
-                        }, 2000);
-
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: res.message || 'Penyelarasan data gagal'
+                        });
                     }
-                });
+                },
 
-            }, 600);
+                error: function (xhr) {
+                    console.log('AJAX ERROR:', xhr.responseText);
 
+                    setButtonBusy(btn, false);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ralat sistem',
+                        text: 'Cuba lagi'
+                    });
+                }
+            });
+
+        });
+
+    });       
+});
+
+
+document.addEventListener('change', function (e) {
+
+    if (e.target && e.target.id === 'kategoriAktiviti') {
+
+        let selected = e.target.options[e.target.selectedIndex];
+        let idAktiviti = document.getElementById('idAktiviti');
+        let aktivitiText = document.getElementById('aktivitiText');
+
+        if (aktivitiText) {
+            aktivitiText.value = selected.dataset.aktiviti_text || '';
         }
-    );  
-          
+
+        if (idAktiviti) {
+            idAktiviti.value = selected.dataset.idaktiviti || '';
+        }
+    }
+
+    if(e.target &&  e.target.id === 'jawatan') {
+        let selected = e.target.options[e.target.selectedIndex];
+        let jawatanText = document.getElementById('jawatanText');
+console.log(selected);
+        if (jawatanText) {
+            jawatanText.value = selected.dataset.jawatan_text || '';
+        }
+    }
 });

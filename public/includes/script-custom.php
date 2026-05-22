@@ -46,7 +46,7 @@ function initDatePicker(parent = document) {
             autoApply: true,
             showDropdowns: true,
             locale: {
-                format: 'DD/MM/YYYY'
+                format: 'DD-MM-YYYY'
             }
         });
 

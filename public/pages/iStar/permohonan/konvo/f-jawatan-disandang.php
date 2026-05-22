@@ -56,26 +56,47 @@
               </select>         
           </td>
 
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-1 flex-nowrap">
-              <button class="btn btn-sm btn-outline-warning js-view-row" data-row='<?= $rowJson ?>'>
-                <i class="ri-eye-line"></i>
-              </button>
+          <!-- TINDAKAN -->
+          <td>
+              <?php 
+              if (
+                  ($row['sumber'] ?? '') === 'Tambahan'
+                  && !empty($row['dokumen']['path'])
+              ):  ?>
 
-              <button class="btn btn-sm btn-outline-primary js-edit-row" data-row='<?= $rowJson ?>'>
-                <i class="ri-pencil-line"></i>
-              </button>
+                  <a href="<?= base_url($row['dokumen']['path']) ?>"
+                  target="_blank"
+                  class="btn btn-sm btn-outline-warning"
+                  title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
+                      <i class="ri-eye-line"></i>
+                  </a>                     
+                  <button type="button"
+                          class="btn btn-sm btn-outline-info upload-btn"
+                          title="<?= h(tr('kemaskini_dokumen', 'Kemaskini Dokumen Sokongan')) ?>"
+                          data-id="<?= h($row['id']) ?>">
+                      <i class="bi bi-upload"></i>
+                  </button>
 
-              <button class="btn btn-sm btn-outline-danger js-delete-row" data-row='<?= $rowJson ?>'>
-                <i class="ri-delete-bin-line"></i>
-              </button>
-            </div>
-          </td>
+                  <input type="file"
+                      class="dokumen-inline d-none"
+                      data-id="<?= h($row['id']) ?>"
+                      accept=".pdf,.jpg,.jpeg">
+              <?php else: ?>
+                  -
+              <?php endif; ?>
+
+              <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                  <button type="button"
+                          class="btn btn-sm btn-outline-danger btn-delete-jawatan"
+                          title = "<?= h(tr('delete', 'Hapus Rekod')) ?>"
+                          data-id="<?= h($row['id']) ?>">
+                      <i class="ri-delete-bin-line"></i>
+                  </button>
+              <?php endif; ?>                 
+          </td>  
         </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
 </div>     
-
-
-                
+     

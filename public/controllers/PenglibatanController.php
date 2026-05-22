@@ -24,6 +24,7 @@ class PenglibatanController
         $this->model = new Penglibatan($pdoIStAD, $pdoEhepa);      
     }
 
+    // PENGLIBATAN
     public function getAllPenglibatan(): array
     {
         $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
@@ -66,7 +67,6 @@ class PenglibatanController
 
         //error_log('TOTAL ROWS: ' . count($wrapper['rows']));
         //error_log(print_r($wrapper['rows'], true)); //apache log
-        //return array_values($wrapper['rows'] ?? []);
         $rows = array_values($wrapper['rows'] ?? []);
 
         //sorting supaya IStAD selalu atas walaupun ada tambahan baru
@@ -464,6 +464,329 @@ class PenglibatanController
         exit;
     }
 
+    // ####### JAWATAN DISANDANG ########
+    public function getAllJawatanDisandang(): array
+    {
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+
+        $wrapper = getJawatanDraft($matrik);
+
+        if (!$wrapper['draft_initialized']) {
+
+            $istad = $this->model->getAllJawatan($matrik);
+
+            initJawatanDraft($matrik, $istad);
+
+            // reload semula dari file (IMPORTANT)
+            $wrapper = getJawatanDraft($matrik);
+        }
+
+        $rows = array_values($wrapper['rows'] ?? []);
+
+        //sorting supaya IStAD selalu atas walaupun ada tambahan baru
+        usort($rows, function ($a, $b) {
+
+            if (($a['sumber'] ?? '') === 'IStAD') {
+                return -1;
+            }
+
+            if (($b['sumber'] ?? '') === 'IStAD') {
+                return 1;
+            }
+
+            return 0;
+        });        
+        return $rows;        
+    }
+
+    public function updateJawatanDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $id    = trim($_POST['id'] ?? '');
+        $field = trim($_POST['field'] ?? '');
+        $value = $_POST['value'] ?? '';
+
+        $wrapper = getJawatanDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+
+        if ($id === '' || $field === '') {
+
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Invalid request'
+            ]);
+
+            exit;
+        }
+
+        foreach ($rows as &$row) {
+            $isIstad = str_starts_with($row['id'], 'ISTAD_');
+            if ($row['id'] === $id) {
+                // check if field is editable for IStAD source
+                if ($isIstad && !canEditFieldJawatan($row, $field)) {
+
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Field ini tidak dibenarkan dikemaskini untuk data IStAD'
+                    ]);
+                    exit;
+                }
+
+                $row[$field] = $value;
+                if ($isIstad) {
+                    $row['source_override'] = true;
+                } else {
+                    $row['is_dirty'] = true;
+                }
+
+                break;
+            }
+        }
+
+        // save balik
+        saveJawatanDraftRows($matrik, $rows);
+
+        echo json_encode([
+            'status' => 'ok',
+            'id' => $id,
+            'field' => $field,
+            'value' => $value,
+            'next_step' => 'sync_to_ehepa_ready'
+        ]);
+
+        exit;
+    }
+
+    //Add New Jawatan Disandang (Tambahan) - with file upload
+    public function addJawatanDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+
+        header('Content-Type: application/json');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $wrapper = getJawatanDraft($matrik);
+        $rows = $wrapper['rows'];        
+
+        // validate input
+        $id_kategori_aktiviti = trim($_POST['id_aktiviti'] ?? '');
+        $kod_kategori_aktiviti = trim($_POST['kategori_aktiviti'] ?? '');
+        $kategori_aktiviti = trim($_POST['aktiviti_text'] ?? '');
+        $nama_bp_program = trim($_POST['nama_bp_program'] ?? '');
+        $tarikh_lantikan = trim($_POST['tarikh'] ?? '');
+        $id_jawatan = $_POST['jawatan'] ?? '';
+        $jawatan = $_POST['jawatan_text'] ?? '';
+        $peringkat = $_POST['peringkat'] ?? '';
+
+        if ($kod_kategori_aktiviti === '' || $nama_bp_program === '' || $tarikh_lantikan === '' || $id_jawatan === '' || $peringkat === '') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Sila lengkapkan semua maklumat'
+            ]);
+            exit;
+        }
+
+        //upload file utk sumber tambahan
+        if (!isset($_FILES['dokumen-jawatan']) || $_FILES['dokumen-jawatan']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Dokumen sokongan wajib dimuat naik'
+            ]);
+            exit;
+        }
+
+        $file = $_FILES['dokumen-jawatan'];
+
+        $allowed = ['pdf', 'jpg', 'jpeg'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Format fail tidak dibenarkan. Hanya PDF, JPG, JPEG dibenarkan.'
+            ]);
+            exit;
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Saiz fail maksimum 5MB'
+            ]);
+            exit;
+        }
+
+        // folder simpan
+        $path = 'pages/iStar/permohonan/konvo/uploads/penglibatan/';
+        $uploadDir = dirname(__DIR__) . '/' . $path;
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        $newFileName = $matrik . '-' . uniqid('dok_') . '.' . $ext;
+        $fullPath = $uploadDir . $newFileName;
+
+        move_uploaded_file($file['tmp_name'], $fullPath);
+
+        //  CREATE ROW
+        $newRow = [
+            'id' => uniqid('new_'),
+            'id_kegiatan_badan' => null,
+            'sumber' => 'Tambahan',
+            'id_kategori_aktiviti' => $id_kategori_aktiviti,
+            'kod_kategori_aktiviti' => $kod_kategori_aktiviti,
+            'kategori_aktiviti' => $kategori_aktiviti,
+            'nama_bp_program' => $nama_bp_program,
+            'id_jawatan' => $id_jawatan,
+            'jawatan' => $jawatan,
+            'tarikh_lantikan' => $tarikh_lantikan,
+            'peringkat' => $peringkat,
+            'dokumen' => [
+                'filename' => $newFileName,
+                'path' => $path . $newFileName,
+                'uploaded_at' => date('Y-m-d H:i:s')
+            ],
+
+            'is_dirty' => true,
+            'conflict' => false
+        ];
+
+        $rows[] = $newRow;
+
+        saveJawatanDraftRows($matrik, $rows);
+        $lookup = $this->getAllLookup();
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Rekod berjaya ditambah',
+            'data' => $newRow,
+            'lookup' => $lookup
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function deleteJawatanDraft()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $id = trim($_POST['id'] ?? '');
+
+        if ($id === '') {
+
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID tidak sah'
+            ]);
+
+            exit;
+        }
+
+        $wrapper = getJawatanDraft($matrik);
+
+        $rows = $wrapper['rows'] ?? [];
+
+        $filtered = [];
+
+        foreach ($rows as $row) {
+
+            // skip row yg nak delete
+            if (($row['id'] ?? '') === $id && ($row['sumber'] ?? '') === 'Tambahan') {
+                
+                // delete physical file
+                if (!empty($row['dokumen']['path'])) {
+
+                    $oldPath = dirname(__DIR__) . '/' . $row['dokumen']['path'];
+
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }             
+
+                continue;
+            }
+
+            $filtered[] = $row;
+        }
+
+        saveJawatanDraftRows($matrik, $filtered);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Rekod berjaya dipadam'
+        ]);
+
+        exit;
+    }    
+
+    public function syncIstadJawatan()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+        $wrapper = getJawatanDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+
+        // ambil fresh dari IStAD
+        $istad = $this->model->getAllJawatan($matrik);
+        $newIstadRows = [];
+
+         foreach ($istad as $row) {
+
+            $id = $row['id_kegiatan_badan'] ?? null;
+
+            $newIstadRows[] = [
+                'id' => $id ? 'ISTAD_' . $id : uniqid('ISTAD_'),
+                'id_kegiatan_badan' => $row['id_kegiatan_badan'] ?? null,
+                'sumber' => 'IStAD',
+
+                'id_kategori_aktiviti' => $row['id_kategori_aktiviti'] ?? null,
+                'kod_kategori_aktiviti' => $row['kod_kategori_aktiviti'] ?? null,
+                'kategori_aktiviti' => $row['kategori_aktiviti'] ?? null,
+
+                'nama_bp_program' => $row['nama_bp_program'] ?? '',
+                'id_jawatan' => $row['id_jawatan'] ?? '',
+                'jawatan' => $row['jawatan'] ?? '',
+                'tarikh_lantikan' => $row['tarikh_mula'] ?? '',
+
+                'peringkat' => $row['peringkat'] ?? null,
+
+                'is_dirty' => false,
+                'source_override' => false,
+                'conflict' => false    
+            ];
+        }         
+     
+        // KEEP Tambahan, REPLACE ONLY IStAD
+        $filtered = array_values(array_filter($rows, function ($r) {
+            return ($r['sumber'] ?? '') !== 'IStAD';
+        }));
+
+        $merged = array_merge($filtered, $newIstadRows);
+
+        saveJawatanDraftRows($matrik, $merged);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Data IStAD berjaya diselaraskan'
+        ]);
+        exit;
+    }
+
+    // ####### ANUGERAH ########
     public function getAllAnugerah(): array
     {
         try {
@@ -608,89 +931,7 @@ class PenglibatanController
         exit;
     }
 
-    public function getAllJawatanDisandang(): array
-    {
-        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
-
-        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
-
-        $wrapper = getJawatanDraft($matrik);
-
-        if (!$wrapper['draft_initialized']) {
-
-            $istad = $this->model->getAllJawatan($matrik);
-
-            initJawatanDraft($matrik, $istad);
-
-            // reload semula dari file (IMPORTANT)
-            $wrapper = getJawatanDraft($matrik);
-        }
-
-        return $wrapper['rows'];
-    }
-
-    public function updateJawatanDraft()
-    {
-        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
-        header('Content-Type: application/json; charset=utf-8');
-
-        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
-
-        $id    = trim($_POST['id'] ?? '');
-        $field = trim($_POST['field'] ?? '');
-        $value = $_POST['value'] ?? '';
-
-        $wrapper = getJawatanDraft($matrik);
-        $rows = $wrapper['rows'] ?? [];
-
-        if ($id === '' || $field === '') {
-
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Invalid request'
-            ]);
-
-            exit;
-        }
-
-        foreach ($rows as &$row) {
-            $isIstad = str_starts_with($row['id'], 'ISTAD_');
-            if ($row['id'] === $id) {
-                // check if field is editable for IStAD source
-                if ($isIstad && !canEditFieldJawatan($row, $field)) {
-
-                    echo json_encode([
-                        'status' => 'error',
-                        'message' => 'Field ini tidak dibenarkan dikemaskini untuk data IStAD'
-                    ]);
-                    exit;
-                }
-
-                $row[$field] = $value;
-                if ($isIstad) {
-                    $row['source_override'] = true;
-                } else {
-                    $row['is_dirty'] = true;
-                }
-
-                break;
-            }
-        }
-
-        // save balik
-        saveJawatanDraftRows($matrik, $rows);
-
-        echo json_encode([
-            'status' => 'ok',
-            'id' => $id,
-            'field' => $field,
-            'value' => $value,
-            'next_step' => 'sync_to_ehepa_ready'
-        ]);
-
-        exit;
-    }
-
+    // ######## LOOKUP ###########
     /** Get lookup data */
     public function getAllLookup(): array
     {

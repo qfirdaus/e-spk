@@ -39,8 +39,8 @@
               <!-- Tarikh -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('profile_tarikh','Tarikh')) ?></label>
-                <input type="date" name="tarikh" class="form-control" required>
-              </div>
+                <input type="text" name="tarikh" class="form-control datepicker" placeholder="dd/mm/yyyy" required>
+              </div>              
 
               <!-- Wakil -->
               <div class="mb-3">
@@ -146,14 +146,18 @@
                 <label class="form-label">
                   <?= h(tr('kategori_perjawatan','Kategori Perjawatan')) ?>
                 </label>
-                <select name="kategori_perjawatan" class="form-select form-select-sm" required>
+                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select form-select-sm" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
-                        <option value="<?= h($opt['kod_kategori_aktiviti']) ?>">
+                        <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
+                            data-idaktiviti="<?= h($opt['id']) ?>"
+                            data-aktiviti_text="<?= h($opt['kategori_aktiviti']) ?>" >
                             <?= h(strtoupper($opt['kategori_aktiviti'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <input type="hidden" name="id_aktiviti" id="idAktiviti">
+                <input type="hidden" name="aktiviti_text" id="aktivitiText">
               </div>
 
               <!-- Nama Program -->
@@ -161,14 +165,13 @@
                 <label class="form-label">
                   <?= h(tr('nama_badan_pelajar_program','Nama Badan Pelajar / Program')) ?>
                 </label>
-                <input type="text" name="nama_penuh" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                <input type="text" name="nama_bp_program" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
               </div>
 
               <!-- Tarikh -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('profile_tarikh','Tarikh')) ?></label>
-                <!-- <input type="date" name="tarikh" class="form-control" required> -->
-                <input type="text" name="tarikh" class="form-control datepicker" placeholder="dd/mm/yyyy" required>
+                <input type="text" name="tarikh" class="form-control datepicker" placeholder="dd-mm-yyyy" required>
               </div>
 
             </div>
@@ -179,20 +182,27 @@
               <!-- Jawatan -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('jawatan','Jawatan')) ?></label>
-                <select name="jawatan" class="form-select form-select-sm" required>
+                <select name="jawatan" id="jawatan" class="form-select form-select-sm" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
-                    <?php foreach ($lookupJawatan as $opt): ?>
-                        <option value="<?= h($opt['id_jawatan']) ?>">
-                            <?= h(strtoupper($opt['keterangan']))  . ' / ' . h(strtoupper($opt['keteranganBP'])) ?>
+                    <?php 
+                      foreach ($lookupJawatan as $opt): 
+                        if (h(strtoupper($opt['keteranganBP'])) != ''):  $str = ' / '; 
+                        else: $str = ''; 
+                        endif;                       
+                    ?>
+                        <option value="<?= h($opt['id_jawatan']) ?>"
+                                data-jawatan_text="<?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>" >
+                            <?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <input type="hidden" name="jawatan_text" id="jawatanText">
               </div>
 
               <!-- Peringkat -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
-                <select name="peringkat" class="form-select form-select-sm" required>
+                <select name="peringkat" id="peringkat" class="form-select form-select-sm" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>">
@@ -207,7 +217,7 @@
                 <label class="form-label">
                   <?= h(tr('dokumen_penglibatan','Dokumen Sokongan')) ?>
                 </label>
-                <input type="file" name="dokumen-penglibatan" class="form-control"
+                <input type="file" name="dokumen-jawatan" class="form-control"
                        accept=".jpg,.jpeg,.pdf"
                        onchange="checkFileSize(this)" required>
                 <small class="text-danger">

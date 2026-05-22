@@ -65,16 +65,14 @@ function initJawatanDraft(string $matrik, array $istadRows): array
 
     foreach ($istadRows as $i => $row) {
 
-        $idBase = $row['id_kegiatan_badan']
-            ?? $row['id_jawatan']
-            ?? uniqid('J');
+        $idBase = $row['id_kegiatan_badan'] ?? $i ;
 
         $rows[] = [
             'id' => 'ISTAD_' . $idBase,
             'id_kegiatan_badan' => $row['id_kegiatan_badan'] ?? null,
             'sumber' => 'IStAD',
 
-            'id_kategori_kegiatan' => $row['id_kategori_aktiviti'] ?? null,
+            'id_kategori_aktiviti' => $row['id_kategori_aktiviti'] ?? null,
             'kod_kategori_aktiviti' => $row['kod_kategori_aktiviti'] ?? null,
             'kategori_aktiviti' => $row['kategori_aktiviti'] ?? null,
 
@@ -121,6 +119,7 @@ function saveJawatanDraft(string $matrik, array $payload): bool
     );
 }
 
+//save by row (for inline edit)
 function saveJawatanDraftRows(string $matrik, array $rows): bool
 {
     $payload = [
