@@ -1020,6 +1020,10 @@ jQuery(function () {
         });
 
     });       
+
+    if (jQuery('#anugerahDT').length) {
+        initStandardDataTable('#anugerahDT');
+    }
 });
 
 

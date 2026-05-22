@@ -67,3 +67,57 @@ table.dataTable tbody textarea.border-warning {
     display: inline-flex;
     align-items: center;
 }
+
+/* Konvo tab and table styling */
+.konvo-tab-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0 0 0.35rem rgba(64, 77, 88, 0.06);
+}
+
+.konvo-tab-card .icares-address-panel-header,
+.konvo-tab-card .konvo-table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.konvo-tab-card .icares-address-panel-header h5,
+.konvo-tab-card .konvo-table-toolbar h5 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.konvo-tab-card .btn {
+    border-radius: 0.75rem;
+}
+
+.table-responsive.dt-standard table th,
+.table-responsive.dt-standard table td {
+    vertical-align: top !important;
+}
+
+.table-responsive.dt-standard table th.col-bil,
+.table-responsive.dt-standard table td.col-bil {
+    width: 60px;
+    text-align: center;
+}
+
+.table-responsive.dt-standard table td.text-center,
+.table-responsive.dt-standard table th.text-center {
+    text-align: center;
+}
+
+.table-responsive.dt-standard .btn {
+    min-height: 34px;
+    min-width: 40px;
+}
+
+.table-responsive.dt-standard .form-select-sm {
+    min-width: 140px;
+}

@@ -1,19 +1,19 @@
-<div class="icares-address-panel-header">
-  <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
-</div>
-<!-- <hr> -->
-<div class="table-responsive dt-standard p-3">
-  <table id="penglibatanDT" class="table table-bordered align-middle w-100">
+<div class="konvo-tab-card p-3 mb-4">
+  <div class="icares-address-panel-header">
+    <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
+  </div>
+  <div class="table-responsive dt-standard">
+    <table id="penglibatanDT" class="table table-bordered align-middle w-100">
     <thead>
       <tr>
-        <th class="col-bil"><?= h(tr('bil_no', 'No.')) ?></th>
-        <th></th>
-        <th class="small w-25"><?= h(tr('nama_program_pertandingan', 'Nama Program / Pertandingan')) ?></th>
-        <th class="small"><?= h(tr('tarikh', 'Tarikh')) ?></th>
-        <th class="small"><?= h(tr('wakil', 'Wakil')) ?></th>
-        <th class="small"><?= h(tr('peringkat', 'Peringkat')) ?></th>
-        <th class="small"><?= h(tr('pencapaian', 'Pencapaian')) ?></th>
-        <th class="small text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th>
+        <th class="col-bil text-center"><?= h(tr('bil_no', 'No.')) ?></th>
+        <th class="w-10 text-center"></th>
+        <th class="small w-35"><?= h(tr('nama_program_pertandingan', 'Nama Program / Pertandingan')) ?></th>
+        <th class="small w-15"><?= h(tr('tarikh', 'Tarikh')) ?></th>
+        <th class="small w-12"><?= h(tr('wakil', 'Wakil')) ?></th>
+        <th class="small w-12"><?= h(tr('peringkat', 'Peringkat')) ?></th>
+        <th class="small w-16"><?= h(tr('pencapaian', 'Pencapaian')) ?></th>
+        <th class="small text-center" style="width:130px;"><?= h(tr('tindakan', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
@@ -32,13 +32,13 @@
     ?>
             <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
                 <td class="col-bil text-center"></td>
-                <td>
+                <td class="text-center">
                     <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                         <?= h($sumber) ?>
                     </span>
                 </td>
 
-                <td align="left">
+                <td class="text-start">
                     <?= h($row['nama'] ?? '-') ?>
                 </td>
 
@@ -97,12 +97,12 @@
 
                         <a href="<?= base_url($row['dokumen']['path']) ?>"
                         target="_blank"
-                        class="btn btn-sm btn-outline-warning"
+                        class="btn btn-sm btn-outline-warning rounded-3"
                         title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                             <i class="ri-eye-line"></i>
                         </a>                     
                         <button type="button"
-                                class="btn btn-sm btn-outline-info upload-btn"
+                                class="btn btn-sm btn-outline-info rounded-3 upload-btn"
                                 title="<?= h(tr('kemaskini_dokumen', 'Kemaskini Dokumen Sokongan')) ?>"
                                 data-id="<?= h($row['id']) ?>">
                             <i class="bi bi-upload"></i>
@@ -119,7 +119,7 @@
 
                     <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
                         <button type="button"
-                                class="btn btn-sm btn-outline-danger btn-delete-penglibatan"
+                                class="btn btn-sm btn-outline-danger rounded-3 btn-delete-penglibatan"
                                 title = "<?= h(tr('delete', 'Hapus Rekod')) ?>"
                                 data-id="<?= h($row['id']) ?>">
                             <i class="ri-delete-bin-line"></i>
@@ -129,5 +129,4 @@
             </tr>
     <?php endforeach; ?>
     </tbody>
-  </table>
-</div>     
+  </table>  </div></div>     

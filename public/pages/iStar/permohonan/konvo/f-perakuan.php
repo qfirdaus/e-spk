@@ -1,4 +1,4 @@
-<div class="card border shadow-sm">
+<div class="konvo-tab-card card shadow-sm mb-4">
 
     <div class="card-body">
 
@@ -61,7 +61,7 @@
             <div class="d-flex justify-content-end">
 
                 <button type="submit"
-                        class="btn btn-primary px-4"
+                        class="btn btn-primary rounded-3 px-4"
                         id="btn-submit-<?= h($istarPerakuanIdPrefix) ?>"
                         disabled>
 
