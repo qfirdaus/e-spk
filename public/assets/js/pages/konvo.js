@@ -511,6 +511,7 @@ jQuery(function () {
         const rowId = jQuery(this).data('id');
         const tr = jQuery(this).closest('tr');
         const formData = new FormData();
+        const ajaxUrl = jQuery(this).data('url');
 
         formData.append('id', rowId);
         formData.append('dokumen', file);
@@ -520,7 +521,7 @@ jQuery(function () {
 
         jQuery.ajax({
 
-            url: base_url + 'pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=updateDokumen',
+            url: base_url + ajaxUrl,
             method: 'POST',
             data: formData,
             processData: false,
@@ -551,6 +552,11 @@ jQuery(function () {
 
                     tr.addClass('row-error');
                     //console.log('FILE UPLOAD FAILED:', res);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: res.message || 'Gagal kemaskini rekod'
+                    });                    
 
                 }
 

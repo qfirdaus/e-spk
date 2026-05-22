@@ -563,6 +563,112 @@ class PenglibatanController
         exit;
     }
 
+    public function updateDokumenJawatan()
+    {
+        require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/JawatanDraftHelper.php';
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+        $id = trim($_POST['id'] ?? '');
+
+        if ($id === '') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID tidak sah'
+            ]);
+            exit;
+        }
+
+        if (
+            !isset($_FILES['dokumen'])
+            || $_FILES['dokumen']['error'] !== UPLOAD_ERR_OK
+        ) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Dokumen gagal dimuat naik'
+            ]);
+            exit;
+        }
+
+        $file = $_FILES['dokumen'];
+        $allowed = ['pdf', 'jpg', 'jpeg'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Format fail tidak dibenarkan'
+            ]);
+            exit;
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Saiz fail maksimum 5MB'
+            ]);
+            exit;
+        }
+
+        $wrapper = getJawatanDraft($matrik);
+        $rows = $wrapper['rows'] ?? [];
+        $path = 'pages/iStar/permohonan/konvo/uploads/jawatan/';
+        $uploadDir = dirname(__DIR__) . '/' . $path;
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        $newFileName = $matrik . '-' . uniqid('dok_') . '.' . $ext;
+        $fullPath = $uploadDir . $newFileName;
+        move_uploaded_file($file['tmp_name'], $fullPath);
+
+        foreach ($rows as &$row) {
+            if (($row['id'] ?? '') !== $id) {
+                continue;
+            }
+
+            // hanya Tambahan boleh update
+            if (($row['sumber'] ?? '') !== 'Tambahan') {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Rekod IStAD tidak boleh dikemaskini'
+                ]);
+                exit;
+            }
+
+            // delete old file
+            if (!empty($row['dokumen']['path'])) {
+                $oldPath = dirname(__DIR__) . '/' . $row['dokumen']['path'];
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // update metadata
+            $row['dokumen'] = [
+                'filename' => $newFileName,
+                'path' => $path . $newFileName,
+                'uploaded_at' => date('Y-m-d H:i:s')
+            ];
+
+            $row['is_dirty'] = true;
+
+            break;
+        }
+
+        saveJawatanDraftRows($matrik, $rows);
+
+        echo json_encode([
+            'status' => 'ok',
+            'message' => 'Dokumen berjaya dikemaskini',
+            'path' => $row['dokumen']['path']
+        ]);
+
+        exit;
+    }   
+
     //Add New Jawatan Disandang (Tambahan) - with file upload
     public function addJawatanDraft()
     {
@@ -624,7 +730,7 @@ class PenglibatanController
         }
 
         // folder simpan
-        $path = 'pages/iStar/permohonan/konvo/uploads/penglibatan/';
+        $path = 'pages/iStar/permohonan/konvo/uploads/jawatan/';
         $uploadDir = dirname(__DIR__) . '/' . $path;
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
@@ -705,9 +811,7 @@ class PenglibatanController
                 
                 // delete physical file
                 if (!empty($row['dokumen']['path'])) {
-
                     $oldPath = dirname(__DIR__) . '/' . $row['dokumen']['path'];
-
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
                     }

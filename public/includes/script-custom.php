@@ -61,4 +61,12 @@ document.addEventListener('shown.bs.modal', function (event) {
     initDatePicker(modal);
 
 });
+
+document.addEventListener('input', function (e) {
+
+    if (e.target.matches('input.uppercase')) {
+        e.target.value = e.target.value.toUpperCase();
+    }
+
+});
 </script>

@@ -80,6 +80,7 @@
                   <input type="file"
                       class="dokumen-inline d-none"
                       data-id="<?= h($row['id']) ?>"
+                      data-url="pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateDokumenJawatan"
                       accept=".pdf,.jpg,.jpeg">
               <?php else: ?>
                   -

@@ -1,27 +1,7 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-22 07:34:36",
+    "updated_at": "2026-05-22 09:59:14",
     "rows": [
-        {
-            "id": "new_6a0fde51be3e9",
-            "id_kegiatan_badan": null,
-            "sumber": "Tambahan",
-            "id_kategori_aktiviti": "3",
-            "kod_kategori_aktiviti": "BP",
-            "kategori_aktiviti": "BADAN PELAJAR",
-            "nama_bp_program": "BADAN PELAJAR T3S",
-            "id_jawatan": "8",
-            "jawatan": "TIMBALAN BENDAHARI \/ TIMBALAN BENDAHARI",
-            "tarikh_lantikan": "28-04-2026",
-            "peringkat": "UNI",
-            "dokumen": {
-                "filename": "2250005-dok_6a0fde51bd229.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0fde51bd229.pdf",
-                "uploaded_at": "2026-05-22 06:40:49"
-            },
-            "is_dirty": true,
-            "conflict": false
-        },
         {
             "id": "ISTAD_1994",
             "id_kegiatan_badan": 1994,
@@ -49,9 +29,9 @@
             "id_jawatan": 6,
             "jawatan": "AJK LOGISTIK",
             "tarikh_lantikan": "2026-04-16",
-            "peringkat": null,
+            "peringkat": "FK",
             "is_dirty": false,
-            "source_override": false,
+            "source_override": true,
             "conflict": false
         },
         {
@@ -65,9 +45,29 @@
             "id_jawatan": 5,
             "jawatan": "AHLI",
             "tarikh_lantikan": "2025-10-06",
-            "peringkat": null,
+            "peringkat": "",
             "is_dirty": false,
-            "source_override": false,
+            "source_override": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a1007fecf58b",
+            "id_kegiatan_badan": null,
+            "sumber": "Tambahan",
+            "id_kategori_aktiviti": "3",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "BADAN PELAJAR T3S",
+            "id_jawatan": "8",
+            "jawatan": "TIMBALAN BENDAHARI \/ TIMBALAN BENDAHARI",
+            "tarikh_lantikan": "09-02-2026",
+            "peringkat": "UNI",
+            "dokumen": {
+                "filename": "2250005-dok_6a1007fece5a3.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a1007fece5a3.pdf",
+                "uploaded_at": "2026-05-22 09:38:38"
+            },
+            "is_dirty": true,
             "conflict": false
         }
     ]

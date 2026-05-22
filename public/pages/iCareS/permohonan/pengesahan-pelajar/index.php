@@ -124,7 +124,8 @@
 
               <!-- Tab 3: Maklumat Penerima -->
               <div class="tab-pane fade show" id="maklumat-penerima-tab" role="tabpanel">
-                <?php  include __DIR__ . '/f-penerima.php'; ?>
+                <?php  //include __DIR__ . '/f-penerima.php'; ?>
+                <div id="penerima-content"></div>
               </div> 
 
               <!-- Tab 4: Perakuan -->
@@ -147,6 +148,15 @@
     include __DIR__ . '/../../../../includes/script-pages.php';  
     include __DIR__ . '/../../../../includes/script-custom.php';
   ?>
+  <script> 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
+      const msg_load = {
+        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
+        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
+        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
+      };
+  </script> 
+  <script src="<?= base_url('assets/js/pages/pengesahan-pelajar.js?v=' . time()) ?>"></script> 
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>
