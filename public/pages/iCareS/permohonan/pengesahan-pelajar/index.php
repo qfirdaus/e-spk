@@ -5,9 +5,9 @@
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
-  $pageHeading     = tr('page_heading_pengesahan_pelajar', 'Pengesahan Pelajar');
-  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
-  $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
+  $pageHeading     = 'Pengesahan Pelajar';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel      = 'Salin No. Matrik';
 
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();

@@ -11,9 +11,9 @@
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
   require_once __DIR__ . '/../../../../controllers/KeluargaController.php'; 
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
-  $pageHeading = tr('page_heading_anugerah_pingat_graduan', 'Anugerah Pingat Graduan');
-  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
-  $copyIdLabel = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
+  $pageHeading = 'Anugerah Pingat Graduan';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel = 'Salin No. Matrik';
   $PAGE_TITLE = tr('istar_title', 'iStar');
   include __DIR__ . '/../../../../includes/header.php';
   include __DIR__ . '/../../../../actions/retrieve-data-keluarga.php';
