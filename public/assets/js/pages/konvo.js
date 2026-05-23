@@ -4,6 +4,13 @@ let jawatanLoaded = false;
 
 console.log('KONVO JS LOADED');
 
+function konvoText(key, fallback) {
+    if (window.konvoI18n && Object.prototype.hasOwnProperty.call(window.konvoI18n, key)) {
+        return window.konvoI18n[key];
+    }
+    return fallback;
+}
+
 function loadPenglibatan() {
 
     if (penglibatanLoaded){
@@ -47,7 +54,7 @@ function loadPenglibatan() {
         })
         .catch(err => {
             console.log(err);
-            box.innerHTML = '<div class="text-danger">Gagal load data</div>';
+            box.innerHTML = `<div class="text-danger">${konvoText('load_data_failed', 'Gagal load data')}</div>`;
         });
 }
 
@@ -81,7 +88,7 @@ function loadJawatan() {
         })
         .catch(err => {
             console.log(err);
-            box.innerHTML = '<div class="text-danger">Gagal load data</div>';
+            box.innerHTML = `<div class="text-danger">${konvoText('load_data_failed', 'Gagal load data')}</div>`;
         });
 
 }
@@ -142,14 +149,14 @@ function initStandardDataTable(tableId) {
                                 id="syncIstadBtn"
                                 class="btn btn-primary rounded-3">
                             <i class="ri-refresh-line me-1"></i>
-                            Sync IStAD
+                            ${konvoText('sync_istad', 'Sync IStAD')}
                         </button>
 
                         <button type="button"
                                 id="penglibatanBtnAdd"
                                 class="btn btn-success rounded-3">
                             <i class="ri-add-line me-1"></i>
-                            Tambah Baru
+                            ${konvoText('add_new', 'Tambah Baru')}
                         </button>
                     </div>
                 `;
@@ -163,14 +170,14 @@ function initStandardDataTable(tableId) {
                                 id="syncIstadJawatanBtn"
                                 class="btn btn-primary rounded-3">
                             <i class="ri-refresh-line me-1"></i>
-                            Sync IStAD
+                            ${konvoText('sync_istad', 'Sync IStAD')}
                         </button>
 
                         <button type="button"
                                 id="jawatanBtnAdd"
                                 class="btn btn-success rounded-3">
                             <i class="ri-add-line me-1"></i>
-                            Tambah Baru
+                            ${konvoText('add_new', 'Tambah Baru')}
                         </button>
                     </div>
                 `;
@@ -193,15 +200,15 @@ function initStandardDataTable(tableId) {
         },
         language: {
             search: "",
-            searchPlaceholder: "Search",
-            lengthMenu: "Show _MENU_ records",
-            info: "Showing _START_ to _END_ of _TOTAL_ records",
-            infoEmpty: "Showing 0 to 0 of 0 records",
-            emptyTable: "No records found",
-            zeroRecords: "No matching records",
+            searchPlaceholder: konvoText('datatable_search_placeholder', 'Search'),
+            lengthMenu: konvoText('datatable_length_menu', 'Show _MENU_ records'),
+            info: konvoText('datatable_info', 'Showing _START_ to _END_ of _TOTAL_ records'),
+            infoEmpty: konvoText('datatable_info_empty', 'Showing 0 to 0 of 0 records'),
+            emptyTable: konvoText('datatable_empty_table', 'No records found'),
+            zeroRecords: konvoText('datatable_zero_records', 'No matching records'),
             paginate: {
-                next: "Next",
-                previous: "Previous"
+                next: konvoText('datatable_next', 'Next'),
+                previous: konvoText('datatable_previous', 'Previous')
             }
 
         },
@@ -367,7 +374,7 @@ jQuery(function () {
             error: function (xhr) {
                 //console.log('AJAX ERROR:', xhr.responseText);
 
-                let msg = 'Ralat sistem. Cuba lagi.';
+                let msg = konvoText('system_error_try_again', 'Ralat sistem. Cuba lagi.');
 
                 try {
                     let res = JSON.parse(xhr.responseText);
@@ -426,7 +433,7 @@ jQuery(function () {
             error: function (xhr) {
                 //console.log('AJAX ERROR:', xhr.responseText);
 
-                let msg = 'Ralat sistem. Cuba lagi.';
+                let msg = konvoText('system_error_try_again', 'Ralat sistem. Cuba lagi.');
 
                 try {
                     let res = JSON.parse(xhr.responseText);
@@ -460,7 +467,7 @@ jQuery(function () {
 
                 if (res.status === 'ok') {
 
-                    showToast(res.message || 'Rekod anugerah berjaya ditambah');
+                    showToast(res.message || konvoText('award_add_success', 'Rekod anugerah berjaya ditambah'));
 
                     form.reset();
 
@@ -475,14 +482,14 @@ jQuery(function () {
                     return;
                 }
 
-                showToast(res.message || 'Gagal simpan rekod anugerah', 'error');
+                showToast(res.message || konvoText('award_save_failed', 'Gagal simpan rekod anugerah'), 'error');
             },
 
             error: function (xhr) {
 
                 console.log('ANUGERAH AJAX ERROR:', xhr.responseText);
 
-                let msg = 'Ralat sistem. Cuba lagi.';
+                let msg = konvoText('system_error_try_again', 'Ralat sistem. Cuba lagi.');
 
                 try {
                     const res = JSON.parse(xhr.responseText);
@@ -617,8 +624,8 @@ jQuery(function () {
                     //console.log('FILE UPLOAD FAILED:', res);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal',
-                        text: res.message || 'Gagal kemaskini rekod'
+                        title: konvoText('swal_failed_title', 'Gagal'),
+                        text: res.message || konvoText('record_update_failed', 'Gagal kemaskini rekod')
                     });                    
 
                 }
@@ -731,12 +738,12 @@ jQuery(function () {
         }
 
         Swal.fire({
-            title: 'Padam rekod ini?',
-            text: "Tindakan ini tidak boleh dibatalkan!",
+            title: konvoText('swal_delete_record_title', 'Padam rekod ini?'),
+            text: konvoText('swal_delete_warning', 'Tindakan ini tidak boleh dibatalkan!'),
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, padam',
-            cancelButtonText: 'Batal'
+            confirmButtonText: konvoText('swal_confirm_delete', 'Ya, padam'),
+            cancelButtonText: konvoText('swal_cancel', 'Batal')
         }).then((result) => {
 
             if (!result.isConfirmed) return;
@@ -757,8 +764,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Berjaya',
-                            text: res.message || 'Rekod berjaya dipadam',
+                            title: konvoText('swal_success_title', 'Berjaya'),
+                            text: res.message || konvoText('record_delete_success', 'Rekod berjaya dipadam'),
                             timer: 1500,
                             showConfirmButton: false
                         });
@@ -776,8 +783,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: res.message || 'Gagal padam rekod'
+                            title: konvoText('swal_failed_title', 'Gagal'),
+                            text: res.message || konvoText('record_delete_failed', 'Gagal padam rekod')
                         });
                     }
                 },
@@ -790,8 +797,8 @@ jQuery(function () {
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Ralat Sistem',
-                        text: 'Cuba lagi sebentar lagi'
+                        title: konvoText('swal_system_error_title', 'Ralat Sistem'),
+                        text: konvoText('swal_try_again_later', 'Cuba lagi sebentar lagi')
                     });
                 }
 
@@ -813,12 +820,12 @@ jQuery(function () {
         }
 
         Swal.fire({
-            title: 'Padam rekod ini?',
-            text: "Tindakan ini tidak boleh dibatalkan!",
+            title: konvoText('swal_delete_record_title', 'Padam rekod ini?'),
+            text: konvoText('swal_delete_warning', 'Tindakan ini tidak boleh dibatalkan!'),
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, padam',
-            cancelButtonText: 'Batal'
+            confirmButtonText: konvoText('swal_confirm_delete', 'Ya, padam'),
+            cancelButtonText: konvoText('swal_cancel', 'Batal')
         }).then((result) => {
 
             if (!result.isConfirmed) return;
@@ -839,8 +846,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Berjaya',
-                            text: res.message || 'Rekod berjaya dipadam',
+                            title: konvoText('swal_success_title', 'Berjaya'),
+                            text: res.message || konvoText('record_delete_success', 'Rekod berjaya dipadam'),
                             timer: 1500,
                             showConfirmButton: false
                         });
@@ -858,8 +865,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: res.message || 'Gagal padam rekod'
+                            title: konvoText('swal_failed_title', 'Gagal'),
+                            text: res.message || konvoText('record_delete_failed', 'Gagal padam rekod')
                         });
                     }
                 },
@@ -871,8 +878,8 @@ jQuery(function () {
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Ralat Sistem',
-                        text: 'Cuba lagi sebentar lagi'
+                        title: konvoText('swal_system_error_title', 'Ralat Sistem'),
+                        text: konvoText('swal_try_again_later', 'Cuba lagi sebentar lagi')
                     });
                 }
 
@@ -888,17 +895,17 @@ jQuery(function () {
         const rowId = btn.data('id');
 
         if (!rowId) {
-            showToast('ID rekod anugerah tidak sah', 'error');
+            showToast(konvoText('award_invalid_id', 'ID rekod anugerah tidak sah'), 'error');
             return;
         }
 
         Swal.fire({
-            title: 'Padam rekod anugerah ini?',
-            text: 'Tindakan ini tidak boleh dibatalkan!',
+            title: konvoText('swal_delete_award_title', 'Padam rekod anugerah ini?'),
+            text: konvoText('swal_delete_warning', 'Tindakan ini tidak boleh dibatalkan!'),
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, padam',
-            cancelButtonText: 'Batal'
+            confirmButtonText: konvoText('swal_confirm_delete', 'Ya, padam'),
+            cancelButtonText: konvoText('swal_cancel', 'Batal')
         }).then((result) => {
 
             if (!result.isConfirmed) return;
@@ -914,19 +921,19 @@ jQuery(function () {
                 success: function (res) {
 
                     if (res.status === 'ok') {
-                        showToast(res.message || 'Rekod anugerah berjaya dipadam');
+                        showToast(res.message || konvoText('award_delete_success', 'Rekod anugerah berjaya dipadam'));
                         setTimeout(() => {
                             location.reload();
                         }, 150);
                         return;
                     }
 
-                    showToast(res.message || 'Gagal padam rekod anugerah', 'error');
+                    showToast(res.message || konvoText('award_delete_failed', 'Gagal padam rekod anugerah'), 'error');
                 },
 
                 error: function (xhr) {
                     console.log('ANUGERAH DELETE ERROR:', xhr.responseText);
-                    showToast('Ralat sistem', 'error');
+                    showToast(konvoText('swal_system_error_title', 'Ralat sistem'), 'error');
                 }
             });
         });
@@ -936,12 +943,12 @@ jQuery(function () {
     jQuery(document).on('click', '#syncIstadBtn', function () {
 
         Swal.fire({
-            title: 'Sync data IStAD?',
-            text: 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+            title: konvoText('sync_istad_title', 'Sync data IStAD?'),
+            text: konvoText('sync_istad_text', 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.'),
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Ya, sync',
-            cancelButtonText: 'Batal'
+            confirmButtonText: konvoText('sync_istad_confirm', 'Ya, sync'),
+            cancelButtonText: konvoText('swal_cancel', 'Batal')
         }).then((result) => {
 
             if (!result.isConfirmed) return;
@@ -969,11 +976,11 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Penyelarasan Data Berjaya',
+                            title: konvoText('sync_success_title', 'Penyelarasan Data Berjaya'),
                             html: `
                                 <b> ${res.message || ''} </b>
                             `,
-                            confirmButtonText: 'OK',
+                            confirmButtonText: konvoText('swal_ok', 'OK'),
                             allowOutsideClick: false
                         }).then(() => {
                             // reload table shj
@@ -985,8 +992,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: res.message || 'Penyelarasan data gagal'
+                            title: konvoText('swal_failed_title', 'Gagal'),
+                            text: res.message || konvoText('sync_failed', 'Penyelarasan data gagal')
                         });
                     }
                 },
@@ -998,8 +1005,8 @@ jQuery(function () {
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Ralat sistem',
-                        text: 'Cuba lagi'
+                        title: konvoText('swal_system_error_title', 'Ralat sistem'),
+                        text: konvoText('swal_try_again', 'Cuba lagi')
                     });
                 }
             });
@@ -1012,12 +1019,12 @@ jQuery(function () {
     jQuery(document).on('click', '#syncIstadJawatanBtn', function () {
 
         Swal.fire({
-            title: 'Sync data IStAD?',
-            text: 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+            title: konvoText('sync_istad_title', 'Sync data IStAD?'),
+            text: konvoText('sync_istad_text', 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.'),
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Ya, sync',
-            cancelButtonText: 'Batal'
+            confirmButtonText: konvoText('sync_istad_confirm', 'Ya, sync'),
+            cancelButtonText: konvoText('swal_cancel', 'Batal')
         }).then((result) => {
 
             if (!result.isConfirmed) return;
@@ -1045,11 +1052,11 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Penyelarasan Data Berjaya',
+                            title: konvoText('sync_success_title', 'Penyelarasan Data Berjaya'),
                             html: `
                                 <b> ${res.message || ''} </b>
                             `,
-                            confirmButtonText: 'OK',
+                            confirmButtonText: konvoText('swal_ok', 'OK'),
                             allowOutsideClick: false
                         }).then(() => {
                             // reload table shj
@@ -1061,8 +1068,8 @@ jQuery(function () {
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: res.message || 'Penyelarasan data gagal'
+                            title: konvoText('swal_failed_title', 'Gagal'),
+                            text: res.message || konvoText('sync_failed', 'Penyelarasan data gagal')
                         });
                     }
                 },
@@ -1074,8 +1081,8 @@ jQuery(function () {
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Ralat sistem',
-                        text: 'Cuba lagi'
+                        title: konvoText('swal_system_error_title', 'Ralat sistem'),
+                        text: konvoText('swal_try_again', 'Cuba lagi')
                     });
                 }
             });

@@ -1,16 +1,7 @@
 <?php
 declare(strict_types=1);
-if (!function_exists('h')) {
-    function h($str) {
-        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-    }
-}
-
-if (!function_exists('tr')) {
-    function tr($key, $default = '') {
-        return $default;
-    }
-}
+require_once __DIR__ . '/../../../../../includes/init.php';
+require_once __DIR__ . '/../../../../../includes/functions-page.php';
 
 if (!function_exists('base_url')) {
     function base_url(string $path = ''): string

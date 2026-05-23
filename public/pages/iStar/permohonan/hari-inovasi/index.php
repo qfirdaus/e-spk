@@ -5,13 +5,13 @@
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = false;
-  $pageHeading     = 'Anugerah Pingat Graduan';
-  $profileCardLabel = 'Profil Pelajar';
-  $copyIdLabel      = 'Salin No. Matrik';
 
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
+  $pageHeading     = tr('page_heading_anugerah_pingat_graduan', 'Anugerah Pingat Graduan');
+  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
+  $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
   include __DIR__ . '/../../../../includes/header.php';
 
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
@@ -174,10 +174,48 @@
   <script>
       const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
       const msg_load = {
-        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
-        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
-        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
+        processing: <?= json_encode(tr('data_processing', 'Sedang diproses...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        loading: <?= json_encode(tr('data_loading', 'Sedang memuatkan...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        syncronizing: <?= json_encode(tr('data_synchronizing', 'Menyelaraskan data...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>
       };
+      window.konvoI18n = <?= json_encode([
+        'add_new' => tr('button_add_new', 'Tambah Baru'),
+        'sync_istad' => tr('sync_istad', 'Sync IStAD'),
+        'load_data_failed' => tr('load_data_failed', 'Gagal load data'),
+        'datatable_search_placeholder' => tr('datatable_search_placeholder', 'Search'),
+        'datatable_length_menu' => tr('datatable_length_menu', 'Show _MENU_ records'),
+        'datatable_info' => tr('datatable_info', 'Showing _START_ to _END_ of _TOTAL_ records'),
+        'datatable_info_empty' => tr('datatable_info_empty', 'Showing 0 to 0 of 0 records'),
+        'datatable_empty_table' => tr('datatable_empty_table', 'No records found'),
+        'datatable_zero_records' => tr('datatable_zero_records', 'No matching records'),
+        'datatable_next' => tr('datatable_next', 'Next'),
+        'datatable_previous' => tr('datatable_previous', 'Previous'),
+        'swal_failed_title' => tr('swal_failed_title', 'Gagal'),
+        'swal_success_title' => tr('swal_success_title', 'Berjaya'),
+        'swal_system_error_title' => tr('swal_system_error_title', 'Ralat Sistem'),
+        'swal_try_again_later' => tr('swal_try_again_later', 'Cuba lagi sebentar lagi'),
+        'swal_try_again' => tr('swal_try_again', 'Cuba lagi'),
+        'swal_delete_record_title' => tr('swal_delete_record_title', 'Padam rekod ini?'),
+        'swal_delete_award_title' => tr('swal_delete_award_title', 'Padam rekod anugerah ini?'),
+        'swal_delete_warning' => tr('swal_delete_warning', 'Tindakan ini tidak boleh dibatalkan!'),
+        'swal_confirm_delete' => tr('swal_confirm_delete', 'Ya, padam'),
+        'swal_cancel' => tr('swal_cancel', 'Batal'),
+        'swal_ok' => tr('swal_ok', 'OK'),
+        'record_delete_success' => tr('record_delete_success', 'Rekod berjaya dipadam'),
+        'record_delete_failed' => tr('record_delete_failed', 'Gagal padam rekod'),
+        'award_add_success' => tr('award_add_success', 'Rekod anugerah berjaya ditambah'),
+        'award_save_failed' => tr('award_save_failed', 'Gagal simpan rekod anugerah'),
+        'award_delete_success' => tr('award_delete_success', 'Rekod anugerah berjaya dipadam'),
+        'award_delete_failed' => tr('award_delete_failed', 'Gagal padam rekod anugerah'),
+        'award_invalid_id' => tr('award_invalid_id', 'ID rekod anugerah tidak sah'),
+        'record_update_failed' => tr('record_update_failed', 'Gagal kemaskini rekod'),
+        'system_error_try_again' => tr('system_error_try_again', 'Ralat sistem. Cuba lagi.'),
+        'sync_istad_title' => tr('sync_istad_title', 'Sync data IStAD?'),
+        'sync_istad_text' => tr('sync_istad_text', 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.'),
+        'sync_istad_confirm' => tr('sync_istad_confirm', 'Ya, sync'),
+        'sync_success_title' => tr('sync_success_title', 'Penyelarasan Data Berjaya'),
+        'sync_failed' => tr('sync_failed', 'Penyelarasan data gagal'),
+      ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
   </script>
   <script src="<?= base_url('assets/js/pages/konvo.js?v=' . time()) ?>"></script>
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
@@ -205,15 +243,15 @@
               "<'dt-bottom-row mt-2 d-flex justify-content-between align-items-center'<'dt-info-left'i><'dt-paging-right d-flex justify-content-end'p>>",
             language: {
               search: "",
-              searchPlaceholder: "Search",
-              lengthMenu: "Show _MENU_ records",
-              info: "Showing _START_ to _END_ of _TOTAL_ records",
-              infoEmpty: "Showing 0 to 0 of 0 records",
-              emptyTable: "No records found",
-              zeroRecords: "No matching records",
+              searchPlaceholder: <?= json_encode(tr('datatable_search_placeholder', 'Search'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+              lengthMenu: <?= json_encode(tr('datatable_length_menu', 'Show _MENU_ records'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+              info: <?= json_encode(tr('datatable_info', 'Showing _START_ to _END_ of _TOTAL_ records'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+              infoEmpty: <?= json_encode(tr('datatable_info_empty', 'Showing 0 to 0 of 0 records'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+              emptyTable: <?= json_encode(tr('datatable_empty_table', 'No records found'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+              zeroRecords: <?= json_encode(tr('datatable_zero_records', 'No matching records'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
               paginate: {
-                next: "Next",
-                previous: "Previous"
+                next: <?= json_encode(tr('datatable_next', 'Next'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+                previous: <?= json_encode(tr('datatable_previous', 'Previous'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>
               }
             },
             order: [],

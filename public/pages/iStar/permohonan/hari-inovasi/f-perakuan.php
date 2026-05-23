@@ -10,8 +10,8 @@
 <div class="konvo-tab-card card shadow-sm mb-4 perakuan-card">
     <div class="card-body">
         <div class="mb-4">
-            <h5 class="section-title mb-1">Perakuan Pemohon</h5>
-            <p class="text-muted mb-0">Sahkan semua kenyataan di bawah sebelum menghantar permohonan anda.</p>
+            <h5 class="section-title mb-1"><?= h(tr('tab_perakuan_pemohon', 'Perakuan Pemohon')) ?></h5>
+            <p class="text-muted mb-0"><?= h(tr('istar_declaration_intro', 'Sahkan semua kenyataan di bawah sebelum menghantar permohonan anda.')) ?></p>
         </div>
 
         <form method="POST" action="submit.php" id="formPerakuan">
@@ -20,27 +20,27 @@
             <div class="row g-4">
                 <div class="col-12 col-xl-7">
                     <div class="perakuan-section p-3">
-                        <h6>Pengesahan</h6>
+                        <h6><?= h(tr('istar_declaration_confirmation', 'Pengesahan')) ?></h6>
 
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input chk" id="<?= $chkPrefix ?>-chk1">
                             <label class="form-check-label" for="<?= $chkPrefix ?>-chk1">
-                                Saya dengan ini mengakui bahawa saya tidak pernah dikenakan sebarang tindakan tatatertib sepanjang tempoh pengajian saya di
-                                <strong>Universiti Pertahanan Nasional Malaysia (UPNM)</strong>.
+                                <?= h(tr('istar_declaration_no_disciplinary_prefix', 'Saya dengan ini mengakui bahawa saya tidak pernah dikenakan sebarang tindakan tatatertib sepanjang tempoh pengajian saya di')) ?>
+                                <strong><?= h(tr('istar_declaration_upnm', 'Universiti Pertahanan Nasional Malaysia (UPNM)')) ?></strong>.
                             </label>
                         </div>
 
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input chk" id="<?= $chkPrefix ?>-chk2">
                             <label class="form-check-label" for="<?= $chkPrefix ?>-chk2">
-                                Saya juga mengaku bahawa segala maklumat yang diberikan adalah benar dan tepat. Pihak Universiti berhak menolak permohonan ini sekiranya maklumat tidak benar.
+                                <?= h(tr('istar_declaration_information_true', 'Saya juga mengaku bahawa segala maklumat yang diberikan adalah benar dan tepat. Pihak Universiti berhak menolak permohonan ini sekiranya maklumat tidak benar.')) ?>
                             </label>
                         </div>
 
                         <div class="form-check mb-0">
                             <input type="checkbox" class="form-check-input chk" id="<?= $chkPrefix ?>-chk3">
                             <label class="form-check-label" for="<?= $chkPrefix ?>-chk3">
-                                Saya bersetuju bahawa keputusan Jawatankuasa Penilaian adalah muktamad dan tidak boleh dipertikaikan.
+                                <?= h(tr('istar_declaration_decision_final', 'Saya bersetuju bahawa keputusan Jawatankuasa Penilaian adalah muktamad dan tidak boleh dipertikaikan.')) ?>
                             </label>
                         </div>
                     </div>
@@ -49,22 +49,22 @@
                 <div class="col-12 col-xl-5">
                     <div class="info-summary p-3 h-100">
                         <div class="mb-3">
-                            <h6 class="mb-1">Maklumat Pemohon</h6>
-                            <p class="text-muted small mb-0">Data ini akan dihantar bersama perakuan.</p>
+                            <h6 class="mb-1"><?= h(tr('istar_applicant_information', 'Maklumat Pemohon')) ?></h6>
+                            <p class="text-muted small mb-0"><?= h(tr('istar_declaration_data_notice', 'Data ini akan dihantar bersama perakuan.')) ?></p>
                         </div>
 
                         <div class="row info-row">
-                            <div class="col-md-4 info-label">Nama</div>
+                            <div class="col-md-4 info-label"><?= h(tr('profile_nama', 'Nama')) ?></div>
                             <div class="col-md-8 info-value">: <?= h($namaPenuh ?? '-') ?></div>
                         </div>
 
                         <div class="row info-row">
-                            <div class="col-md-4 info-label">No. Kad Pengenalan</div>
+                            <div class="col-md-4 info-label"><?= h(tr('profile_no_kad_pengenalan', 'No. Kad Pengenalan')) ?></div>
                             <div class="col-md-8 info-value">: <?= h($nokp ?? '-') ?></div>
                         </div>
 
                         <div class="row info-row mb-0">
-                            <div class="col-md-4 info-label">Tarikh</div>
+                            <div class="col-md-4 info-label"><?= h(tr('tarikh', 'Tarikh')) ?></div>
                             <div class="col-md-8 info-value">: <?= date('d-m-Y') ?></div>
                         </div>
                     </div>

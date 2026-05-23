@@ -8,12 +8,12 @@
       <tr>
         <th class="col-bil text-center"><?= h(tr('senarai_no', 'No.')) ?></th>
         <th class="w-10 text-center"></th>
-        <th class="small w-30">Nama Badan Pelajar / Program </th>
+        <th class="small w-30"><?= h(tr('nama_badan_pelajar_program', 'Nama Badan Pelajar / Program')) ?></th>
         <th class="small w-18"><?= h(tr('kategori_perjawatan', 'Kategori Perjawatan')) ?></th>
-        <th class="small w-14">Tarikh Lantikan</th>
-        <th class="small w-12">Jawatan</th>
-        <th class="small w-12">Peringkat</th>
-        <th class="small text-center" style="width:130px;">Tindakan</th>
+        <th class="small w-14"><?= h(tr('profile_tarikh_lantikan', 'Tarikh Lantikan')) ?></th>
+        <th class="small w-12"><?= h(tr('jawatan', 'Jawatan')) ?></th>
+        <th class="small w-12"><?= h(tr('peringkat', 'Peringkat')) ?></th>
+        <th class="small text-center" style="width:130px;"><?= h(tr('tindakan', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
@@ -24,6 +24,9 @@
         foreach ($jawatanData as $i => $row): 
           $peringkat = $row['peringkat'] ?? null;
           $sumber = $row['sumber'] ?? 'Tambahan';   
+          $sumberLabel = $sumber === 'IStAD'
+              ? tr('istar_source_istad', 'IStAD')
+              : tr('istar_source_additional', 'Tambahan');
       ?>
         <?php $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); ?>
 
@@ -31,7 +34,7 @@
           <td class="col-bil text-center"></td>
           <td class="text-center">
               <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
-                  <?= h($sumber) ?>
+                  <?= h($sumberLabel) ?>
               </span>
           </td>          
           <td class="text-start">
@@ -101,5 +104,4 @@
     </tbody>
   </table>
   </div>
-</div>     
-     
+</div>
