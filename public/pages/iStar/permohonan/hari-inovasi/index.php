@@ -28,6 +28,9 @@
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
   $errorMessage = $peribadiController->getErrorMessage();
   $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+  $namaPenuh = (string)($peribadi['nama_penuh'] ?? ($profileView['nama_penuh'] ?? ''));
+  $nokp = (string)($peribadi['nokp'] ?? '');
+  $istarPerakuanIdPrefix = 'hari-inovasi-perakuan';
 ?>
 
 <body
@@ -86,7 +89,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#jawatan-disandang-tab" role="tab">
-                <i class="ri-shield-user-line me-1"></i> <?= h(tr('tab_jawatan_disandang','Jawatan Yang Disandang')) ?>
+                <i class="ri-user-line me-1"></i> <?= h(tr('tab_jawatan_disandang','Jawatan Yang Disandang')) ?>
               </a>
             </li>
             <li class="nav-item">
@@ -96,7 +99,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="tab" href="#perakuan-pemohon-tab" role="tab">
-                <i class="ri-todo-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
+                <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_perakuan_pemohon','Perakuan Pemohon')) ?>
               </a>
             </li>
           </ul>
@@ -165,6 +168,107 @@
   include __DIR__ . '/../../../../includes/script.php'; 
   include __DIR__ . '/../../../../includes/script-pages.php';  
   include __DIR__ . '/../../../../includes/script-custom.php';
+
+  // Layout helpers used by Konvo page (load base_url + messages and page script)
+  ?>
+  <script>
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
+      const msg_load = {
+        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
+        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
+        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
+      };
+  </script>
+  <script src="<?= base_url('assets/js/pages/konvo.js?v=' . time()) ?>"></script>
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
+  <script>
+    jQuery(function(){
+      try {
+        jQuery('.hari-inovasi-table').each(function () {
+          const table = this;
+
+          if (jQuery.fn.DataTable.isDataTable(table)) {
+            jQuery(table).DataTable().destroy();
+          }
+
+          jQuery(table).DataTable({
+            pageLength: 10,
+            lengthChange: true,
+            lengthMenu: [10, 25, 50, 100],
+            ordering: true,
+            autoWidth: false,
+            scrollX: false,
+            responsive: true,
+            dom:
+              "<'row mb-2'<'col-sm-12 col-md-6 dt-top-left'l><'col-sm-12 col-md-6 d-flex justify-content-md-end dt-top-right'f>>" +
+              "<'row'<'col-sm-12'tr>>" +
+              "<'dt-bottom-row mt-2 d-flex justify-content-between align-items-center'<'dt-info-left'i><'dt-paging-right d-flex justify-content-end'p>>",
+            language: {
+              search: "",
+              searchPlaceholder: "Search",
+              lengthMenu: "Show _MENU_ records",
+              info: "Showing _START_ to _END_ of _TOTAL_ records",
+              infoEmpty: "Showing 0 to 0 of 0 records",
+              emptyTable: "No records found",
+              zeroRecords: "No matching records",
+              paginate: {
+                next: "Next",
+                previous: "Previous"
+              }
+            },
+            order: [],
+            columnDefs: [
+              {
+                targets: 0,
+                orderable: false,
+                searchable: false,
+                width: '56px',
+                className: 'col-bil text-center'
+              },
+              {
+                targets: -1,
+                orderable: false,
+                searchable: false,
+                className: 'text-center'
+              }
+            ],
+            createdRow: function (row) {
+              jQuery('.js-tooltip-cell', row).each(function () {
+                const cellText = jQuery(this).text().trim();
+
+                if (!cellText) return;
+
+                this.setAttribute('title', cellText);
+                this.setAttribute('data-bs-toggle', 'tooltip');
+                this.setAttribute('data-bs-placement', 'top');
+
+                if (typeof bootstrap !== 'undefined' && !this._bsTooltip) {
+                  this._bsTooltip = new bootstrap.Tooltip(this, {
+                    boundary: 'window',
+                    customClass: 'konvo-tooltip'
+                  });
+                }
+              });
+            },
+            rowCallback: function (row, data, index) {
+              const info = this.api().page.info();
+              jQuery('td:eq(0)', row).html(info.start + index + 1);
+            },
+            destroy: true
+          });
+        });
+
+        jQuery('[data-bs-toggle="tooltip"]').each(function () {
+          if (!this._bsTooltip && typeof bootstrap !== 'undefined') {
+            this._bsTooltip = new bootstrap.Tooltip(this, { boundary: 'window', customClass: 'konvo-tooltip' });
+          }
+        });
+      } catch (e) {
+        console.log('Init konvo helpers failed', e);
+      }
+    });
+  </script>
+  <?php
 ?>
 
 <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

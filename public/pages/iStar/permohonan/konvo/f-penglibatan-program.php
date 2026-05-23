@@ -50,7 +50,7 @@
 
                 <!-- WAKIL (dropdown lookup) -->
                 <td>
-                    <select name="wakil" class="form-select form-select-sm">
+                    <select name="wakil" class="form-select">
                         <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                         <?php foreach ($lookupWakil as $opt): ?>
                             <option value="<?= h($opt['wakil_code']) ?>"
@@ -63,7 +63,7 @@
 
                 <!-- PERINGKAT -->
                 <td>
-                    <select name="peringkat" class="form-select form-select-sm">
+                    <select name="peringkat" class="form-select">
                         <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                         <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>"
@@ -76,7 +76,7 @@
 
                 <!-- PENCAPAIAN -->
                 <td>
-                    <select name="pencapaian" class="form-select form-select-sm">
+                    <select name="pencapaian" class="form-select">
                         <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                         <?php foreach ($lookupPencapaian as $opt): ?>
                             <option value="<?= h($opt['pencapaian_code']) ?>"

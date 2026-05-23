@@ -5,6 +5,19 @@
                   <div class="skeleton-row"></div>
                 </div>
 
+                <?php
+                  $statusPekerjaan = (string)($status_pekerjaan ?? ($peribadi['status_pekerjaan'] ?? ''));
+                  $sektorPekerjaan = (string)($sektor_pekerjaan ?? ($peribadi['sektor_pekerjaan'] ?? ''));
+                  $statusPekerjaanSambilan = (string)($status_pekerjaan_sambilan ?? ($peribadi['status_pekerjaan_sambilan'] ?? ''));
+                ?>
+
+                <div class="icares-address-content">
+                  <div class="tab-pane show active">
+                    <div class="icares-address-panel-header">
+                      <h5><?= h(tr('tab_maklumat_pekerjaan', 'Maklumat Pekerjaan')) ?></h5>
+                      <span><?= h(tr('profile_alamat_editable', 'Boleh Dikemaskini')) ?></span>
+                    </div>
+
                 <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
                   <input type="hidden" name="icares_form" value="data_pekerjaan">
                   <div class="row">
@@ -17,8 +30,8 @@
                             <div class="col-sm-8">
                               <select name="status_pekerjaan" class="form-select">
                                 <option value="">-- Sila Pilih --</option>
-                                <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Bekerja</option>
-                                <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Tidak Bekerja</option>
+                                <option value="Bekerja" <?= $statusPekerjaan === 'Bekerja' ? 'selected' : '' ?>>Bekerja</option>
+                                <option value="Tidak Bekerja" <?= $statusPekerjaan === 'Tidak Bekerja' ? 'selected' : '' ?>>Tidak Bekerja</option>
                               </select>
                             </div>                 
                           </div>
@@ -29,9 +42,9 @@
                             <div class="col-sm-8">
                               <select name="sektor_pekerjaan" class="form-select">
                                 <option value="">-- Sila Pilih --</option>
-                                <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Kerajaan</option>
-                                <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Swasta</option>
-                                <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Persendirian</option>
+                                <option value="Kerajaan" <?= $sektorPekerjaan === 'Kerajaan' ? 'selected' : '' ?>>Kerajaan</option>
+                                <option value="Swasta" <?= $sektorPekerjaan === 'Swasta' ? 'selected' : '' ?>>Swasta</option>
+                                <option value="Persendirian" <?= $sektorPekerjaan === 'Persendirian' ? 'selected' : '' ?>>Persendirian</option>
                               </select>
                             </div>                 
                           </div>   
@@ -42,8 +55,8 @@
                             <div class="col-sm-8">
                               <select name="status_pekerjaan_sambilan" class="form-select">
                                 <option value="">-- Sila Pilih --</option>
-                                <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Ya</option>
-                                <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Tidak</option>
+                                <option value="Ya" <?= $statusPekerjaanSambilan === 'Ya' ? 'selected' : '' ?>>Ya</option>
+                                <option value="Tidak" <?= $statusPekerjaanSambilan === 'Tidak' ? 'selected' : '' ?>>Tidak</option>
                               </select>
                             </div>                 
                           </div>                  
@@ -113,11 +126,13 @@
 
                         <!-- Submit Button -->
                         <div class="col-12 text-end mt-3">
-                          <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
+                          <button type="submit" class="btn btn-primary rounded-3 px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
                           </button>
                         </div>
 
                       </div>
                     </div>
                   </div>
-                </form>           
+                </form>
+                  </div>
+                </div>           

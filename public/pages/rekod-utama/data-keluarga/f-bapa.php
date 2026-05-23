@@ -130,9 +130,9 @@
         <div class="col-sm-8">
           <select name="kategori_tempat_tinggal" class="form-select">
             <option value="">-- Sila Pilih --</option>
-            <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Persendirian</option>
-            <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Sewaan</option>
-            <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Lain-lain (Sila Nyatakan)</option>
+            <option value="Persendirian" <?= $kategori_tempat_tinggal === 'Persendirian' ? 'selected' : '' ?>>Persendirian</option>
+            <option value="Sewaan" <?= $kategori_tempat_tinggal === 'Sewaan' ? 'selected' : '' ?>>Sewaan</option>
+            <option value="Lain-lain" <?= $kategori_tempat_tinggal === 'Lain-lain' ? 'selected' : '' ?>>Lain-lain (Sila Nyatakan)</option>
           </select>
         </div>
       </div>  
@@ -205,7 +205,7 @@
           <select name="status_pekerjaan" class="form-control">
               <option value="">-- Sila pilih --</option>
               <?php foreach ($employmentStatus as $status): ?>
-                  <option value="<?= h($status['statusCode']) ?>">
+                  <option value="<?= h($status['statusCode']) ?>" <?= $status_pekerjaan === (string)$status['statusCode'] ? 'selected' : '' ?>>
                       <?= h($lang == 'en' ? $status['statusEN'] : $status['statusMY']) ?>
                   </option>
               <?php endforeach; ?>
@@ -220,7 +220,7 @@
           <select name="sector_pekerjaan" class="form-control">
               <option value="">-- Sila pilih --</option>
               <?php foreach ($employmentSector as $sector): ?>
-                  <option value="<?= h($sector['sectorCode']) ?>">
+                  <option value="<?= h($sector['sectorCode']) ?>" <?= $sector_pekerjaan === (string)$sector['sectorCode'] ? 'selected' : '' ?>>
                       <?= h($lang == 'en' ? $sector['sectorEN'] : $sector['sectorMY']) ?>
                   </option>
               <?php endforeach; ?>
@@ -234,10 +234,10 @@
         <div class="col-sm-8">
           <select name="perkhidmatan_beruniform" class="form-control">
               <option value="">-- Sila pilih --</option>
-              <option value="yes" <?= (isset($sector_pekerjaan) && $sector_pekerjaan == 'yes') ? 'selected' : '' ?>>
+              <option value="yes" <?= in_array($perkhidmatan_beruniform, ['yes', 'Ya'], true) ? 'selected' : '' ?>>
                   <?= ($lang == 'en' ? 'Yes' : 'Ya') ?>
               </option>
-              <option value="no" <?= (isset($sector_pekerjaan) && $sector_pekerjaan == 'no') ? 'selected' : '' ?>>
+              <option value="no" <?= in_array($perkhidmatan_beruniform, ['no', 'Tidak'], true) ? 'selected' : '' ?>>
                   <?= ($lang == 'en' ? 'No' : 'Tidak') ?>
               </option>
           </select>      
@@ -251,7 +251,7 @@
           <select name="jenis_perkhidmatan_beruniform" class="form-control">
               <option value="">-- Sila pilih --</option>
               <?php foreach ($uniformService as $service): ?>
-                  <option value="<?= h($service['serviceCode']) ?>">
+                  <option value="<?= h($service['serviceCode']) ?>" <?= $jenis_perkhidmatan_beruniform === (string)$service['serviceCode'] ? 'selected' : '' ?>>
                       <?= h($lang == 'en' ? $service['serviceEN'] : $service['serviceMY']) ?>
                   </option>
               <?php endforeach; ?>
@@ -385,7 +385,7 @@
   <!-- BUTTON -->
   <div class="row">
     <div class="col-12 text-end mt-4">
-      <button type="submit" class="btn btn-primary px-4">
+      <button type="submit" class="btn btn-primary rounded-3 px-4">
         <i class="ri-save-3-line me-2"></i>
         <?= h(tr('profile_save_button','Simpan')) ?>
       </button>

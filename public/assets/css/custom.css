@@ -199,6 +199,19 @@
   background: rgba(255,255,255,.06);
 }
 
+/* Top-align modals on page views */
+.modal-dialog-centered {
+  align-items: flex-start !important;
+  min-height: calc(100% - 3.5rem) !important;
+}
+.modal-dialog {
+  margin: 1.75rem auto !important;
+}
+.modal.fade .modal-dialog,
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+
 .dash-card {
   background: #fff;
   border: 1px solid rgba(15, 23, 42, 0.06);

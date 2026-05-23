@@ -73,6 +73,17 @@ $nama_ibu = $parentDetails['nama_ibu'] ?? '';
 $nokpibu = $parentDetails['nokpibu'] ?? '';
 $nohp_ibu = $parentDetails['nohp_ibu'] ?? '';
 
+$kategori_tempat_tinggal = (string)($parentDetails['kategori_tempat_tinggal'] ?? '');
+$status_pekerjaan = (string)($parentDetails['status_pekerjaan'] ?? '');
+$sektor_pekerjaan = (string)($parentDetails['sektor_pekerjaan'] ?? '');
+$sector_pekerjaan = (string)($parentDetails['sector_pekerjaan'] ?? $sektor_pekerjaan);
+$perkhidmatan_beruniform = (string)($parentDetails['perkhidmatan_beruniform'] ?? '');
+$jenis_perkhidmatan_beruniform = (string)($parentDetails['jenis_perkhidmatan_beruniform'] ?? '');
+$status_perkhidmatan_beruniform = (string)($parentDetails['status_perkhidmatan_beruniform'] ?? '');
+$pendapatan_bulanan = (string)($parentDetails['pendapatan_bulanan'] ?? '');
+$bilAnugerahDekan = (string)($parentDetails['bil_adik_beradik'] ?? '');
+$anak_ke = (string)($parentDetails['anak_ke'] ?? '');
+
 $notel_terkini = $userDetails['notel_terkini'] ?? '';
 $notel = $notel_terkini;
 $nokp = $userDetails['nokp'] ?? '';
@@ -97,6 +108,7 @@ $program_pengajian = $program;
 $peringkat_pengajian = $userDetails['tahap_pengajian'] ?? '';
 $kdtahap = $userDetails['kdtahap'] ?? '';
 $tempoh_pengajian = $userDetails['tempoh_pengajian'] ?? '';
+$tempoh_program = $userDetails['tempoh_program'] ?? $tempoh_pengajian;
 $sesi_akademik = $userDetails['sesi_akademik'] ?? '';
 $sesi_akademik_masuk = $userDetails['semester_masuk'] ?? '';
 $sesi_akademik_tamat = $userDetails['semester_tamat'] ?? '';
@@ -108,6 +120,9 @@ $pngs = $userDetails['pngs'] ?? '';
 $pngk = $userDetails['pngk'] ?? '';
 $pembiayaan_pengajian = $userDetails['pembiayaan_pengajian'] ?? '';
 $pembiayaan = $pembiayaan_pengajian;
+$kegiatan_badan_pelajar = $userDetails['kegiatan_badan_pelajar'] ?? '';
+$kegiatan_sukan = $userDetails['kegiatan_sukan'] ?? '';
+$tahap_penglibatan = $userDetails['tahap_penglibatan'] ?? '';
 
 if (!function_exists('count_age')) {
   function count_age(DateTime $tarikh_lahir): string {

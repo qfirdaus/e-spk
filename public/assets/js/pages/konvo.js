@@ -206,25 +206,78 @@ function initStandardDataTable(tableId) {
 
         },
 
+        order: [],
         columnDefs: [
             {
                 targets: 0,
                 orderable: false,
                 searchable: false,
-                width: 60
+                width: '5%',
+                className: 'text-center'
             },
-            {  // Tindakan 
+            {
+                targets: 1,
+                width: '7%',
+                className: 'text-center'
+            },
+            {
+                targets: 2,
+                width: '38%',
+                className: 'text-start'
+            },
+            {
+                targets: 3,
+                width: '10%',
+                className: 'text-center'
+            },
+            {
+                targets: 4,
+                width: '10%',
+                className: 'text-center'
+            },
+            {
+                targets: 5,
+                width: '10%',
+                className: 'text-center'
+            },
+            {
+                targets: 6,
+                width: '10%',
+                className: 'text-center'
+            },
+            {
                 targets: -1,
                 orderable: false,
                 searchable: false,
-                width: 150
+                width: '10%',
+                className: 'text-center'
             }
 
         ],
+        createdRow: function (row, data, dataIndex) {
+            var $cell = jQuery('td', row).eq(2);
+            var cellText = $cell.text().trim();
+
+            if (cellText.length) {
+                $cell.attr('title', cellText);
+                $cell.attr('data-bs-toggle', 'tooltip');
+                $cell.attr('data-bs-placement', 'top');
+            }
+
+            if (typeof bootstrap !== 'undefined') {
+                jQuery('[data-bs-toggle="tooltip"]', row).each(function () {
+                    if (!this._bsTooltip) {
+                        this._bsTooltip = new bootstrap.Tooltip(this, {
+                            boundary: 'window',
+                            customClass: 'konvo-tooltip'
+                        });
+                    }
+                });
+            }
+        },
         rowCallback: function (row, data, index) {
 
             const api = this.api();
-
             const info = api.page.info();
 
             jQuery('td:eq(0)', row)

@@ -130,9 +130,9 @@
         <div class="col-sm-8">
           <select name="kategori_tempat_tinggal" class="form-select">
             <option value="">-- Sila Pilih --</option>
-            <option value="Lelaki" <?= $jantina=='Lelaki'?'selected':'' ?>>Persendirian</option>
-            <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Sewaan</option>
-            <option value="Perempuan" <?= $jantina=='Perempuan'?'selected':'' ?>>Lain-lain (Sila Nyatakan)</option>
+            <option value="Persendirian" <?= $kategori_tempat_tinggal === 'Persendirian' ? 'selected' : '' ?>>Persendirian</option>
+            <option value="Sewaan" <?= $kategori_tempat_tinggal === 'Sewaan' ? 'selected' : '' ?>>Sewaan</option>
+            <option value="Lain-lain" <?= $kategori_tempat_tinggal === 'Lain-lain' ? 'selected' : '' ?>>Lain-lain (Sila Nyatakan)</option>
           </select>
         </div>
       </div>  
@@ -384,7 +384,7 @@
   <!-- BUTTON -->
   <div class="row">
     <div class="col-12 text-end mt-4">
-      <button type="submit" class="btn btn-primary px-4">
+      <button type="submit" class="btn btn-primary rounded-3 px-4">
         <i class="ri-save-3-line me-2"></i>
         <?= h(tr('profile_save_button','Simpan')) ?>
       </button>
