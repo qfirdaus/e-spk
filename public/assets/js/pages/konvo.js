@@ -127,12 +127,9 @@ function initStandardDataTable(tableId) {
         scrollX: false,
         responsive: true,
         dom:
-        "<'row mb-2 align-items-center dt-header'" +
-            "<'col-md-6 d-flex align-items-center dt-left'l>" +
-            "<'col-md-6 d-flex justify-content-end align-items-center gap-2 dt-right'f>" +
-        ">" +
+        "<'row mb-2'<'col-sm-12 col-md-6 dt-top-left'l><'col-sm-12 col-md-6 d-flex justify-content-md-end dt-top-right'f>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
+        "<'dt-bottom-row mt-2 d-flex justify-content-between align-items-center'<'dt-info-left'i><'dt-paging-right d-flex justify-content-end'p>>",
         initComplete: function () {
 
             let toolbar = '';
@@ -179,7 +176,20 @@ function initStandardDataTable(tableId) {
                 `;
             }
 
-            jQuery(tableId + '_filter').parent().append(toolbar);
+            try {
+                var $table = jQuery(tableId);
+                var $wrapper = $table.closest('.dataTables_wrapper');
+                var $topRight = $wrapper.find('.dt-top-right').first();
+
+                if ($topRight && $topRight.length) {
+                    $topRight.addClass('align-items-center gap-2 flex-nowrap');
+                    $topRight.append(toolbar);
+                } else {
+                    jQuery(tableId + '_filter').parent().append(toolbar);
+                }
+            } catch (e) {
+                jQuery(tableId + '_filter').parent().append(toolbar);
+            }
         },
         language: {
             search: "",

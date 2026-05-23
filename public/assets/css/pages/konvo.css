@@ -121,3 +121,93 @@ table.dataTable tbody textarea.border-warning {
 .table-responsive.dt-standard .form-select-sm {
     min-width: 140px;
 }
+
+/* Bottom row: put search + toolbar alongside pagination on the right */
+.dt-standard .dt-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.dt-standard .dt-bottom-row .dt-info-left {
+    white-space: nowrap;
+}
+
+.dt-standard .dt-bottom-row .dt-paging-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.dt-standard .dt-bottom-row .dt-filter-toolbar {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.dt-standard .dt-bottom-row .dt-filter-toolbar .dataTables_filter {
+    margin: 0;
+}
+
+.dt-standard .dt-bottom-row .dt-filter-toolbar .dataTables_filter input {
+    width: 240px;
+    max-width: 240px;
+    height: 34px;
+}
+
+.dt-standard .dt-bottom-row .dt-custom-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dt-standard .dt-bottom-row .dt-custom-actions .btn {
+    height: 34px;
+}
+
+@media (max-width: 767.98px) {
+    .dt-standard .dt-bottom-row {
+        justify-content: flex-start;
+    }
+    .dt-standard .dt-bottom-row .dt-paging-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    .dt-standard .dt-bottom-row .dt-filter-toolbar,
+    .dt-standard .dt-bottom-row .dt-custom-actions,
+    .dt-standard .dt-bottom-row .dataTables_paginate {
+        width: 100%;
+    }
+}
+
+/* Top-right header controls (search + toolbar above table) */
+.dt-standard .dt-top-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
+.dt-standard .dt-top-right .dataTables_filter { margin: 0; }
+
+.dt-standard .dt-top-right .dataTables_filter input {
+    width: 220px;
+    max-width: 40%;
+    height: 34px;
+}
+
+.dt-standard .dt-top-right .dt-custom-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+@media (max-width: 767.98px) {
+    .dt-standard .dt-top-right { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+    .dt-standard .dt-top-right .dataTables_filter input { width: 100%; max-width: 100%; }
+}
