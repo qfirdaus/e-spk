@@ -1,14 +1,29 @@
 <?php
 declare(strict_types=1);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if (!function_exists('h')) {
     function h($str) {
-        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8');
     }
 }
 
 if (!function_exists('tr')) {
     function tr($key, $default = '') {
-        return $default;
+        static $lines = null;
+        if ($lines === null) {
+            $lang = strtolower((string)($_SESSION['lang'] ?? $_SESSION['user.lang'] ?? 'ms'));
+            if (!in_array($lang, ['ms', 'en'], true)) {
+                $lang = 'ms';
+            }
+            $file = __DIR__ . '/../../../../../lang/' . $lang . '.php';
+            $loaded = is_file($file) ? require $file : [];
+            $lines = is_array($loaded) ? $loaded : [];
+        }
+        $value = $lines[$key] ?? null;
+        return ($value === null || $value === '') ? $default : (string)$value;
     }
 }
 

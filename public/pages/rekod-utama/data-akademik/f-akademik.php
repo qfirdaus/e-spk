@@ -5,6 +5,13 @@
                   <div class="skeleton-row"></div>
                 </div>
 
+                <div class="icares-address-content">
+                  <div class="tab-pane show active">
+                    <div class="icares-address-panel-header">
+                      <h5><?= h(tr('tab_maklumat_akademik','Maklumat Akademik')) ?></h5>
+                      <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
+                    </div>
+
                 <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
                   <input type="hidden" name="icares_form" value="data_akademik">
                   <div class="row">
@@ -47,7 +54,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_sesi_akademik_masuk','Sesi Akademik Masuk')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="semester_masuk" class="form-control" value="<?= h($sesi_akademik_masuk) ?>" readonly>
+                              <input type="text" name="semester_masuk" class="form-control" value="<?= h($sesi_akademik_masuk ?? '') ?>" readonly>
                             </div>
                           </div>
 
@@ -55,7 +62,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_sesi_akademik_tamat','Sesi Akademik Tamat')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="semester_tamat" class="form-control" value="<?= h($sesi_akademik_tamat) ?>" readonly>
+                              <input type="text" name="semester_tamat" class="form-control" value="<?= h($sesi_akademik_tamat ?? '') ?>" readonly>
                             </div>
                           </div>
 
@@ -107,11 +114,13 @@
                         <?php if (empty($hideButton)) { ?> 
                         <!-- Submit Button -->
                         <div class="col-12 text-end mt-3">
-                          <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
+                          <button type="submit" class="btn btn-primary rounded-3 px-4 profile-submit-btn"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
                           </button>
                         </div>
                         <?php } ?>
                       </div>
                     </div>
                   </div>
-                </form> 
+                </form>
+                  </div>
+                </div> 

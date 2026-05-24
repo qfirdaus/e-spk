@@ -45,7 +45,7 @@
               <!-- Wakil -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('wakil','Wakil')) ?></label>
-                <select name="wakil" class="form-select form-select-sm" required>
+                <select name="wakil" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupWakil as $opt): ?>
                         <option value="<?= h($opt['idwakil']) ?>">
@@ -63,7 +63,7 @@
               <!-- Peringkat -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
-                <select name="peringkat" class="form-select form-select-sm" required>
+                <select name="peringkat" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>">
@@ -76,7 +76,7 @@
               <!-- Pencapaian -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('pencapaian','Pencapaian')) ?></label>
-                <select name="pencapaian" class="form-select form-select-sm" required>
+                <select name="pencapaian" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPencapaian as $opt): ?>
                         <option value="<?= h($opt['pencapaian_code']) ?>">
@@ -146,7 +146,7 @@
                 <label class="form-label">
                   <?= h(tr('kategori_perjawatan','Kategori Perjawatan')) ?>
                 </label>
-                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select form-select-sm" required>
+                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
                         <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
@@ -182,7 +182,7 @@
               <!-- Jawatan -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('jawatan','Jawatan')) ?></label>
-                <select name="jawatan" id="jawatan" class="form-select form-select-sm" required>
+                <select name="jawatan" id="jawatan" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php 
                       foreach ($lookupJawatan as $opt): 
@@ -202,7 +202,7 @@
               <!-- Peringkat -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
-                <select name="peringkat" id="peringkat" class="form-select form-select-sm" required>
+                <select name="peringkat" id="peringkat" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupPeringkat as $opt): ?>
                         <option value="<?= h($opt['peringkat_code']) ?>">

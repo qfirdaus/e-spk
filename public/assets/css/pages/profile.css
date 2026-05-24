@@ -690,6 +690,12 @@
       font-weight:700;
       box-shadow:0 14px 24px rgba(37,99,235,.16);
     }
+    .icares-address-content .btn.btn-primary.profile-submit-btn{
+      border-radius:.375rem;
+      padding:.375rem 1.5rem;
+      font-weight:400;
+      box-shadow:none;
+    }
     [data-bs-theme="dark"] .icares-address-nav{
       border-color:rgba(148,163,184,.16);
       background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(17,24,39,.96));

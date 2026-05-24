@@ -18,10 +18,12 @@ function checkFileSize(input) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.querySelectorAll('.chk');
-    const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix) ?>');
+    const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix ?? '') ?>');
 
     checkboxes.forEach(chk => {
         chk.addEventListener('change', () => {
+            if (!button) return;
+
             let allChecked = true;
             checkboxes.forEach(c => {
                 if (!c.checked) allChecked = false;

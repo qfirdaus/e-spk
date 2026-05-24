@@ -99,7 +99,7 @@ class KeluargaController
 
         $stmt = $this->pdoMysql->prepare($sql);
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; //fetch all rows
 
         $salaryRanges = [];
         foreach ($rows as $row) {
@@ -130,7 +130,7 @@ class KeluargaController
 
         $stmt = $this->pdoMysql->prepare($sql);
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; //fetch all rows
 
         $employmentStatuses = [];
         foreach ($rows as $row) {
@@ -149,7 +149,7 @@ class KeluargaController
 
         $stmt = $this->pdoMysql->prepare($sql);
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; //fetch all rows
 
         $employmentSectors = [];
         foreach ($rows as $row) {
@@ -169,7 +169,7 @@ class KeluargaController
 
         $stmt = $this->pdoMysql->prepare($sql);
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: null; //fetch all rows
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: []; //fetch all rows
 
         $uniformServices = [];
         foreach ($rows as $row) {

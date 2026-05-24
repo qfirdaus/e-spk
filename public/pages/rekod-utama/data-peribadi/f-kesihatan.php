@@ -1,4 +1,11 @@
 
+                <div class="icares-address-content">
+                  <div class="tab-pane show active">
+                    <div class="icares-address-panel-header">
+                      <h5><?= h(tr('tab_maklumat_kesihatan', 'Maklumat Kesihatan')) ?></h5>
+                      <span><?= h(tr('profile_alamat_editable', 'Boleh Dikemaskini')) ?></span>
+                    </div>
+
                 <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
                   <input type="hidden" name="icares_form" value="data_kesihatan">
                   <div class="row">
@@ -30,11 +37,13 @@
 
                         <!-- Submit Button -->
                         <div class="col-12 text-end mt-3">
-                          <button type="submit" class="btn btn-primary px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
+                          <button type="submit" class="btn btn-primary rounded-3 px-4"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
                           </button>
                         </div>
 
                       </div>
                     </div>
                   </div>
-                </form>    
+                </form>
+                  </div>
+                </div>    
