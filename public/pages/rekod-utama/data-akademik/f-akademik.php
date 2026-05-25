@@ -90,7 +90,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngs','PNGS')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngs" class="form-control" value="<?= h($pngs ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
+                              <input type="text" name="pngs" class="form-control" value="<?= h($pngs ?? '') ?>"  readonly >
                             </div>                 
                           </div>
 
@@ -98,7 +98,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngk','PNGK')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngk" class="form-control" value="<?= h($pngk ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
+                              <input type="text" name="pngk" class="form-control" value="<?= h($pngk ?? '') ?>" readonly >
                             </div>
                           </div>  
 

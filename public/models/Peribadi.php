@@ -20,7 +20,7 @@ class Peribadi
                        e.f005sesi as semester_terkini,
                        f.f005sesi as semester_masuk,
                        g.f005sesi as semester_tamat
-                FROM v210 a
+                FROM v210_eHEPA a
                 LEFT JOIN t015kewarganegaraan b ON a.kewarganegaraan = b.f015kdnegeri
                 LEFT JOIN t015negeri c ON a.neglahir = c.f015kdnegeri
                 LEFT JOIN t021kahwin d ON a.kdkahwin = d.f021kdkahwin
@@ -72,6 +72,8 @@ class Peribadi
                 $age = '';
             }
         }
+        $tempoh = (float)($student['bilsem'] ?? 0);
+        $tempoh_program =      rtrim(rtrim(number_format($tempoh, 2), '0'), '.') . ' Tahun (' . ((int)$tempoh * 2) . ' Semester)';
 
         return [
             'matrik' => (string)($student['matrik'] ?? ''),
@@ -101,9 +103,9 @@ class Peribadi
             'statuskategori' => (string)($student['statuskategori'] ?? ''),
             'semester_terkini' => (string)($student['semester_terkini'] ?? ''),
             'semester_masuk' => (string)($student['semester_masuk'] ?? ''),
-            'semester_tamat' => (string)($student['semester_tamat'] ?? ''),
-            'pngs' => (string)($student['pngs'] ?? ''),
-            'pngk' => (string)($student['pngk'] ?? ''),
+            'semester_tamat' => (string)($student['semester_tamat'] ?? '-'),
+            'pngs' => ((string)($student['release']) == 1) ? (string)($student['pngs'] ?? '') : '',
+            'pngk' => ((string)($student['release']) == 1) ? (string)($student['pngk'] ?? '') : '',
             'alamat1' => (string)($student['alamat1'] ?? ''),
             'alamat2' => (string)($student['alamat2'] ?? ''),
             'alamat3' => (string)($student['alamat3'] ?? ''),
@@ -111,6 +113,8 @@ class Peribadi
             'negeri' => (string)($student['negeri'] ?? ''),
             'kategori_kadet' => (string)($student['kategori_kadet'] ?? ''),
             'kadet' => (string)($student['kadet'] ?? ''),
+            'tahun_pengajian' => (string)($student['tahun_pengajian'] ?? ''),
+            'tempoh_program' => $tempoh_program,
             'status_pelajar' => ($student['kategori_kadet'] ?? '') === 'Pkdt' ? 'Kadet ' . ($student['kadet'] ?? '') : ($student['kadet'] ?? ''),
             'avatar_url' => $avatar,
         ];

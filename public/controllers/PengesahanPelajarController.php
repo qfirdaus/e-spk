@@ -26,21 +26,55 @@ class PengesahanPelajarController
     public function getAllLookup(): array
     {
         return [
-            'wakil' => $this->getLookupWakil()
+            'negeri' => $this->getLookupNegeri(),
+            'negara' => $this->getLookupNegara()
         ];
     }    
     
-    public function getLookupWakil(): array
+    public function getLookupNegeri(): array
     {
         try {
-            return $this->model->getWakilLookup();
+            return $this->model->getNegeriLookup();
         } catch (Throwable $e) {
             $this->errorMessage = $e->getMessage();
             return [];
         }
     }  
     
+    public function getLookupNegara(): array
+    {
+        try {
+            return $this->model->getNegaraLookup();
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }  
+        
     /** Get lookup data */
+
+    public function submitPermohonan($matrik, $draft)
+    {
+        try {
+            $this->model->savePermohonan($matrik, $draft);
+
+            $file = __DIR__ . '/../pages/iCareS/permohonan/pengesahan-pelajar/temp/' . $matrik . '_draft.json';
+            if (file_exists($file)) {
+                unlink($file);
+            }
+
+            return [
+                'status' => 'success'
+            ];
+
+        } catch (Exception $e) {
+
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+    }
 
     public function testConnection()
     {

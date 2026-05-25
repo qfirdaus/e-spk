@@ -54,7 +54,7 @@
 
                 <button type="submit"
                         class="btn btn-primary px-4"
-                        id="btn-submit-<?= h($icaresPerakuanIdPrefix) ?>"
+                        id="btn-submit-application"
                         disabled>
 
                     <i class="ri-send-plane-line me-2"></i>

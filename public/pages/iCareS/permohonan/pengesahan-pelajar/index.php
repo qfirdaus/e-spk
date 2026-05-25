@@ -1,10 +1,10 @@
 <?php
-  // pages/data-peribadi.php
+  // pages/pengesahan-pelajar.php
   declare(strict_types=1);
   $NEED_DATERANGE  = false;
   $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = true;
-  $NEED_SELECT2    = false;
+  $NEED_DATATABLES = false;
+  $NEED_SELECT2    = true;
   $pageHeading     = 'Pengesahan Pelajar';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel      = 'Salin No. Matrik';
@@ -155,6 +155,11 @@
         loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
         syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
       };
+      let DRAFT = {
+          dataStudent: <?= json_encode($peribadi ?? []) ?>,
+          penerima: {},
+          perakuan: {}
+      };      
   </script> 
   <script src="<?= base_url('assets/js/pages/pengesahan-pelajar.js?v=' . time()) ?>"></script> 
 

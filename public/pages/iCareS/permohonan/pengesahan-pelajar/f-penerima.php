@@ -47,18 +47,40 @@
           </div>
 
           <!-- Negeri -->
+          <?php 
+            $lookupNegeri = $lookupAll['negeri'] ?? [];
+          ?>
           <div class="mb-2 row align-items-center">
             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_negeri','Negeri')) ?></label>
             <div class="col-sm-8">
-              <input type="text" name="negeri" class="form-control uppercase" value="<?= h($data['negeri'] ?? '') ?>" >
+              <select name="negeri" class="form-select form-select-sm">
+                  <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                  <?php foreach ($lookupNegeri as $opt): ?>
+                  <option value="<?= h($opt['state_code']) ?>"
+                      <?= h($data['negeri'] ?? '') == $opt['state_code'] ? 'selected' : '' ?>>
+                      <?= h(strtoupper($opt['state'])) ?>
+                  </option>
+                  <?php endforeach; ?>
+              </select>   
             </div>
           </div>
 
           <!-- Negara -->
+          <?php 
+            $lookupNegara = $lookupAll['negara'] ?? [];
+          ?>
           <div class="mb-2 row align-items-center">
             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_negara','Negara')) ?></label>
             <div class="col-sm-8">
-              <input type="text" name="negara" class="form-control uppercase" value="<?= h($data['negara'] ?? '') ?>" >
+              <select name="negara" class="form-select form-select-sm select2">
+                  <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                  <?php foreach ($lookupNegara as $opt): ?>
+                  <option value="<?= h($opt['country_code']) ?>"
+                      <?= h($data['negara'] ?? '') == $opt['country_code'] ? 'selected' : '' ?>>
+                      <?= h(strtoupper($opt['country'])) ?>
+                  </option>
+                  <?php endforeach; ?>
+              </select>   
             </div>
           </div>                                 
 
