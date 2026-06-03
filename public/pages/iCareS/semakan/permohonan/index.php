@@ -12,7 +12,6 @@
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
   include __DIR__ . '/../../../../includes/header.php';
   include __DIR__ . '/../../../../actions/retrieve-data-peribadi.php';
@@ -64,26 +63,41 @@
             
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
-              <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-peribadi-tab" role="tab">
-                  <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_profil_pengguna','Maklumat Peribadi')) ?>
+                <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#semak_pengesahan_pelajar-tab" role="tab">
+                    <i class="ri-todo-line me-1"></i> <?= h(tr('tab_semak_pengesahan_pelajar','Pengesahan Pelajar')) ?>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-akademik-tab" role="tab">
-                  <i class="ri-book-2-line me-1"></i> <?= h(tr('tab_maklumat_akademik', 'Maklumat Akademik')) ?>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_surat_jaminan-tab" role="tab">
+                    <i class="ri-shield-check-line me-1"></i> <?= h(tr('tab_semak_surat_jaminan', 'Surat Jaminan (GL)')) ?>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-penerima-tab" role="tab">
-                  <i class="ri-briefcase-line me-1"></i> <?= h(tr('tab_maklumat_penerima', 'Maklumat Penerima')) ?>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_pengesahan_insuran-tab" role="tab">
+                    <i class="ri-health-book-line me-1"></i> <?= h(tr('tab_semak_pengesahan_insuran', 'Pengesahan Insuran')) ?>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-perakuan-tab" role="tab">
-                  <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_maklumat_perakuan', 'Maklumat Perakuan')) ?>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_bantuan_kes_khas-tab" role="tab">
+                    <i class="ri-hand-heart-line me-1"></i> <?= h(tr('tab_semak_bantuan_kes_khas', 'Bantuan Kes Khas')) ?>
                 </a>
-              </li>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_bantuan_pembelajaran-tab" role="tab">
+                    <i class="ri-book-open-line me-1"></i> <?= h(tr('tab_semak_bantuan_pembelajaran', 'Bantuan Pembelajaran')) ?>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_pembiayaan_pengajian-tab" role="tab">
+                    <i class="ri-graduation-cap-line me-1"></i> <?= h(tr('tab_semak_pembiayaan_pengajian', 'Pembiayaan Pengajian')) ?>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#semak_kemudahan_kenderaan-tab" role="tab">
+                    <i class="ri-bus-line me-1"></i> <?= h(tr('tab_semak_kemudahan_kenderaan', 'Kemudahan Kenderaan')) ?>
+                </a>
+                </li>
 
             </ul>
 
@@ -112,24 +126,46 @@
               
               <?php $hideButton = true; // hide button simpan & readonly ?>
               
-              <!-- Tab 1: Maklumat Peribadi -->
-              <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/../../../rekod-utama/data-peribadi/f-peribadi.php'; ?>
+              <!-- Tab 1: Semak Pengesahan Pelajar -->
+              <div class="tab-pane fade show active" id="semak_pengesahan_pelajar-tab" role="tabpanel"> 
+                <?php //include __DIR__ . '/list-pengesahan-pelajar.php'; ?>
+                <div id="pengesahan-pelajar-container">
+                    <div class="text-muted">Memuatkan data...</div>
+                </div>
               </div>
 
-              <!-- Tab 2: Maklumat Akademik -->
-              <div class="tab-pane fade show" id="maklumat-akademik-tab" role="tabpanel">                
+              <!-- Tab 2: Semak Surat Jaminan -->
+              <div class="tab-pane fade show" id="semak_surat_jaminan-tab" role="tabpanel">                
                 <?php include __DIR__ . '/../../../rekod-utama/data-akademik/f-akademik.php'; ?>
               </div>    
 
-              <!-- Tab 3: Maklumat Penerima -->
-              <div class="tab-pane fade show" id="maklumat-penerima-tab" role="tabpanel">
+              <!-- Tab 3: Semak Pengesahan Insuran -->
+              <div class="tab-pane fade show" id="semak_pengesahan_insuran-tab" role="tabpanel">
+                <?php  //include __DIR__ . '/f-penerima.php'; ?>
+                <div id="penerima-content"></div>
+              </div>   
+
+              <!-- Tab 4: Semak Bantuan Kes Khas -->
+              <div class="tab-pane fade show" id="semak_bantuan_kes_khas-tab" role="tabpanel">
+                <?php  //include __DIR__ . '/f-penerima.php'; ?>
+                <div id="penerima-content"></div>
+              </div>   
+
+              <!-- Tab 5: Semak Bantuan Pembelajaran -->
+              <div class="tab-pane fade show" id="tab_semak_bantuan_pembelajaran-tab" role="tabpanel">
+                <?php  //include __DIR__ . '/f-penerima.php'; ?>
+                <div id="penerima-content"></div>
+              </div>   
+
+              <!-- Tab 6: Semak Pembiayaan Pengajian -->
+              <div class="tab-pane fade show" id="semak_pembiayaan_pengajian-tab" role="tabpanel">
+                <?php  //include __DIR__ . '/f-penerima.php'; ?>
                 <div id="penerima-content"></div>
               </div> 
 
-              <!-- Tab 4: Perakuan -->
-              <div class="tab-pane fade show" id="maklumat-perakuan-tab" role="tabpanel">
-                <?php  include __DIR__ . '/f-perakuan.php'; ?>
+              <!-- Tab 7: Semak Kemudahan Kenderaan -->
+              <div class="tab-pane fade show" id="semak_kemudahan_kenderaan-tab" role="tabpanel">
+                <?php  include __DIR__ . '/f-kemudahan-kenderaan.php'; ?>
               </div>
               
             </div>
@@ -153,15 +189,10 @@
         processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
         loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
         syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
-      };
-      let DRAFT = {
-          dataStudent: <?= json_encode($peribadi ?? []) ?>,
-          penerima: {},
-          perakuan: {}
-      };      
+      };    
   </script> 
-  <script src="<?= base_url('assets/js/pages/pengesahan-pelajar.js?v=' . time()) ?>"></script> 
-
+  <script src="<?= base_url('assets/js/pages/icares-semakan-permohonan.js?v=' . time()) ?>"></script> 
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/semakan.css') ?>">
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

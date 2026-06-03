@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-26 08:28:30",
+    "updated_at": "2026-05-26 13:13:34",
     "dataStudent": {
         "matrik": "2250005",
         "nama_penuh": "Muhamad Nur Nasrullah bin Mohamad Ali",
@@ -44,9 +44,35 @@
         "status_pelajar": "AWAM",
         "avatar_url": "https:\/\/kemasukan.upnm.edu.my\/tawaran\/pelajar\/student_image\/2250005.jpg"
     },
-    "penerima": [],
-    "perakuan": {
-        "chk1": 0,
-        "chk2": 0
-    }
+    "penglibatan": [
+        {
+            "id": "ISTAD_1925",
+            "peringkat": "NEG",
+            "pencapaian": "EMAS"
+        },
+        {
+            "id": "new_6a152b9c0bf14",
+            "wakil": "IND"
+        }
+    ],
+    "jawatan": [
+        {
+            "id": "ISTAD_1994",
+            "peringkat": "INT"
+        },
+        {
+            "id": "ISTAD_2119",
+            "peringkat": "FK"
+        },
+        {
+            "id": "ISTAD_8564",
+            "peringkat": "BP"
+        },
+        {
+            "id": "new_6a1007fecf58b",
+            "peringkat": "KBG"
+        }
+    ],
+    "anugerah": [],
+    "perakuan": []
 }

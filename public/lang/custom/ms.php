@@ -167,7 +167,7 @@ return [
     'tab_maklumat_pekerjaan' => 'Maklumat Pekerjaan',
     'tab_maklumat_penerima' => 'Maklumat Penerima',
     'tab_maklumat_penjaga' => 'Maklumat Penjaga',
-    'tab_maklumat_perakuan' => 'Maklumat Perakaun',
+    'tab_maklumat_perakuan' => 'Maklumat Perakuan',
     'tab_peglibatan_program' => 'Penglibatan Program',
     'tab_pelajar_diraja' => 'Pelajar Diraja',
     'tab_perakuan_pemohon' => 'Perakuan Pemohon',

@@ -81,7 +81,7 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#maklumat-perakuan-tab" role="tab">
-                  <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_maklumat_perakuan', 'Maklumat Perakaun')) ?>
+                  <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_maklumat_perakuan', 'Maklumat Perakuan')) ?>
                 </a>
               </li>
 

@@ -32,7 +32,7 @@ function loadDraft() {
     .then(res => res.json())
     .then(data => {
 
-        console.log('DRAFT LOADED:', data);
+        //console.log('DRAFT LOADED:', data);
 
         let keepDataStudent = DRAFT.dataStudent;
         DRAFT = data;
@@ -260,8 +260,7 @@ function submitPermohonan() {
                 confirmButtonText: 'OK'
             }).then(() => {
 
-                location.reload();
-                //window.location.href = base_url + 'pages/dashboard.php';
+                window.location.href = base_url + 'pages/iCares/semakan/permohonan/index.php';
             });
         } else {
             Swal.fire({

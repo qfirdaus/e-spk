@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-22 09:44:40",
+    "updated_at": "2026-05-26 07:12:31",
     "rows": [
         {
             "id": "new_6a0e899acb73f",
@@ -8,7 +8,7 @@
             "sumber": "Tambahan",
             "nama": "PROGRAM TESS2",
             "tarikh": "2026-05-12",
-            "wakil": "2",
+            "wakil": "IND",
             "peringkat": "UNI",
             "pencapaian": "EMAS",
             "dokumen": {
@@ -25,13 +25,13 @@
             "sumber": "Tambahan",
             "nama": "SUKAN2",
             "tarikh": "2026-05-13",
-            "wakil": "1",
+            "wakil": "BP",
             "peringkat": "NEG",
             "pencapaian": "PERAK",
             "dokumen": {
-                "filename": "2250005-dok_6a100968cfd95.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a100968cfd95.pdf",
-                "uploaded_at": "2026-05-22 09:44:40"
+                "filename": "2250005-dok_6a152b0fef469.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a152b0fef469.pdf",
+                "uploaded_at": "2026-05-26 07:09:36"
             },
             "is_dirty": true,
             "conflict": false
@@ -42,12 +42,12 @@
             "sumber": "IStAD",
             "nama": "BICARA SUMUD FORTILLA",
             "tarikh": "2025-12-02",
-            "wakil": null,
-            "peringkat": null,
-            "pencapaian": "PESERTA",
+            "wakil": "FK",
+            "peringkat": "NEG",
+            "pencapaian": "EMAS",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
             "id": "ISTAD_1928",
@@ -68,12 +68,12 @@
             "sumber": "IStAD",
             "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
             "tarikh": "2025-11-08",
-            "wakil": null,
-            "peringkat": null,
+            "wakil": "FK",
+            "peringkat": "BP",
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
             "id": "ISTAD_1964",
@@ -81,12 +81,12 @@
             "sumber": "IStAD",
             "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
             "tarikh": "2025-12-23",
-            "wakil": null,
+            "wakil": "IND",
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
             "id": "ISTAD_2018",
@@ -217,6 +217,23 @@
             "is_dirty": false,
             "conflict": false,
             "source_override": false
+        },
+        {
+            "id": "new_6a152b9c0bf14",
+            "id_kegiatan_pelajar": null,
+            "sumber": "Tambahan",
+            "nama": "PROGRAM TEST",
+            "tarikh": "28-04-2026",
+            "wakil": "IND",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
+            "dokumen": {
+                "filename": "2250005-dok_6a152bb703019.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a152bb703019.pdf",
+                "uploaded_at": "2026-05-26 07:12:23"
+            },
+            "is_dirty": true,
+            "conflict": false
         }
     ]
 }

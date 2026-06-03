@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-22 09:59:14",
+    "updated_at": "2026-05-26 07:12:48",
     "rows": [
         {
             "id": "ISTAD_1994",
@@ -13,9 +13,9 @@
             "id_jawatan": 6,
             "jawatan": "AJK LOGISTIK",
             "tarikh_lantikan": "2026-01-08",
-            "peringkat": null,
+            "peringkat": "INT",
             "is_dirty": false,
-            "source_override": false,
+            "source_override": true,
             "conflict": false
         },
         {
@@ -45,7 +45,7 @@
             "id_jawatan": 5,
             "jawatan": "AHLI",
             "tarikh_lantikan": "2025-10-06",
-            "peringkat": "",
+            "peringkat": "BP",
             "is_dirty": false,
             "source_override": true,
             "conflict": false
@@ -61,7 +61,7 @@
             "id_jawatan": "8",
             "jawatan": "TIMBALAN BENDAHARI \/ TIMBALAN BENDAHARI",
             "tarikh_lantikan": "09-02-2026",
-            "peringkat": "UNI",
+            "peringkat": "KBG",
             "dokumen": {
                 "filename": "2250005-dok_6a1007fece5a3.pdf",
                 "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a1007fece5a3.pdf",
