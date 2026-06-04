@@ -1,4 +1,10 @@
 <script>
+/*
+ * IQS FRAMEWORK CORE FILE
+ *
+ * READ ONLY for downstream project programmers.
+ * Do not modify this file directly in template or cloned projects.
+ */
 function checkFileSize(input) {
   const maxFileSize = 5 * 1024 * 1024;
   if (!input || !input.files || !input.files[0]) {
@@ -15,60 +21,4 @@ function checkFileSize(input) {
 
   input.setCustomValidity('');
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const checkboxes = document.querySelectorAll('.chk');
-    const button = document.getElementById('btn-submit-<?= h($istarPerakuanIdPrefix ?? '') ?>');
-
-    checkboxes.forEach(chk => {
-        chk.addEventListener('change', () => {
-            if (!button) return;
-
-            let allChecked = true;
-            checkboxes.forEach(c => {
-                if (!c.checked) allChecked = false;
-            });
-            button.disabled = !allChecked;
-        });
-    });  
-    initDatePicker();
-});
-
-function initDatePicker(parent = document) {
-
-    jQuery(parent).find('.datepicker').each(function () {
-
-        // prevent duplicate init
-        if (jQuery(this).data('daterangepicker')) {
-            return;
-        }
-
-        jQuery(this).daterangepicker({
-            singleDatePicker: true,
-            autoApply: true,
-            showDropdowns: true,
-            locale: {
-                format: 'DD-MM-YYYY'
-            }
-        });
-
-    });
-
-}
-
-document.addEventListener('shown.bs.modal', function (event) {
-
-    const modal = event.target;
-
-    initDatePicker(modal);
-
-});
-
-document.addEventListener('input', function (e) {
-
-    if (e.target.matches('input.uppercase')) {
-        e.target.value = e.target.value.toUpperCase();
-    }
-
-});
 </script>

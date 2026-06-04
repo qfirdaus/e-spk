@@ -1,4 +1,10 @@
 <script>
+/*
+ * IQS FRAMEWORK CORE FILE
+ *
+ * READ ONLY for downstream project programmers.
+ * Do not modify this file directly in template or cloned projects.
+ */
 (function () {
   'use strict';
 
@@ -102,64 +108,6 @@
     return pane && pane.id ? '#' + pane.id : (window.location.hash || '');
   }
 
-  function shouldUseLocalSubmitFeedback() {
-    const currentPath = String(window.location.pathname || '').replace(/\\/g, '/');
-    return /\/pages\/(?:iStar|rekod-utama|iCareS)\//.test(currentPath);
-  }
-
-  function findRelatedSkeleton(form) {
-    let sibling = form.previousElementSibling;
-    while (sibling) {
-      if (sibling.classList && sibling.classList.contains('skeleton-loader')) {
-        return sibling;
-      }
-      sibling = sibling.previousElementSibling;
-    }
-
-    return form.parentElement ? form.parentElement.querySelector('.skeleton-loader') : null;
-  }
-
-  function resolveSubmitButton(form, submitEvent) {
-    if (submitEvent && submitEvent.submitter instanceof HTMLElement) {
-      return submitEvent.submitter;
-    }
-
-    return form.querySelector('button[type="submit"], input[type="submit"]');
-  }
-
-  function setLocalSubmitFeedback(form, submitEvent) {
-    if (!shouldUseLocalSubmitFeedback()) return;
-    if (form.dataset.localSubmitPending === '1') return;
-
-    const method = String(form.getAttribute('method') || 'get').toLowerCase();
-    const action = String(form.getAttribute('action') || '').trim();
-    if (method !== 'post' || action === '' || action === '#') return;
-
-    form.dataset.localSubmitPending = '1';
-    form.setAttribute('aria-busy', 'true');
-
-    const skeleton = findRelatedSkeleton(form);
-    if (skeleton) {
-      skeleton.style.display = 'block';
-    }
-
-    form.style.opacity = '0.55';
-    form.style.pointerEvents = 'none';
-
-    const submitButton = resolveSubmitButton(form, submitEvent);
-    if (!submitButton) return;
-
-    if (submitButton.tagName === 'BUTTON') {
-      submitButton.dataset.originalHtml = submitButton.innerHTML;
-      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' + <?= json_encode(tr('profile_js_processing', 'Sedang diproses...'), JSON_UNESCAPED_UNICODE) ?>;
-    } else {
-      submitButton.dataset.originalValue = submitButton.value;
-      submitButton.value = <?= json_encode(tr('profile_js_processing', 'Sedang diproses...'), JSON_UNESCAPED_UNICODE) ?>;
-    }
-
-    submitButton.disabled = true;
-  }
-
   function showTabFromHash() {
     const hash = window.location.hash || '';
     if (!hash || hash === '#') return;
@@ -233,9 +181,6 @@
   document.addEventListener('submit', function (event) {
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
-
-    setLocalSubmitFeedback(form, event);
-
     const action = form.getAttribute('action') || '';
     if (!/\/actions\/profile-update\.php(?:$|[?#])/.test(action)) return;
 
@@ -271,161 +216,4 @@
     initPageEnhancements();
   }
 })();
-
-function showLoading(messageKey = 'processing') {
-  const message = msg_load[messageKey] || msg_load.processing; 
-  
-  hideLoading();
-  if (window.AppLoader && typeof window.AppLoader.show === 'function') {
-    window.__userListLoaderToken = window.AppLoader.show(message);
-    return;
-  }
-
-  if (window.IQSLoader && typeof window.IQSLoader.show === 'function') {
-    window.__userListLoaderToken = window.IQSLoader.show(message);
-  }
-}
-
-function hideLoading() {
-  if (!window.__userListLoaderToken) {
-    return;
-  }
-  if (window.AppLoader && typeof window.AppLoader.hide === 'function') {
-    window.AppLoader.hide(window.__userListLoaderToken);
-  } else if (window.IQSLoader && typeof window.IQSLoader.hide === 'function') {
-    window.IQSLoader.hide(window.__userListLoaderToken);
-  }
-  window.__userListLoaderToken = null;
-}
-
-function resolveLoadMessage(messageKey) {
-    if (typeof msg_load !== 'undefined' && msg_load && msg_load[messageKey]) {
-        return msg_load[messageKey];
-    }
-
-    if (typeof msg_load !== 'undefined' && msg_load && msg_load.processing) {
-        return msg_load.processing;
-    }
-
-    return 'Sedang diproses...';
-}
-
-function renderInlineLoader(message) {
-    return `
-        <div class="konvo-inline-loader" role="status" aria-live="polite">
-            <div class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></div>
-            <span>${message}</span>
-        </div>
-    `;
-}
-
-function setSectionLoading(container, messageKey = 'loading') {
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = renderInlineLoader(resolveLoadMessage(messageKey));
-}
-
-function setButtonBusy(button, isBusy, messageKey = 'processing') {
-    const btn = button && button.jquery ? button : jQuery(button);
-
-    if (!btn.length) {
-        return;
-    }
-
-    if (isBusy) {
-        if (!btn.data('original-html')) {
-            btn.data('original-html', btn.html());
-        }
-
-        btn.prop('disabled', true);
-        btn.addClass('is-busy');
-        btn.html(`
-            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-            <span>${resolveLoadMessage(messageKey)}</span>
-        `);
-        return;
-    }
-
-    const originalHtml = btn.data('original-html');
-    if (originalHtml) {
-        btn.html(originalHtml);
-        btn.removeData('original-html');
-    }
-
-    btn.prop('disabled', false);
-    btn.removeClass('is-busy');
-}
-
-function showToast(message, type = 'success') {
-
-    let bgClass = 'bg-success';
-
-    if (type === 'error') {
-        bgClass = 'bg-danger';
-    }
-
-    const toast = `
-
-        <div class="toast align-items-center text-white ${bgClass} border-0 show mb-2">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button"
-                        class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast">
-                </button>
-            </div>
-        </div>
-
-    `;
-
-    jQuery('.toast-lite').append(toast);
-
-    setTimeout(() => {
-        jQuery('.toast-lite .toast').first().remove();
-    }, 2500);
-
-}
-
-window.konvoI18n = <?= json_encode([
-  'add_new' => tr('button_add_new', 'Tambah Baru'),
-  'sync_istad' => tr('sync_istad', 'Sync IStAD'),
-  'load_data_failed' => tr('load_data_failed', 'Gagal load data'),
-  'datatable_search_placeholder' => tr('datatable_search_placeholder', 'Search'),
-  'datatable_length_menu' => tr('datatable_length_menu', 'Show _MENU_ records'),
-  'datatable_info' => tr('datatable_info', 'Showing _START_ to _END_ of _TOTAL_ records'),
-  'datatable_info_empty' => tr('datatable_info_empty', 'Showing 0 to 0 of 0 records'),
-  'datatable_empty_table' => tr('datatable_empty_table', 'No records found'),
-  'datatable_zero_records' => tr('datatable_zero_records', 'No matching records'),
-  'datatable_next' => tr('datatable_next', 'Next'),
-  'datatable_previous' => tr('datatable_previous', 'Previous'),
-  'swal_failed_title' => tr('swal_failed_title', 'Gagal'),
-  'swal_success_title' => tr('swal_success_title', 'Berjaya'),
-  'swal_system_error_title' => tr('swal_system_error_title', 'Ralat Sistem'),
-  'swal_try_again_later' => tr('swal_try_again_later', 'Cuba lagi sebentar lagi'),
-  'swal_try_again' => tr('swal_try_again', 'Cuba lagi'),
-  'swal_delete_record_title' => tr('swal_delete_record_title', 'Padam rekod ini?'),
-  'swal_delete_award_title' => tr('swal_delete_award_title', 'Padam rekod anugerah ini?'),
-  'swal_delete_warning' => tr('swal_delete_warning', 'Tindakan ini tidak boleh dibatalkan!'),
-  'swal_confirm_delete' => tr('swal_confirm_delete', 'Ya, padam'),
-  'swal_cancel' => tr('swal_cancel', 'Batal'),
-  'swal_ok' => tr('swal_ok', 'OK'),
-  'record_delete_success' => tr('record_delete_success', 'Rekod berjaya dipadam'),
-  'record_delete_failed' => tr('record_delete_failed', 'Gagal padam rekod'),
-  'award_add_success' => tr('award_add_success', 'Rekod anugerah berjaya ditambah'),
-  'award_save_failed' => tr('award_save_failed', 'Gagal simpan rekod anugerah'),
-  'award_delete_success' => tr('award_delete_success', 'Rekod anugerah berjaya dipadam'),
-  'award_delete_failed' => tr('award_delete_failed', 'Gagal padam rekod anugerah'),
-  'award_invalid_id' => tr('award_invalid_id', 'ID rekod anugerah tidak sah'),
-  'record_update_failed' => tr('record_update_failed', 'Gagal kemaskini rekod'),
-  'system_error_try_again' => tr('system_error_try_again', 'Ralat sistem. Cuba lagi.'),
-  'sync_istad_title' => tr('sync_istad_title', 'Sync data IStAD?'),
-  'sync_istad_text' => tr('sync_istad_text', 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.'),
-  'sync_istad_confirm' => tr('sync_istad_confirm', 'Ya, sync'),
-  'sync_success_title' => tr('sync_success_title', 'Penyelarasan Data Berjaya'),
-  'sync_failed' => tr('sync_failed', 'Penyelarasan data gagal'),
-], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
 </script>
