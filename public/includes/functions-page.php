@@ -1,15 +1,12 @@
 <?php
-    const PROFILE_CONFIG = [
-    'LOGIN_ACTIVITY_LIMIT' => 50,
-    'AUDIT_EVENTS_LIMIT' => 100,
-    'DATATABLES_PAGE_LENGTH' => 10,
-    'DATATABLES_INIT_DELAY' => 300,
-    'TOAST_DURATION' => 1400,
-    'POLLING_INTERVAL' => 100,
-    'POLLING_MAX_ATTEMPTS' => 50,
-    'COPY_RATE_LIMIT' => 1000
-  ];
-
+/**
+ * IQS FRAMEWORK CORE FILE
+ *
+ * READ ONLY for downstream project programmers.
+ * Do not modify this file directly in template or cloned projects.
+ * Custom changes must be implemented in project-specific files
+ * or approved extension points.
+ */
 // Close session lock after reading
 if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
 

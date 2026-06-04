@@ -1,5 +1,12 @@
 <?php
-// classes/SystemConfigConstants.php
+/**
+ * IQS FRAMEWORK CORE FILE
+ *
+ * READ ONLY for downstream project programmers.
+ * Do not modify this file directly in template or cloned projects.
+ * Custom changes must be implemented in project-specific files
+ * or approved extension points.
+ */// classes/SystemConfigConstants.php
 declare(strict_types=1);
 
 /**
@@ -194,12 +201,6 @@ class SystemConfigConstants {
     'ri-folder-chart-line',
     'ri-folder-user-fill',
     'ri-folder-user-line',
-    'ri-bard-line',
-    'ri-bard-fill',
-    'ri-heart-2-line',
-    'ri-heart-2-fill',
-    'ri-hand-heart-line',
-    'ri-hand-heart-fill',    
   ];
   
   // Audit Event Types
