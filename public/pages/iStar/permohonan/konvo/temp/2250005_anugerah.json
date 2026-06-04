@@ -1,0 +1,48 @@
+{
+    "draft_initialized": true,
+    "updated_at": "2026-06-04 06:01:19",
+    "rows": [
+        {
+            "id": "anugerah_6a1fec3d84293",
+            "nama_anugerah": "ANUGERAH 2",
+            "tahun": "2024",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "BP",
+            "dokumen": {
+                "filename": "2250005-award_6a1fec3d8318b.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/anugerah\/2250005-award_6a1fec3d8318b.pdf",
+                "uploaded_at": "2026-06-03 10:56:29"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "anugerah_6a1fed141f839",
+            "nama_anugerah": "ANUGERAH UNIVERSITI",
+            "tahun": "2025",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "UNI",
+            "dokumen": {
+                "filename": "2250005-award_6a1fed141e530.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/anugerah\/2250005-award_6a1fed141e530.pdf",
+                "uploaded_at": "2026-06-03 11:00:04"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "anugerah_6a206142af074",
+            "nama_anugerah": "ANUGERAH UNIVERSITI 2",
+            "tahun": "2023",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "UNI",
+            "dokumen": {
+                "filename": "2250005-dok_6a20f88f00558.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/anugerah\/2250005-dok_6a20f88f00558.pdf",
+                "uploaded_at": "2026-06-04 06:01:19"
+            },
+            "is_dirty": true,
+            "conflict": false
+        }
+    ]
+}

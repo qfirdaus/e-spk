@@ -36,8 +36,6 @@
   $nokp = (string)($peribadi['nokp'] ?? '');
   $istarPerakuanIdPrefix = 'istar-konvo';
 
-  // $jawatanData = $penglibatanController->getAllJawatanDisandang();
-
   //print_r($lookupWakil);
 ?>
 
@@ -158,7 +156,9 @@
 
               <!-- Tab 4: Anugerah dan Pengiktirafan -->
               <div class="tab-pane fade" id="anugerah-pengiktirafan-tab" role="tabpanel">
-                  <?php include __DIR__ . '/f-anugerah-pengiktirafan.php'; ?>
+                  <div id="anugerah-content" class="text-center py-3">
+                      <?= h(tr('data_loading_records', 'Memuatkan Data...')) ?>
+                  </div>
               </div>
 
               <!-- Tab 5: Perakauan Pemohon -->

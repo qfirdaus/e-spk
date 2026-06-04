@@ -2,8 +2,9 @@ const saveTimers = {};
 let penglibatanLoaded = false;
 let jawatanLoaded = false;
 let perakuanloaded = false;
+let anugerahLoaded = false;
 
-console.log('KONVO JS LOADED');
+//console.log('KONVO JS LOADED');
 
 function konvoText(key, fallback) {
     if (window.konvoI18n && Object.prototype.hasOwnProperty.call(window.konvoI18n, key)) {
@@ -37,41 +38,84 @@ document.addEventListener('shown.bs.tab', function (event) {
         }
 
     }   
+
+    if(target === '#anugerah-pengiktirafan-tab') {
+
+        if (!anugerahLoaded) {
+            loadAnugerah();
+        }
+    }   
     
     if (target === '#perakuan-pemohon-tab') {
-        if (!perakuanloaded) {
+        if (!perakuanloaded && DRAFT_KONVO.perakuan) {
             initPerakuan();
         }
     }       
 
 });
 
-document.addEventListener('change', function (e) {
-
-    if (e.target && e.target.id === 'kategoriAktiviti') {
+document.addEventListener('change', function (e) {    
+    if (e.target && e.target.classList.contains('kategori-select')) {
 
         let selected = e.target.options[e.target.selectedIndex];
-        let idAktiviti = document.getElementById('idAktiviti');
-        let aktivitiText = document.getElementById('aktivitiText');
+        let ID_aktiviti = selected.dataset.idaktiviti || '';
+        let Text_aktiviti = selected.dataset.aktiviti_text || '';
 
+        // dalam table
+        let row = e.target.closest('tr');
+        if (row) {
+            let aktivitiId = row.querySelector('.id-Aktiviti');
+            let aktivitiText = row.querySelector('.aktiviti-Text');
+
+            if (aktivitiId) {
+                aktivitiId.value = ID_aktiviti;
+            }
+            if (aktivitiText) {
+                aktivitiText.value = Text_aktiviti;
+            }
+
+            jQuery(aktivitiId).trigger('change');
+            jQuery(aktivitiText).trigger('change');            
+            return;
+        }
+
+        // modal
+        let modal = e.target.closest('.modal') || document;
+        let aktivitiId = modal.querySelector('.id-Aktiviti');
+        let aktivitiText = modal.querySelector('.aktiviti-Text');
+        if (aktivitiId) {
+            aktivitiId.value = ID_aktiviti;
+        }
         if (aktivitiText) {
-            aktivitiText.value = selected.dataset.aktiviti_text || '';
+            aktivitiText.value = Text_aktiviti;
         }
+    }  
 
-        if (idAktiviti) {
-            idAktiviti.value = selected.dataset.idaktiviti || '';
-        }
-    }
+    if (e.target && e.target.classList.contains('jawatan-select')) {
 
-    if(e.target &&  e.target.id === 'jawatan') {
         let selected = e.target.options[e.target.selectedIndex];
-        let jawatanText = document.getElementById('jawatanText');
+        let text = selected.dataset.jawatan_text || '';
 
-        //console.log(selected);
-        if (jawatanText) {
-            jawatanText.value = selected.dataset.jawatan_text || '';
+        // dalam table
+        let row = e.target.closest('tr');
+        if (row) {
+            let jawatanText = row.querySelector('.jawatan-text');
+            if (jawatanText) {
+                jawatanText.value = text;
+            }
+
+            jQuery(jawatanText).trigger('change');  
+            return;
         }
-    }
+
+        // dalam modal / form biasa
+        let modal = e.target.closest('.modal') || document;
+        let jawatanText = modal.querySelector('.jawatan-text');
+
+        if (jawatanText) {
+            jawatanText.value = text;
+        }
+    }   
 });
 
 // #### Functions Load ####
@@ -92,6 +136,11 @@ async function loadDraft() {
         DRAFT_KONVO = data || {};
 
         DRAFT_KONVO.dataStudent = keepDataStudent;
+        DRAFT_KONVO.perakuan = {
+            chk1: DRAFT_KONVO.perakuan?.chk1 ?? 0,
+            chk2: DRAFT_KONVO.perakuan?.chk2 ?? 0,
+            chk3: DRAFT_KONVO.perakuan?.chk3 ?? 0
+        };
 
         if (!DRAFT_KONVO.penglibatan) {
             DRAFT_KONVO.penglibatan = [];
@@ -107,7 +156,7 @@ async function loadDraft() {
 
         if (!DRAFT_KONVO.perakuan) {
             DRAFT_KONVO.perakuan = {};
-        }
+        }             
 
     } catch (err) {
 
@@ -159,6 +208,7 @@ function loadPenglibatan() {
 
             setTimeout(() => {
                 initStandardDataTable('#penglibatanDT');
+                initDatePicker(document.getElementById('penglibatanDT'));
             }, 0);
 
             penglibatanLoaded = true;
@@ -202,9 +252,55 @@ function loadJawatan() {
 
             requestAnimationFrame(() => {
                 initStandardDataTable('#jawatanDT');
+                initDatePicker(document.getElementById('jawatanDT'));
             });
 
             jawatanLoaded = true;
+        })
+        .catch(err => {
+            console.log(err);
+            box.innerHTML = `<div class="text-danger">${konvoText('load_data_failed', 'Gagal load data')}</div>`;
+        });
+
+}
+
+function loadAnugerah() {
+
+    if (anugerahLoaded) return;
+
+    const box = document.getElementById('anugerah-content');
+
+    if (!box) return;
+
+    setSectionLoading(box, 'loading');
+
+    fetch(base_url + 'pages/iStar/permohonan/konvo/ajax/load-anugerah.php')
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Gagal load anugerah');
+            }
+
+            return res.text();
+        })
+        .then(html => {
+
+            box.innerHTML = html;
+            
+            //sync and save to DRAFT_KONVO
+            syncAnugerahFromTable();
+            if (DRAFT_KONVO.anugerah.length) {
+                fillAnugerah();
+            }
+            initAutoSaveAnugerah();
+
+            hideLoading();
+
+            requestAnimationFrame(() => {
+                initStandardDataTable('#anugerahDT');
+                initDatePicker(document.getElementById('anugerahDT'));
+            });
+
+            anugerahLoaded = true;
         })
         .catch(err => {
             console.log(err);
@@ -280,6 +376,20 @@ function initStandardDataTable(tableId) {
                 `;
             }
 
+            if (tableId === '#anugerahDT') {
+
+                toolbar = `
+                    <div class="d-flex gap-2 ms-2">
+                        <button type="button"
+                                id="anugerahBtnAdd"
+                                class="btn btn-success rounded-3">
+                            <i class="ri-add-line me-1"></i>
+                            ${konvoText('add_new', 'Tambah Baru')}
+                        </button>
+                    </div>
+                `;
+            }
+
             try {
                 var $table = jQuery(tableId);
                 var $wrapper = $table.closest('.dataTables_wrapper');
@@ -320,43 +430,12 @@ function initStandardDataTable(tableId) {
                 className: 'text-center'
             },
             {
-                targets: 1,
-                width: '7%',
-                className: 'text-center'
-            },
-            {
-                targets: 2,
-                width: '38%',
-                className: 'text-start'
-            },
-            {
-                targets: 3,
-                width: '10%',
-                className: 'text-center'
-            },
-            {
-                targets: 4,
-                width: '10%',
-                className: 'text-center'
-            },
-            {
-                targets: 5,
-                width: '10%',
-                className: 'text-center'
-            },
-            {
-                targets: 6,
-                width: '10%',
-                className: 'text-center'
-            },
-            {
                 targets: -1,
                 orderable: false,
                 searchable: false,
                 width: '10%',
                 className: 'text-center'
             }
-
         ],
         createdRow: function (row, data, dataIndex) {
             var $cell = jQuery('td', row).eq(2);
@@ -384,7 +463,9 @@ function initStandardDataTable(tableId) {
             const api = this.api();
             const info = api.page.info();
 
-            jQuery('td:eq(0)', row)
+            //jQuery('td:eq(0)', row)
+            jQuery(row)
+                .find('td.col-bil')            
                 .html(info.start + index + 1);
 
         },
@@ -560,6 +641,82 @@ function initAutoSaveJawatan() {
     );
 }
 
+function initAutoSaveAnugerah() {
+    jQuery(document).on(
+        'change',
+        '#anugerahDT tbody select, #anugerahDT tbody textarea, #anugerahDT tbody input:not([type=file])',
+        function () {
+
+            let el = jQuery(this);
+            let tr = el.closest('tr');
+
+            // handle DataTables child row
+            if (tr.hasClass('child')) {
+                tr = tr.prev('tr');
+            }
+
+            // fallback safety (kalau nested structure weird)
+            if (!tr.data('id')) {
+                tr = el.closest('tr').prev('tr');
+            }
+
+            let rowId = tr.data('id');
+            let field = this.name;
+            let value = el.val();
+
+            if (!rowId || !field) return;
+
+            const timerKey = rowId + '_' + field;
+            clearTimeout(saveTimers[timerKey]);
+
+            tr.removeClass('row-success row-error');
+            tr.addClass('row-saving');
+            el.addClass('border-warning');
+
+            saveTimers[timerKey] = setTimeout(() => {
+                let existing = DRAFT_KONVO.anugerah.find(x => x.id == rowId);
+
+                if (!existing) {
+                    existing = { id: rowId };
+                    DRAFT_KONVO.anugerah.push(existing);
+                }
+
+                existing[field] = value; // update only changed field
+                saveDraft();
+
+                jQuery.ajax({
+                    url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=updateAnugerahDraft',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id: rowId,
+                        field: field,
+                        value: value
+                    },
+                    success: function () {
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-error');
+                        tr.addClass('row-success');
+
+                        setTimeout(() => tr.removeClass('row-success'), 1500);
+                    },
+
+                    error: function () {
+
+                        el.removeClass('border-warning');
+                        tr.removeClass('row-saving row-success');
+                        tr.addClass('row-error');
+
+                        setTimeout(() => tr.removeClass('row-error'), 2000);
+                    }
+                });
+
+            }, 600);
+        }
+    );
+}
+
 function initPerakuan() {
 
     const form = document.getElementById('formPerakuan');
@@ -672,6 +829,26 @@ function fillJawatan() {
             if (field.length) {
                 field.val(item[key]);
             }
+            
+        });
+
+    });
+}
+function fillAnugerah() {
+
+    DRAFT_KONVO.anugerah.forEach(item => {
+
+        let tr = jQuery(`#anugerahDT tbody tr[data-id="${item.id}"]`);
+
+        if (!tr.length) return;
+
+        Object.keys(item).forEach(key => {
+
+            let field = tr.find(`[name="${key}"]`);
+
+            if (field.length) {
+                field.val(item[key]);
+            }
         });
 
     });
@@ -748,7 +925,38 @@ function syncJawatanFromTable() {
 
     });
 
-    console.log('SYNC JAWATAN:', DRAFT_KONVO.jawatan);
+    //console.log('SYNC JAWATAN:', DRAFT_KONVO.jawatan);
+    saveDraft();
+}
+
+function syncAnugerahFromTable() {
+
+    // kalau draft dah ada data, jangan overwrite
+    if (DRAFT_KONVO.anugerah.length) {
+        return;
+    }
+
+    DRAFT_KONVO.anugerah = [];
+
+    jQuery('#anugerahDT tbody tr').each(function () {
+
+        let tr = jQuery(this);
+
+        let row = {
+            id: tr.data('id')
+        };
+
+        tr.find('[name]').each(function () {
+
+            row[this.name] = jQuery(this).val();
+
+        });
+
+        DRAFT_KONVO.anugerah.push(row);
+
+    });
+
+    console.log('SYNC ANUGERAH:', DRAFT_KONVO.anugerah);
     saveDraft();
 }
 
@@ -783,7 +991,7 @@ jQuery(function () {
     // Add New Penglibatan
     jQuery(document).on('submit', '#penglibatanForm', function (e) {
 
-        console.log('PENGLIBATAN FORM SUBMIT TRIGGERED');
+        //console.log('PENGLIBATAN FORM SUBMIT TRIGGERED');
 
         e.preventDefault();
 
@@ -862,7 +1070,7 @@ jQuery(function () {
                 //console.log('RESPONSE:', res);
 
                 if (res.status === 'ok') {
-                    jawatanLoaded = true;
+                    //jawatanLoaded = true;
                     //console.log('RELOAD JAWATAN TABLE');
 
                     form.reset();
@@ -872,9 +1080,21 @@ jQuery(function () {
                     ).hide();
 
                     //reload page to reflect new data
-                    setTimeout(() => {
-                        location.reload();
-                    }, 150);                
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 150);  
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: konvoText('swal_success_title', 'Berjaya'),
+                        text: res.message || konvoText('record_save_success', 'Rekod berjaya disimpan'),
+                        timer: 1500,
+                        showConfirmButton: false
+                    }); 
+
+                    // reload table shj
+                    jawatanLoaded = false;
+                    loadJawatan();                      
 
                 } else {
                     //console.log('FAILED TO ADD:', res);
@@ -901,13 +1121,15 @@ jQuery(function () {
     //Add New Anugerah
     jQuery(document).on('submit', '#anugerahForm', function (e) {
 
+        //console.log('ANUGERAH FORM SUBMIT TRIGGERED');
+
         e.preventDefault();
 
-        const form = this;
-        const formData = new FormData(form);
+        let form = this;
+        let formData = new FormData(form);
 
         jQuery.ajax({
-            url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=addDraft',
+            url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=addAnugerahDraft',
             method: 'POST',
             data: formData,
             processData: false,
@@ -916,9 +1138,10 @@ jQuery(function () {
 
             success: function (res) {
 
-                if (res.status === 'ok') {
+                //console.log('RESPONSE:', res);
 
-                    showToast(res.message || konvoText('award_add_success', 'Rekod anugerah berjaya ditambah'));
+                if (res.status === 'ok') {
+                    //console.log('RELOAD ANUGERAH TABLE');
 
                     form.reset();
 
@@ -926,33 +1149,40 @@ jQuery(function () {
                         document.getElementById('anugerahAddModal')
                     ).hide();
 
-                    setTimeout(() => {
-                        location.reload();
-                    }, 150);
+                    Swal.fire({
+                        icon: 'success',
+                        title: konvoText('swal_success_title', 'Berjaya'),
+                        text: res.message || konvoText('record_save_success', 'Rekod berjaya disimpan'),
+                        timer: 1500,
+                        showConfirmButton: false
+                    }); 
 
-                    return;
+                    // reload table shj
+                    anugerahLoaded = false;
+                    loadAnugerah();              
+
+                } else {
+                    //console.log('FAILED TO ADD:', res);
                 }
-
-                showToast(res.message || konvoText('award_save_failed', 'Gagal simpan rekod anugerah'), 'error');
             },
 
             error: function (xhr) {
-
-                console.log('ANUGERAH AJAX ERROR:', xhr.responseText);
+                //console.log('AJAX ERROR:', xhr.responseText);
 
                 let msg = konvoText('system_error_try_again', 'Ralat sistem. Cuba lagi.');
 
                 try {
-                    const res = JSON.parse(xhr.responseText);
+                    let res = JSON.parse(xhr.responseText);
                     if (res.message) msg = res.message;
                 } catch (e) {}
 
-                showToast(msg, 'error');
+                //console.log('AJAX ERROR:', xhr.responseText);
             }
+
         });
     });
 
-    // Update Document Penglibatan - kemaskini dokumen secara inline bila file dipilih
+    // Update Document - kemaskini dokumen secara inline bila file dipilih
     jQuery(document).on('change', '.dokumen-inline', function () {
 
         const input = this;
@@ -961,7 +1191,14 @@ jQuery(function () {
 
         const file = input.files[0];
         const rowId = jQuery(this).data('id');
-        const tr = jQuery(this).closest('tr');
+        let el = jQuery(this);
+        let tr = el.closest('tr');
+
+        // FIX DataTables child row
+        if (tr.hasClass('child')) {
+            tr = tr.prev('tr');
+        }
+
         const formData = new FormData();
         const ajaxUrl = jQuery(this).data('url');
 
@@ -981,7 +1218,7 @@ jQuery(function () {
             dataType: 'json',
 
             success: function (res) {
-
+                
                 tr.removeClass('row-saving');
 
                 if (res.status === 'ok') {
@@ -991,10 +1228,10 @@ jQuery(function () {
 
                     // UPDATE LINK VIEW BUTTON
                     const filePath = res.path; // <-- kena return dari backend
+                    const id = rowId;
 
-                    if (filePath) {
-                        tr.find('a.btn-outline-warning').attr('href', base_url + filePath);
-                    }
+                    jQuery('a.btn-outline-warning[data-id="' + id + '"]')
+                        .attr('href', base_url + filePath);
 
                     setTimeout(() => {
                         tr.removeClass('row-success');
@@ -1026,9 +1263,15 @@ jQuery(function () {
 
     });    
 
-    // button trigger for upload document penglibatan
+    // button trigger for upload document 
     jQuery(document).on('click', '.upload-btn', function () {
-        const tr = jQuery(this).closest('tr');
+        let el = jQuery(this);
+        let tr = el.closest('tr');
+
+        // FIX DataTables child row
+        if (tr.hasClass('child')) {
+            tr = tr.prev('tr');
+        }        
         const input = tr.find('.dokumen-inline')[0];
 
         if (input) {
@@ -1073,22 +1316,19 @@ jQuery(function () {
                 success: function (res) {
 
                     if (res.status === 'ok') {
-
                         Swal.fire({
                             icon: 'success',
                             title: konvoText('swal_success_title', 'Berjaya'),
                             text: res.message || konvoText('record_delete_success', 'Rekod berjaya dipadam'),
                             timer: 1500,
                             showConfirmButton: false
-                        });
+                        }); 
 
-                        const table = jQuery('#penglibatanDT').DataTable();
+                        // reload table shj
+                        penglibatanLoaded = false;
+                        loadPenglibatan();
 
-                        table
-                            .row(btn.closest('tr'))
-                            .remove()
-                            .draw(false);
-
+                        //console.log('RECORD DELETED, RELOAD TABLE');
                     } else {
 
                         btn.prop('disabled', false);
@@ -1164,12 +1404,9 @@ jQuery(function () {
                             showConfirmButton: false
                         });
 
-                        const table = jQuery('#jawatanDT').DataTable();
-
-                        table
-                            .row(btn.closest('tr'))
-                            .remove()
-                            .draw(false);
+                        // reload table shj
+                        jawatanLoaded = false;
+                        loadJawatan();
 
                     } else {
 
@@ -1207,7 +1444,7 @@ jQuery(function () {
         const rowId = btn.data('id');
 
         if (!rowId) {
-            showToast(konvoText('award_invalid_id', 'ID rekod anugerah tidak sah'), 'error');
+            console.log('NO ROW ID');
             return;
         }
 
@@ -1223,7 +1460,7 @@ jQuery(function () {
             if (!result.isConfirmed) return;
 
             jQuery.ajax({
-                url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=deleteDraft',
+                url: base_url + 'pages/iStar/permohonan/konvo/ajax/anugerah.php?action=deleteAnugerahDraft',
                 method: 'POST',
                 dataType: 'json',
                 data: {
@@ -1233,19 +1470,41 @@ jQuery(function () {
                 success: function (res) {
 
                     if (res.status === 'ok') {
-                        showToast(res.message || konvoText('award_delete_success', 'Rekod anugerah berjaya dipadam'));
-                        setTimeout(() => {
-                            location.reload();
-                        }, 150);
-                        return;
-                    }
 
-                    showToast(res.message || konvoText('award_delete_failed', 'Gagal padam rekod anugerah'), 'error');
+                        Swal.fire({
+                            icon: 'success',
+                            title: konvoText('swal_success_title', 'Berjaya'),
+                            text: res.message || konvoText('record_delete_success', 'Rekod berjaya dipadam'),
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+
+                        // reload table shj
+                        anugerahLoaded = false;
+                        loadAnugerah();
+
+                    } else {
+
+                        btn.prop('disabled', false);
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: konvoText('swal_failed_title', 'Gagal'),
+                            text: res.message || konvoText('record_delete_failed', 'Gagal padam rekod')
+                        });
+                    }
                 },
 
                 error: function (xhr) {
-                    console.log('ANUGERAH DELETE ERROR:', xhr.responseText);
-                    showToast(konvoText('swal_system_error_title', 'Ralat sistem'), 'error');
+
+                    btn.prop('disabled', false);
+                    console.log(xhr.responseText);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: konvoText('swal_system_error_title', 'Ralat Sistem'),
+                        text: konvoText('swal_try_again_later', 'Cuba lagi sebentar lagi')
+                    });
                 }
             });
         });
@@ -1281,7 +1540,7 @@ jQuery(function () {
                 method: 'POST',
                 dataType: 'json',
 
-                success: function (res) {
+                success: async function (res) {
                     setButtonBusy(btn, false);
 
                     if (res.status === 'ok') {
@@ -1294,10 +1553,11 @@ jQuery(function () {
                             `,
                             confirmButtonText: konvoText('swal_ok', 'OK'),
                             allowOutsideClick: false
-                        }).then(() => {
-                            // reload table shj
+                        }).then(async () => {
+                            DRAFT_KONVO.penglibatan = [];
+
                             penglibatanLoaded = false;
-                            loadPenglibatan();
+                            loadPenglibatan();       // reload UI table fresh  
                         });
 
                     } else {
@@ -1357,7 +1617,7 @@ jQuery(function () {
                 method: 'POST',
                 dataType: 'json',
 
-                success: function (res) {
+                success: async function (res) {
                     setButtonBusy(btn, false);
                     
                     if (res.status === 'ok') {
@@ -1370,10 +1630,11 @@ jQuery(function () {
                             `,
                             confirmButtonText: konvoText('swal_ok', 'OK'),
                             allowOutsideClick: false
-                        }).then(() => {
-                            // reload table shj
+                        }).then(async () => {
+                            DRAFT_KONVO.jawatan = [];
+
                             jawatanLoaded = false;
-                            loadJawatan();
+                            loadJawatan();       // reload UI table fresh                            
                         });
 
                     } else {
@@ -1405,5 +1666,6 @@ jQuery(function () {
 
     if (jQuery('#anugerahDT').length) {
         initStandardDataTable('#anugerahDT');
+        initDatePicker(document.getElementById('anugerahDT'));
     }
 });

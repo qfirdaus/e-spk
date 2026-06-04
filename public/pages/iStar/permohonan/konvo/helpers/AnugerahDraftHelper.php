@@ -50,11 +50,13 @@ function saveAnugerahDraft(string $matrik, array $payload): bool
 }
 
 //save by row (for inline edit)
-function saveAnugerahRows(string $matrik, array $rows): bool
+function saveAnugerahDraftRows(string $matrik, array $rows): bool
 {
-    return saveAnugerahDraft($matrik, [
+    $payload = [
         'draft_initialized' => true,
         'updated_at' => date('Y-m-d H:i:s'),
-        'rows' => array_values($rows),
-    ]);
+        'rows' => array_values($rows)
+    ];
+
+    return saveAnugerahDraft($matrik, $payload);
 }

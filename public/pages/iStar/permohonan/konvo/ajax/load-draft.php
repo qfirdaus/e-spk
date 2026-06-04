@@ -21,7 +21,11 @@ if (!file_exists($file)) {
         'penglibatan' => new stdClass(),
         'jawatan' => new stdClass(),
         'anugerah' => new stdClass(),
-        'perakuan' => new stdClass()
+        'perakuan' => [
+                        'chk1' => 0,
+                        'chk2' => 0,
+                        'chk3' => 0
+                      ]
     ]);
     exit;
 }

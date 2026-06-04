@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-26 08:28:30",
+    "updated_at": "2026-06-04 12:47:19",
     "dataStudent": {
         "matrik": "2250005",
         "nama_penuh": "Muhamad Nur Nasrullah bin Mohamad Ali",
@@ -17,7 +17,7 @@
         "negeri_lahir": "SARAWAK",
         "status_kahwin": "Bujang",
         "tarikh_lahir": "2005-09-25 00:00:00.000",
-        "age": "20 tahun 8 bulan 1 hari",
+        "age": "20 tahun 8 bulan 9 hari",
         "kdfakulti": "6100",
         "fakulti": "FAKULTI PENGAJIAN DAN PENGURUSAN PERTAHANAN",
         "kdprogram": "ZP59",
@@ -46,7 +46,7 @@
     },
     "penerima": [],
     "perakuan": {
-        "chk1": 0,
-        "chk2": 0
+        "chk1": 1,
+        "chk2": 1
     }
 }

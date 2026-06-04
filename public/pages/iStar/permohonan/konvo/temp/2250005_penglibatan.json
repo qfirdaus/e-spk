@@ -1,37 +1,20 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-26 07:12:31",
+    "updated_at": "2026-06-04 05:44:39",
     "rows": [
         {
-            "id": "new_6a0e899acb73f",
+            "id": "new_6a1fe5457dfc6",
             "id_kegiatan_pelajar": null,
             "sumber": "Tambahan",
-            "nama": "PROGRAM TESS2",
-            "tarikh": "2026-05-12",
-            "wakil": "IND",
-            "peringkat": "UNI",
-            "pencapaian": "EMAS",
-            "dokumen": {
-                "filename": "2250005-dok_6a0e899aca55f.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a0e899aca55f.pdf",
-                "uploaded_at": "2026-05-21 06:27:06"
-            },
-            "is_dirty": true,
-            "conflict": false
-        },
-        {
-            "id": "new_6a0fbc04008c3",
-            "id_kegiatan_pelajar": null,
-            "sumber": "Tambahan",
-            "nama": "SUKAN2",
-            "tarikh": "2026-05-13",
-            "wakil": "BP",
-            "peringkat": "NEG",
+            "nama": "PROGRAM TEST",
+            "tarikh": "27-01-2026",
+            "wakil": "KOL",
+            "peringkat": "FK",
             "pencapaian": "PERAK",
             "dokumen": {
-                "filename": "2250005-dok_6a152b0fef469.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a152b0fef469.pdf",
-                "uploaded_at": "2026-05-26 07:09:36"
+                "filename": "2250005-dok_6a1fe5457d2b4.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a1fe5457d2b4.pdf",
+                "uploaded_at": "2026-06-03 10:26:45"
             },
             "is_dirty": true,
             "conflict": false
@@ -42,12 +25,12 @@
             "sumber": "IStAD",
             "nama": "BICARA SUMUD FORTILLA",
             "tarikh": "2025-12-02",
-            "wakil": "FK",
-            "peringkat": "NEG",
-            "pencapaian": "EMAS",
+            "wakil": null,
+            "peringkat": null,
+            "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1928",
@@ -68,12 +51,12 @@
             "sumber": "IStAD",
             "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER ",
             "tarikh": "2025-11-08",
-            "wakil": "FK",
-            "peringkat": "BP",
+            "wakil": null,
+            "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_1964",
@@ -81,12 +64,12 @@
             "sumber": "IStAD",
             "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
             "tarikh": "2025-12-23",
-            "wakil": "IND",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
             "id": "ISTAD_2018",
@@ -211,26 +194,26 @@
             "sumber": "IStAD",
             "nama": "UPNM RUNNING COMMUNITY (URC)",
             "tarikh": "2026-01-08",
-            "wakil": null,
+            "wakil": "FK",
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
-            "id": "new_6a152b9c0bf14",
+            "id": "new_6a205ff7769ae",
             "id_kegiatan_pelajar": null,
             "sumber": "Tambahan",
-            "nama": "PROGRAM TEST",
-            "tarikh": "28-04-2026",
-            "wakil": "IND",
-            "peringkat": "UNI",
-            "pencapaian": "PESERTA",
+            "nama": "SUKAN2",
+            "tarikh": "04-06-2026",
+            "wakil": "UNI",
+            "peringkat": "KBG",
+            "pencapaian": "EMAS",
             "dokumen": {
-                "filename": "2250005-dok_6a152bb703019.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a152bb703019.pdf",
-                "uploaded_at": "2026-05-26 07:12:23"
+                "filename": "2250005-dok_6a20f4a7ba483.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a20f4a7ba483.pdf",
+                "uploaded_at": "2026-06-04 05:44:39"
             },
             "is_dirty": true,
             "conflict": false

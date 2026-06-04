@@ -20,13 +20,21 @@
     <tbody>
       <?php 
         $lookupPeringkat = $lookupAll['peringkat'] ?? [];
+        $lookupJawatan = $lookupAll['jawatan'] ?? [];
+        $lookupKategoriPerjawatan = $lookupAll['kategori_perjawatan'] ?? [];
 
         foreach ($jawatanData as $i => $row): 
           $peringkat = $row['peringkat'] ?? null;
+          $kategori_aktiviti = $row['kategori_aktiviti'] ?? null;
+          $id_kategori_aktiviti = $row['id_kategori_aktiviti'] ?? null;
+          $kod_kategori_aktiviti = $row['kod_kategori_aktiviti'] ?? null;
+          $jawatan = $row['jawatan'] ?? null;
+          $id_jawatan = $row['id_jawatan'] ?? null;
           $sumber = $row['sumber'] ?? 'Tambahan';   
           $sumberLabel = $sumber === 'IStAD'
               ? tr('istar_source_istad', 'IStAD')
               : tr('istar_source_additional', 'Tambahan');
+
       ?>
         <?php $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); ?>
 
@@ -36,18 +44,83 @@
               <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                   <?= h($sumberLabel) ?>
               </span>
-          </td>          
+          </td>     
+
+          <!-- Nama Badan Pelajar -->
           <td class="text-start">
-            <?= h($row['nama_bp_program'] ?? '-') ?>
-            <!-- <span class="access-chip is-allowed truncate-1line" data-bs-toggle="tooltip" data-bs-custom-class="template-tooltip" data-bs-original-title="IStAD">IStAD</span> -->
+          <?php if ($sumber === 'Tambahan'): ?>
+              <input type="text"
+                    name="nama_bp_program"
+                    class="form-control form-control-sm"
+                    value="<?= h($row['nama_bp_program'] ?? '') ?>">
+          <?php else: ?>
+              <?= h($row['nama_bp_program'] ?? '-') ?>
+          <?php endif; ?>
           </td>
-          <td align="left"><?= h($row['kategori_aktiviti'] ?? '-') ?></td>
+
+          <!-- Kategori Perjawatan -->
           <td>
-            <?= !empty($row['tarikh_lantikan'])
-              ? h(date('d/m/Y', strtotime($row['tarikh_lantikan'])))
-              : '-' ?>
+          <?php if ($sumber === 'Tambahan'): ?>
+                <select name="kod_kategori_aktiviti" id="kategoriAktiviti" class="form-select kategori-select" required>
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
+                        <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
+                            data-idaktiviti="<?= h($opt['id']) ?>"
+                            data-aktiviti_text="<?= h($opt['kategori_aktiviti']) ?>" 
+                            <?= $kod_kategori_aktiviti == $opt['kod_kategori_aktiviti'] ? 'selected' : '' ?> >
+                            <?= h(strtoupper($opt['kategori_aktiviti'])) ?>
+                        </option>                    
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="id_kategori_aktiviti" class="form-control id-Aktiviti">
+                <input type="hidden" name="kategori_aktiviti" class="form-control aktiviti-Text">                
+          <?php else: ?>
+              <?= h($kategori_aktiviti ?? '-') ?>
+          <?php endif; ?>
           </td>
-          <td><?= h($row['jawatan'] ?? '-') ?></td>
+
+          <!-- Tarikh Lantikan -->
+          <td>
+          <?php if ($sumber === 'Tambahan'): ?>
+              <input type="text"
+                    name="tarikh_lantikan"
+                    class="form-control form-control-sm datepicker"
+                    placeholder="dd/mm/yyyy"
+                    value="<?= !empty($row['tarikh_lantikan'])
+                          ? h(date('d/m/Y', strtotime($row['tarikh_lantikan'])))
+                          : '' ?>">
+          <?php else: ?>
+              <?= !empty($row['tarikh_lantikan'])
+                  ? h(date('d/m/Y', strtotime($row['tarikh_lantikan'])))
+                  : '-' ?>
+          <?php endif; ?>
+          </td>
+
+          <!-- Jawatan -->
+          <td>
+          <?php if ($sumber === 'Tambahan'): ?>
+                <select name="id_jawatan" class="form-select jawatan-select" required>
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php 
+                        foreach ($lookupJawatan as $opt): 
+                        if (h(strtoupper($opt['keteranganBP'])) != ''):  $str = ' / '; 
+                        else: $str = ''; 
+                        endif;                           
+                    ?>
+                        <option value="<?= h($opt['id_jawatan']) ?>"
+                                data-jawatan_text="<?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>" 
+                            <?= $id_jawatan == $opt['id_jawatan'] ? 'selected' : '' ?> >
+                            <?= h(strtoupper($opt['keterangan'])) ?>
+                        </option>                    
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="jawatan" id="jawatanText" class="form-control jawatan-text">
+          <?php else: ?>
+              <?= h($jawatan ?? '-') ?>
+          <?php endif; ?>
+          </td>          
+
+          <!-- Peringkat -->
           <td>
               <select name="peringkat" class="form-select form-select-sm">
                   <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
@@ -71,6 +144,7 @@
                   <a href="<?= base_url($row['dokumen']['path']) ?>"
                   target="_blank"
                   class="btn btn-sm btn-outline-warning rounded-3"
+                  data-id="<?= h($row['id']) ?>" 
                   title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                       <i class="ri-eye-line"></i>
                   </a>                     

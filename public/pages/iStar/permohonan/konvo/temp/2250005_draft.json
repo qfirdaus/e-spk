@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-05-26 13:13:34",
+    "updated_at": "2026-06-04 13:16:09",
     "dataStudent": {
         "matrik": "2250005",
         "nama_penuh": "Muhamad Nur Nasrullah bin Mohamad Ali",
@@ -17,7 +17,7 @@
         "negeri_lahir": "SARAWAK",
         "status_kahwin": "Bujang",
         "tarikh_lahir": "2005-09-25 00:00:00.000",
-        "age": "20 tahun 8 bulan 1 hari",
+        "age": "20 tahun 8 bulan 9 hari",
         "kdfakulti": "6100",
         "fakulti": "FAKULTI PENGAJIAN DAN PENGURUSAN PERTAHANAN",
         "kdprogram": "ZP59",
@@ -47,32 +47,167 @@
     "penglibatan": [
         {
             "id": "ISTAD_1925",
-            "peringkat": "NEG",
-            "pencapaian": "EMAS"
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
         },
         {
-            "id": "new_6a152b9c0bf14",
-            "wakil": "IND"
+            "id": "ISTAD_1928",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1859",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1964",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_2018",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1848",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1927",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1965",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_2131",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1915",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_2022",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1901",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_2119",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "ISTAD_1994",
+            "wakil": "FK",
+            "peringkat": "",
+            "pencapaian": "PESERTA"
+        },
+        {
+            "id": "new_6a1fe5457dfc6",
+            "nama": "PROGRAM TEST",
+            "tarikh": "27-01-2026",
+            "wakil": "KOL",
+            "peringkat": "FK",
+            "pencapaian": "PERAK"
+        },
+        {
+            "id": "new_6a205ff7769ae",
+            "nama": "SUKAN2",
+            "tarikh": "04-06-2026",
+            "wakil": "UNI",
+            "peringkat": "KBG",
+            "pencapaian": "EMAS"
         }
     ],
     "jawatan": [
         {
-            "id": "ISTAD_1994",
-            "peringkat": "INT"
+            "id": "ISTAD_2119",
+            "peringkat": ""
         },
         {
-            "id": "ISTAD_2119",
-            "peringkat": "FK"
+            "id": "ISTAD_1994",
+            "peringkat": ""
         },
         {
             "id": "ISTAD_8564",
+            "peringkat": ""
+        },
+        {
+            "id": "new_6a1fec3349ecc",
+            "nama_bp_program": "BADAN PELAJAR TEST",
+            "kod_kategori_aktiviti": "BP",
+            "id_kategori_aktiviti": "",
+            "kategori_aktiviti": "",
+            "tarikh_lantikan": "30-12-2025",
+            "id_jawatan": "7",
+            "jawatan": "",
             "peringkat": "BP"
         },
         {
-            "id": "new_6a1007fecf58b",
-            "peringkat": "KBG"
+            "id": "new_6a2052432af5a",
+            "nama_bp_program": "SUKAN",
+            "kod_kategori_aktiviti": "PRO",
+            "id_kategori_aktiviti": "",
+            "kategori_aktiviti": "",
+            "tarikh_lantikan": "13-01-2026",
+            "id_jawatan": "5",
+            "jawatan": "",
+            "peringkat": "UNI"
         }
     ],
-    "anugerah": [],
-    "perakuan": []
+    "anugerah": [
+        {
+            "id": "anugerah_6a1fec3d84293",
+            "nama_anugerah": "ANUGERAH 2",
+            "tahun": "2024",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "BP"
+        },
+        {
+            "id": "anugerah_6a1fed141f839",
+            "nama_anugerah": "ANUGERAH UNIVERSITI",
+            "tahun": "2025",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "UNI"
+        },
+        {
+            "id": "anugerah_6a206142af074",
+            "nama_anugerah": "ANUGERAH UNIVERSITI 2",
+            "tahun": "2023",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "UNI"
+        }
+    ],
+    "perakuan": {
+        "chk1": 1,
+        "chk2": 1,
+        "chk3": 1
+    }
 }

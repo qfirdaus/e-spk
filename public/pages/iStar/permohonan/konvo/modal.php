@@ -48,7 +48,7 @@
                 <select name="wakil" class="form-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupWakil as $opt): ?>
-                        <option value="<?= h($opt['idwakil']) ?>">
+                        <option value="<?= h($opt['wakil_code']) ?>">
                             <?= h(strtoupper($opt['wakil_my'])) ?>
                         </option>
                     <?php endforeach; ?>
@@ -146,7 +146,7 @@
                 <label class="form-label">
                   <?= h(tr('kategori_perjawatan','Kategori Perjawatan')) ?>
                 </label>
-                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select" required>
+                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select kategori-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
                         <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
@@ -156,8 +156,8 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="id_aktiviti" id="idAktiviti">
-                <input type="hidden" name="aktiviti_text" id="aktivitiText">
+                <input type="hidden" name="id_aktiviti" id="idAktiviti" class="form-control id-Aktiviti">
+                <input type="hidden" name="aktiviti_text" id="aktivitiText" class="form-control aktiviti-Text">
               </div>
 
               <!-- Nama Program -->
@@ -182,7 +182,7 @@
               <!-- Jawatan -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('jawatan','Jawatan')) ?></label>
-                <select name="jawatan" id="jawatan" class="form-select" required>
+                <select name="jawatan" class="form-select jawatan-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php 
                       foreach ($lookupJawatan as $opt): 
@@ -196,7 +196,7 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="jawatan_text" id="jawatanText">
+                <input type="hidden" name="jawatan_text" id="jawatanText" class="form-control jawatan-text">
               </div>
 
               <!-- Peringkat -->
@@ -218,6 +218,115 @@
                   <?= h(tr('dokumen_penglibatan','Dokumen Sokongan')) ?>
                 </label>
                 <input type="file" name="dokumen-jawatan" class="form-control"
+                       accept=".jpg,.jpeg,.pdf"
+                       onchange="checkFileSize(this)" required>
+                <small class="text-danger">
+                  <?= h(tr('dokumen_penglibatan_note','Max 5MB (JPG/JPEG/PDF)')) ?>
+                </small>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <?= h(tr('template_senarai_crud_btn_cancel', 'Cancel')) ?>
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ri-save-3-line me-1"></i>
+            <?= h(tr('profile_save_button', 'Simpan')) ?>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ########################################## -->
+
+<!-- MODAL: Add Anugerah / Pengiktirafan -->
+<div class="modal fade" id="anugerahAddModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-add-circle-line"></i>
+          <?= h(tr('profile_anugerah_disandang','Tambah Anugerah / Pengiktirafan')) ?>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form id="anugerahForm" method="post" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-md-6">
+
+              <!-- Nama Anugerah / Pengiktirafan -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('nama_anugerah_pengiktirafan','Nama Anugerah / Pengiktirafan')) ?>
+                </label>
+                <input type="text" name="nama_anugerah" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+              </div>
+
+              <!-- Tahun -->
+              <div class="mb-3">
+                <label class="form-label"><?= h(tr('profile_tahun','Tahun')) ?></label>
+
+                <select name="tahun" class="form-select" required>
+                  <option value=""><?= h(tr('sila_pilih','Sila Pilih')) ?></option>
+
+                  <?php
+                    $currentYear = date('Y');
+                    $startYear = $currentYear - 15;  
+                    $endYear = $currentYear;      
+
+                    for ($y = $endYear; $y >= $startYear; $y--):
+                  ?>
+                      <option value="<?= $y ?>">
+                        <?= $y ?>
+                      </option>
+                  <?php endfor; ?>
+                </select>
+              </div>
+
+              <!-- Kurniaan / Pemberian -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('kurniaan_pemberian','Kurniaan / Pemberian')) ?>
+                </label>
+                <input type="text" name="kurniaan_pemberian" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+              </div>              
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-md-6">
+
+              <!-- Peringkat -->
+              <div class="mb-3">
+                <label class="form-label"><?= h(tr('peringkat','Peringkat')) ?></label>
+                <select name="peringkat" id="peringkat" class="form-select" required>
+                    <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                    <?php foreach ($lookupPeringkat as $opt): ?>
+                        <option value="<?= h($opt['peringkat_code']) ?>">
+                            <?= h(strtoupper($opt['peringkat_my'])) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+              </div>
+
+              <!-- Dokumen -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('dokumen_penglibatan','Dokumen Sokongan')) ?>
+                </label>
+                <input type="file" name="dokumen-anugerah" class="form-control"
                        accept=".jpg,.jpeg,.pdf"
                        onchange="checkFileSize(this)" required>
                 <small class="text-danger">

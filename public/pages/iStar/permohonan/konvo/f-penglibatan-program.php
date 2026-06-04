@@ -40,19 +40,36 @@
                         <?= h($sumberLabel) ?>
                     </span>
                 </td>
-
-                <td class="text-start">
+                
+                <!-- Nama Program -->
+                <td>
+                <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                    <input type="text"
+                        name="nama"
+                        class="form-control"
+                        value="<?= h($row['nama'] ?? '') ?>">
+                <?php else: ?>
                     <?= h($row['nama'] ?? '-') ?>
+                <?php endif; ?>
                 </td>
 
+                <!-- Tarikh -->
                 <td>
+                <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                    <input type="text"
+                        name="tarikh"
+                        class="form-control datepicker"
+                        placeholder="dd/mm/yyyy"
+                        value="<?= h($row['tarikh'] ?? '') ?>">
+                <?php else: ?>
                     <?= !empty($row['tarikh'])
                         ? h(date('d/m/Y', strtotime($row['tarikh'])))
                         : '-' ?>
+                <?php endif; ?>
                 </td>
 
                 <!-- WAKIL (dropdown lookup) -->
-                <td>
+                <td> 
                     <select name="wakil" class="form-select">
                         <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                         <?php foreach ($lookupWakil as $opt): ?>
@@ -101,6 +118,7 @@
                         <a href="<?= base_url($row['dokumen']['path']) ?>"
                         target="_blank"
                         class="btn btn-sm btn-outline-warning rounded-3"
+                        data-id="<?= h($row['id']) ?>"
                         title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                             <i class="ri-eye-line"></i>
                         </a>                     
