@@ -390,4 +390,50 @@ return [
 'sync_success_title' => 'Penyelarasan Data Berjaya',
 'system_error_try_again' => 'Ralat sistem. Cuba lagi.',
 // ===== END iStar Konvo UI =====
+
+// ===== BEGIN iStar JS UI =====
+'add_new' => 'Tambah Baru',
+'sync_istad' => 'Sync IStAD',
+'load_data_failed' => 'Gagal load data',
+'datatable_search_placeholder' => 'Search',
+'datatable_length_menu' => 'Show _MENU_ records',
+'datatable_info' => 'Showing _START_ to _END_ of _TOTAL_ records',
+'datatable_info_empty' => 'Showing 0 to 0 of 0 records',
+'datatable_empty_table' => 'No records found',
+'datatable_zero_records' => 'No matching records',
+'datatable_next' => 'Next',
+'datatable_previous' => 'Previous',
+
+'swal_failed_title' => 'Gagal',
+'swal_success_title' => 'Berjaya',
+'swal_system_error_title' => 'Ralat Sistem',
+'swal_try_again_later' => 'Cuba lagi sebentar lagi',
+'swal_try_again' => 'Cuba lagi',
+
+'swal_delete_record_title' => 'Padam rekod ini?',
+'swal_delete_award_title' => 'Padam rekod anugerah ini?',
+'swal_delete_warning' => 'Tindakan ini tidak boleh dibatalkan!',
+'swal_confirm_delete' => 'Ya, padam',
+'swal_cancel' => 'Batal',
+'swal_ok' => 'OK',
+
+'record_delete_success' => 'Rekod berjaya dipadam',
+'record_delete_failed' => 'Gagal padam rekod',
+
+'award_add_success' => 'Rekod anugerah berjaya ditambah',
+'award_save_failed' => 'Gagal simpan rekod anugerah',
+'award_delete_success' => 'Rekod anugerah berjaya dipadam',
+'award_delete_failed' => 'Gagal padam rekod anugerah',
+'award_invalid_id' => 'ID rekod anugerah tidak sah',
+
+'record_update_failed' => 'Gagal kemaskini rekod',
+'system_error_try_again' => 'Ralat sistem. Cuba lagi.',
+
+'sync_istad_title' => 'Sync data IStAD?',
+'sync_istad_text' => 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+'sync_istad_confirm' => 'Ya, sync',
+'sync_success_title' => 'Penyelarasan Data Berjaya',
+'sync_failed' => 'Penyelarasan data gagal',
+'sync_istad_msg' => 'Data IStAD berjaya diselaraskan',
+// ===== END iStar JS UI =====
 ];

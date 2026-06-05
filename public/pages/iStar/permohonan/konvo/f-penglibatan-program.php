@@ -38,11 +38,11 @@
                 <td class="text-center">
                     <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                         <?= h($sumberLabel) ?>
-                    </span>
+                    </span>                    
                 </td>
                 
                 <!-- Nama Program -->
-                <td>
+                <td data-field="nama">
                 <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
                     <input type="text"
                         name="nama"
@@ -54,13 +54,15 @@
                 </td>
 
                 <!-- Tarikh -->
-                <td>
+                <td data-field="tarikh">
                 <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
                     <input type="text"
                         name="tarikh"
                         class="form-control datepicker"
                         placeholder="dd/mm/yyyy"
-                        value="<?= h($row['tarikh'] ?? '') ?>">
+                        value="<?= !empty($row['tarikh'])
+                            ? h(date('d/m/Y', strtotime($row['tarikh'])))
+                            : '' ?>">
                 <?php else: ?>
                     <?= !empty($row['tarikh'])
                         ? h(date('d/m/Y', strtotime($row['tarikh'])))
@@ -119,6 +121,7 @@
                         target="_blank"
                         class="btn btn-sm btn-outline-warning rounded-3"
                         data-id="<?= h($row['id']) ?>"
+                        data-path="<?= $row['dokumen']['path'] ?>"
                         title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                             <i class="ri-eye-line"></i>
                         </a>                     

@@ -391,4 +391,51 @@ return [
 'sync_success_title' => 'Data Synchronization Successful',
 'system_error_try_again' => 'System error. Please try again.',
 // ===== END iStar Konvo UI =====
+
+// ===== BEGIN iStar JS UI =====
+'add_new' => 'Add New',
+'sync_istad' => 'Sync IStAD',
+'load_data_failed' => 'Failed to load data',
+
+'datatable_search_placeholder' => 'Search',
+'datatable_length_menu' => 'Show _MENU_ records',
+'datatable_info' => 'Showing _START_ to _END_ of _TOTAL_ records',
+'datatable_info_empty' => 'Showing 0 to 0 of 0 records',
+'datatable_empty_table' => 'No records found',
+'datatable_zero_records' => 'No matching records',
+'datatable_next' => 'Next',
+'datatable_previous' => 'Previous',
+
+'swal_failed_title' => 'Failed',
+'swal_success_title' => 'Success',
+'swal_system_error_title' => 'System Error',
+'swal_try_again_later' => 'Please try again later',
+'swal_try_again' => 'Please try again',
+
+'swal_delete_record_title' => 'Delete this record?',
+'swal_delete_award_title' => 'Delete this award record?',
+'swal_delete_warning' => 'This action cannot be undone!',
+'swal_confirm_delete' => 'Yes, delete',
+'swal_cancel' => 'Cancel',
+'swal_ok' => 'OK',
+
+'record_delete_success' => 'Record deleted successfully',
+'record_delete_failed' => 'Failed to delete record',
+
+'award_add_success' => 'Award record added successfully',
+'award_save_failed' => 'Failed to save award record',
+'award_delete_success' => 'Award record deleted successfully',
+'award_delete_failed' => 'Failed to delete award record',
+'award_invalid_id' => 'Invalid award record ID',
+
+'record_update_failed' => 'Failed to update record',
+'system_error_try_again' => 'System error. Please try again.',
+
+'sync_istad_title' => 'Sync IStAD data?',
+'sync_istad_text' => 'IStAD data will be updated. Additional data will not be affected.',
+'sync_istad_confirm' => 'Yes, sync',
+'sync_success_title' => 'Data Synchronization Successful',
+'sync_failed' => 'Data synchronization failed',
+'sync_istad_msg' => 'IStAD successfully synchronized.',
+// ===== END iStar JS UI =====
 ];

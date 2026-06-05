@@ -1,14 +1,27 @@
 <?php
   // pages/data-peribadi.php
   declare(strict_types=1);
-  $NEED_DATERANGE  = true;
-  $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = true;
-  $NEED_SELECT2    = false;
+  const PROFILE_CONFIG = [
+  'LOGIN_ACTIVITY_LIMIT' => 30,
+  'AUDIT_EVENTS_LIMIT' => 30,
+  'DATATABLES_PAGE_LENGTH' => 10,
+  'DATATABLES_INIT_DELAY' => 300,
+  'TOAST_DURATION' => 1400,
+  'POLLING_INTERVAL' => 100,
+  'POLLING_MAX_ATTEMPTS' => 50,
+  'COPY_RATE_LIMIT' => 1000
+  ];
 
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
+
+  $NEED_DATERANGE  = true;
+  $NEED_VECTORMAP  = false;
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = false;  
+
+  $PAGE_TITLE = tr('istar_title', 'iStar');
   $pageHeading     = tr('page_heading_anugerah_pingat_graduan', 'Anugerah Pingat Graduan');
   $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
   $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
@@ -20,11 +33,12 @@
 
   $penglibatanController = new PenglibatanController();
   $lookupAll = $penglibatanController->getAllLookup();
+
   // Check active session status
   $profile_controller = new ProfileController();
   $profile = $profile_controller->getCurrentUserProfile();
   $profileView = $profile;
-  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
+  $loginActivity = $profile_controller->getLoginActivity();
   $isActive = hasActiveSession($loginActivity);
   
   $peribadiController = new PeribadiController();
@@ -180,11 +194,12 @@
     include __DIR__ . '/../../../../includes/script.php'; 
     include __DIR__ . '/../../../../includes/script-pages.php';  
     include __DIR__ . '/../../../../includes/script-custom.php';
+    // include __DIR__ . '/../../../../includes/script-test.php';
     include __DIR__ . '/modal.php';
   ?>
 
   <script> 
-      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
       const msg_load = {
         processing: <?= json_encode(tr('data_processing', 'Sedang diproses...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
         loading: <?= json_encode(tr('data_loading', 'Sedang memuatkan...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
@@ -198,7 +213,9 @@
           perakuan: {}
       };        
   </script> 
-  <script src="<?= base_url('assets/js/pages/konvo.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script>
+  <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/istar-konvo.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

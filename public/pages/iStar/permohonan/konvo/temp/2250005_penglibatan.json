@@ -1,24 +1,7 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-06-04 05:44:39",
+    "updated_at": "2026-06-05 11:01:46",
     "rows": [
-        {
-            "id": "new_6a1fe5457dfc6",
-            "id_kegiatan_pelajar": null,
-            "sumber": "Tambahan",
-            "nama": "PROGRAM TEST",
-            "tarikh": "27-01-2026",
-            "wakil": "KOL",
-            "peringkat": "FK",
-            "pencapaian": "PERAK",
-            "dokumen": {
-                "filename": "2250005-dok_6a1fe5457d2b4.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a1fe5457d2b4.pdf",
-                "uploaded_at": "2026-06-03 10:26:45"
-            },
-            "is_dirty": true,
-            "conflict": false
-        },
         {
             "id": "ISTAD_1925",
             "id_kegiatan_pelajar": 1925,
@@ -116,12 +99,12 @@
             "sumber": "IStAD",
             "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
             "tarikh": "2025-12-24",
-            "wakil": null,
-            "peringkat": null,
+            "wakil": "IND",
+            "peringkat": "FK",
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
             "id": "ISTAD_2131",
@@ -142,12 +125,12 @@
             "sumber": "IStAD",
             "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
             "tarikh": "2025-12-10",
-            "wakil": null,
-            "peringkat": null,
+            "wakil": "FK",
+            "peringkat": "UNI",
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": false
+            "source_override": true
         },
         {
             "id": "ISTAD_2022",
@@ -194,26 +177,26 @@
             "sumber": "IStAD",
             "nama": "UPNM RUNNING COMMUNITY (URC)",
             "tarikh": "2026-01-08",
-            "wakil": "FK",
+            "wakil": null,
             "peringkat": null,
             "pencapaian": "PESERTA",
             "is_dirty": false,
             "conflict": false,
-            "source_override": true
+            "source_override": false
         },
         {
-            "id": "new_6a205ff7769ae",
+            "id": "new_6a229006ee15d",
             "id_kegiatan_pelajar": null,
             "sumber": "Tambahan",
-            "nama": "SUKAN2",
-            "tarikh": "04-06-2026",
-            "wakil": "UNI",
-            "peringkat": "KBG",
-            "pencapaian": "EMAS",
+            "nama": "PROGRAM TEST",
+            "tarikh": "03-03-2026",
+            "wakil": "FK",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
             "dokumen": {
-                "filename": "2250005-dok_6a20f4a7ba483.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a20f4a7ba483.pdf",
-                "uploaded_at": "2026-06-04 05:44:39"
+                "filename": "2250005-dok_6a229006ed407.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a229006ed407.pdf",
+                "uploaded_at": "2026-06-05 10:59:50"
             },
             "is_dirty": true,
             "conflict": false

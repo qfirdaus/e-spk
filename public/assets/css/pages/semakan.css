@@ -568,3 +568,61 @@ table.dataTable tbody textarea.border-warning {
     .dt-standard .dt-top-right { flex-direction: column; align-items: stretch; gap: 0.5rem; }
     .dt-standard .dt-top-right .dataTables_filter input { width: 100%; max-width: 100%; }
 }
+
+.details-control {
+    cursor: pointer;
+    width: 40px;
+}
+
+.archive-child-content {
+    background: #f8f9fa;
+    padding: 15px;
+}
+
+.child-table {
+    background: #fff;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+
+.child-table thead {
+    background: #eaf3fb;
+}
+
+.child-table thead th {
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.child-table td,
+.child-table th {
+    vertical-align: middle;
+}
+
+tr.shown {
+    background-color: #fafafa !important;
+}
+
+.archive-child-content .table {
+    margin-bottom: 0;
+}
+
+.archive-expand-icon {
+    transition: all .2s ease;
+}
+
+td.details-control {
+    cursor: pointer;
+}
+
+.child-table td {
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+table.dataTable tbody tr.child td {
+    background: #f8f9fa;
+}

@@ -1,46 +1,21 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-06-04 05:59:51",
+    "updated_at": "2026-06-05 10:57:23",
     "rows": [
         {
-            "id": "new_6a1fec3349ecc",
-            "id_kegiatan_badan": null,
-            "sumber": "Tambahan",
-            "id_kategori_aktiviti": "3",
-            "kod_kategori_aktiviti": "BP",
-            "kategori_aktiviti": "MPP",
-            "nama_bp_program": "BADAN PELAJAR TEST",
-            "id_jawatan": "7",
-            "jawatan": "3",
-            "tarikh_lantikan": "30-12-2025",
-            "peringkat": "BP",
-            "dokumen": {
-                "filename": "2250005-dok_6a1fee9a09500.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a1fee9a09500.pdf",
-                "uploaded_at": "2026-06-03 11:06:34"
-            },
-            "is_dirty": true,
-            "conflict": false,
-            "jawatan_text": "<br \/><b>Warning<\/bag>:  Undefined variable $str in <b>D:\\SOURCECODE\\PHP\\e-hepa\\public\\pes\\iStar\\permohonan\\konvo\\f-jawatan-disandang.php<\/b> on line <b>103<\/b><br \/>PENGARAHPENGERUSI \/ PRESIDEN"
-        },
-        {
-            "id": "new_6a2052432af5a",
-            "id_kegiatan_badan": null,
-            "sumber": "Tambahan",
-            "id_kategori_aktiviti": "4",
+            "id": "ISTAD_1994",
+            "id_kegiatan_badan": 1994,
+            "sumber": "IStAD",
+            "id_kategori_aktiviti": 4,
             "kod_kategori_aktiviti": "PRO",
             "kategori_aktiviti": "PROGRAM",
-            "nama_bp_program": "SUKAN",
-            "id_jawatan": 5,
-            "jawatan": "AHLI \/ AHLI BIASA",
-            "tarikh_lantikan": "13-01-2026",
+            "nama_bp_program": "UPNM RUNNING COMMUNITY (URC)",
+            "id_jawatan": 6,
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "2026-01-08",
             "peringkat": "UNI",
-            "dokumen": {
-                "filename": "2250005-dok_6a20f48f43256.pdf",
-                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a20f48f43256.pdf",
-                "uploaded_at": "2026-06-04 05:44:15"
-            },
-            "is_dirty": true,
+            "is_dirty": false,
+            "source_override": true,
             "conflict": false
         },
         {
@@ -54,25 +29,9 @@
             "id_jawatan": 6,
             "jawatan": "AJK LOGISTIK",
             "tarikh_lantikan": "2026-04-16",
-            "peringkat": null,
+            "peringkat": "FK",
             "is_dirty": false,
-            "source_override": false,
-            "conflict": false
-        },
-        {
-            "id": "ISTAD_1994",
-            "id_kegiatan_badan": 1994,
-            "sumber": "IStAD",
-            "id_kategori_aktiviti": 4,
-            "kod_kategori_aktiviti": "PRO",
-            "kategori_aktiviti": "PROGRAM",
-            "nama_bp_program": "UPNM RUNNING COMMUNITY (URC)",
-            "id_jawatan": 6,
-            "jawatan": "AJK LOGISTIK",
-            "tarikh_lantikan": "2026-01-08",
-            "peringkat": null,
-            "is_dirty": false,
-            "source_override": false,
+            "source_override": true,
             "conflict": false
         },
         {
@@ -86,9 +45,29 @@
             "id_jawatan": 5,
             "jawatan": "AHLI",
             "tarikh_lantikan": "2025-10-06",
-            "peringkat": null,
+            "peringkat": "UNI",
             "is_dirty": false,
-            "source_override": false,
+            "source_override": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a228f677bc21",
+            "id_kegiatan_badan": null,
+            "sumber": "Tambahan",
+            "id_kategori_aktiviti": "3",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "SUKAN",
+            "id_jawatan": 7,
+            "jawatan": "TIMBALAN SETIAUSAHA \/ TIMBALAN SETIAUSAHA",
+            "tarikh_lantikan": "31-03-2026",
+            "peringkat": "BP",
+            "dokumen": {
+                "filename": "2250005-dok_6a228f677b1f5.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a228f677b1f5.pdf",
+                "uploaded_at": "2026-06-05 10:57:11"
+            },
+            "is_dirty": true,
             "conflict": false
         }
     ]

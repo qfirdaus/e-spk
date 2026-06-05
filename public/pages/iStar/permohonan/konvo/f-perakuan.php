@@ -67,7 +67,7 @@
             <div class="d-flex justify-content-end mt-4">
                 <button type="submit"
                         class="btn btn-primary rounded-3 px-4 btn-submit"
-                        id="btn-submit-<?= h($istarPerakuanIdPrefix) ?>"
+                        id="btn-submit-istar-konvo"
                         disabled>
                     <i class="ri-send-plane-line me-2"></i>
                     <?= h(tr('profile_btn_submit','Hantar Permohonan')) ?>

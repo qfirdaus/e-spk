@@ -191,6 +191,7 @@
         syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
       };    
   </script> 
+  <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
   <script src="<?= base_url('assets/js/pages/icares-semakan-permohonan.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/semakan.css') ?>">
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

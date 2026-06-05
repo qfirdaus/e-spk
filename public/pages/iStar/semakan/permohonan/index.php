@@ -1,5 +1,5 @@
 <?php
-  // pages/pengesahan-pelajar.php
+  // pages/data-peribadi.php
   declare(strict_types=1);
   const PROFILE_CONFIG = [
   'LOGIN_ACTIVITY_LIMIT' => 30,
@@ -12,28 +12,47 @@
   'COPY_RATE_LIMIT' => 1000
   ];
 
-  $NEED_DATERANGE  = false;
-  $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = false;
-  $NEED_SELECT2    = true;
-  
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
+  require_once __DIR__ . '/../../../../includes/functions-page.php'; 
+
+  $NEED_DATERANGE  = true;
+  $NEED_VECTORMAP  = false;
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = false;  
 
   $PAGE_TITLE = tr('istar_title', 'iStar');
-  $pageHeading     = 'Pengesahan Pelajar';
-  $profileCardLabel = 'Profil Pelajar';
-  $copyIdLabel      = 'Salin No. Matrik';
+  $pageHeading     = tr('page_heading_semak_permohonan_anugerah_pingat_graduan', 'Semak Permohonan Anugerah Pingat Graduan');
+  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
+  $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
+  include __DIR__ . '/../../../../includes/header.php';
 
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
-  require_once __DIR__ . '/../../../../includes/functions-page.php'; 
-  include __DIR__ . '/../../../../includes/header.php';
-  include __DIR__ . '/../../../../actions/retrieve-data-peribadi.php';
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php';        
+  require_once __DIR__ . '/../../../../controllers/PenglibatanController.php';
+
+  $penglibatanController = new PenglibatanController();
+  $lookupAll = $penglibatanController->getAllLookup();
 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity();
   $isActive = hasActiveSession($loginActivity);
+  
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $errorMessage = $peribadiController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+  $anugerahData = $penglibatanController->getAllAnugerah();
+  $namaPenuh = (string)($peribadi['nama_penuh'] ?? ($profileView['nama_penuh'] ?? ''));
+  $nokp = (string)($peribadi['nokp'] ?? '');
+  $istarPerakuanIdPrefix = 'istar-konvo';
+
+  //print_r($lookupWakil);
 ?>
+
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
   data-menu-color="<?= h($_SESSION['theme.sidebar'] ?? 'dark') ?>"
@@ -75,30 +94,14 @@
           <!-- Profile Card with Tabs -->
           <div class="card border-0 shadow-sm profile-card">
             <?php include __DIR__ . '/../../../../includes/profile-card.php'; ?>
-            
+
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
               <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-peribadi-tab" role="tab">
-                  <i class="ri-login-box-line me-1"></i> <?= h(tr('tab_profil_pengguna','Maklumat Peribadi')) ?>
+                <a class="nav-link active" data-bs-toggle="tab" href="#semak-pingat-graduan-tab" role="tab">
+                  <i class="ri-medal-2-line me-1"></i> <?= h(tr('tab_anugerah-pingat-graduan','Anugerah Pingat Graduan')) ?>
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-akademik-tab" role="tab">
-                  <i class="ri-book-2-line me-1"></i> <?= h(tr('tab_maklumat_akademik', 'Maklumat Akademik')) ?>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-penerima-tab" role="tab">
-                  <i class="ri-briefcase-line me-1"></i> <?= h(tr('tab_maklumat_penerima', 'Maklumat Penerima')) ?>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#maklumat-perakuan-tab" role="tab">
-                  <i class="ri-file-paper-line me-1"></i> <?= h(tr('tab_maklumat_perakuan', 'Maklumat Perakuan')) ?>
-                </a>
-              </li>
-
             </ul>
 
             <!-- Kandungan Tab -->
@@ -126,28 +129,15 @@
               
               <?php $hideButton = true; // hide button simpan & readonly ?>
               
-              <!-- Tab 1: Maklumat Peribadi -->
-              <div class="tab-pane fade show active" id="maklumat-peribadi-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/../../../rekod-utama/data-peribadi/f-peribadi.php'; ?>
+              <!-- Tab 1: Anugerah Pingat Graduan -->
+              <div class="tab-pane fade show active" id="semak-pingat-graduan-tab" role="tabpanel">
+                <div id="semak-pingat-graduan-container">
+                    <div class="text-muted">Memuatkan data...</div>
+                </div>
               </div>
 
-              <!-- Tab 2: Maklumat Akademik -->
-              <div class="tab-pane fade show" id="maklumat-akademik-tab" role="tabpanel">                
-                <?php include __DIR__ . '/../../../rekod-utama/data-akademik/f-akademik.php'; ?>
-              </div>    
-
-              <!-- Tab 3: Maklumat Penerima -->
-              <div class="tab-pane fade show" id="maklumat-penerima-tab" role="tabpanel">
-                <div id="penerima-content"></div>
-              </div> 
-
-              <!-- Tab 4: Perakuan -->
-              <div class="tab-pane fade show" id="maklumat-perakuan-tab" role="tabpanel">
-                <?php  include __DIR__ . '/f-perakuan.php'; ?>
-              </div>
-              
             </div>
-          </div>        
+          </div>    
           <!-- /Profile Card with Tabs -->
 
         </div>
@@ -161,21 +151,19 @@
     include __DIR__ . '/../../../../includes/script-pages.php';  
     include __DIR__ . '/../../../../includes/script-custom.php';
   ?>
+
   <script> 
-      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
       const msg_load = {
-        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
-        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
-        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
-      };
-      let DRAFT = {
-          dataStudent: <?= json_encode($peribadi ?? []) ?>,
-          penerima: {},
-          perakuan: {}
-      };      
+        processing: <?= json_encode(tr('data_processing', 'Sedang diproses...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        loading: <?= json_encode(tr('data_loading', 'Sedang memuatkan...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        syncronizing: <?= json_encode(tr('data_synchronizing', 'Menyelaraskan data...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>
+      };        
   </script> 
+  
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/icares-pengesahan-pelajar.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/istar-semakan-permohonan.js?v=' . time()) ?>"></script> 
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/semakan.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>

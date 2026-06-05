@@ -1277,6 +1277,39 @@ class PenglibatanController
     
     /** Get lookup data */
 
+    /** Submit permohonan */
+    public function submitPermohonan($matrik, $draft, $application_type)
+    {
+        try {
+            $this->model->savePermohonan($matrik, $draft, $application_type);
+            
+            $path = __DIR__ . '/../pages/iStar/permohonan/konvo/temp/';
+            $files = [
+                $path . $matrik . '_draft.json',
+                $path . $matrik . '_penglibatan.json',
+                $path . $matrik . '_jawatan.json',
+                $path . $matrik . '_anugerah.json'
+            ];
+
+            foreach ($files as $file) {
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+
+            return [
+                'status' => 'success'
+            ];
+
+        } catch (Exception $e) {
+
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
     public function testConnection()
     {
         return $this->model->testConnection();

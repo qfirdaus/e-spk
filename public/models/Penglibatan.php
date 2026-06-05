@@ -154,6 +154,231 @@ class Penglibatan
     }
     /**  Get lookup data   */
 
+    /**  Save permohonan   */
+    function toMysqlDate($date)
+    {
+        if (!$date) return null;
+
+        $d = DateTime::createFromFormat('d-m-Y', $date);
+        return $d ? $d->format('Y-m-d') : null;
+    }    
+    
+    public function savePermohonan($matric_no, $draft, $application_type = 'konvo')
+    {
+        $checkSql = "
+            SELECT id
+            FROM istar_application
+            WHERE matric_no = ?
+            AND application_type = ?
+            LIMIT 1
+        ";
+
+        $checkStmt = $this->ehepa->prepare($checkSql);
+        $checkStmt->execute([$matric_no, $application_type]);
+        $existing = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+        $student = $draft['dataStudent'] ?? [];
+        $perakuan = $draft['perakuan'] ?? [];
+
+        $agreement = (
+            ($perakuan['chk1'] ?? 0) &&
+            ($perakuan['chk2'] ?? 0) &&
+            ($perakuan['chk3'] ?? 0)
+        ) ? 1 : 0;
+
+        if ($existing) {
+
+            $sql = "
+                UPDATE istar_application SET
+                    student_name = ?,
+                    ic_no = ?,
+                    email = ?,
+                    faculty_code = ?,
+                    faculty_name = ?,
+                    program_code = ?,
+                    program_name = ?,
+                    semester = ?,
+                    agreement = ?,
+                    updated_at = NOW()
+                WHERE id = ?
+            ";
+
+            $stmt = $this->ehepa->prepare($sql);
+
+            $stmt->execute([
+                $student['nama_penuh'] ?? '',
+                $student['nokp'] ?? '',
+                $student['email'] ?? '',
+                $student['kdfakulti'] ?? '',
+                $student['fakulti'] ?? '',
+                $student['kdprogram'] ?? '',
+                $student['program'] ?? '',
+                $student['semester_terkini'] ?? '',
+                $agreement,
+                $existing['id']
+            ]);
+
+            $application_id = $existing['id'];
+
+        } else {
+
+            $sql = "
+                INSERT INTO istar_application (
+                    matric_no,
+                    application_type,
+
+                    student_name,
+                    ic_no,
+                    email,
+
+                    faculty_code,
+                    faculty_name,
+
+                    program_code,
+                    program_name,
+
+                    semester,
+                    agreement,
+
+                    status,
+                    submitted_at,
+                    updated_at
+                )
+                VALUES (
+                    ?, ?,
+                    ?, ?, ?,
+                    ?, ?,
+                    ?, ?,
+                    ?, ?,
+                    1,
+                    NOW(),
+                    NOW()
+                )
+            ";
+
+            $stmt = $this->ehepa->prepare($sql);
+
+            $stmt->execute([
+                $matric_no,
+                $application_type,
+
+                $student['nama_penuh'] ?? '',
+                $student['nokp'] ?? '',
+                $student['email'] ?? '',
+
+                $student['kdfakulti'] ?? '',
+                $student['fakulti'] ?? '',
+
+                $student['kdprogram'] ?? '',
+                $student['program'] ?? '',
+
+                $student['semester_terkini'] ?? '',
+                $agreement
+            ]);
+
+            $application_id = $this->ehepa->lastInsertId();
+        }
+
+
+        // buang data untuk elak duplicate
+        $this->ehepa->prepare("DELETE FROM istar_application_participation WHERE application_id = ?")
+            ->execute([$application_id]);
+
+        $this->ehepa->prepare("DELETE FROM istar_application_position WHERE application_id = ?")
+            ->execute([$application_id]);
+
+        $this->ehepa->prepare("DELETE FROM istar_application_award WHERE application_id = ?")
+            ->execute([$application_id]);
+
+
+        // penglibatan
+        foreach ($draft['penglibatan'] ?? [] as $item) {
+
+            $sql = "
+                INSERT INTO istar_application_participation (
+                    application_id,
+                    source,
+                    external_id,
+                    name_programme,
+                    representative,
+                    level,
+                    achievement,
+                    document_path
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ";
+
+            $this->ehepa->prepare($sql)->execute([
+                $application_id,
+                $item['sumber'] ?? null,
+                $item['id'] ?? null,
+                $item['nama'] ?? null,
+                $item['wakil'] ?? '',
+                $item['peringkat'] ?? '',
+                $item['pencapaian'] ?? '',
+                $item['dokumen_path'] ?? ''
+            ]);
+        }
+
+
+        // jawatan
+        foreach ($draft['jawatan'] ?? [] as $item) {
+
+            $sql = "
+                INSERT INTO istar_application_position (
+                    application_id,
+                    external_id,
+                    position_id,
+                    position_name,
+                    category_code,
+                    level,
+                    appointment_date
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ";
+
+            $this->ehepa->prepare($sql)->execute([
+                $application_id,
+                $item['id'] ?? null,
+                $item['id_jawatan'] ?? null,
+                $item['jawatan'] ?? null,
+                $item['kod_kategori_aktiviti'] ?? null,
+                $item['peringkat'] ?? null,
+                $this->toMysqlDate($item['tarikh_lantikan'] ?? null)
+            ]);
+        }
+
+
+        // anugerah
+        foreach ($draft['anugerah'] ?? [] as $item) {
+
+            $sql = "
+                INSERT INTO istar_application_award (
+                    application_id,
+                    external_id,
+                    award_name,
+                    year,
+                    issuer,
+                    level
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            ";
+
+            $this->ehepa->prepare($sql)->execute([
+                $application_id,
+                $item['id'] ?? null,
+                $item['nama_anugerah'] ?? null,
+                $item['tahun'] ?? null,
+                $item['kurniaan_pemberian'] ?? null,
+                $item['peringkat'] ?? null
+            ]);
+        }
+
+
+        return true;
+    }
+
+    /**  Test connection   */
     public function testConnection(): bool
     {
         $stmt = $this->istad->query("SELECT 1");

@@ -10,8 +10,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 if (!is_array($input)) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'INVALID JSON INPUT',
-        'raw' => $rawInput
+        'message' => 'INVALID JSON INPUT'
     ]);
     exit;
 }
