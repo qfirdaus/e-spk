@@ -154,6 +154,23 @@ class Penglibatan
     }
     /**  Get lookup data   */
 
+    public function getActiveSession(): array
+    {
+        $sql = "
+            SELECT *
+            FROM istar_config_date
+            WHERE config_type = ?
+            AND config_category_award = ?
+            AND is_active = ?
+            ORDER BY id ASC
+        ";
+
+        $stmt = $this->ehepa->prepare($sql);
+        $stmt->execute(['APPLICATION','pingat_graduan',1]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /**  Save permohonan   */
     function toMysqlDate($date)
     {
@@ -300,12 +317,13 @@ class Penglibatan
                     source,
                     external_id,
                     name_programme,
+                    programme_date,
                     representative,
                     level,
                     achievement,
                     document_path
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ";
 
             $this->ehepa->prepare($sql)->execute([
@@ -313,6 +331,7 @@ class Penglibatan
                 $item['sumber'] ?? null,
                 $item['id'] ?? null,
                 $item['nama'] ?? null,
+                $this->toMysqlDate($item['tarikh'] ?? null),
                 $item['wakil'] ?? '',
                 $item['peringkat'] ?? '',
                 $item['pencapaian'] ?? '',

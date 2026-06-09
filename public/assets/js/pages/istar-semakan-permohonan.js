@@ -195,6 +195,7 @@ function initStandardDataTable(tableId) {
     return table;
 }
 
+// expand row 
 function initExpandRow(table) {
 
     $('#pingatGraduanDT tbody').on(
@@ -260,6 +261,7 @@ function initChildTable(tableId) {
     }, 50);
 }
 
+// render child table for each row (pingat graduan) with data from row.penglibatan
 function renderChildTable(row)
 {
     const penglibatan = row.penglibatan || [];
@@ -277,30 +279,51 @@ function renderChildTable(row)
     let rows = '';
 
     penglibatan.forEach((p, i) => {
+        const formatTarikhMY = (dateStr) => {
+            if (!dateStr) return '-';
+            const bulan = [
+                'Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun',
+                'Jul', 'Ogo', 'Sep', 'Okt', 'Nov', 'Dis'
+            ];
+
+            const d = new Date(dateStr);
+            return `${String(d.getDate()).padStart(2, '0')} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+        };        
+
+        const badgeClass =  p.source === 'IStAD'  ? 'bg-darkgreen' : 'bg-salmon';
+
         rows += `
             <tr>
                 <td class="text-center">${i + 1}</td>
-                <td>${p.source ?? '-'}</td>
-                <td>${p.external_id ?? '-'}</td>
+                <td>
+                    <span class="badge ${badgeClass}">
+                        ${p.source ?? '-'}
+                    </span>                
+                </td>
+                <td>${p.name_programme ?? '-'}</td>
+                <td>${formatTarikhMY(p.programme_date)}</td>
+                <td>${p.representative_desc ?? '-'}</td>
+                <td>${p.level_desc ?? '-'}</td>
                 <td>${p.achievement ?? '-'}</td>
-                <td>${p.level ?? '-'}</td>
-                <td>${p.created_at ?? '-'}</td>
             </tr>
         `;
     });
 
     return `
         <div class="archive-child-content p-3">
-
+            <div class="icares-address-panel-header">
+                <h5 class="text-h5">Penglibatan Program</h5>
+            </div>
             <table id="${tableId}" class="table table-sm table-bordered child-table mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th width="5%">Bil</th>
-                        <th>Source</th>
-                        <th>ID</th>
-                        <th>Pencapaian</th>
-                        <th>Level</th>
+                        <th width="5%">No</th>
+                        <th></th>
+                        <th>Nama Program</th>
                         <th>Tarikh</th>
+                        <th>Wakil</th>
+                        <th>Peringkat</th>
+                        <th>Pencapaian</th>
                     </tr>
                 </thead>
 

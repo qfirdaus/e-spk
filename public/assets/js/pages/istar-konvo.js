@@ -930,14 +930,6 @@ function syncPenglibatanFromTable() {
             dokumen_path: ''
         };
 
-        // semua input dalam row
-        // tr.find('input, select, textarea').each(function () {
-        //     const name = this.name;
-        //     if (name) {
-        //         row[name] = jQuery(this).val();
-        //     }
-        // });    
-
         // helper ambil value (input > text fallback)
         function getValue(field) {
             let input = tr.find(`[name="${field}"]`);
@@ -1774,8 +1766,4 @@ jQuery(function () {
 
     });       
 
-    // if (jQuery('#anugerahDT').length) {
-    //     initStandardDataTable('#anugerahDT');
-    //     initDatePicker(document.getElementById('anugerahDT'));
-    // }
 });

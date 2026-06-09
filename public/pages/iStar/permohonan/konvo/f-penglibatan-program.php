@@ -59,13 +59,13 @@
                     <input type="text"
                         name="tarikh"
                         class="form-control datepicker"
-                        placeholder="dd/mm/yyyy"
+                        placeholder="dd-mm-yyyy"
                         value="<?= !empty($row['tarikh'])
-                            ? h(date('d/m/Y', strtotime($row['tarikh'])))
+                            ? h(date('d-m-Y', strtotime($row['tarikh'])))
                             : '' ?>">
                 <?php else: ?>
                     <?= !empty($row['tarikh'])
-                        ? h(date('d/m/Y', strtotime($row['tarikh'])))
+                        ? h(date('d-m-Y', strtotime($row['tarikh'])))
                         : '-' ?>
                 <?php endif; ?>
                 </td>

@@ -1,6 +1,20 @@
 <?php
-  // pages/data-keluarga.php
+  // pages/data-akademik.php
   declare(strict_types=1);
+
+  if (!defined('PROFILE_CONFIG')) {
+    define('PROFILE_CONFIG', [
+      'LOGIN_ACTIVITY_LIMIT' => 50,
+      'AUDIT_EVENTS_LIMIT' => 100,
+      'DATATABLES_PAGE_LENGTH' => 10,
+      'DATATABLES_INIT_DELAY' => 300,
+      'TOAST_DURATION' => 1400,
+      'POLLING_INTERVAL' => 100,
+      'POLLING_MAX_ATTEMPTS' => 50,
+      'COPY_RATE_LIMIT' => 1000
+    ]);
+  }
+
   $NEED_DATERANGE  = false;
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
@@ -12,13 +26,21 @@
   require_once __DIR__ . '/../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../controllers/KeluargaController.php'; 
+  require_once __DIR__ . '/../../../controllers/PeribadiController.php';   
   require_once __DIR__ . '/../../../includes/functions-page.php'; 
   include __DIR__ . '/../../../includes/header.php';
-  include __DIR__ . '/../../../actions/retrieve-data-keluarga.php';
-
+ 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $errorMessage = $peribadiController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
