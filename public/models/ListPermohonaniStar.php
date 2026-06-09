@@ -37,10 +37,12 @@ class ListPermohonaniStar
 
         // table istar_application_participation
         $sqlChild = "
-            SELECT *
-            FROM istar_application_participation
+            SELECT a.*, w.wakil_my as representative_desc, UPPER(l.peringkat_my) as level_desc
+            FROM istar_application_participation a
+            LEFT JOIN lp_representative w ON a.representative = w.wakil_code
+            LEFT JOIN lp_level l ON a.level = l.peringkat_code
             WHERE application_id IN ($placeholders)
-            ORDER BY id ASC
+            ORDER BY a.id ASC
         ";
 
         $stmtChild = $this->ehepa->prepare($sqlChild);

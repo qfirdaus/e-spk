@@ -22,7 +22,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_fakulti','Fakulti')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="fakulti" class="form-control" value="<?= ucwords(strtolower(h($fakulti ?? ''))) ?>" readonly>
+                              <input type="text" name="fakulti" class="form-control" value="<?= ucwords(strtolower(h($peribadi['fakulti'] ?? ''))) ?>" readonly>
                             </div>                 
                           </div>
 
@@ -30,7 +30,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_peringkat_pengajian','Peringkat Pengajian')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="peringkat_pengajian" class="form-control" value="<?= ucwords(strtolower(h($peringkat_pengajian ?? ''))) ?>" readonly>
+                              <input type="text" name="peringkat_pengajian" class="form-control" value="<?= ucwords(strtolower(h($peribadi['tahap_pengajian'] ?? ''))) ?>" readonly>
                             </div>
                           </div>                        
 
@@ -38,7 +38,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_program_pengajian','Program Pengajian')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="program_pengajian" class="form-control" value="<?= str_replace('( ', '(', ucwords(strtolower(str_replace('(', '( ', h($program_pengajian ?? ''))))) ?>" readonly>
+                              <input type="text" name="program_pengajian" class="form-control" value="<?= str_replace('( ', '(', ucwords(strtolower(str_replace('(', '( ', h($peribadi['program_pengajian'] ?? ''))))) ?>" readonly>
                             </div>
                           </div>
 
@@ -46,7 +46,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tempoh_program','Tempoh Program')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="tempoh_program" class="form-control" value="<?= ucwords(strtolower(h($tempoh_program ?? ''))) ?>" readonly>
+                              <input type="text" name="tempoh_program" class="form-control" value="<?= ucwords(strtolower(h($peribadi['tempoh_program'] ?? ''))) ?>" readonly>
                             </div>
                           </div>
 
@@ -54,7 +54,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_sesi_akademik_masuk','Sesi Akademik Masuk')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="semester_masuk" class="form-control" value="<?= h($sesi_akademik_masuk ?? '') ?>" readonly>
+                              <input type="text" name="semester_masuk" class="form-control" value="<?= h($peribadi['sesi_akademik_masuk'] ?? '') ?>" readonly>
                             </div>
                           </div>
 
@@ -62,7 +62,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_sesi_akademik_tamat','Sesi Akademik Tamat')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="semester_tamat" class="form-control" value="<?= h($sesi_akademik_tamat ?? '') ?>" readonly>
+                              <input type="text" name="semester_tamat" class="form-control" value="<?= h($peribadi['sesi_akademik_tamat'] ?? '') ?>" readonly>
                             </div>
                           </div>
 
@@ -74,7 +74,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pengajian','Status Pengajian')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="status_pengajian" class="form-control" value="<?= ucwords(strtolower(h($status_pengajian ?? ''))) ?>" readonly>
+                              <input type="text" name="status_pengajian" class="form-control" value="<?= ucwords(strtolower(h($peribadi['status_pengajian'] ?? ''))) ?>" readonly>
                             </div>
                           </div>
 
@@ -82,7 +82,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_semester_terkini','Semester Pengajian Terkini')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="semester_terkini" class="form-control" value="<?= h($semester_terkini ?? '') ?>" readonly>
+                              <input type="text" name="semester_terkini" class="form-control" value="<?= h($peribadi['semester_terkini'] ?? '') ?>" readonly>
                             </div>
                           </div>   
 
@@ -90,7 +90,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngs','PNGS')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngs" class="form-control" value="<?= h($pngs ?? '') ?>"  readonly >
+                              <input type="text" name="pngs" class="form-control" value="<?= h($peribadi['pngs'] ?? '') ?>"  readonly >
                             </div>                 
                           </div>
 
@@ -98,7 +98,7 @@
                           <div class="mb-2 row align-items-center">
                             <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_pngk','PNGK')) ?></label>
                             <div class="col-sm-8">
-                              <input type="text" name="pngk" class="form-control" value="<?= h($pngk ?? '') ?>" readonly >
+                              <input type="text" name="pngk" class="form-control" value="<?= h($peribadi['pngk'] ?? '') ?>" readonly >
                             </div>
                           </div>  
 

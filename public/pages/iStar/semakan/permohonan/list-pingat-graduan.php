@@ -7,7 +7,7 @@
     <thead>
       <tr>
         <th width="40"></th>
-        <th class="col-bil text-center">#</th>
+        <th class="col-bil text-center">No</th>
         <th class="small w-30"><?= h(tr('nama', 'Nama')) ?></th>
         <th class="small w-15"><?= h(tr('matrik', 'Matrik')) ?></th>
         <th class="small w-12"><?= h(tr('tarikh_permohonan', 'Tarikh Permohonan')) ?></th>

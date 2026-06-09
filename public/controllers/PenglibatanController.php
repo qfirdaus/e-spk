@@ -1310,6 +1310,16 @@ class PenglibatanController
         }
     }
 
+    public function getSesiPermohonan(): array
+    {
+        try {
+            return $this->model->getActiveSession();
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }     
+
     public function testConnection()
     {
         return $this->model->testConnection();
