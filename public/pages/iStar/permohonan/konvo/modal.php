@@ -7,7 +7,7 @@
   $lookupKategoriPerjawatan = $lookupAll['kategori_perjawatan'] ?? [];
 ?>
 <!-- // Modal: Add Penglibatan Program -->
-<div class="modal fade" id="penglibatanAddModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-gradient" id="penglibatanAddModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
@@ -23,6 +23,12 @@
         <input type="hidden" name="icares_form" value="istar_konvo_penglibatan_program">
 
         <div class="modal-body">
+          <div class="alert alert-info d-flex align-items-center mb-3">
+              <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+              <div>
+                  <span class="text-danger">Pastikan rekod yang ditambah belum wujud dalam sistem ISTAD.</span>
+              </div>
+          </div>          
           <div class="row">
 
             <!-- LEFT COLUMN -->
@@ -123,7 +129,7 @@
 <!-- ########################################## -->
 
 <!-- MODAL: Add Jawatan Disandang -->
-<div class="modal fade" id="jawatanAddModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-gradient" id="jawatanAddModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
@@ -248,7 +254,7 @@
 <!-- ########################################## -->
 
 <!-- MODAL: Add Anugerah / Pengiktirafan -->
-<div class="modal fade" id="anugerahAddModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-gradient" id="anugerahAddModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
@@ -334,6 +340,68 @@
                 </small>
               </div>
 
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <?= h(tr('template_senarai_crud_btn_cancel', 'Cancel')) ?>
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ri-save-3-line me-1"></i>
+            <?= h(tr('profile_save_button', 'Simpan')) ?>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ########################################## -->
+
+<!-- MODAL: Add Anugerah Dekan -->
+<div class="modal fade modal-gradient" id="dekanAddModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-add-circle-line"></i>
+          <?= h(tr('anugerah_dekan','Tambah Anugerah Dekan')) ?>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form id="dekanForm" method="post" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-md-12">
+
+              <!-- Nama Dokumen  -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('nama_dokumen','Nama Dokumen')) ?>
+                </label>
+                <input type="text" name="nama_dokumen" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+              </div>
+
+              <!-- Dokumen -->
+              <div class="mb-3">
+                <label class="form-label">
+                  <?= h(tr('dokumen_dekan','Dokumen Sokongan')) ?>
+                </label>
+                <input type="file" name="dokumen-dekan" class="form-control"
+                       accept=".jpg,.jpeg,.pdf"
+                       onchange="checkFileSize(this)" required>
+                <small class="text-danger">
+                  <?= h(tr('dokumen_penglibatan_note','Max 5MB (JPG/JPEG/PDF)')) ?>
+                </small>
+              </div>              
             </div>
 
           </div>

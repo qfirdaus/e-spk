@@ -436,44 +436,37 @@ table.dataTable tbody textarea.border-warning {
     border-radius: 8px;
 }
 
-#penglibatanAddModal .modal-header,
-#jawatanAddModal .modal-header {
+.modal-gradient .modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border-bottom: none;
     padding: 1rem 1.35rem;
 }
 
-#penglibatanAddModal .modal-header .modal-title,
-#jawatanAddModal .modal-header .modal-title {
+.modal-gradient .modal-header .modal-title {
     color: white;
     font-weight: 600;
     font-size: 1.15rem;
     letter-spacing: 0.3px;
 }
 
-#penglibatanAddModal .modal-header .btn-close,
-#jawatanAddModal .modal-header .btn-close {
+.modal-gradient .modal-header .btn-close {
     filter: invert(1);
     opacity: 0.9;
 }
 
-#penglibatanAddModal .modal-header .btn-close,
-#jawatanAddModal .modal-header .btn-close:hover {
+.modal-gradient .modal-header .btn-close:hover {
     opacity: 1;
 }
 
-#penglibatanAddModal .modal-body,
-#jawatanAddModal .modal-body {
+.modal-gradient .modal-body {
     padding: 1rem 1.35rem;
 }
 
-#penglibatanAddModal .modal-footer,
-#jawatanAddModal .modal-footer {
+.modal-gradient .modal-footer {
     padding: 0.95rem 1.35rem;
     background-color: #f8f9fa;
 }
-
 .modal-dialog-centered {
     align-items: flex-start !important;
     min-height: calc(100% - 3.5rem) !important;

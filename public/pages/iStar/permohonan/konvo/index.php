@@ -46,7 +46,7 @@
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
   $errorMessage = $peribadiController->getErrorMessage();
   $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
-  $anugerahData = $penglibatanController->getAllAnugerah();
+
   $namaPenuh = (string)($peribadi['nama_penuh'] ?? ($profileView['nama_penuh'] ?? ''));
   $nokp = (string)($peribadi['nokp'] ?? '');
   $istarPerakuanIdPrefix = 'istar-konvo';
@@ -105,7 +105,7 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#maklumat-akademik-tab" role="tab">
-                  <i class="ri-book-line me-1"></i> <?= h(tr('tab_maklumat-akademik','Maklumat Akademik')) ?>
+                  <i class="ri-book-line me-1"></i> <?= h(tr('tab_maklumat-akademik','Maklumat Akademik')) ?>                  
                 </a>
               </li>              
               <li class="nav-item">
@@ -161,9 +161,42 @@
               </div>
 
               <!-- Tab 2: Maklumat Akademik -->
-              <div class="tab-pane fade show" id="maklumat-akademik-tab" role="tabpanel">
-                  <?php include __DIR__ . '/../../../rekod-utama/data-akademik/f-akademik.php'; ?>
-              </div>
+              <div class="tab-pane fade" id="maklumat-akademik-tab" role="tabpanel">
+
+                <div class="row">
+                  <!-- LEFT SUB TAB -->
+                  <div class="col-md-3">
+                    <div class="icares-address-nav" role="tablist" aria-label="<?= h(tr('tab_maklumat_alamat', 'Maklumat Alamat')) ?>">
+                      <button class="icares-address-nav__item active" id="tab-akademik-sumber" data-bs-toggle="pill" data-bs-target="#akademik-sumber-tab" type="button" role="tab" aria-controls="alamat-tetap-panel" aria-selected="true">
+                        <i class="ri-book-line"></i>
+                        <span><?= h(tr('maklumat_akademik', 'Maklumat Akademik')) ?></span>
+                      </button>
+                      <button class="icares-address-nav__item" id="tab-akademik-tambahan-tab" data-bs-toggle="pill" data-bs-target="#akademik-tambahan-tab" type="button" role="tab" aria-controls="alamat-tinggal-panel" aria-selected="false">
+                        <i class="ri-folder-add-line"></i>
+                        <span><?= h(tr('maklumat_tambahan', 'Maklumat Tambahan')) ?></span>
+                      </button>
+                    </div>      
+                  </div>
+
+                  <!-- RIGHT CONTENT -->
+                  <div class="col-md-9">
+                    <div class="tab-content">
+                      <!-- TAB 1: DATA SAP -->
+                      <div class="tab-pane fade show active" id="akademik-sumber-tab">
+                          <?php  include __DIR__ . '/../../../rekod-utama/data-akademik/f-akademik.php'; ?>
+                      </div>
+
+                      <!-- TAB 2: TAMBAHAN -->
+                      <div class="tab-pane fade" id="akademik-tambahan-tab">
+                          <?php //include __DIR__ . '/f-akademik-tambahan.php'; ?>
+                          <div id="akademik-tambahan-content" class="text-center py-3">
+                              <?= h(tr('data_loading_records', 'Memuatkan Data...')) ?>
+                          </div>                          
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>              
 
               <!-- Tab 3: Penglibatan Program -->
               <div class="tab-pane fade" id="penglibatan-program-tab" role="tabpanel">    
@@ -218,6 +251,8 @@
       };
       let DRAFT_KONVO = {
           dataStudent: <?= json_encode($peribadi ?? []) ?>,
+          akademikTambahan: {},
+          gredPSM: {},
           penglibatan: {},
           jawatan: {},
           anugerah: {},

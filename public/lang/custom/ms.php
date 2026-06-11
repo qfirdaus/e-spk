@@ -366,7 +366,7 @@ return [
 'istar_declaration_no_disciplinary_prefix' => 'Saya dengan ini mengakui bahawa saya tidak pernah dikenakan sebarang tindakan tatatertib sepanjang tempoh pengajian saya di',
 'istar_declaration_upnm' => 'Universiti Pertahanan Nasional Malaysia (UPNM)',
 'istar_source_additional' => 'Tambahan',
-'istar_source_istad' => 'IStAD',
+'istar_source_istad' => 'ISTAD',
 'load_data_failed' => 'Gagal memuatkan data',
 'record_delete_failed' => 'Gagal padam rekod',
 'record_delete_success' => 'Rekod berjaya dipadam',
@@ -383,17 +383,17 @@ return [
 'swal_try_again' => 'Cuba lagi',
 'swal_try_again_later' => 'Cuba lagi sebentar lagi',
 'sync_failed' => 'Penyelarasan data gagal',
-'sync_istad' => 'Selaras IStAD',
+'sync_istad' => 'Selaras ISTAD',
 'sync_istad_confirm' => 'Ya, selaras',
-'sync_istad_text' => 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
-'sync_istad_title' => 'Selaras data IStAD?',
+'sync_istad_text' => 'Data ISTAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+'sync_istad_title' => 'Selaras data ISTAD?',
 'sync_success_title' => 'Penyelarasan Data Berjaya',
 'system_error_try_again' => 'Ralat sistem. Cuba lagi.',
 // ===== END iStar Konvo UI =====
 
 // ===== BEGIN iStar JS UI =====
 'add_new' => 'Tambah Baru',
-'sync_istad' => 'Sync IStAD',
+'sync_istad' => 'Sync ISTAD',
 'load_data_failed' => 'Gagal load data',
 'datatable_search_placeholder' => 'Search',
 'datatable_length_menu' => 'Show _MENU_ records',
@@ -429,11 +429,11 @@ return [
 'record_update_failed' => 'Gagal kemaskini rekod',
 'system_error_try_again' => 'Ralat sistem. Cuba lagi.',
 
-'sync_istad_title' => 'Sync data IStAD?',
-'sync_istad_text' => 'Data IStAD akan dikemaskini semula. Data Tambahan tidak akan berubah.',
+'sync_istad_title' => 'Sync data ISTAD?',
+'sync_istad_text' => 'Proses sync hanya akan menambah rekod ISTAD yang belum wujud. Rekod ISTAD sedia ada dan Rekod Tambahan tidak akan diubah.',
 'sync_istad_confirm' => 'Ya, sync',
 'sync_success_title' => 'Penyelarasan Data Berjaya',
 'sync_failed' => 'Penyelarasan data gagal',
-'sync_istad_msg' => 'Data IStAD berjaya diselaraskan',
+'sync_istad_msg' => 'Data ISTAD berjaya diselaraskan',
 // ===== END iStar JS UI =====
 ];

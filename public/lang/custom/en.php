@@ -367,7 +367,7 @@ return [
 'istar_declaration_no_disciplinary_prefix' => 'I hereby declare that I have never been subjected to any disciplinary action throughout my study period at',
 'istar_declaration_upnm' => 'National Defence University of Malaysia (UPNM)',
 'istar_source_additional' => 'Additional',
-'istar_source_istad' => 'IStAD',
+'istar_source_istad' => 'ISTAD',
 'load_data_failed' => 'Failed to load data',
 'record_delete_failed' => 'Failed to delete record',
 'record_delete_success' => 'Record deleted successfully',
@@ -384,17 +384,17 @@ return [
 'swal_try_again' => 'Try again',
 'swal_try_again_later' => 'Please try again later',
 'sync_failed' => 'Data synchronization failed',
-'sync_istad' => 'Sync IStAD',
+'sync_istad' => 'Sync ISTAD',
 'sync_istad_confirm' => 'Yes, sync',
-'sync_istad_text' => 'IStAD data will be updated again. Additional data will not be changed.',
-'sync_istad_title' => 'Sync IStAD data?',
+'sync_istad_text' => 'ISTAD data will be updated again. Additional data will not be changed.',
+'sync_istad_title' => 'Sync ISTAD data?',
 'sync_success_title' => 'Data Synchronization Successful',
 'system_error_try_again' => 'System error. Please try again.',
 // ===== END iStar Konvo UI =====
 
 // ===== BEGIN iStar JS UI =====
 'add_new' => 'Add New',
-'sync_istad' => 'Sync IStAD',
+'sync_istad' => 'Sync ISTAD',
 'load_data_failed' => 'Failed to load data',
 
 'datatable_search_placeholder' => 'Search',
@@ -431,11 +431,11 @@ return [
 'record_update_failed' => 'Failed to update record',
 'system_error_try_again' => 'System error. Please try again.',
 
-'sync_istad_title' => 'Sync IStAD data?',
-'sync_istad_text' => 'IStAD data will be updated. Additional data will not be affected.',
+'sync_istad_title' => 'Sync ISTAD data?',
+'sync_istad_text' => 'The sync process only adds new ISTAD records. Existing ISTAD records and Additional Records remain unchanged.',
 'sync_istad_confirm' => 'Yes, sync',
 'sync_success_title' => 'Data Synchronization Successful',
 'sync_failed' => 'Data synchronization failed',
-'sync_istad_msg' => 'IStAD successfully synchronized.',
+'sync_istad_msg' => 'ISTAD successfully synchronized.',
 // ===== END iStar JS UI =====
 ];

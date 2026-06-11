@@ -37,6 +37,8 @@ $draft = [
 
     // DATA CORE
     'dataStudent' => $input['dataStudent'] ?? [],
+    'akademikTambahan' => $input['akademikTambahan'] ?? [],
+    'gredPSM' => $input['gredPSM'] ?? [],
     'penglibatan'    => $input['penglibatan'] ?? [],
     'jawatan'    => $input['jawatan'] ?? [],
     'anugerah'    => $input['anugerah'] ?? [],

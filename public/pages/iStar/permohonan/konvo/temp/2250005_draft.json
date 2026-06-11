@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-06-09 09:35:37",
+    "updated_at": "2026-06-11 15:18:07",
     "dataStudent": {
         "matrik": "2250005",
         "nama_penuh": "Muhamad Nur Nasrullah bin Mohamad Ali",
@@ -17,7 +17,7 @@
         "negeri_lahir": "SARAWAK",
         "status_kahwin": "Bujang",
         "tarikh_lahir": "2005-09-25 00:00:00.000",
-        "age": "20 tahun 8 bulan 14 hari",
+        "age": "20 tahun 8 bulan 16 hari",
         "kdfakulti": "6100",
         "fakulti": "FAKULTI PENGAJIAN DAN PENGURUSAN PERTAHANAN",
         "kdprogram": "ZP59",
@@ -48,168 +48,20 @@
         "status_pelajar": "AWAM",
         "avatar_url": "https:\/\/kemasukan.upnm.edu.my\/tawaran\/pelajar\/student_image\/2250005.jpg"
     },
-    "penglibatan": [
+    "akademikTambahan": [
         {
-            "id": "ISTAD_1925",
-            "sumber": "IStAD",
-            "nama": "BICARA SUMUD FORTILLA",
-            "tarikh": "02-12-2025",
-            "wakil": "KOL",
-            "peringkat": "KOL",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
+            "id": "dekan_6a2a3e6294852",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a5ddec17cd.pdf",
+            "nama_dokumen": "SEMESTER 1"
         },
         {
-            "id": "ISTAD_1928",
-            "sumber": "IStAD",
-            "nama": "KONSERT MALAM BUDAYA UPNM 2025",
-            "tarikh": "05-12-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1859",
-            "sumber": "IStAD",
-            "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER",
-            "tarikh": "08-11-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1964",
-            "sumber": "IStAD",
-            "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
-            "tarikh": "23-12-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_2018",
-            "sumber": "IStAD",
-            "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
-            "tarikh": "14-01-2026",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1848",
-            "sumber": "IStAD",
-            "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
-            "tarikh": "04-11-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1927",
-            "sumber": "IStAD",
-            "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
-            "tarikh": "03-12-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1965",
-            "sumber": "IStAD",
-            "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
-            "tarikh": "24-12-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_2131",
-            "sumber": "IStAD",
-            "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
-            "tarikh": "23-04-2026",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1915",
-            "sumber": "IStAD",
-            "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
-            "tarikh": "10-12-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_2022",
-            "sumber": "IStAD",
-            "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
-            "tarikh": "15-01-2026",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1901",
-            "sumber": "IStAD",
-            "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
-            "tarikh": "17-11-2025",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_2119",
-            "sumber": "IStAD",
-            "nama": "UPNM COMMUNITY RUN 2.0",
-            "tarikh": "16-04-2026",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "ISTAD_1994",
-            "sumber": "IStAD",
-            "nama": "UPNM RUNNING COMMUNITY (URC)",
-            "tarikh": "08-01-2026",
-            "wakil": "",
-            "peringkat": "",
-            "pencapaian": "PESERTA",
-            "dokumen_path": ""
-        },
-        {
-            "id": "new_6a276d7fb0c5e",
-            "sumber": "Tambahan",
-            "nama": "SUKAN2",
-            "tarikh": "02-06-2026",
-            "wakil": "BP",
-            "peringkat": "BP",
-            "pencapaian": "PERAK",
-            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a276d7fafcd5.pdf"
-        },
-        {
-            "id": "new_6a276db4efcee",
-            "sumber": "Tambahan",
-            "nama": "BADAN PELAJAR 2",
-            "tarikh": "31-03-2026",
-            "wakil": "BP",
-            "peringkat": "BP",
-            "pencapaian": "PERAK",
-            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a276dd53131c.pdf"
+            "id": "dekan_6a2a56904a914",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a5e4153ce5.pdf",
+            "nama_dokumen": "SEMESTER 1"
         }
     ],
+    "gredPSM": "A",
+    "penglibatan": [],
     "jawatan": [],
     "anugerah": [],
     "perakuan": {

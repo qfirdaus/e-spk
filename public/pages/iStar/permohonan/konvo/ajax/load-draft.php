@@ -18,6 +18,8 @@ if (!file_exists($file)) {
     echo json_encode([
         'draft_initialized' => false,
         'dataStudent' => new stdClass(),
+        'akademikTambahan' => new stdClass(),
+        'gredPSM' => new stdClass(),
         'penglibatan' => new stdClass(),
         'jawatan' => new stdClass(),
         'anugerah' => new stdClass(),
@@ -26,7 +28,7 @@ if (!file_exists($file)) {
                         'chk2' => 0,
                         'chk3' => 0
                       ]
-    ]);
+    ]);   
     exit;
 }
 

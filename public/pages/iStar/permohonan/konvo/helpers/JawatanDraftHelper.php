@@ -7,7 +7,7 @@ function JawatanDraftPath(string $matrik): string
 
 function canEditFieldJawatan($row, $field)
 {
-    if (($row['sumber'] ?? '') === 'IStAD') {
+    if (($row['sumber'] ?? '') === 'ISTAD') {
 
         $allowed = ['peringkat'];
 
@@ -70,7 +70,7 @@ function initJawatanDraft(string $matrik, array $istadRows): array
         $rows[] = [
             'id' => 'ISTAD_' . $idBase,
             'id_kegiatan_badan' => $row['id_kegiatan_badan'] ?? null,
-            'sumber' => 'IStAD',
+            'sumber' => 'ISTAD',
 
             'id_kategori_aktiviti' => $row['id_kategori_aktiviti'] ?? null,
             'kod_kategori_aktiviti' => $row['kod_kategori_aktiviti'] ?? null,

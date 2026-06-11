@@ -1,0 +1,30 @@
+{
+    "draft_initialized": true,
+    "updated_at": "2026-06-11 09:18:19",
+    "rows": [
+        {
+            "id": "dekan_6a2a3e6294852",
+            "sumber": "TAMBAHAN",
+            "nama_dokumen": "SEMESTER 1",
+            "dokumen": {
+                "filename": "2250005-dok_6a2a5ddec17cd.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a5ddec17cd.pdf",
+                "uploaded_at": "2026-06-11 09:03:58"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "dekan_6a2a56904a914",
+            "sumber": "TAMBAHAN",
+            "nama_dokumen": "SEMESTER 1",
+            "dokumen": {
+                "filename": "2250005-dok_6a2a613b9204e.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a613b9204e.pdf",
+                "uploaded_at": "2026-06-11 09:18:19"
+            },
+            "is_dirty": true,
+            "conflict": false
+        }
+    ]
+}

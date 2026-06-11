@@ -1,5 +1,5 @@
 <!-- // Modal: Add Tetapan Tarikh Permohonan -->
-<div class="modal fade" id="dateConfigAddModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-gradient" id="dateConfigAddModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
 
@@ -101,7 +101,7 @@
 <!-- ########################################## -->
 
  <!-- Modal: Update Tetapan Tarikh Permohonan -->
-<div class="modal fade" id="dateConfigUpdateModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-gradient" id="dateConfigUpdateModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
 

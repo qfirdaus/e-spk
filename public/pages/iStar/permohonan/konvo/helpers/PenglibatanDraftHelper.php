@@ -6,7 +6,7 @@ function penglibatanDraftPath(string $matrik): string
 
 function canEditField($row, $field)
 {
-    if (($row['sumber'] ?? '') === 'IStAD') {
+    if (($row['sumber'] ?? '') === 'ISTAD') {
 
         $allowed = ['wakil', 'peringkat', 'pencapaian'];
 
@@ -45,7 +45,7 @@ function getPenglibatanDraft(string $matrik): array
 
 /*
 |--------------------------------------------------------------------------
-| LOAD DRAFT (atau create from IStAD first time)
+| LOAD DRAFT (atau create from ISTAD first time)
 |--------------------------------------------------------------------------
 */
 function loadPenglibatanDraft(string $matrik, array $istadRows = []): array
@@ -61,7 +61,7 @@ function loadPenglibatanDraft(string $matrik, array $istadRows = []): array
             $rows[] = [
                 'id' => 'ISTAD_' . ($row['id_kegiatan_pelajar'] ?? $i),
                 'id_kegiatan_pelajar' => $row['id_kegiatan_pelajar'] ?? null,
-                'sumber' => 'IStAD',
+                'sumber' => 'ISTAD',
                 'nama' => $row['nama'] ?? '',
                 'tarikh' => $row['tarikh'] ?? '',
                 'wakil' => null,

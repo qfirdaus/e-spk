@@ -31,8 +31,8 @@
           $jawatan = $row['jawatan'] ?? null;
           $id_jawatan = $row['id_jawatan'] ?? null;
           $sumber = $row['sumber'] ?? 'Tambahan';   
-          $sumberLabel = $sumber === 'IStAD'
-              ? tr('istar_source_istad', 'IStAD')
+          $sumberLabel = $sumber === 'ISTAD'
+              ? tr('istar_source_istad', 'ISTAD')
               : tr('istar_source_additional', 'Tambahan');
 
       ?>
@@ -41,7 +41,7 @@
         <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
           <td class="col-bil text-center"></td>
           <td class="text-center">
-              <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
+              <span class="badge <?php echo $sumber === 'ISTAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                   <?= h($sumberLabel) ?>
               </span>
           </td>     

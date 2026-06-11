@@ -29,20 +29,20 @@
             $peringkat = $row['peringkat'] ?? null;
             $pencapaian = $row['pencapaian'] ?? null;
             $sumber = $row['sumber'] ?? 'Tambahan';   
-            $sumberLabel = $sumber === 'IStAD'
-                ? tr('istar_source_istad', 'IStAD')
+            $sumberLabel = $sumber === 'ISTAD'
+                ? tr('istar_source_istad', 'ISTAD')
                 : tr('istar_source_additional', 'Tambahan');
     ?>
             <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
                 <td class="col-bil text-center"></td>
                 <td class="text-center">
-                    <span class="badge <?php echo $sumber === 'IStAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
+                    <span class="badge <?php echo $sumber === 'ISTAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
                         <?= h($sumberLabel) ?>
                     </span>                    
                 </td>
                 
                 <!-- Nama Program -->
-                <td data-field="nama">
+                <td class="text-start" data-field="nama" style="width: 1% !important">
                 <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
                     <input type="text"
                         name="nama"

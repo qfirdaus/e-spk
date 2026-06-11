@@ -158,7 +158,7 @@ function autoSavePenerima(form) {
 
     DRAFT.penerima = data;
 
-    console.log('UPDATED DRAFT:', DRAFT);
+    //console.log('UPDATED DRAFT:', DRAFT);
 
     saveDraft();
 }
