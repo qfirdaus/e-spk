@@ -95,6 +95,7 @@
                                                             class="dokumen-inline d-none"
                                                             data-id="<?= h($row['id']) ?>"
                                                             data-namadokumen="<?= h($row['nama_dokumen'] ?? '') ?>"
+                                                            data-tab="akademikTambahan"
                                                             data-url="pages/iStar/permohonan/konvo/ajax/akademik-tambahan.php?action=updateDokumenDekan"
                                                             accept=".pdf,.jpg,.jpeg">
 

@@ -1,6 +1,6 @@
 {
     "draft_initialized": true,
-    "updated_at": "2026-06-11 15:18:07",
+    "updated_at": "2026-06-18 17:52:49",
     "dataStudent": {
         "matrik": "2250005",
         "nama_penuh": "Muhamad Nur Nasrullah bin Mohamad Ali",
@@ -17,7 +17,7 @@
         "negeri_lahir": "SARAWAK",
         "status_kahwin": "Bujang",
         "tarikh_lahir": "2005-09-25 00:00:00.000",
-        "age": "20 tahun 8 bulan 16 hari",
+        "age": "20 tahun 8 bulan 23 hari",
         "kdfakulti": "6100",
         "fakulti": "FAKULTI PENGAJIAN DAN PENGURUSAN PERTAHANAN",
         "kdprogram": "ZP59",
@@ -50,23 +50,269 @@
     },
     "akademikTambahan": [
         {
-            "id": "dekan_6a2a3e6294852",
-            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a5ddec17cd.pdf",
-            "nama_dokumen": "SEMESTER 1"
-        },
-        {
-            "id": "dekan_6a2a56904a914",
-            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-dok_6a2a5e4153ce5.pdf",
+            "id": "dekan_6a3112d1d8e6c",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/dekan\/2250005-semester_1-6a3112d1d86a1.pdf",
             "nama_dokumen": "SEMESTER 1"
         }
     ],
     "gredPSM": "A",
-    "penglibatan": [],
-    "jawatan": [],
-    "anugerah": [],
+    "penglibatan": [
+        {
+            "id": "ISTAD_2248",
+            "sumber": "ISTAD",
+            "nama": "ARABIC WEEK",
+            "tarikh": "03-05-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1925",
+            "sumber": "ISTAD",
+            "nama": "BICARA SUMUD FORTILLA",
+            "tarikh": "02-12-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2253",
+            "sumber": "ISTAD",
+            "nama": "UPNM Running Community 4.0",
+            "tarikh": "11-06-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1994",
+            "sumber": "ISTAD",
+            "nama": "UPNM RUNNING COMMUNITY (URC)",
+            "tarikh": "08-01-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2119",
+            "sumber": "ISTAD",
+            "nama": "UPNM COMMUNITY RUN 2.0",
+            "tarikh": "16-04-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1901",
+            "sumber": "ISTAD",
+            "nama": "SESI PERJUMPAAN KOLEJ KEDIAMAN TUAH",
+            "tarikh": "17-11-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2022",
+            "sumber": "ISTAD",
+            "nama": "PROGRAM TOWN HALL MPP X BADAN PELAJAR",
+            "tarikh": "15-01-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1915",
+            "sumber": "ISTAD",
+            "nama": "PROGRAM KEMPEN TUAH SAVE THE WORLD",
+            "tarikh": "10-12-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2131",
+            "sumber": "ISTAD",
+            "nama": "PROGRAM HIMPUNAN SOLIDARITI MAHASISWA UPNM",
+            "tarikh": "23-04-2026",
+            "wakil": "",
+            "peringkat": "KBG",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1965",
+            "sumber": "ISTAD",
+            "nama": "PROGRAM ARAM BEGULAI 2.0 ANAK SARAWAK",
+            "tarikh": "24-12-2025",
+            "wakil": "FK",
+            "peringkat": "NEG",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1927",
+            "sumber": "ISTAD",
+            "nama": "PERTANDINGAN TARIAN INTER FAKULTI UPNM 2025",
+            "tarikh": "03-12-2025",
+            "wakil": "UNI",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1848",
+            "sumber": "ISTAD",
+            "nama": "Penyertaan Pelajar Ke Festival of Idea (FOI 2025) di PICC Putrajay",
+            "tarikh": "04-11-2025",
+            "wakil": "IND",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2018",
+            "sumber": "ISTAD",
+            "nama": "PAMERAN ETIKA PROFESIONAL KETENTERAAN",
+            "tarikh": "14-01-2026",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1964",
+            "sumber": "ISTAD",
+            "nama": "NEONRUN UPNM (3KM FUNRUN): RUN THE NIGHT, OWN YOUR FUTURE",
+            "tarikh": "23-12-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1859",
+            "sumber": "ISTAD",
+            "nama": "KURSUS GIG ECONOMY: START DRONE AS A CAREER",
+            "tarikh": "08-11-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_1928",
+            "sumber": "ISTAD",
+            "nama": "KONSERT MALAM BUDAYA UPNM 2025",
+            "tarikh": "05-12-2025",
+            "wakil": "",
+            "peringkat": "",
+            "pencapaian": "PESERTA",
+            "dokumen_path": ""
+        },
+        {
+            "id": "new_6a2b6235b71a7",
+            "sumber": "Tambahan",
+            "nama": "SUKAN2",
+            "tarikh": "12-06-2026",
+            "wakil": "KOL",
+            "peringkat": "UNI",
+            "pencapaian": "PESERTA",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a2b631fbfe37.pdf"
+        },
+        {
+            "id": "new_6a2b64f833572",
+            "sumber": "Tambahan",
+            "nama": "TEST2 BP3",
+            "tarikh": "27-01-2026",
+            "wakil": "KOL",
+            "peringkat": "KOL",
+            "pencapaian": "PERAK",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/penglibatan\/2250005-dok_6a2b651bc73e1.pdf"
+        }
+    ],
+    "jawatan": [
+        {
+            "id": "ISTAD_1994",
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM RUNNING COMMUNITY (URC)",
+            "id_jawatan": "6",
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "08\/01\/2026",
+            "peringkat": "",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_2119",
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM COMMUNITY RUN 2.0",
+            "id_jawatan": "6",
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "16\/04\/2026",
+            "peringkat": "UNI",
+            "dokumen_path": ""
+        },
+        {
+            "id": "ISTAD_8564",
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "PERSATUAN ANAK SARAWAK",
+            "id_jawatan": "5",
+            "jawatan": "AHLI",
+            "tarikh_lantikan": "06\/10\/2025",
+            "peringkat": "FK",
+            "dokumen_path": ""
+        },
+        {
+            "id": "new_6a33646e0961a",
+            "sumber": "Tambahan",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "BADAN PELAJAR T3S",
+            "id_jawatan": "4",
+            "jawatan": "BENDAHARI",
+            "tarikh_lantikan": "18-06-2026",
+            "peringkat": "BP",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a3364ab27008.pdf"
+        },
+        {
+            "id": "new_6a336fc119406",
+            "sumber": "Tambahan",
+            "kod_kategori_aktiviti": "PJM",
+            "kategori_aktiviti": "PMF\/JPPD\/MTKK",
+            "nama_bp_program": "BADAN PELAJAR T3S",
+            "id_jawatan": "2",
+            "jawatan": "TIMBALAN PENGARAH",
+            "tarikh_lantikan": "18-06-2026",
+            "peringkat": "FK",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a336fc117d7d.pdf"
+        }
+    ],
+    "anugerah": [
+        {
+            "id": "anugerah_6a33742c4c414",
+            "nama_anugerah": "ANUGERAH 2",
+            "tahun": "2025",
+            "kurniaan_pemberian": "UNIVERSITI",
+            "peringkat": "INT",
+            "dokumen_path": "pages\/iStar\/permohonan\/konvo\/uploads\/anugerah\/2250005-award_6a33742c4bf6f.pdf"
+        }
+    ],
     "perakuan": {
-        "chk1": 0,
-        "chk2": 0,
-        "chk3": 0
+        "chk1": 1,
+        "chk2": 1,
+        "chk3": 1
     }
 }

@@ -485,14 +485,41 @@ class PenglibatanController
 
         $wrapper = getJawatanDraft($matrik);
 
+        // FIRST TIME → create from ISTAD 
+        // pertama kali buka, belum ada draft, baru generate dari ISTAD. Lepas tu save sebagai draft utk next time load terus dari draft
         if (!$wrapper['draft_initialized']) {
 
             $istad = $this->model->getAllJawatan($matrik);
 
-            initJawatanDraft($matrik, $istad);
+            $data = [];
 
-            // reload semula dari file (IMPORTANT)
-            $wrapper = getJawatanDraft($matrik);
+            foreach ($istad as $row) {
+
+                $id = $row['id_kegiatan_badan'] ?? null;
+
+                $data[] = [
+                    'id' => $id ? 'ISTAD_' . $id : uniqid('DRAFT_'),
+                    'id_kegiatan_badan' => $id,
+                    'sumber' => 'ISTAD',
+
+                    'kod_kategori_aktiviti' => $row['kod_kategori_aktiviti'] ?? null,
+                    'kategori_aktiviti' => $row['kategori_aktiviti'] ?? null,
+
+                    'nama_bp_program' => $row['nama_bp_program'] ?? '',
+                    'id_jawatan' => $row['id_jawatan'] ?? '',
+                    'jawatan' => $row['jawatan'] ?? '',
+                    'tarikh_lantikan' => $row['tarikh_mula'] ?? '',
+
+                    'peringkat' => $row['peringkat'] ?? null,
+
+                    'is_dirty' => false,
+                    'conflict' => false,
+                    'source_override' => false
+                ];
+            }            
+            saveJawatanDraftRows($matrik, $data);
+
+            return $data;
         }
 
         $rows = array_values($wrapper['rows'] ?? []);
@@ -694,13 +721,12 @@ class PenglibatanController
         $rows = $wrapper['rows'];        
 
         // validate input
-        $id_kategori_aktiviti = trim($_POST['id_aktiviti'] ?? '');
-        $kod_kategori_aktiviti = trim($_POST['kategori_aktiviti'] ?? '');
-        $kategori_aktiviti = trim($_POST['aktiviti_text'] ?? '');
+        $kod_kategori_aktiviti = trim($_POST['kod_kategori_aktiviti'] ?? '');
+        $kategori_aktiviti = trim($_POST['kategori_aktiviti'] ?? '');
         $nama_bp_program = trim($_POST['nama_bp_program'] ?? '');
         $tarikh_lantikan = trim($_POST['tarikh'] ?? '');
-        $id_jawatan = isset($_POST['jawatan']) ? (int) $_POST['jawatan'] : null;
-        $jawatan_text = $_POST['jawatan_text'] ?? '';
+        $id_jawatan = isset($_POST['id_jawatan']) ? (int) $_POST['id_jawatan'] : null;
+        $jawatan_text = $_POST['jawatan'] ?? '';
         $peringkat = $_POST['peringkat'] ?? '';
 
         if ($kod_kategori_aktiviti === '' || $nama_bp_program === '' || $tarikh_lantikan === '' || $id_jawatan === '' || $peringkat === '') {
@@ -758,7 +784,6 @@ class PenglibatanController
             'id' => uniqid('new_'),
             'id_kegiatan_badan' => null,
             'sumber' => 'Tambahan',
-            'id_kategori_aktiviti' => $id_kategori_aktiviti,
             'kod_kategori_aktiviti' => $kod_kategori_aktiviti,
             'kategori_aktiviti' => $kategori_aktiviti,
             'nama_bp_program' => $nama_bp_program,
@@ -1231,20 +1256,50 @@ class PenglibatanController
     }
 
     // Akademik Tambahan -- Dokumen Anugerah Dekan
+    // public function getAllAkademikTambahan(): array
+    // {
+    //     try {
+    //         require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/AkademikTambahanDraftHelper.php';
+
+    //         $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+    //         $wrapper = getAkademikTambahanDraft($matrik);
+
+    //         saveAkademikTambahanDraftRows($matrik, $data);
+
+    //         return array_values($wrapper['rows'] ?? []);
+    //     } catch (Throwable $e) {
+    //         $this->errorMessage = $e->getMessage();
+    //         return [];
+    //     }
+    // }
     public function getAllAkademikTambahan(): array
     {
         try {
+            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+
             require_once __DIR__ . '/../pages/iStar/permohonan/konvo/helpers/AkademikTambahanDraftHelper.php';
 
-            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
             $wrapper = getAkademikTambahanDraft($matrik);
 
-            return array_values($wrapper['rows'] ?? []);
+            // FIRST TIME → create empty draft (NO ISTAD SOURCE)
+            if (!$wrapper['draft_initialized']) {
+
+                $data = []; // akademik tambahan memang tiada ISTAD source
+
+                saveAkademikTambahanDraftRows($matrik, $data);
+
+                return $data;
+            }
+
+            $rows = array_values($wrapper['rows'] ?? []);
+
+            return $rows;
+
         } catch (Throwable $e) {
             $this->errorMessage = $e->getMessage();
             return [];
         }
-    }
+    }    
 
     public function addDekanDraft()
     {
@@ -1608,6 +1663,7 @@ class PenglibatanController
             $path = __DIR__ . '/../pages/iStar/permohonan/konvo/temp/';
             $files = [
                 $path . $matrik . '_draft.json',
+                $path . $matrik . '_akademik-tambahan.json',
                 $path . $matrik . '_penglibatan.json',
                 $path . $matrik . '_jawatan.json',
                 $path . $matrik . '_anugerah.json'

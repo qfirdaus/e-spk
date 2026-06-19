@@ -263,6 +263,10 @@
   <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script>
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
   <script src="<?= base_url('assets/js/pages/istar-konvo.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/istar-akademik-tambahan.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/istar-penglibatan.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/istar-jawatan-disandang.js?v=' . time()) ?>"></script>   
+  <script src="<?= base_url('assets/js/pages/istar-anugerah-pengiktirafan.js?v=' . time()) ?>"></script>   
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/konvo.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

@@ -84,6 +84,7 @@
               target="_blank"
               class="btn btn-sm btn-outline-warning rounded-3"
               data-id="<?= h($row['id']) ?>"
+              data-path="<?= $row['dokumen']['path'] ?>"
               title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                   <i class="ri-eye-line"></i>
               </a>                     
@@ -97,6 +98,7 @@
               <input type="file"
                   class="dokumen-inline d-none"
                   data-id="<?= h($row['id']) ?>"
+                  data-tab="anugerah"
                   data-url="pages/iStar/permohonan/konvo/ajax/anugerah.php?action=updateDokumenAnugerah"
                   accept=".pdf,.jpg,.jpeg">
 

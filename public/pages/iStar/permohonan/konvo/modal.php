@@ -152,18 +152,18 @@
                 <label class="form-label">
                   <?= h(tr('kategori_perjawatan','Kategori Perjawatan')) ?>
                 </label>
-                <select name="kategori_aktiviti" id="kategoriAktiviti" class="form-select kategori-select" required>
+                <select name="kod_kategori_aktiviti" id="kategoriAktiviti" class="form-select kategori-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
-                    <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
-                        <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
-                            data-idaktiviti="<?= h($opt['id']) ?>"
-                            data-aktiviti_text="<?= h($opt['kategori_aktiviti']) ?>" >
-                            <?= h(strtoupper($opt['kategori_aktiviti'])) ?>
-                        </option>
+                    <?php foreach ($lookupKategoriPerjawatan as $opt): 
+                    ?>
+                            <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
+                                data-idaktiviti="<?= h($opt['id']) ?>"
+                                data-kategori_aktiviti="<?= h($opt['kategori_aktiviti']) ?>" >
+                                <?= h(strtoupper($opt['kategori_aktiviti'])) ?>
+                            </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="id_aktiviti" id="idAktiviti" class="form-control id-Aktiviti">
-                <input type="hidden" name="aktiviti_text" id="aktivitiText" class="form-control aktiviti-Text">
+                <input type="hidden" name="kategori_aktiviti" id="aktivitiText" class="form-control aktiviti-Text">
               </div>
 
               <!-- Nama Program -->
@@ -188,21 +188,20 @@
               <!-- Jawatan -->
               <div class="mb-3">
                 <label class="form-label"><?= h(tr('jawatan','Jawatan')) ?></label>
-                <select name="jawatan" class="form-select jawatan-select" required>
+                <select name="id_jawatan" class="form-select jawatan-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php 
-                      foreach ($lookupJawatan as $opt): 
-                        if (h(strtoupper($opt['keteranganBP'])) != ''):  $str = ' / '; 
-                        else: $str = ''; 
-                        endif;                       
+                      foreach ($lookupJawatan as $opt):           
+                        if(empty($opt['keteranganBP'])) continue; {}            
                     ?>
                         <option value="<?= h($opt['id_jawatan']) ?>"
-                                data-jawatan_text="<?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>" >
-                            <?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>
+                                data-bp="<?= h(strtoupper($opt['keteranganBP'])) ?>"
+                                data-default="<?= h(strtoupper($opt['keterangan'])) ?>" >
+                            <?= h(strtoupper($opt['keterangan'])) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="jawatan_text" id="jawatanText" class="form-control jawatan-text">
+                <input type="hidden" name="jawatan" class="form-control jawatan-text">
               </div>
 
               <!-- Peringkat -->
