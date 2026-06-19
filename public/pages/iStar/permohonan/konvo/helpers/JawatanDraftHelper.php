@@ -5,6 +5,7 @@ function JawatanDraftPath(string $matrik): string
     return __DIR__ . '/../temp/' . $matrik . '_jawatan.json';
 }
 
+
 function canEditFieldJawatan($row, $field)
 {
     if (($row['sumber'] ?? '') === 'ISTAD') {
@@ -22,6 +23,7 @@ function canEditFieldJawatan($row, $field)
 | READ DRAFT
 |--------------------------------------------------------------------------
 */
+
 function getJawatanDraft(string $matrik): array
 {
     $path = JawatanDraftPath($matrik);
@@ -29,7 +31,6 @@ function getJawatanDraft(string $matrik): array
     if (!file_exists($path)) {
         return [
             'draft_initialized' => false,
-            'updated_at' => null,
             'rows' => []
         ];
     }
@@ -40,64 +41,14 @@ function getJawatanDraft(string $matrik): array
     if (!is_array($data)) {
         return [
             'draft_initialized' => false,
-            'updated_at' => null,
             'rows' => []
         ];
     }
 
     return [
         'draft_initialized' => $data['draft_initialized'] ?? false,
-        'updated_at' => $data['updated_at'] ?? null,
-        'rows' => is_array($data['rows'] ?? null)
-            ? array_values($data['rows'])
-            : []
+        'rows' => $data['rows'] ?? []
     ];
-}
-
-/*
-|--------------------------------------------------------------------------
-| INIT FIRST TIME (FROM ISTAD)
-|--------------------------------------------------------------------------
-*/
-function initJawatanDraft(string $matrik, array $istadRows): array
-{
-    $rows = [];
-
-    foreach ($istadRows as $i => $row) {
-
-        $idBase = $row['id_kegiatan_badan'] ?? $i ;
-
-        $rows[] = [
-            'id' => 'ISTAD_' . $idBase,
-            'id_kegiatan_badan' => $row['id_kegiatan_badan'] ?? null,
-            'sumber' => 'ISTAD',
-
-            'id_kategori_aktiviti' => $row['id_kategori_aktiviti'] ?? null,
-            'kod_kategori_aktiviti' => $row['kod_kategori_aktiviti'] ?? null,
-            'kategori_aktiviti' => $row['kategori_aktiviti'] ?? null,
-
-            'nama_bp_program' => $row['nama_bp_program'] ?? '',
-            'id_jawatan' => $row['id_jawatan'] ?? '',
-            'jawatan' => $row['jawatan'] ?? '',
-            'tarikh_lantikan' => $row['tarikh_mula'] ?? '',
-
-            'peringkat' => $row['peringkat'] ?? null,
-
-            'is_dirty' => false,
-            'source_override' => false,
-            'conflict' => false
-        ];
-    }
-
-    $payload = [
-        'draft_initialized' => true,
-        'updated_at' => date('Y-m-d H:i:s'),
-        'rows' => $rows
-    ];
-
-    saveJawatanDraft($matrik, $payload);
-
-    return $payload;
 }
 
 /*
@@ -119,7 +70,7 @@ function saveJawatanDraft(string $matrik, array $payload): bool
     );
 }
 
-//save by row (for inline edit)
+//save by row 
 function saveJawatanDraftRows(string $matrik, array $rows): bool
 {
     $payload = [

@@ -26,7 +26,6 @@
         foreach ($jawatanData as $i => $row): 
           $peringkat = $row['peringkat'] ?? null;
           $kategori_aktiviti = $row['kategori_aktiviti'] ?? null;
-          $id_kategori_aktiviti = $row['id_kategori_aktiviti'] ?? null;
           $kod_kategori_aktiviti = $row['kod_kategori_aktiviti'] ?? null;
           $jawatan = $row['jawatan'] ?? null;
           $id_jawatan = $row['id_jawatan'] ?? null;
@@ -47,7 +46,7 @@
           </td>     
 
           <!-- Nama Badan Pelajar -->
-          <td class="text-start">
+          <td class="text-start" data-field="nama_bp_program">
           <?php if ($sumber === 'Tambahan'): ?>
               <input type="text"
                     name="nama_bp_program"
@@ -59,28 +58,29 @@
           </td>
 
           <!-- Kategori Perjawatan -->
-          <td>
+          <td data-field="kategori_aktiviti">
           <?php if ($sumber === 'Tambahan'): ?>
-                <select name="kod_kategori_aktiviti" id="kategoriAktiviti" class="form-select kategori-select" required>
+                <select name="kod_kategori_aktiviti" class="form-select kategori-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php foreach ($lookupKategoriPerjawatan as $opt): ?>
                         <option value="<?= h($opt['kod_kategori_aktiviti']) ?>"
                             data-idaktiviti="<?= h($opt['id']) ?>"
-                            data-aktiviti_text="<?= h($opt['kategori_aktiviti']) ?>" 
+                            data-kategori_aktiviti="<?= h($opt['kategori_aktiviti']) ?>" 
                             <?= $kod_kategori_aktiviti == $opt['kod_kategori_aktiviti'] ? 'selected' : '' ?> >
                             <?= h(strtoupper($opt['kategori_aktiviti'])) ?>
                         </option>                    
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="id_kategori_aktiviti" class="form-control id-Aktiviti">
-                <input type="hidden" name="kategori_aktiviti" class="form-control aktiviti-Text">                
+                <input type="hidden" name="kategori_aktiviti" class="form-control aktiviti-Text" value="<?= h($kategori_aktiviti ?? '') ?>" >
+
           <?php else: ?>
+              <input type="hidden" name="kod_kategori_aktiviti" class="form-control" value="<?= h($kod_kategori_aktiviti ?? '') ?>" >   
               <?= h($kategori_aktiviti ?? '-') ?>
           <?php endif; ?>
           </td>
 
           <!-- Tarikh Lantikan -->
-          <td>
+          <td data-field="tarikh_lantikan">
           <?php if ($sumber === 'Tambahan'): ?>
               <input type="text"
                     name="tarikh_lantikan"
@@ -97,31 +97,35 @@
           </td>
 
           <!-- Jawatan -->
-          <td>
+          <td data-field="jawatan">
           <?php if ($sumber === 'Tambahan'): ?>
                 <select name="id_jawatan" class="form-select jawatan-select" required>
                     <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                     <?php 
-                        foreach ($lookupJawatan as $opt): 
-                        if (h(strtoupper($opt['keteranganBP'])) != ''):  $str = ' / '; 
-                        else: $str = ''; 
-                        endif;                           
-                    ?>
-                        <option value="<?= h($opt['id_jawatan']) ?>"
-                                data-jawatan_text="<?= h(strtoupper($opt['keterangan']))  . $str . h(strtoupper($opt['keteranganBP'])) ?>" 
-                            <?= $id_jawatan == $opt['id_jawatan'] ? 'selected' : '' ?> >
-                            <?= h(strtoupper($opt['keterangan'])) ?>
-                        </option>                    
+                        foreach ($lookupJawatan as $opt):                        
+                    ?>     
+                            <option value="<?= h($opt['id_jawatan']) ?>"
+                                data-bp="<?= h(strtoupper($opt['keteranganBP'])) ?>"
+                                data-default="<?= h(strtoupper($opt['keterangan'])) ?>"
+                                <?= $id_jawatan == $opt['id_jawatan'] ? 'selected' : '' ?> >
+
+                            <?= ($kod_kategori_aktiviti == 'BP')
+                                ? h(strtoupper($opt['keteranganBP']))
+                                : h(strtoupper($opt['keterangan'])) ?>
+
+                            </option>                                      
                     <?php endforeach; ?>
                 </select>
-                <input type="hidden" name="jawatan" id="jawatanText" class="form-control jawatan-text">
+                <input type="hidden" name="jawatan" class="form-control jawatan-text" value="<?= h($jawatan ?? '') ?>" >
+
           <?php else: ?>
+              <input type="hidden" name="id_jawatan" class="form-control" value="<?= h($id_jawatan ?? '') ?>" >            
               <?= h($jawatan ?? '-') ?>
           <?php endif; ?>
           </td>          
 
           <!-- Peringkat -->
-          <td>
+          <td data-field="peringkat">
               <select name="peringkat" class="form-select form-select-sm">
                   <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
                   <?php foreach ($lookupPeringkat as $opt): ?>
@@ -145,6 +149,7 @@
                   target="_blank"
                   class="btn btn-sm btn-outline-warning rounded-3"
                   data-id="<?= h($row['id']) ?>" 
+                  data-path="<?= $row['dokumen']['path'] ?>"
                   title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
                       <i class="ri-eye-line"></i>
                   </a>                     
@@ -158,6 +163,7 @@
                   <input type="file"
                       class="dokumen-inline d-none"
                       data-id="<?= h($row['id']) ?>"
+                      data-tab="jawatanDisandang"
                       data-url="pages/iStar/permohonan/konvo/ajax/jawatan.php?action=updateDokumenJawatan"
                       accept=".pdf,.jpg,.jpeg">
               <?php else: ?>

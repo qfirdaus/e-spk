@@ -1,0 +1,89 @@
+{
+    "draft_initialized": true,
+    "updated_at": "2026-06-18 11:05:09",
+    "rows": [
+        {
+            "id": "ISTAD_1994",
+            "id_kegiatan_badan": 1994,
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM RUNNING COMMUNITY (URC)",
+            "id_jawatan": 6,
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "2026-01-08",
+            "peringkat": null,
+            "is_dirty": false,
+            "conflict": false,
+            "source_override": false
+        },
+        {
+            "id": "ISTAD_2119",
+            "id_kegiatan_badan": 2119,
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "PRO",
+            "kategori_aktiviti": "PROGRAM",
+            "nama_bp_program": "UPNM COMMUNITY RUN 2.0",
+            "id_jawatan": 6,
+            "jawatan": "AJK LOGISTIK",
+            "tarikh_lantikan": "2026-04-16",
+            "peringkat": "UNI",
+            "is_dirty": false,
+            "conflict": false,
+            "source_override": true
+        },
+        {
+            "id": "ISTAD_8564",
+            "id_kegiatan_badan": 8564,
+            "sumber": "ISTAD",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "PERSATUAN ANAK SARAWAK",
+            "id_jawatan": 5,
+            "jawatan": "AHLI",
+            "tarikh_lantikan": "2025-10-06",
+            "peringkat": "FK",
+            "is_dirty": false,
+            "conflict": false,
+            "source_override": true
+        },
+        {
+            "id": "new_6a33646e0961a",
+            "id_kegiatan_badan": null,
+            "sumber": "Tambahan",
+            "kod_kategori_aktiviti": "BP",
+            "kategori_aktiviti": "BADAN PELAJAR",
+            "nama_bp_program": "BADAN PELAJAR T3S",
+            "id_jawatan": "4",
+            "jawatan": "BENDAHARI",
+            "tarikh_lantikan": "18-06-2026",
+            "peringkat": "BP",
+            "dokumen": {
+                "filename": "2250005-dok_6a3364ab27008.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a3364ab27008.pdf",
+                "uploaded_at": "2026-06-18 05:23:23"
+            },
+            "is_dirty": true,
+            "conflict": false
+        },
+        {
+            "id": "new_6a336fc119406",
+            "id_kegiatan_badan": null,
+            "sumber": "Tambahan",
+            "kod_kategori_aktiviti": "PJM",
+            "kategori_aktiviti": "PMF\/JPPD\/MTKK",
+            "nama_bp_program": "BADAN PELAJAR T3S",
+            "id_jawatan": "2",
+            "jawatan": "TIMBALAN PENGARAH",
+            "tarikh_lantikan": "18-06-2026",
+            "peringkat": "FK",
+            "dokumen": {
+                "filename": "2250005-dok_6a336fc117d7d.pdf",
+                "path": "pages\/iStar\/permohonan\/konvo\/uploads\/jawatan\/2250005-dok_6a336fc117d7d.pdf",
+                "uploaded_at": "2026-06-18 06:10:41"
+            },
+            "is_dirty": true,
+            "conflict": false
+        }
+    ]
+}
