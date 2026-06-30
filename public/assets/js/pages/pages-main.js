@@ -1,3 +1,12 @@
+jQuery(document).ready(function ($) {
+    // Cari elemen yang ada class .select2 dan aktifkan
+    $('.select2').select2({
+        placeholder: "-- Sila Pilih --",
+        allowClear: false,
+        width: '100%'
+    });
+});
+
 function initDatePicker(parent = document) {
 
     jQuery(parent).find('.datepicker').each(function () {

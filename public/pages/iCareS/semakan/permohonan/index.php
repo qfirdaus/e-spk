@@ -1,23 +1,47 @@
 <?php
   // pages/pengesahan-pelajar.php
   declare(strict_types=1);
+  const PROFILE_CONFIG = [
+  'LOGIN_ACTIVITY_LIMIT' => 30,
+  'AUDIT_EVENTS_LIMIT' => 30,
+  'DATATABLES_PAGE_LENGTH' => 10,
+  'DATATABLES_INIT_DELAY' => 300,
+  'TOAST_DURATION' => 1400,
+  'POLLING_INTERVAL' => 100,
+  'POLLING_MAX_ATTEMPTS' => 50,
+  'COPY_RATE_LIMIT' => 1000
+  ];
   $NEED_DATERANGE  = false;
   $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = false;
-  $NEED_SELECT2    = true;
-  $pageHeading     = 'Pengesahan Pelajar';
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = false;
+  $pageHeading     = 'Maklumat Akademik';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel      = 'Salin No. Matrik';
 
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
+  require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
+  require_once __DIR__ . '/../../../../controllers/RekodPeribadiController.php';  
   require_once __DIR__ . '/../../../../includes/functions-page.php'; 
   include __DIR__ . '/../../../../includes/header.php';
-  include __DIR__ . '/../../../../actions/retrieve-data-peribadi.php';
-
+ 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $errorMessage = $peribadiController->getErrorMessage();  
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+  $rekodPeribadiController = new RekodPeribadiController();
+  $dataSponsor = $rekodPeribadiController->getSponsorData($stafID);
+  $lookupAll = $rekodPeribadiController->getAllLookup();
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
@@ -181,7 +205,6 @@
   <?php 
     include __DIR__ . '/../../../../includes/script.php'; 
     include __DIR__ . '/../../../../includes/script-pages.php';  
-    include __DIR__ . '/../../../../includes/script-custom.php';
   ?>
   <script> 
       const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 
@@ -191,6 +214,7 @@
         syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
       };    
   </script> 
+
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
   <script src="<?= base_url('assets/js/pages/icares-semakan-permohonan.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/semakan.css') ?>">

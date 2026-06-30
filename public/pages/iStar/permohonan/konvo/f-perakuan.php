@@ -5,7 +5,7 @@
             <p class="text-muted mb-0"><?= h(tr('istar_declaration_intro', 'Sahkan semua kenyataan di bawah sebelum menghantar permohonan anda.')) ?></p>
         </div>
 
-        <form method="POST" action="submit.php" id="formPerakuan">
+        <form method="POST" id="formPerakuan">
             <div class="row g-4">
                 <div class="col-12 col-xl-7">
                     <div class="perakuan-section p-3">

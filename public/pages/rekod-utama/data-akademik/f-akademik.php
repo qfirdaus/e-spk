@@ -1,4 +1,6 @@
-
+<?php
+  $lookupSponsor = $lookupAll['sponsor'] ?? [];
+?>
                 <div class="skeleton-loader" style="display: none;">
                   <div class="skeleton-row"></div>
                   <div class="skeleton-row"></div>
@@ -12,7 +14,7 @@
                       <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
                     </div>
 
-                    <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
+                    <form id="form-akademik" method="post" enctype="multipart/form-data">
                       <input type="hidden" name="icares_form" value="data_akademik">
                       <div class="row">
                         <div class="col-12">
@@ -106,7 +108,30 @@
                               <div class="mb-2 row align-items-center">
                                 <label class="col-sm-4 col-form-label"><?= h(tr('profile_pembiayaan_pengajian','Pembiayaan Pengajian')) ?></label>
                                 <div class="col-sm-8">
-                                  <input type="text" name="pembiayaan_pengajian" class="form-control" value="<?= h($pembiayaan_pengajian ?? '') ?>" <?php if (!empty($hideButton)) { ?> readonly<?php } ?> >
+                                  <?php if (($hideButton ?? false) === true): ?>
+                                        <?php 
+                                            $currentSponsorName = '';
+                                            foreach ($lookupSponsor as $opt) {
+                                                if (($dataSponsor['sponsor_code'] ?? '') == $opt['sponsor_code']) {
+                                                    $currentSponsorName = strtoupper($opt['sponsor_name'] ?? $opt['sponsor_name'] ?? '');
+                                                    break;
+                                                }
+                                            }
+                                        ?>
+                                        <input type="text" class="form-control form-control-sm" value="<?= h($currentSponsorName) ?>" readonly>
+                                        <input type="hidden" name="pembiayaan_pengajian" value="<?= h($dataSponsor['sponsor_code'] ?? '') ?>">
+
+                                    <?php else: ?>
+                                        <select name="pembiayaan_pengajian" class="form-select form-select-sm select2">
+                                            <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                                            <?php foreach ($lookupSponsor as $opt): ?>
+                                            <option value="<?= h($opt['sponsor_code']) ?>"
+                                                <?= h($dataSponsor['sponsor_code'] ?? '') == $opt['sponsor_code'] ? 'selected' : '' ?>>
+                                                <?= h(strtoupper($opt['sponsor_name_my'] ?? $opt['sponsor_name'] ?? '')) ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    <?php endif; ?>
                                 </div>
                               </div>                     
                             </div>

@@ -623,50 +623,6 @@ function initStandardDataTable(tableId) {
 
 }
 
-// function initPerakuan() {
-//     if (perakuanloaded) return;
-
-//     const form = document.getElementById('formPerakuan');
-//     const btn = form?.querySelector('button[type="submit"]');
-
-//     if (!form || !btn) return;
-
-//     const chk1 = document.getElementById('chk1');
-//     const chk2 = document.getElementById('chk2');
-//     const chk3 = document.getElementById('chk3');
-
-//     if (!DRAFT_KONVO.perakuan) {
-//         DRAFT_KONVO.perakuan = {};
-//     }
-
-//     function updateState() {
-
-//         DRAFT_KONVO.perakuan.chk1 = chk1.checked ? 1 : 0;
-//         DRAFT_KONVO.perakuan.chk2 = chk2.checked ? 1 : 0;
-//         DRAFT_KONVO.perakuan.chk3 = chk3.checked ? 1 : 0;
-
-//         const allChecked = chk1.checked && chk2.checked && chk3.checked;
-
-//         btn.disabled = !allChecked;
-
-//         saveDraft();
-//     }
-
-//     chk1.addEventListener('change', updateState);
-//     chk2.addEventListener('change', updateState);
-//     chk3.addEventListener('change', updateState);
-
-//     fillPerakuan(); 
-//     //updateState();
-//     perakuanloaded = true;
-
-//     form.addEventListener('submit', function (e) {
-//         e.preventDefault();
-
-//         submitPermohonan();
-//     });    
-// }
-
 function initPerakuan() {
 
     if (perakuanloaded) return;
@@ -701,8 +657,7 @@ function initPerakuan() {
     chk2.addEventListener('change', updateState);
     chk3.addEventListener('change', updateState);
 
-    // ❌ JANGAN CALL updateState HERE
-
+    updateState();
     perakuanloaded = true;
 
     form.addEventListener('submit', function (e) {
@@ -762,43 +717,6 @@ function fillPerakuan() {
     chk3.checked = Number(p.chk3) === 1;
 }
 
-// function fillPerakuan() {
-
-//     const chk1 = document.getElementById('chk1');
-//     const chk2 = document.getElementById('chk2');
-//     const chk3 = document.getElementById('chk3');
-
-//     if (!chk1 || !chk2 || !chk3) return;
-
-//     chk1.checked = DRAFT_KONVO.perakuan?.chk1 == 1;
-//     chk2.checked = DRAFT_KONVO.perakuan?.chk2 == 1;
-//     chk3.checked = DRAFT_KONVO.perakuan?.chk3 == 1;
-// }
-
-// function saveDraft() {
-
-//     fetch(
-//         base_url +
-//         'pages/iStar/permohonan/konvo/ajax/save-draft.php',
-//         {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(DRAFT_KONVO)
-//         }
-//     )
-
-//     .then(res => res.json())
-
-//     .then(data => {
-//         console.log('Draft saved');
-//     })
-
-//     .catch(err => {
-//         console.error('Save failed', err);
-//     });
-// }
 function saveDraft() {
 
     const payload = JSON.parse(JSON.stringify(DRAFT_KONVO));
@@ -870,6 +788,40 @@ jQuery(function () {
         const input = this;
 
         if (!input.files.length) return;
+
+        // checking file size & type
+        if (input.files.length > 0) {
+            let file = input.files[0];
+            let fileSize = file.size / 1024 / 1024; // Tukar saiz kepada MB
+            let fileName = file.name;
+            let fileExtension = fileName.split('.').pop().toLowerCase();
+            
+            let allowedExtensions = ['jpg', 'jpeg', 'pdf'];
+            if ($.inArray(fileExtension, allowedExtensions) == -1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Format Fail Tidak Sah',
+                    text: 'Sila pilih fail dalam format JPG, JPEG atau PDF sahaja.',
+                    confirmButtonColor: '#3085d6'
+                });
+                
+                $(this).val(''); // Reset fail
+                return false;
+            }
+            
+            // Maksimum 5MB
+            if (fileSize > 5) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Saiz Fail Terlalu Besar',
+                    text: 'Saiz fail yang dipilih adalah ' + fileSize.toFixed(2) + 'MB. Maksimum saiz yang dibenarkan adalah 5MB.',
+                    confirmButtonColor: '#3085d6'
+                });
+                
+                $(this).val(''); // Reset fail
+                return false;
+            }
+        }
 
         const file = input.files[0];
         const rowId = jQuery(this).data('id');

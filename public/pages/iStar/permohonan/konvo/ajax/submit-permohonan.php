@@ -19,6 +19,8 @@ if (!$user_id || !$input) {
 $controller = new PenglibatanController();
 
 $appliction_type = 'konvo';
-$result = $controller->submitPermohonan($user_id, $input, $appliction_type);
+$configSesi = $controller->getSesiPermohonan('APPLICATION','pingat_graduan');
+
+$result = $controller->submitPermohonan($user_id, $input, $configSesi['id'], $appliction_type);
 
 echo json_encode($result);

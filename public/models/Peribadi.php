@@ -3,11 +3,13 @@
 class Peribadi
 {
     private PDO $dbStudent;
+    private PDO $dbAsrama;
     private User $userModel;
 
-    public function __construct(PDO $pdoStudent, User $userModel)
+    public function __construct(PDO $pdoStudent, PDO $pdoAsrama, User $userModel)
     {
         $this->dbStudent = $pdoStudent;
+        $this->dbAsrama = $pdoAsrama;
         $this->userModel = $userModel;
     }
 
@@ -114,6 +116,14 @@ class Peribadi
             'alamat2' => (string)($student['alamat2'] ?? ''),
             'alamat3' => (string)($student['alamat3'] ?? ''),
             'alamat4' => (string)($student['alamat4'] ?? ''),
+            'alamat_stay1' => (string)($student['f210almtTT1'] ?? ''),
+            'alamat_stay2' => (string)($student['f210almtTT2'] ?? ''),
+            'alamat_stay3' => (string)($student['f210almtTT3'] ?? ''),
+            'alamat_stay4' => (string)($student['f210almtTT4'] ?? ''),      
+            'alamat_surat1' => (string)($student['f210almtSM1'] ?? ''),
+            'alamat_surat2' => (string)($student['f210almtSM2'] ?? ''),
+            'alamat_surat3' => (string)($student['f210almtSM3'] ?? ''),
+            'alamat_surat4' => (string)($student['f210almtSM4'] ?? ''),     
             'negeri' => (string)($student['negeri'] ?? ''),
             'kategori_kadet' => (string)($student['kategori_kadet'] ?? ''),
             'kadet' => (string)($student['kadet'] ?? ''),
@@ -122,6 +132,18 @@ class Peribadi
             'status_pelajar' => ($student['kategori_kadet'] ?? '') === 'Pkdt' ? 'Kadet ' . ($student['kadet'] ?? '') : ($student['kadet'] ?? ''),
             'avatar_url' => $avatar,         
         ];
+    }
+
+    public function getPenginapanStudent(string $matrik): array
+    {
+        $sql = "SELECT *  
+                FROM v_PenginapanPelajar           
+                WHERE convert(varchar(50), matrik) = :matrik ";
+
+        $stmt = $this->dbAsrama->prepare($sql);
+        $stmt->execute([trim($matrik)]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
 
     public function count_age(DateTime $tarikh_lahir): string {

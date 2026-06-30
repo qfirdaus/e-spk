@@ -22,9 +22,12 @@ class PeribadiController
             throw new RuntimeException('Sambungan Sybase Pelajar tidak tersedia.');
         }
 
+        $pdoAsrama = Database::pdoAdditional('dbx_sybase_asramadb', 'production');
+        $pdoAsrama->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);        
+
         $this->userModel = new User(Database::pdoMysql());
 
-        $this->model = new Peribadi($pdoStudent, $this->userModel);
+        $this->model = new Peribadi($pdoStudent, $pdoAsrama, $this->userModel);
     }
 
 
@@ -49,6 +52,19 @@ class PeribadiController
 
             $avatar = $this->model->getAvatar((string)($student['matrik'] ?? ''), base_url('assets/images/no-image.jpg'));
             return $this->model->formatStudent($student, $avatar);
+
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [];
+        }
+    }
+
+    public function getPenginapanSemasaPengajian(): array
+    {
+        try{
+            $matrik = trim((string)($_SESSION['f_stafID'] ?? ''));
+            
+            return $this->model->getPenginapanStudent($matrik);
 
         } catch (Throwable $e) {
             $this->errorMessage = $e->getMessage();

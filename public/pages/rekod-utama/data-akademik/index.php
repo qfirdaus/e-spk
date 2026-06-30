@@ -18,7 +18,7 @@
   $NEED_DATERANGE  = false;
   $NEED_VECTORMAP  = false;
   $NEED_DATATABLES = true;
-  $NEED_SELECT2    = false;
+  $NEED_SELECT2    = true;
   $pageHeading     = 'Maklumat Akademik';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel      = 'Salin No. Matrik';
@@ -26,7 +26,8 @@
   require_once __DIR__ . '/../../../includes/init.php';
   require_login();
   require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../controllers/PeribadiController.php';   
+  require_once __DIR__ . '/../../../controllers/PeribadiController.php'; 
+  require_once __DIR__ . '/../../../controllers/RekodPeribadiController.php';  
   require_once __DIR__ . '/../../../includes/functions-page.php'; 
   include __DIR__ . '/../../../includes/header.php';
  
@@ -39,8 +40,12 @@
 
   $peribadiController = new PeribadiController();
   $peribadi = $peribadiController->getCurrentUserDetailsInfo();
-  $errorMessage = $peribadiController->getErrorMessage();
+  $errorMessage = $peribadiController->getErrorMessage();  
   $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+  $rekodPeribadiController = new RekodPeribadiController();
+  $dataSponsor = $rekodPeribadiController->getSponsorData($stafID);
+  $lookupAll = $rekodPeribadiController->getAllLookup();
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
@@ -135,9 +140,24 @@
   <?php 
     include __DIR__ . '/../../../includes/script.php'; 
     include __DIR__ . '/../../../includes/script-pages.php';  
-    include __DIR__ . '/../../../includes/script-custom.php';
   ?>
+  <script> 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
+      const msg_load = {
+        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
+        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
+        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
+      };          
+  </script>
 
-<div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
+  <?php if ($NEED_SELECT2): ?>
+    <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>?v=<?= time(); ?>"></script>
+  <?php endif; ?>
+
+  <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/hepa-data-akademik.js?v=' . time()) ?>"></script>
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/rekod-utama.css') ?>">
+
+  <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

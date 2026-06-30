@@ -11,28 +11,41 @@
   'POLLING_MAX_ATTEMPTS' => 50,
   'COPY_RATE_LIMIT' => 1000
   ];
-
-  $NEED_DATERANGE  = false;
-  $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = false;
-  $NEED_SELECT2    = true;
-  
   require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
+  require_once __DIR__ . '/../../../../includes/functions-page.php'; 
 
   $PAGE_TITLE = tr('istar_title', 'iStar');
   $pageHeading     = 'Pengesahan Pelajar';
   $profileCardLabel = 'Profil Pelajar';
   $copyIdLabel      = 'Salin No. Matrik';
+  $NEED_DATERANGE  = false;
+  $NEED_VECTORMAP  = false;
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = true;
 
+  include __DIR__ . '/../../../../includes/header.php';  
   require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
   require_once __DIR__ . '/../../../../controllers/PeribadiController.php'; 
-  require_once __DIR__ . '/../../../../includes/functions-page.php'; 
-  include __DIR__ . '/../../../../includes/header.php';
-  include __DIR__ . '/../../../../actions/retrieve-data-peribadi.php';
+  require_once __DIR__ . '/../../../../controllers/RekodPeribadiController.php';
 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $peribadiController = new PeribadiController();
+  $peribadi = $peribadiController->getCurrentUserDetailsInfo();
+  $dataKolej = $peribadiController->getPenginapanSemasaPengajian();
+  $errorMessage = $peribadiController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
+
+  $rekodPeribadiController = new RekodPeribadiController();
+  $dataSponsor = $rekodPeribadiController->getSponsorData($stafID);
+  $lookupAll = $rekodPeribadiController->getAllLookup();
+  $lookupSponsor = $lookupAll['sponsor'] ?? [];  
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
@@ -159,7 +172,6 @@
   <?php 
     include __DIR__ . '/../../../../includes/script.php'; 
     include __DIR__ . '/../../../../includes/script-pages.php';  
-    include __DIR__ . '/../../../../includes/script-custom.php';
   ?>
   <script> 
       const base_url = "<?= rtrim(base_url(), '/') . '/' ?>"; 

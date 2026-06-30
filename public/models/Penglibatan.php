@@ -152,22 +152,45 @@ class Penglibatan
     }
     /**  Get lookup data   */
 
-    public function getActiveSession(): array
+    public function getActiveSession($config_type, $config_category_award): array
     {
         $sql = "
-            SELECT *
-            FROM istar_config_date
+            SELECT a.*, b.award_desc
+            FROM istar_config_date a
+            LEFT JOIN lp_award_category b ON a.config_category_award = b.award_category
             WHERE config_type = ?
             AND config_category_award = ?
             AND is_active = ?
-            ORDER BY id ASC
+            ORDER BY a.id ASC
+            LIMIT 1
         ";
 
         $stmt = $this->ehepa->prepare($sql);
-        $stmt->execute(['APPLICATION','pingat_graduan',1]);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([$config_type, $config_category_award, 1]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     }
+
+    public function existsPermohonan($matrik, $id_session): bool {
+
+        $sql = "
+            SELECT 1
+            FROM istar_record_application
+            WHERE matric_no = ?
+            AND session_apply = ?
+            LIMIT 1
+        ";
+
+        $stmt = $this->ehepa->prepare($sql);
+
+        $stmt->execute([
+            $matrik,
+            $id_session
+        ]);
+
+        return (bool)$stmt->fetchColumn();
+    }    
 
     /**  Save permohonan   */
     function toMysqlDate($date)
@@ -178,11 +201,11 @@ class Penglibatan
         return $d ? $d->format('Y-m-d') : null;
     }    
     
-    public function savePermohonan($matric_no, $draft, $application_type = 'konvo')
+    public function savePermohonan($matric_no, $draft, $id_session_apply, $application_type = 'konvo')
     {
         $checkSql = "
             SELECT id
-            FROM istar_application
+            FROM istar_record_application
             WHERE matric_no = ?
             AND application_type = ?
             LIMIT 1
@@ -204,32 +227,14 @@ class Penglibatan
         if ($existing) {
 
             $sql = "
-                UPDATE istar_application SET
-                    student_name = ?,
-                    ic_no = ?,
-                    email = ?,
-                    faculty_code = ?,
-                    faculty_name = ?,
-                    program_code = ?,
-                    program_name = ?,
-                    semester = ?,
-                    agreement = ?,
+                UPDATE istar_record_application SET
                     updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ? 
             ";
 
             $stmt = $this->ehepa->prepare($sql);
 
             $stmt->execute([
-                $student['nama_penuh'] ?? '',
-                $student['nokp'] ?? '',
-                $student['email'] ?? '',
-                $student['kdfakulti'] ?? '',
-                $student['fakulti'] ?? '',
-                $student['kdprogram'] ?? '',
-                $student['program'] ?? '',
-                $student['semester_terkini'] ?? '',
-                $agreement,
                 $existing['id']
             ]);
 
@@ -238,56 +243,25 @@ class Penglibatan
         } else {
 
             $sql = "
-                INSERT INTO istar_application (
-                    matric_no,
+                INSERT INTO istar_record_application (
                     application_type,
-
+                    matric_no,
                     student_name,
-                    ic_no,
-                    email,
-
-                    faculty_code,
-                    faculty_name,
-
-                    program_code,
-                    program_name,
-
-                    semester,
-                    agreement,
-
+                    session_apply,
                     status,
-                    submitted_at,
-                    updated_at
+                    agreement,
+                    submitted_at
                 )
-                VALUES (
-                    ?, ?,
-                    ?, ?, ?,
-                    ?, ?,
-                    ?, ?,
-                    ?, ?,
-                    1,
-                    NOW(),
-                    NOW()
-                )
+                VALUES ( ?, ?, ?, ?, 1, ?, NOW() )
             ";
 
             $stmt = $this->ehepa->prepare($sql);
 
             $stmt->execute([
-                $matric_no,
                 $application_type,
-
+                $matric_no,
                 $student['nama_penuh'] ?? '',
-                $student['nokp'] ?? '',
-                $student['email'] ?? '',
-
-                $student['kdfakulti'] ?? '',
-                $student['fakulti'] ?? '',
-
-                $student['kdprogram'] ?? '',
-                $student['program'] ?? '',
-
-                $student['semester_terkini'] ?? '',
+                $id_session_apply ?? '',
                 $agreement
             ]);
 
@@ -296,21 +270,68 @@ class Penglibatan
 
 
         // buang data untuk elak duplicate
-        $this->ehepa->prepare("DELETE FROM istar_application_participation WHERE application_id = ?")
+        $this->ehepa->prepare("DELETE FROM istar_record_personal WHERE application_id = ?")
             ->execute([$application_id]);
 
-        $this->ehepa->prepare("DELETE FROM istar_application_position WHERE application_id = ?")
+        $this->ehepa->prepare("DELETE FROM istar_record_participation WHERE application_id = ?")
             ->execute([$application_id]);
 
-        $this->ehepa->prepare("DELETE FROM istar_application_award WHERE application_id = ?")
+        $this->ehepa->prepare("DELETE FROM istar_record_position WHERE application_id = ?")
             ->execute([$application_id]);
 
+        $this->ehepa->prepare("DELETE FROM istar_record_award WHERE application_id = ?")
+            ->execute([$application_id]);
+
+        // personal
+        if (!empty($draft['dataStudent'])) {
+            $item = $draft['dataStudent'];
+            $sqlPersonal = "
+                INSERT INTO istar_record_personal (
+                    application_id, matric_no, student_name, ic_no, birth_of_date, age, state_of_birth,
+                    nationality, gender, race, religion, marital_status, hpno, hpno_latest, email,
+                    student_status, faculty_code, faculty_name, level_of_study, program_code, program_name,
+                    period_of_study, semester_study_latest, pngs, pngk, study_financing, session_in, session_out, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ";
+            
+            $this->ehepa->prepare($sqlPersonal)->execute([
+                $application_id,
+                $item['matrik'] ?? null,
+                $item['nama_penuh'] ?? null,
+                $item['nokp'] ?? null,
+                $this->toMysqlDate($item['tarikh_lahir'] ?? null),
+                $item['age'] ?? '',
+                $item['negeri_lahir'] ?? '',
+                $item['warganegara'] ?? '',
+                $item['jantina'] ?? '',
+                $item['bangsa'] ?? '',
+                $item['agama'] ?? '',
+                $item['status_kahwin'] ?? '',
+                $item['telno'] ?? '',            
+                $item['telno_terkini'] ?? null, 
+                $item['email'] ?? null,
+                $item['status_pelajar'] ?? '',
+                $item['kdfakulti'] ?? '',
+                $item['fakulti'] ?? '',
+                $item['tahap_pengajian'] ?? '',
+                $item['kdprogram'] ?? '',
+                $item['program'] ?? '',
+                $item['tempoh_program'] ?? '',
+                $item['semester_terkini'] ?? '',
+                $item['pngs'] ?? '',
+                $item['pngk'] ?? '',
+                $item['pembiayaan_pengajian'] ?? '',
+                $item['sesi_akademik_masuk'] ?? '',
+                $item['sesi_akademik_tamat'] ?? ''
+            ]);
+        }
 
         // penglibatan
         foreach ($draft['penglibatan'] ?? [] as $item) {
 
             $sql = "
-                INSERT INTO istar_application_participation (
+                INSERT INTO istar_record_participation (
                     application_id,
                     source,
                     external_id,
@@ -342,7 +363,7 @@ class Penglibatan
         foreach ($draft['jawatan'] ?? [] as $item) {
 
             $sql = "
-                INSERT INTO istar_application_position (
+                INSERT INTO istar_record_position (
                     application_id,
                     external_id,
                     position_id,
@@ -370,7 +391,7 @@ class Penglibatan
         foreach ($draft['anugerah'] ?? [] as $item) {
 
             $sql = "
-                INSERT INTO istar_application_award (
+                INSERT INTO istar_record_award (
                     application_id,
                     external_id,
                     award_name,

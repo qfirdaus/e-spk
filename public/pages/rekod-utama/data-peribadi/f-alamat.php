@@ -4,7 +4,7 @@
                   <div class="skeleton-row"></div>
                 </div>
 
-                <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
+                <form method="post" enctype="multipart/form-data" >
                   <input type="hidden" name="icares_form" value="data_alamat">
 
                   <div class="icares-address-layout">
@@ -63,23 +63,23 @@
                       <div class="tab-pane fade" id="alamat-tinggal-panel" role="tabpanel" aria-labelledby="alamat-tinggal-tab" tabindex="0">
                         <div class="icares-address-panel-header">
                           <h5><?= h(tr('profile_alamat_tempat_tinggal', 'Alamat Tempat Tinggal')) ?></h5>
-                          <span><?= h(tr('profile_alamat_editable', 'Data Sumber')) ?></span>
+                          <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
                         </div>
                         <div class="row g-3">
                           <div class="col-12">
                             <label class="form-label"><?= h(tr('profile_alamat1', 'Alamat')) ?></label>
-                            <input type="text" name="alamat_tinggal_1" class="form-control" value="<?= h($alamat1x ?? '') ?>" readonly>
+                            <input type="text" name="alamat_tinggal_1" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat_stay1'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-12">
-                            <input type="text" name="alamat_tinggal_2" class="form-control" value="<?= h($alamat2x ?? '') ?>" readonly>
+                            <input type="text" name="alamat_tinggal_2" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat_stay2'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_poskod', 'Poskod')) ?></label>
-                            <input type="text" name="alamat_tinggal_poskod" class="form-control" value="<?= h($poskodx ?? '') ?>" readonly>
+                            <input type="text" name="alamat_tinggal_poskod" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat_stay3'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_bandar', 'Bandar')) ?></label>
-                            <input type="text" name="alamat_tinggal_bandar" class="form-control" value="<?= h($bandarx ?? '') ?>" readonly>
+                            <input type="text" name="alamat_tinggal_bandar" class="form-control" value="<?= ucwords(strtolower(h($peribadi['alamat_stay4'] ?? ''))) ?>" readonly>
                           </div>
                           <div class="col-md-4">
                             <label class="form-label"><?= h(tr('profile_negeri', 'Negeri')) ?></label>
@@ -95,43 +95,57 @@
                       <div class="tab-pane fade" id="alamat-penginapan-panel" role="tabpanel" aria-labelledby="alamat-penginapan-tab" tabindex="0">
                         <div class="icares-address-panel-header">
                           <h5><?= h(tr('profile_penginapan_semasa_pengajian', 'Penginapan Semasa Pengajian')) ?></h5>
-                          <span><?= h(tr('profile_alamat_editable', 'Data Sumber')) ?></span>
+                          <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
                         </div>
                         <div class="row g-3">
                           <div class="col-md-6">
                             <label class="form-label"><?= h(tr('kategori_penginapan', 'Kategori Penginapan')) ?></label>
-                            <input type="text" name="alamat_penginapan_kategori" class="form-control" value="Dalam Kampus" readonly>
+                            <input type="text" name="alamat_penginapan_kategori" class="form-control" value="<?= h($dataKolej ["penginapan"] ?? '') ?>" readonly>
                           </div>
-                          <div class="col-12">
-                            <label class="form-label"><?= h(tr('profile_alamat1', 'Alamat')) ?></label>
-                            <input type="text" name="alamat_penginapan_1" class="form-control" value="<?= h($alamat1x ?? '') ?>" readonly>
-                          </div>
-                          <div class="col-12">
-                            <input type="text" name="alamat_penginapan_2" class="form-control" value="<?= h($alamat2x ?? '') ?>" readonly>
-                          </div>
-                          <div class="col-md-4">
-                            <label class="form-label"><?= h(tr('profile_poskod', 'Poskod')) ?></label>
-                            <input type="text" name="alamat_penginapan_poskod" class="form-control" value="<?= h($poskodx ?? '') ?>" readonly>
-                          </div>
-                          <div class="col-md-4">
-                            <label class="form-label"><?= h(tr('profile_bandar', 'Bandar')) ?></label>
-                            <input type="text" name="alamat_penginapan_bandar" class="form-control" value="<?= h($bandarx ?? '') ?>" readonly>
-                          </div>
-                          <div class="col-md-4">
-                            <label class="form-label"><?= h(tr('profile_negeri', 'Negeri')) ?></label>
-                            <input type="text" name="alamat_penginapan_negeri" class="form-control" value="<?= h($negerix ?? '') ?>" readonly>
-                          </div>
-                          <div class="col-md-6">
-                            <label class="form-label"><?= h(tr('profile_negara', 'Negara')) ?></label>
-                            <input type="text" name="alamat_penginapan_negara" class="form-control" value="<?= h($negarax ?? '') ?>" readonly>
-                          </div>
+
+                          <!-- dalam kampus -->
+                          <?php if($dataKolej ["penginapan"] == "Kolej Kediaman"):?>
+                                <div class="col-12">
+                                  <label class="form-label"><?= h(tr('kolej_kediaman', 'Kolej Kediaman')) ?></label>
+                                  <input type="text" name="kolej_kediaman" class="form-control" value="<?= h($dataKolej ["kolejkediaman"] ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-12">
+                                  <label class="form-label"><?= h(tr('no_bilik', 'No. Bilik')) ?></label>
+                                  <input type="text" name="nobilik" class="form-control" value="<?= h($dataKolej["nobilik"] ?? '') ?>" readonly>
+                                </div>  
+                          <?php else: ?>     
+                                <!--luar kampus  -->
+                                <div class="col-12">
+                                  <label class="form-label"><?= h(tr('profile_alamat1', 'Alamat')) ?></label>
+                                  <input type="text" name="alamat_penginapan_1" class="form-control" value="<?= h($dataKolej ["alamat_luarkampus"] ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-12">
+                                  <input type="text" name="alamat_penginapan_2" class="form-control" value="<?= h($dataKolej["nobilik"] ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                  <label class="form-label"><?= h(tr('profile_poskod', 'Poskod')) ?></label>
+                                  <input type="text" name="alamat_penginapan_poskod" class="form-control" value="<?= h($alamat_surat3 ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                  <label class="form-label"><?= h(tr('profile_bandar', 'Bandar')) ?></label>
+                                  <input type="text" name="alamat_penginapan_bandar" class="form-control" value="<?= h($alamat_surat4 ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                  <label class="form-label"><?= h(tr('profile_negeri', 'Negeri')) ?></label>
+                                  <input type="text" name="alamat_penginapan_negeri" class="form-control" value="<?= h($negerix ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-label"><?= h(tr('profile_negara', 'Negara')) ?></label>
+                                  <input type="text" name="alamat_penginapan_negara" class="form-control" value="<?= h($negarax ?? '') ?>" readonly>
+                                </div>
+                          <?php endif; ?>
                         </div>
                       </div>
 
                       <div class="tab-pane fade" id="alamat-surat-panel" role="tabpanel" aria-labelledby="alamat-surat-tab" tabindex="0">
                         <div class="icares-address-panel-header">
                           <h5><?= h(tr('profile_alamat_surat_menyurat', 'Alamat Surat Menyurat')) ?></h5>
-                          <span><?= h(tr('profile_alamat_editable', 'Data Sumber')) ?></span>
+                          <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
                         </div>
                         <div class="row g-3">
                           <div class="col-12">

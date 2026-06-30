@@ -1655,15 +1655,15 @@ class PenglibatanController
     /** Get lookup data */
 
     /** Submit permohonan */
-    public function submitPermohonan($matrik, $draft, $application_type)
+    public function submitPermohonan($matrik, $draft, $id_session_apply, $application_type)
     {
         try {
-            $this->model->savePermohonan($matrik, $draft, $application_type);
+            $this->model->savePermohonan($matrik, $draft, $id_session_apply, $application_type);
             
             $path = __DIR__ . '/../pages/iStar/permohonan/konvo/temp/';
             $files = [
                 $path . $matrik . '_draft.json',
-                $path . $matrik . '_akademik-tambahan.json',
+                $path . $matrik . '_akademik_tambahan.json',
                 $path . $matrik . '_penglibatan.json',
                 $path . $matrik . '_jawatan.json',
                 $path . $matrik . '_anugerah.json'
@@ -1688,15 +1688,19 @@ class PenglibatanController
         }
     }
 
-    public function getSesiPermohonan(): array
+    public function getSesiPermohonan($config_type, $config_category_award): array
     {
         try {
-            return $this->model->getActiveSession();
+            return $this->model->getActiveSession($config_type, $config_category_award);
         } catch (Throwable $e) {
             $this->errorMessage = $e->getMessage();
             return [];
         }
     }     
+
+    public function checkPermohonanSediaAda($matrik, $id_session) {
+        return $this->model->existsPermohonan($matrik, $id_session);
+    }
 
     public function testConnection()
     {

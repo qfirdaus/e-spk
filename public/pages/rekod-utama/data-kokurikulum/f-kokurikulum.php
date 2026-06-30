@@ -1,76 +1,157 @@
+<div class="konvo-tab-card p-3 mb-4">
+  <div class="icares-address-panel-header">
+    <h5 class="text-h5"><?= h(tr('profile_senarai_penglibatan_program','Senarai Penglibatan Program')) ?></h5>
+  </div>
+  <div class="table-responsive dt-standard">
+    <table id="penglibatanDT" class="table table-bordered align-middle w-100">
+    <thead>
+      <tr>
+        <th class="col-bil text-center"><?= h(tr('bil_no', 'No.')) ?></th>
+        <th class="w-10 text-center"></th>
+        <th class="small w-35"><?= h(tr('nama_program_pertandingan', 'Nama Program / Pertandingan')) ?></th>
+        <th class="small w-15"><?= h(tr('tarikh', 'Tarikh')) ?></th>
+        <th class="small w-12"><?= h(tr('wakil', 'Wakil')) ?></th>
+        <th class="small w-12"><?= h(tr('peringkat', 'Peringkat')) ?></th>
+        <th class="small w-16"><?= h(tr('pencapaian', 'Pencapaian')) ?></th>
+        <th class="small text-center" style="width:130px;"><?= h(tr('tindakan', 'Tindakan')) ?></th>
+      </tr>
+    </thead>
 
-                <div class="skeleton-loader" style="display: none;">
-                  <div class="skeleton-row"></div>
-                  <div class="skeleton-row"></div>
-                  <div class="skeleton-row"></div>
-                </div>
+    <tbody>
+    <?php 
+        //$lookupAll call from ajax/load-penglibatan.php
+        $lookupWakil = $lookupAll['wakil'] ?? [];
+        $lookupPeringkat = $lookupAll['peringkat'] ?? [];
+        $lookupPencapaian = $lookupAll['pencapaian'] ?? [];   
 
-                <div class="icares-address-content">
-                  <div class="tab-pane show active">
-                    <div class="icares-address-panel-header">
-                      <h5><?= h(tr('tab_maklumat_kokurikulum','Maklumat Kokurikulum')) ?></h5>
-                      <span><?= h(tr('profile_alamat_source', 'Data Sumber')) ?></span>
-                    </div>
+        foreach ($penglibatanData as $i => $row): 
+            $wakil     = $row['wakil'] ?? null;
+            $peringkat = $row['peringkat'] ?? null;
+            $pencapaian = $row['pencapaian'] ?? null;
+            $sumber = $row['sumber'] ?? 'Tambahan';   
+            $sumberLabel = $sumber === 'ISTAD'
+                ? tr('istar_source_istad', 'ISTAD')
+                : tr('istar_source_additional', 'Tambahan');
+    ?>
+            <tr  data-id="<?= $row['id'] ?>" data-type="<?= $row['sumber'] ?>" >
+                <td class="col-bil text-center"></td>
+                <td class="text-center">
+                    <span class="badge <?php echo $sumber === 'ISTAD' ? 'bg-darkgreen' : 'bg-salmon'; ?>">
+                        <?= h($sumberLabel) ?>
+                    </span>                    
+                </td>
+                
+                <!-- Nama Program -->
+                <td class="text-start" data-field="nama" style="width: 1% !important">
+                <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                    <input type="text"
+                        name="nama"
+                        class="form-control"
+                        value="<?= h($row['nama'] ?? '') ?>">
+                <?php else: ?>
+                    <?= h($row['nama'] ?? '-') ?>
+                <?php endif; ?>
+                </td>
 
-                <form method="post" enctype="multipart/form-data" action="<?= base_url('actions/profile-update.php') ?>">
-                  <input type="hidden" name="icares_form" value="data_kokurikulum">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="row">
-                        <div class="col-md-6 gx-4">
-                          <!-- Status Pelajar -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_status_pelajar','Status Pelajar')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="status_pelajar" class="form-control" value="<?= ucwords(strtolower(h($status_pelajar ?? ''))) ?>" readonly>
-                            </div>                 
-                          </div>
+                <!-- Tarikh -->
+                <td data-field="tarikh">
+                <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                    <input type="text"
+                        name="tarikh"
+                        class="form-control datepicker"
+                        placeholder="dd-mm-yyyy"
+                        value="<?= !empty($row['tarikh'])
+                            ? h(date('d-m-Y', strtotime($row['tarikh'])))
+                            : '' ?>">
+                <?php else: ?>
+                    <?= !empty($row['tarikh'])
+                        ? h(date('d-m-Y', strtotime($row['tarikh'])))
+                        : '-' ?>
+                <?php endif; ?>
+                </td>
 
-                          <!-- Kegiatan Badan Pelajar -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_kegiatan_badan_pelajar','Kegiatan Badan Pelajar')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="kegiatan_badan_pelajar" class="form-control" value="<?= ucwords(strtolower(h($kegiatan_badan_pelajar ?? ''))) ?>" readonly>
-                            </div>
-                          </div>                        
+                <!-- WAKIL (dropdown lookup) -->
+                <td> 
+                    <select name="wakil" class="form-select">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupWakil as $opt): ?>
+                            <option value="<?= h($opt['wakil_code']) ?>"
+                                <?= $wakil == $opt['wakil_code'] ? 'selected' : '' ?>>
+                                <?= h($opt['wakil_my']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
 
-                          <!-- Tahap Penglibatan  -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tahap_penglibatan','Tahap Penglibatan')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="tahap_penglibatan" class="form-control" value="<?= ucwords(strtolower(h($tahap_penglibatan ?? ''))) ?>" readonly>
-                            </div>
-                          </div>
+                <!-- PERINGKAT -->
+                <td>
+                    <select name="peringkat" class="form-select">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupPeringkat as $opt): ?>
+                        <option value="<?= h($opt['peringkat_code']) ?>"
+                            <?= $peringkat == $opt['peringkat_code'] ? 'selected' : '' ?>>
+                            <?= h(strtoupper($opt['peringkat_my'])) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
 
-                        </div>
+                <!-- PENCAPAIAN -->
+                <td>
+                    <select name="pencapaian" class="form-select">
+                        <option value=""><?= h(tr('sila_pilih', 'Sila Pilih')) ?></option>
+                        <?php foreach ($lookupPencapaian as $opt): ?>
+                            <option value="<?= h($opt['pencapaian_code']) ?>"
+                                <?= $pencapaian == $opt['pencapaian_code'] ? 'selected' : '' ?>>
+                                <?= h(strtoupper($opt['pencapaian_my'])) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
 
-                        <div class="col-md-6 gx-4">                                      
-                          <!-- Kegiatan Sukan -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_kegiatan_sukan','Kegiatan Sukan')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="kegiatan_sukan" class="form-control" value="<?= ucwords(strtolower(h($kegiatan_sukan ?? ''))) ?>" readonly>
-                            </div>
-                          </div>
+                <!-- TINDAKAN -->
+                <td>
+                    <?php 
+                    if (
+                        ($row['sumber'] ?? '') === 'Tambahan'
+                        && !empty($row['dokumen']['path'])
+                    ):  ?>
 
-                          <!-- Tahap Penglibatan -->
-                          <div class="mb-2 row align-items-center">
-                            <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('profile_tahap_penglibatan','Tahap Penglibatan')) ?></label>
-                            <div class="col-sm-8">
-                              <input type="text" name="tahap_penglibatan" class="form-control" value="<?= ucwords(strtolower(h($tahap_penglibatan ?? ''))) ?>" readonly>
-                            </div>
-                          </div>              
-                        </div>
+                        <a href="<?= base_url($row['dokumen']['path']) ?>"
+                        target="_blank"
+                        class="btn btn-sm btn-outline-warning rounded-3"
+                        data-id="<?= h($row['id']) ?>"
+                        data-path="<?= $row['dokumen']['path'] ?>"
+                        title="<?= h(tr('lihat_dokumen', 'Lihat Dokumen Sokongan')) ?>">
+                            <i class="ri-eye-line"></i>
+                        </a>                     
+                        <button type="button"
+                                class="btn btn-sm btn-outline-info rounded-3 upload-btn"
+                                title="<?= h(tr('kemaskini_dokumen', 'Kemaskini Dokumen Sokongan')) ?>"
+                                data-id="<?= h($row['id']) ?>">
+                            <i class="bi bi-upload"></i>
+                        </button>
 
-                        <!-- Submit Button -->
-                        <div class="col-12 text-end mt-3">
-                          <button type="submit" class="btn btn-primary rounded-3 px-4 profile-submit-btn"><i class="ri-save-3-line me-2"></i> <?= h(tr('profile_save_button','Simpan')) ?>
-                          </button>
-                        </div>
+                        <input type="file"
+                            class="dokumen-inline d-none"
+                            data-id="<?= h($row['id']) ?>"
+                            data-tab="penglibatan"
+                            data-url="pages/iStar/permohonan/konvo/ajax/penglibatan.php?action=updateDokumen"
+                            accept=".pdf,.jpg,.jpeg">
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
 
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                  </div>
-                </div> 
+                    <?php if (($row['sumber'] ?? '') === 'Tambahan'): ?>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger rounded-3 btn-delete-penglibatan"
+                                title = "<?= h(tr('delete', 'Hapus Rekod')) ?>"
+                                data-id="<?= h($row['id']) ?>">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    <?php endif; ?>                 
+                </td>   
+            </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>  </div></div>

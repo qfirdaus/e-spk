@@ -1,24 +1,44 @@
 <?php
   // pages/data-keluarga.php
   declare(strict_types=1);
-  $NEED_DATERANGE  = false;
-  $NEED_VECTORMAP  = false;
-  $NEED_DATATABLES = true;
-  $NEED_SELECT2    = false;
-  $pageHeading     = 'Maklumat Kokurikulum';
-  $profileCardLabel = 'Profil Pelajar';
-  $copyIdLabel      = 'Salin No. Matrik';
+  const PROFILE_CONFIG = [
+  'LOGIN_ACTIVITY_LIMIT' => 30,
+  'AUDIT_EVENTS_LIMIT' => 30,
+  'DATATABLES_PAGE_LENGTH' => 10,
+  'DATATABLES_INIT_DELAY' => 300,
+  'TOAST_DURATION' => 1400,
+  'POLLING_INTERVAL' => 100,
+  'POLLING_MAX_ATTEMPTS' => 50,
+  'COPY_RATE_LIMIT' => 1000
+  ];
 
   require_once __DIR__ . '/../../../includes/init.php';
   require_login();
-  require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
-  require_once __DIR__ . '/../../../controllers/KeluargaController.php'; 
   require_once __DIR__ . '/../../../includes/functions-page.php'; 
+
+  $NEED_DATERANGE  = false;
+  $NEED_VECTORMAP  = false;
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = true;
+  $pageHeading     = 'Maklumat Peribadi';
+  $profileCardLabel = 'Profil Pelajar';
+  $copyIdLabel      = 'Salin No. Matrik';
+
   include __DIR__ . '/../../../includes/header.php';
-  include __DIR__ . '/../../../actions/retrieve-data-keluarga.php';
+  require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
+  require_once __DIR__ . '/../../../controllers/PeribadiController.php';
+  require_once __DIR__ . '/../../../controllers/PenglibatanController.php';
 
   // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity(PROFILE_CONFIG['LOGIN_ACTIVITY_LIMIT']);
   $isActive = hasActiveSession($loginActivity);
+
+  $penglibatanController = new PenglibatanController();
+  $errorMessage = $penglibatanController->getErrorMessage();
+  $stafID = trim((string)($_SESSION['f_stafID'] ?? ''));
 ?>
 <body
   data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
@@ -97,7 +117,9 @@
 
               <!-- Tab 1: Maklumat Kokurikulum -->
               <div class="tab-pane fade show active" id="maklumat-kokurikulum-tab" role="tabpanel"> 
-                <?php include __DIR__ . '/f-kokurikulum.php'; ?>
+                  <div id="penglibatan-content" class="text-center py-3">
+                      <?= h(tr('data_loading_records', 'Memuatkan Data...')) ?>
+                  </div>
               </div>
 
             </div>
@@ -113,9 +135,28 @@
   <?php 
     include __DIR__ . '/../../../includes/script.php'; 
     include __DIR__ . '/../../../includes/script-pages.php';  
-    include __DIR__ . '/../../../includes/script-custom.php';
   ?>
+  <script> 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
+      const msg_load = {
+        processing: "<?= h(tr('data_processing', 'Sedang diproses...')) ?>",
+        loading: "<?= h(tr('data_loading', 'Sedang memuatkan...')) ?>",
+        syncronizing: "<?= h(tr('data_synchronizing', 'Menyelaraskan data...')) ?>"
+      }; 
+      let DRAFT_KOKU = {
+          dataStudent: <?= json_encode($peribadi ?? []) ?>,
+          penglibatan: {}
+      };             
+  </script>
 
-<div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
+  <?php if ($NEED_SELECT2): ?>
+    <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>?v=<?= time(); ?>"></script>
+  <?php endif; ?>
+
+  <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/hepa-data-kokurikulum.js?v=' . time()) ?>"></script>
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/rekod-utama.css') ?>">
+
+  <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

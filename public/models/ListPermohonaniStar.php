@@ -15,7 +15,7 @@ class ListPermohonaniStar
             SELECT 
                 a.*,
                 s.status AS status_name
-            FROM istar_application a
+            FROM istar_record_application a
             LEFT JOIN lp_status s 
                 ON a.status = s.status_code
             WHERE a.matric_no = ?
@@ -35,10 +35,10 @@ class ListPermohonaniStar
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-        // table istar_application_participation
+        // table istar_record_participation
         $sqlChild = "
             SELECT a.*, w.wakil_my as representative_desc, UPPER(l.peringkat_my) as level_desc
-            FROM istar_application_participation a
+            FROM istar_record_participation a
             LEFT JOIN lp_representative w ON a.representative = w.wakil_code
             LEFT JOIN lp_level l ON a.level = l.peringkat_code
             WHERE application_id IN ($placeholders)
