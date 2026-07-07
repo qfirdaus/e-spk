@@ -9,169 +9,126 @@ class MaklumatPLOController
     private MaklumatPLO $model;
     private PDO $pdoSPK;
     private PDO $pdoStudent;
-
     private string $errorMessage = '';
 
     public function __construct()
     {        
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
     
-        $pdoStudent = Database::pdoSybaseStudent();
-        if (!$pdoStudent instanceof PDO) {
+        $this->pdoStudent = Database::pdoSybaseStudent();
+        if (!$this->pdoStudent instanceof PDO) {
             throw new RuntimeException('Sambungan Sybase Pelajar tidak tersedia.');
         }
 
-        $lang = $_SESSION['lang'] ?? 'ms';
         $this->pdoSPK = Database::pdoMysql();
         $this->pdoSPK->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->model = new MaklumatPLO($this->pdoSPK, $pdoStudent);   
+        // Pasangkan pdoSPK dan pdoStudent ke dalam Model
+        $this->model = new MaklumatPLO($this->pdoSPK, $this->pdoStudent);   
+        
+        // Jalankan fungsi semakan POST secara automatik jika ada carian dibuat
+        $this->handleSearchRequest();
     }
 
-    public function getAllDataPLO(): array
+    /**
+     * Mengendalikan form submission (Carian/Search)
+     */
+    private function handleSearchRequest(): void
     {
-        try {
-            return $this->model->getListDataPLO();
-        } catch (Throwable $e) {
-            $this->errorMessage = $e->getMessage();
-            return [];
-        }   
-    }
-
-    // ######## LOOKUP ###########
-    /** Get lookup data */
-    public function getAllLookup(): array
-    {
-        return [
-            'list_sesikemasukan' => $this->getLookupSesiKemasukan()
-        ];
-    }    
-    
-    public function getLookupSesiKemasukan(): array
-    {
-        try {
-            return $this->model->getSesiKemasukanLookup();
-        } catch (Throwable $e) {
-            $this->errorMessage = $e->getMessage();
-            return [];
+        if (isset($_POST["selectPengajian"]) || isset($_POST["selectSesi"]) || isset($_POST["selectProgram"])) {
+            $_SESSION["pengajianplo"] = $_POST["selectPengajian"] ?? '';
+            $_SESSION["sesiplo"] = $_POST["selectSesi"] ?? '';
+            $_SESSION["programplo"] = $_POST["selectProgram"] ?? '';
+            
+            header('Location: index.php');
+            exit();
         }
-    }   
 
+        // Set default value jika session belum wujud
+        $_SESSION["pengajianplo"] = $_SESSION["pengajianplo"] ?? '';
+        $_SESSION["sesiplo"] = $_SESSION["sesiplo"] ?? '';
+        $_SESSION["programplo"] = $_SESSION["programplo"] ?? '';
+    }
 
-    // // ########## SUBMIT FORM ##########
-    // public function submitApplicationDate($userID, $formData)
-    // {
-    //     try {
-    //         $isSaved = $this->model->saveDateApply($userID, $formData);
+    /**
+     * Menjana kod penapisan berdasarkan Tahap Pengajian
+     */
+    private function getKodTerm(): string
+    {
+        $pengajian = $_SESSION["pengajianplo"] ?? '';
+        if ($pengajian === "Asasi") {
+            return "f005term like 'B%'";
+        } else if ($pengajian === "Diploma") {
+            return "f005term like 'E%'";
+        } else if ($pengajian === "Sarjana Muda") {
+            return "f005term like 'A%'";
+        }
+        return "";
+    }
 
-    //         if ($isSaved) {
-    //             return [
-    //                 'status' => 'success',
-    //                 'message' => 'Maklumat akaun berjaya disimpan'
-    //             ];
-    //         } else {
-    //             return [
-    //                 'status' => 'error',
-    //                 'message' => 'Gagal mengemaskini maklumat ke dalam pangkalan data.'
-    //             ];
-    //         }
+    /**
+     * Mengumpul semua data yang diperlukan oleh halaman utama (View)
+     */
+    public function getHalamanData(): array
+    {
+        $programUniversiti = 'Universiti';
+        $ptj = $_SESSION['ptj'] ?? '';
+        $sesiPlo = $_SESSION["sesiplo"] ?? '';
+        $programPlo = $_SESSION["programplo"] ?? '';
+        $tahapPengajian = $_SESSION["pengajianplo"] ?? '';
 
-    //     } catch (Exception $e) {
-    //         return [
-    //             'status' => 'error',
-    //             'message' => 'Ralat Sistem: ' . $e->getMessage()
-    //         ];
-    //     }        
-    // }
+        $kodTerm = $this->getKodTerm();
 
-    // public function updateDateAppDraft()
-    // {
-    //     header('Content-Type: application/json; charset=utf-8');
+        try {
+            return [
+                'list_sesi'       => $this->model->getSesiList($kodTerm),
+                'list_program'    => $this->model->getProgramList($tahapPengajian, $ptj),
+                'selected_term'   => $this->model->getSelectedTerm($sesiPlo),
+                'selected_program'=> $this->model->getSelectedProgram($programPlo),
+                'list_peo'        => $this->model->getPeoList($sesiPlo, $programPlo),
+                'list_plo'        => $this->model->getPloList($sesiPlo, $programUniversiti),
+                'list_mqf'        => $this->model->getMqfList(),
+            ];
+        } catch (Throwable $e) {
+            $this->errorMessage = $e->getMessage();
+            return [
+                'list_sesi' => [], 'list_program' => [], 'selected_term' => [],
+                'selected_program' => [], 'list_peo' => [], 'list_plo' => [], 'list_mqf' => []
+            ];
+        }
+    }
 
-    //     $userID = trim((string)($_SESSION['f_stafID'] ?? ''));
+    public function savePLO($matrik, $formData)
+    {
+        try {
+            $formData['created_by'] = $matrik;
 
-    //     $configType = trim((string)($_POST['update_config_type'] ?? ''));
-    //     $sessionCategoryAward = trim((string)($_POST['update_config_category_award'] ?? ''));
-    //     $sessionName = trim((string)($_POST['update_config_name_session'] ?? ''));
-    //     $configTarikhMula = trim($_POST['update_config_tarikh_mula'] ?? ''); 
-    //     $configTarikhTamat = trim($_POST['update_config_tarikh_tamat'] ?? ''); 
-    //     $session_status = (int)($_POST['update_config_is_active'] ?? 0);
-    //     $record_id = (int)($_POST['update_config_id'] ?? 0);
+            $isSaved = $this->model->addPloBaharu($formData);
 
-    //     if ($sessionName === '' || $sessionCategoryAward === '' || $sessionName === '' || $configTarikhMula === '' || $configTarikhTamat === '' ) {
-    //         echo json_encode([
-    //             'status' => 'error',
-    //             'message' => 'Sila lengkapkan semua maklumat tarikh permohonan',
-    //         ]);
-    //         exit;
-    //     }
+            if ($isSaved) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod berjaya disimpan'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengemaskini maklumat ke dalam pangkalan data.'
+                ];
+            }
 
-    //     $newRow = [
-    //         'config_type' => $configType,
-    //         'config_category_award' => $sessionCategoryAward,
-    //         'config_name' => $sessionName,
-    //         'start_date' => $configTarikhMula,
-    //         'end_date' => $configTarikhTamat,
-    //         'is_active' => $session_status,
-    //         'updated_by' => $userID
-    //     ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }        
+    }
 
-    //     try {
-    //         $this->model->updateDateApply($record_id, $newRow);
-
-    //         echo json_encode([
-    //             'status' => 'ok',
-    //             'message' => 'Rekod berjaya ditambah',
-    //             'data' => $newRow,
-    //             'id' => $record_id
-    //         ]);
-    //         exit;
-
-    //     } catch (Exception $e) {
-
-    //         echo json_encode([
-    //             'status' => 'error',
-    //             'message' => $e->getMessage()
-    //         ]);
-    //         exit;
-    //     }
-    // }
-
-    // public function deleteDateAppDraft()
-    // {
-    //     header('Content-Type: application/json; charset=utf-8');
-
-    //     $userID = trim((string)($_SESSION['f_stafID'] ?? ''));
-
-    //     $id = trim($_POST['id'] ?? '');
-
-    //     if ($id === '') {
-
-    //         echo json_encode([
-    //             'status' => 'error',
-    //             'message' => 'ID tidak sah'
-    //         ]);
-
-    //         exit;
-    //     }
-
-    //     try {
-    //         $this->model->deleteDateApply($id);
-
-    //         echo json_encode([
-    //             'status' => 'ok',
-    //             'message' => 'Rekod berjaya ditambah'
-    //         ]);
-    //         exit;
-
-    //     } catch (Exception $e) {
-
-    //         echo json_encode([
-    //             'status' => 'error',
-    //             'message' => $e->getMessage()
-    //         ]);
-    //         exit;
-    //     }
-    // }    
-
+    public function getErrorMessage(): string
+    {
+        return $this->errorMessage;
+    }
 }

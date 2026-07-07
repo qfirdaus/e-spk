@@ -1,158 +1,141 @@
 <?php
+declare(strict_types=1);
+
 class MaklumatPLO
 {
-    private PDO $dbSPK;
-    private PDO $dbStudent;
+    private PDO $pdoSPK;
+    private PDO $pdoStudent;
 
     public function __construct(PDO $pdoSPK, PDO $pdoStudent)
     {
-        $this->dbSPK = $pdoSPK;
-        $this->dbStudent = $pdoStudent;
+        $this->pdoSPK = $pdoSPK;
+        $this->pdoStudent = $pdoStudent;
     }
 
-    public function getListDataPLO(): array
+    public function getSesiList(string $tahapPengajian): array
     {
-        $sql = "
-            SELECT * 
-            FROM spk_tplo 
-            WHERE status_aktif= ?
-        ";
-
-        $stmt = $this->dbSPK->prepare($sql);
-        $stmt->execute([1]);
-        //$stmt->execute([1, $_SESSION["sesiplo"], $programuniversiti]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }     
-
-    public function getSesiKemasukanLookup(): array
-    {
-        $sql = "
-            SELECT * 
-            FROM v005_spk 
-            ORDER BY f005term desc
-        ";
-
-        $stmt = $this->dbStudent->prepare($sql);
+        if (empty($tahapPengajian)) return [];
+        
+        $sql = "SELECT * FROM v005_spk WHERE $tahapPengajian ORDER BY f005term DESC";
+        $stmt = $this->pdoStudent->prepare($sql);
         $stmt->execute();
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }      
+    }
 
-    // public function getApplicationSessionLookup($config_type): array
-    // {
-    //     $sql = "
-    //         SELECT a.*, b.award_desc
-    //         FROM istar_config_date a
-    //         LEFT JOIN lp_award_category b ON a.config_category_award = b.award_category
-    //         WHERE config_type = ?
-    //         ORDER BY a.id ASC
-    //         LIMIT 1
-    //     ";
-
-    //     $stmt = $this->dbSPK->prepare($sql);
-
-    //     $stmt->execute([$config_type]);
-
-    //     return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-    // }
-
-    // public function saveDateApply($userID, $formData)
-    // {      
-    //     $sql = "
-    //         INSERT INTO istar_config_date (
-    //             config_type,
-    //             config_category_award,
-    //             config_name,
-    //             start_date,
-    //             end_date,
-    //             created_at,
-    //             created_by
-    //         )
-    //         VALUES (
-    //             ?, ?, ?, ?, ?, NOW(), ?
-    //         )
-    //     ";
-
-    //     $stmt = $this->dbSPK->prepare($sql);
-
-    //     $stmt->execute([
-    //         $formData['config_type'] ?? '',
-    //         $formData['config_category_award'] ?? '',
-    //         $formData['config_name_session'] ?? '',
-    //         $this->toMysqlDate($formData['config_tarikh_mula'] ?? '' ?? null),
-    //         $this->toMysqlDate($formData['config_tarikh_tamat'] ?? '' ?? null),
-    //         $userID ?? ''
-    //     ]);
-
-    //     return true;
-    // }
-    
-    // public function updateDateApply($record_id, $draft)
-    // {
-    //     try {
-
-    //         $sql = "
-    //             UPDATE istar_config_date
-    //             SET
-    //                 config_type = ?,
-    //                 config_category_award = ?,
-    //                 config_name = ?,
-    //                 start_date = ?,
-    //                 end_date = ?,
-    //                 is_active_override = ?,
-    //                 updated_at = NOW(),
-    //                 updated_by = ?
-    //             WHERE id = ?
-    //         ";
-
-    //         $stmt = $this->dbSPK->prepare($sql);
-
-    //         $stmt->execute([
-
-    //             $draft['config_type'] ?? '',
-    //             $draft['config_category_award'] ?? '',
-    //             $draft['config_name'] ?? '',
-    //             $this->toMysqlDate($draft['start_date'] ?? null),
-    //             $this->toMysqlDate($draft['end_date'] ?? null),
-    //             $draft['is_active'] ?? 1,
-    //             $draft['updated_by'] ?? '',
-    //             $record_id
-    //         ]);
-
-    //         return true;
-
-    //     } catch (Exception $e) {
-    //         return false;
-    //     }
-    // }
-    
-    // public function deleteDateApply($rowID)
-    // {
-    //     try {
-
-    //         $sql = "
-    //             DELETE FROM istar_config_date
-    //             WHERE id = ?
-    //             LIMIT 1
-    //         ";
-
-    //         $stmt = $this->dbSPK->prepare($sql);
-    //         $stmt->execute([$rowID]);
-
-    //         return $stmt->rowCount() > 0;
-
-    //     } catch (Exception $e) {
-    //         return false;
-    //     }
-    // }
-
-    function toMysqlDate($date)
+    public function getProgramList(string $tahapPengajian, string $ptj): array
     {
-        if (!$date) return null;
+        $sql = "SELECT * FROM v006_spk WHERE tahap_pengajian = :tahap AND fakulti_singkatan = :ptj ORDER BY program";
+        $stmt = $this->pdoStudent->prepare($sql);
+        $stmt->execute([
+            ':tahap' => $tahapPengajian,
+            ':ptj' => $ptj
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        $d = DateTime::createFromFormat('d-m-Y', $date);
-        return $d ? $d->format('Ymd') : null;
-    }      
+    public function getSelectedTerm(string $sesiPlo): array
+    {
+        $sql = "SELECT * FROM v005_spk WHERE f005term = :sesi";
+        $stmt = $this->pdoStudent->prepare($sql);
+        $stmt->execute([':sesi' => $sesiPlo]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    }
 
+    public function getSelectedProgram(string $programPlo): array
+    {
+        $sql = "SELECT * FROM v006_spk WHERE id_program = :id_program";
+        $stmt = $this->pdoStudent->prepare($sql);
+        $stmt->execute([':id_program' => $programPlo]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getPeoList(string $sesiPlo, string $programPlo): array
+    {
+        $sesiLike = substr($sesiPlo, 0, -1) . '%';
+        
+        $sql = "SELECT * FROM spk_tpeo WHERE status_aktif = 1 AND kod_sesi LIKE :sesi AND kod_program = :program ORDER BY kod_peo";
+        $stmt = $this->pdoSPK->prepare($sql);
+        $stmt->execute([
+            ':sesi' => $sesiLike,
+            ':program' => $programPlo
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPloList(string $sesiPlo, string $programUniversiti): array
+    {
+        $sql = "SELECT * FROM spk_tplo WHERE status_aktif = 1 AND kod_sesi = :sesi AND program_universiti = :program_uni";
+        $stmt = $this->pdoSPK->prepare($sql);
+        $stmt->execute([
+            ':sesi' => $sesiPlo,
+            ':program_uni' => $programUniversiti
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMqfList(): array
+    {
+        $sql = "SELECT * FROM spk_tmqf WHERE status_aktif = 1";
+        $stmt = $this->pdoSPK->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addPloBaharu(array $data): bool 
+    {
+        $program_universiti = 'Universiti';
+        
+        $sesiid = $data['txtsesiid'] ?? null;
+        $kodplo = $data['selectkodplo'] ?? null;
+        $kodmqf = $data['selectkodmqf'] ?? null;
+        $keteranganbm = $data['txtketeranganplo'] ?? null;
+        $created_by = $data['created_by'] ?? null;
+        $chkpeo = $data['chkpeo'] ?? [];
+
+        try {
+            $this->pdoSPK->beginTransaction();
+
+            $sql = "INSERT INTO spk_tplo (program_universiti, kod_plo, keterangan_bm, kod_sesi, kod_mqf, created_by, created_date) 
+                    VALUES (:program_uni, :kod_plo, :keterangan_bm, :kod_sesi, :kod_mqf, :created_by, NOW())";
+                    
+            $stmt = $this->pdoSPK->prepare($sql);
+            $result = $stmt->execute([
+                ':program_uni'   => $program_universiti,
+                ':kod_plo'       => $kodplo,
+                ':keterangan_bm' => $keteranganbm,
+                ':kod_sesi'      => $sesiid,
+                ':kod_mqf'       => $kodmqf,
+                ':created_by'    => $created_by
+            ]);
+
+            if (!$result) {
+                $this->pdoSPK->rollBack();
+                return false;
+            }
+
+            $plo_id = $this->pdoSPK->lastInsertId();
+
+            if (!empty($chkpeo) && $plo_id) {
+                $sql_peo = "INSERT INTO spk_tpenetapan_peo_plo (id_peo, id_plo, created_by, created_date) 
+                            VALUES (:id_peo, :id_plo, :created_by, NOW())";
+                $stmt_peo = $this->pdoSPK->prepare($sql_peo);
+
+                foreach ($chkpeo as $peo) {
+                    $stmt_peo->execute([
+                        ':id_peo'     => $peo,
+                        ':id_plo'     => $plo_id,
+                        ':created_by' => $created_by
+                    ]);
+                }
+            }
+
+            $this->pdoSPK->commit();
+            return true;
+
+        } catch (Exception $e) {
+            if ($this->pdoSPK->inTransaction()) {
+                $this->pdoSPK->rollBack();
+            }
+            throw $e;
+        }
+    }
 }

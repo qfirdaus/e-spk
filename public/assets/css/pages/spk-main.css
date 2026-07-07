@@ -435,17 +435,21 @@ table.dataTable tbody textarea.border-warning {
     margin: 1.75rem auto !important;
 }
 
-.modal.fade,
+.modal-backdrop.show {
+    opacity: 0.5 !important; /* Kekalkan ketelusan kelabu lembut Bootstrap asli */
+}
+/* .modal.fade,
 .modal.fade .modal-dialog,
 .modal.show .modal-dialog {
     transition: none !important;
     transform: none !important;
-}
+} */
 
 .modal-content {
     border: none;
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important; /* Naikkan shadow di content, bukan di dialog */
 }
 
 .modal-header {
@@ -540,3 +544,49 @@ table.dataTable thead th {
     width: 100%;
     clear: both;
 }
+
+/* ##### Select2  ##### */
+
+.select2-container--default .select2-selection--single {
+    height: 40px !important;              
+    border: 1px solid #dee2e6 !important;   
+    border-radius: 12px !important;        
+    background-color: #fff !important;
+    display: block !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 1rem !important;       
+    font-size: 0.85rem !important;        
+    color: #212529 !important;
+    line-height: 38px !important;         
+    text-align: left !important;          
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+    top: 1px !important;
+    right: 12px !important;               
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #6c757d !important; 
+    padding-left: 1rem !important;        
+    font-size: 0.85rem !important;        
+    line-height: 38px !important;         
+    text-align: left !important;          
+}
+
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #6c757d !important; 
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #6c757d transparent transparent transparent !important;
+}
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent #6c757d transparent !important;
+}
+
+/* #### Select2 #### */

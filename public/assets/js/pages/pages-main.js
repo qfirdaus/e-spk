@@ -1,10 +1,18 @@
 jQuery(document).ready(function ($) {
-    // Cari elemen yang ada class .select2 dan aktifkan
-    $('.select2').select2({
-        placeholder: "-- Sila Pilih --",
-        allowClear: false,
-        width: '100%'
-    });
+    $('.select2').each(function () {
+        var $this = $(this);
+        
+        // Cari jika select2 ini berada di dalam modal
+        var $parentModal = $this.closest('.modal'); 
+        
+        $this.select2({
+            placeholder: "-- Sila Pilih --",
+            allowClear: false,
+            width: '100%',
+            // Jika ada modal
+            dropdownParent: $parentModal.length ? $parentModal : null
+        });
+    });    
 });
 
 function initDatePicker(parent = document) {
