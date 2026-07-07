@@ -177,7 +177,34 @@ class MaklumatPLOController
                 'message' => 'Ralat Sistem: ' . $e->getMessage()
             ];
         }         
-    }    
+    }   
+    
+    public function copyPLO($matrik, $formData)
+    {
+        try {
+            $formData['created_by'] = $matrik;
+
+            $isCopied = $this->model->salinPloSesi($formData);
+
+            if ($isCopied) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod PLO berjaya disalin ke sesi baharu.'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal menyalin maklumat PLO ke dalam pangkalan data.'
+                ];
+            }
+
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }        
+    }
 
     public function getErrorMessage(): string
     {

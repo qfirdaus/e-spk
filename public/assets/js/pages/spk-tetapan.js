@@ -8,7 +8,7 @@ function jsSwalText(key, fallback) {
 }
 
 jQuery(function () {
-    // modal tambah lepas click button +
+    // modal tambah - button + clicked
     const modalTambah = document.getElementById('tambah');
     if (modalTambah) {
         modalTambah.addEventListener('show.bs.modal', function (event) {
@@ -18,27 +18,28 @@ jQuery(function () {
             const programId = button.getAttribute('data-programid');
 
             const modal = jQuery(this);
+
             modal.find('#txtsesiid').val(sesiId);
             modal.find('#txtsesi').val(sesi);
             modal.find('#txtprogramid').val(programId);
         });
     }
 
-    // modal salin lepas click button copy
-    // const modalSalin = document.getElementById('salin');
-    // if (modalSalin) {
-    //     modalSalin.addEventListener('show.bs.modal', function (event) {
-    //         const button = event.relatedTarget;
-    //         const sesiId = button.getAttribute('data-sesiId');
-    //         const sesi = button.getAttribute('data-sesi');
-    //         const programId = button.getAttribute('data-programId');
+    // modal salin - button salin clicked
+    const modalSalin = document.getElementById('salin');
+    if (modalSalin) {
+        modalSalin.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const sesi = button.getAttribute('data-sesi');
+            const programId = button.getAttribute('data-programid');
 
-    //         const modal = jQuery(this);
-    //         modal.find('#txtsesiid').val(sesiId);
-    //         modal.find('#txtsesi').val(sesi);
-    //         modal.find('#txtprogramid').val(programId);             
-    //     });
-    // }    
+            const modal = jQuery(this);
+
+            //modal.find('#txtsesiid').val(sesiId);
+            modal.find('#txtsesi').val(sesi);
+            modal.find('#txtprogramid').val(programId);
+        });
+    }
 
     // modal kemaskini
     const modalKemaskini = document.getElementById('kemaskini');
@@ -90,7 +91,7 @@ jQuery(function () {
                 }
             }
         });
-    }    
+    }
 });
 
 function deleteFunc(idPlo) {
@@ -195,16 +196,12 @@ function submitPLO(formElement) {
     .then(res => res.json())
     .then(res => {
         if (res.status === 'success') {
-            // if (document.activeElement) {
-            //     document.activeElement.blur(); 
-            // }    
-
-            // const modalElement = document.getElementById('tambah');
-            // const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-            // modalInstance.hide();
+            const modalElement = document.getElementById('tambah');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modalInstance.hide();
 
             //remove modal backdrop if it exists
-            //document.querySelector('.modal-backdrop')?.remove();
+            document.querySelector('.modal-backdrop')?.remove();
 
             Swal.fire({
                 icon: 'success',
@@ -278,12 +275,12 @@ function updatePLO(formElement) {
     .then(res => res.json())
     .then(res => {
         if (res.status === 'success') {
-            // const modalElement = document.getElementById('kemaskini');
-            // const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-            // modalInstance.hide();
+            const modalElement = document.getElementById('kemaskini');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modalInstance.hide();
 
             //remove modal backdrop if it exists
-            //document.querySelector('.modal-backdrop')?.remove();
+            document.querySelector('.modal-backdrop')?.remove();
 
             Swal.fire({
                 icon: 'success',
@@ -298,6 +295,85 @@ function updatePLO(formElement) {
                 icon: 'error',
                 title: 'Gagal',
                 text: res.message || 'Gagal mengemaskini rekod'
+            });
+        }
+    })
+    .catch(err => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Ralat',
+            text: 'Ralat pelayan (Server Error) semasa menyimpan data'
+        });
+    });
+} 
+
+// copy PLO
+const btnSalinPloSubmit = document.getElementById('btnSalinPloSubmit');
+if (btnSalinPloSubmit) {
+    btnSalinPloSubmit.addEventListener('click', function(e) {
+        const modalElement = document.getElementById('salin');
+        const form = modalElement.querySelector('form');
+        
+        if (!form.checkValidity()) {
+            form.reportValidity(); 
+            return;
+        }
+
+        Swal.fire({
+            title: 'Adakah anda pasti?',
+            text: "Anda mahu menyalin maklumat PLO sesi ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Simpan!',
+            cancelButtonText: 'Batal',
+            target: modalElement,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'btnSalin';
+                hiddenInput.value = '1';
+                form.appendChild(hiddenInput);
+
+                copyPLO(form);
+            }
+        });
+    });
+}
+
+function copyPLO(formElement) {
+    const formData = new FormData(formElement);
+    const controllerUrl = base_url + 'pages/page-admin/maklumat-plo-ku/copy-plo.php';
+
+    fetch(controllerUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === 'success') {
+            const modalElement = document.getElementById('salin');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modalInstance.hide();
+
+            //remove modal backdrop if it exists
+            document.querySelector('.modal-backdrop')?.remove();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berjaya',
+                text: res.message || 'Rekod berjaya disalin',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: res.message || 'Gagal menyalin rekod'
             });
         }
     })

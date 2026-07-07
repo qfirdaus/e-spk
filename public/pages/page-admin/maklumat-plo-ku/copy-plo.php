@@ -1,32 +1,24 @@
 <?php
-
-include("../../action/config.php");
-if (!isset($_SESSION)) {
+if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
+header('Content-Type: application/json');
 
-$programuniversiti = 'Universiti';
-$tosesiid = $_POST["txtsesi"];
-//$toprogramid = $_POST["txtprogramid"];
-$fromsesiid = $_POST["selectSesiModal"];
-//$fromprogramid = $_POST["selectProgramModal"];
-$created_by = $_SESSION['id_staf'];
+require_once __DIR__ . '/../../../controllers/MaklumatPLOController.php';
 
+$input = $_POST; 
 
-$sql = "select * from spk_tplo where status_aktif=1 and kod_sesi='$fromsesiid' and program_universiti='$programuniversiti'";
-$sql_result = @sybase_query($sql, $connection);
-$result_peo = null;
-// echo $sql;
-while ($result = @sybase_fetch_array($sql_result)) {
-    $sql_plo = "insert into spk_tplo(program_universiti, kod_plo, keterangan_bm, kod_sesi, created_by, created_date) "
-            . "values ('$programuniversiti', '".$result['kod_plo']."','".$result['keterangan_bm']."','$tosesiid', '$created_by', GETDATE())";
-    $result_peo = @sybase_query($sql_plo, $connection);
+$user_id = $_SESSION['f_stafID'] ?? $_SESSION['id_staf'] ?? null;
+
+if (!$user_id || empty($input['txtsesi']) || empty($input['selectSesiModal'])) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Permintaan tidak sah atau maklumat sesi tidak lengkap.'
+    ]);
+    exit;
 }
 
+$controller = new MaklumatPLOController();
+$result = $controller->copyPLO($user_id, $input);
 
-if ($result_peo) {
-    header('Location: ../maklumat-plo-ku?action=save-success');
-} else {
-    header('Location: ../maklumat-plo-ku?action=save-fail');
-}
-?>
+echo json_encode($result);

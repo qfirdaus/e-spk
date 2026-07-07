@@ -237,4 +237,64 @@ class MaklumatPLO
             throw $e;
         }      
     } 
+
+    public function salinPloSesi(array $data): bool 
+    {
+        $program_universiti = 'Universiti';
+        
+        $toSesiId = $data['txtsesi'] ?? null;          
+        $fromSesiId = $data['selectSesiModal'] ?? null; 
+        $created_by = $data['created_by'] ?? null;
+
+        if (!$toSesiId || !$fromSesiId) {
+            return false;
+        }
+
+        try {
+            $this->pdoSPK->beginTransaction();
+
+            $sqlSelect = "SELECT kod_plo, keterangan_bm, kod_mqf FROM spk_tplo 
+                          WHERE status_aktif = 1 
+                          AND kod_sesi = :from_sesi 
+                          AND program_universiti = :program_uni";
+            
+            $stmtSelect = $this->pdoSPK->prepare($sqlSelect);
+            $stmtSelect->execute([
+                ':from_sesi'   => $fromSesiId,
+                ':program_uni' => $program_universiti
+            ]);
+            
+            $listPlo = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($listPlo)) {
+                $this->pdoSPK->rollBack();
+                return false; 
+            }
+
+            $sqlInsert = "INSERT INTO spk_tplo (program_universiti, kod_plo, keterangan_bm, kod_sesi, kod_mqf, created_by, created_date) 
+                          VALUES (:program_uni, :kod_plo, :keterangan_bm, :kod_sesi, :kod_mqf, :created_by, NOW())";
+            
+            $stmtInsert = $this->pdoSPK->prepare($sqlInsert);
+
+            foreach ($listPlo as $plo) {
+                $stmtInsert->execute([
+                    ':program_uni'   => $program_universiti,
+                    ':kod_plo'       => $plo['kod_plo'],
+                    ':keterangan_bm' => $plo['keterangan_bm'],
+                    ':kod_sesi'      => $toSesiId,
+                    ':kod_mqf'       => $plo['kod_mqf'],
+                    ':created_by'    => $created_by
+                ]);
+            }
+
+            $this->pdoSPK->commit();
+            return true;
+
+        } catch (Exception $e) {
+            if ($this->pdoSPK->inTransaction()) {
+                $this->pdoSPK->rollBack();
+            }
+            throw $e;
+        }
+    }
 }

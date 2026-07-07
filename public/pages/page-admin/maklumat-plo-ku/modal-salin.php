@@ -20,14 +20,14 @@
               <?= h(tr('LBL-SESI-KEMASUKAN', $lang['LBL-SESI-KEMASUKAN'] ?? 'Sesi Kemasukan')) ?>
             </label>
             <div class="col-sm-9">
-              <select class="form-select form-select-sm select2" name="selectSesiModal" id="selectSesi" required>
-                <option value="" disabled selected>- <?= h(tr('SELECT-PILIH', 'Sila Pilih')) ?> -</option>
-                <?php while ($result = @sybase_fetch_array($sql_result_termList1)) { ?>
-                  <option value="<?= h($result["f005term"]) ?>">
-                    <?= h($result["f005term"]) ?> - <?= h($result["semester"]) ?>
-                  </option>
-                <?php } ?>
-              </select>
+                <select class="form-select form-select-sm select2" name="selectSesiModal" id="selectSesiModal">
+                    <option value="" <?= (empty($_SESSION["sesiplo"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
+                    <?php foreach ($data['list_sesi'] as $sesi): ?>
+                    <option value="<?= h($sesi['f005term']) ?>" <?= ($sesi['f005term'] === ($data['selected_term']['f005term'] ?? '')) ? 'selected' : '' ?> >
+                        <?= h($sesi['f005term']) ?> - <?= h($sesi['semester']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>             
             </div>
           </div>
 

@@ -82,7 +82,7 @@ if ($controller->getErrorMessage()) {
         </button>
 
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnSalin" id="btnSalin" 
-                data-toggle="modal" data-target="#salin" 
+                data-bs-toggle="modal" data-bs-target="#salin" 
                 data-sesi="<?= h($sesiID) ?>"
                 data-programid="<?= h($programID) ?>"
                 title="<?= h(tr('salin_plo', 'Salin PLO')) ?>">
