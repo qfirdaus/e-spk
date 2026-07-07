@@ -8,7 +8,7 @@ function jsSwalText(key, fallback) {
 }
 
 jQuery(function () {
-    // modal tambah
+    // modal tambah lepas click button +
     const modalTambah = document.getElementById('tambah');
     if (modalTambah) {
         modalTambah.addEventListener('show.bs.modal', function (event) {
@@ -23,6 +23,22 @@ jQuery(function () {
             modal.find('#txtprogramid').val(programId);
         });
     }
+
+    // modal salin lepas click button copy
+    // const modalSalin = document.getElementById('salin');
+    // if (modalSalin) {
+    //     modalSalin.addEventListener('show.bs.modal', function (event) {
+    //         const button = event.relatedTarget;
+    //         const sesiId = button.getAttribute('data-sesiId');
+    //         const sesi = button.getAttribute('data-sesi');
+    //         const programId = button.getAttribute('data-programId');
+
+    //         const modal = jQuery(this);
+    //         modal.find('#txtsesiid').val(sesiId);
+    //         modal.find('#txtsesi').val(sesi);
+    //         modal.find('#txtprogramid').val(programId);             
+    //     });
+    // }    
 
     // modal kemaskini
     const modalKemaskini = document.getElementById('kemaskini');
@@ -74,7 +90,7 @@ jQuery(function () {
                 }
             }
         });
-    }
+    }    
 });
 
 function deleteFunc(idPlo) {
