@@ -30,17 +30,6 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-PROGRAM']?></label>
-                                            <div class="col-sm-10">
-                                                <select class="form-control" name="selectProgramModal" id="selectProgram">
-                                                    <option value="" disabled="">- <?= $lang['SELECT-PILIH']?> -</option>
-                                                    <?php while ($result = @sybase_fetch_array($sql_result_programList1)) { ?>
-                                                        <option value="<?= $result["id_program"] ?>"><?= $result["program"] ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
                                     </div>                                                                                             
                                 </div>                          
                             </section>                  

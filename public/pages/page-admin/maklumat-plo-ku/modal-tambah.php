@@ -9,7 +9,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form autocomplete="off" action="sql_add_plo.php" method="POST">
+      <form autocomplete="off" method="POST">
         <div class="modal-body">
           
           <input name="txtprogramid" id="txtprogramid" type="hidden" readonly>

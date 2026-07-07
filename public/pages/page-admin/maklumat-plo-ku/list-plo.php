@@ -141,28 +141,32 @@ if ($controller->getErrorMessage()) {
 
             <td><?= h($row['senarai_clo'] ?? '') ?></td>
 
-            <td>    
-                <button type="button" name="ploBtnUpdate"
-                        class="btn btn-sm btn-outline-secondary rounded-3 btn-update-plo" 
-                        title="<?= h(tr('update', 'Kemaskini Rekod')) ?>"
-                        data-id="<?= $idPLO ?>">
-                    <i class="ri-pencil-line"></i>
-                </button>   
+            <td align="center">    
+              <button type="button" 
+                      class="btn btn-sm btn-icon btn-outline-success me-1" 
+                      id="btnKemaskini" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#kemaskini" 
+                      data-sesiid="<?= h($sesiID) ?>"
+                      data-sesi="<?= h($semester) ?>"
+                      data-programid="<?= h($programID) ?>"
+                      data-program="<?= h($programNama) ?>"
+                      data-idplo="<?= h($idPLO) ?>"
+                      data-kodplo="<?= h($row["kod_plo"]) ?>"
+                      data-keteranganbm="<?= h($row["keterangan_bm"]) ?>"
+                      data-kodmqf="<?= h($row["kod_mqf"]) ?>"
+                      data-peolist='<?= json_encode($list_peo_checked ?? []) ?>'
+                      title="<?= h($lang['TTP-KEMASKINI'] ?? 'Kemaskini') ?>">
+                  <i class="ri-edit-line"></i>
+              </button>
 
-                <button type="button"
-                        class="btn btn-sm btn-outline-warning rounded-3 btn-override-plo"
-                        title="<?= h(tr('override', 'Override')) ?>"
-                        data-id="<?= $idPLO ?>"> 
-                    <i class="ri-toggle-line"></i>
-                </button>  
-
-                <button type="button"
-                        class="btn btn-sm btn-outline-danger rounded-3 btn-delete-plo"
-                        title="<?= h(tr('delete', 'Hapus Rekod')) ?>"
-                        data-id="<?= $idPLO ?>"
-                        <?= $isExpired ?>> 
-                    <i class="ri-delete-bin-line"></i>
-                </button>          
+              <button type="button" 
+                      class="btn btn-sm btn-icon btn-outline-danger" 
+                      id="btnHapus" 
+                      onclick="deleteFunc(<?= h($idPLO) ?>)" 
+                      title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">
+                  <i class="ri-delete-bin-7-line"></i>
+              </button>       
             </td>           
         </tr>
       <?php 

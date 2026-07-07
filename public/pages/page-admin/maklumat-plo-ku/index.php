@@ -135,6 +135,7 @@
     include __DIR__ . '/../../../includes/script-pages.php';  
     include __DIR__ . '/senarai-kod.php';
     include __DIR__ . '/modal-tambah.php';
+    include __DIR__ . '/modal-kemaskini.php';
   ?>
 
   <script> 

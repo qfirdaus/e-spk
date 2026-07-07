@@ -127,6 +127,58 @@ class MaklumatPLOController
         }        
     }
 
+    public function updatePLO($matrik, $formData) {
+        try {
+            $formData['updated_by'] = $matrik;
+
+            $isSaved = $this->model->updateDataPlo($formData);
+
+            if ($isSaved) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod berjaya disimpan'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengemaskini maklumat ke dalam pangkalan data.'
+                ];
+            }
+
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }         
+    }   
+
+    public function deletePLO($matrik, $formData) {
+        try {
+            $formData['updated_by'] = $matrik;
+
+            $isSaved = $this->model->deleteDataPlo($formData);
+
+            if ($isSaved) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod berjaya dihapuskan'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengemaskini maklumat ke dalam pangkalan data.'
+                ];
+            }
+
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }         
+    }    
+
     public function getErrorMessage(): string
     {
         return $this->errorMessage;
