@@ -195,12 +195,16 @@ function submitPLO(formElement) {
     .then(res => res.json())
     .then(res => {
         if (res.status === 'success') {
-            const modalElement = document.getElementById('tambah');
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-            modalInstance.hide();
+            // if (document.activeElement) {
+            //     document.activeElement.blur(); 
+            // }    
+
+            // const modalElement = document.getElementById('tambah');
+            // const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            // modalInstance.hide();
 
             //remove modal backdrop if it exists
-            document.querySelector('.modal-backdrop')?.remove();
+            //document.querySelector('.modal-backdrop')?.remove();
 
             Swal.fire({
                 icon: 'success',
@@ -274,12 +278,12 @@ function updatePLO(formElement) {
     .then(res => res.json())
     .then(res => {
         if (res.status === 'success') {
-            const modalElement = document.getElementById('kemaskini');
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-            modalInstance.hide();
+            // const modalElement = document.getElementById('kemaskini');
+            // const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            // modalInstance.hide();
 
             //remove modal backdrop if it exists
-            document.querySelector('.modal-backdrop')?.remove();
+            //document.querySelector('.modal-backdrop')?.remove();
 
             Swal.fire({
                 icon: 'success',
