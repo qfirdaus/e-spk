@@ -1,5 +1,4 @@
 <?php
-  // pages/konfiguraisi/tetapan-tarikh/index.php
   declare(strict_types=1);
   const PROFILE_CONFIG = [
   'LOGIN_ACTIVITY_LIMIT' => 30,
@@ -154,7 +153,7 @@
   
   <!-- <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script> -->
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/spk-tetapan.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/spk-maklumat-plo.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

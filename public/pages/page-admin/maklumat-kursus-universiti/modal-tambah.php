@@ -1,67 +1,73 @@
+<div class="modal fade modal-gradient" id="tambah" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-add-circle-line me-1"></i>
+          <?= h(tr('TTL-TAMBAH-KURSUS-BAHARU', 'Tambah Kursus Baharu')) ?>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-<div id="tambah" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+      <form autocomplete="off" method="POST">
+        <div class="modal-body">
+          
+          <input name="txtprogramid" id="txtprogramid" type="hidden" readonly>
 
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Kursus Baharu</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('sesi','Sesi')) ?>
+            </label>
+            <div class="col-sm-3 mb-2 mb-sm-0">
+              <input name="txtsesiid" id="txtsesiid" type="text" class="form-control form-control-sm" autocomplete="off" readonly>
             </div>
-            <form autocomplete="off" action="sql_add_kursus.php" method="POST">
-                <div class="modal-body"><div class="row">
-                        <div class="col-lg-12 portlets">
-                            <section class="panel">
-                                <div class="panel-body">
-                                    <span class="arrow"></span>
-                                    <div class="col-xs-12 col-sm-12 col-md-12 co2l-lg-12 col-xl-12">						
-                                        <input name="txtprogramid" id="txtprogramid" type="hidden" class="form-control" autocomplete="off" readonly="">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-SESI-KEMASUKAN']?></label>
-                                            <div class="col-sm-2">
-                                                <input name="txtsesiid" id="txtsesiid" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <input name="txtsesi" id="txtsesi" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Kursus</label>
-                                            <div class="col-sm-5">
-                                                <select class="form-control" name="selectkursus" id="selectkursus">
-                                                    <option value="">- <?= $lang['SELECT-PILIH']?> -</option>
-                                                    <?php
-                                                    while ($result = @sybase_fetch_array($sql_result_subject_list1)) {
-                                                    ?>
-                                                        <option value="<?= $result["kodk"] ?>"><?= $result["kodk"] ?> - <?= $result["subjekbm"] ?></option>
-                                                    <?php 
-                                                    } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Kategori Kursus</label>
-                                            <div class="col-sm-5">
-                                                <select class="form-control" name="selectKategoriKursus" id="selectKategoriKursus">
-                                                      <option value="0"  >- <?= $lang['SELECT-PILIH'] ?> -</option>
-                                                      <option value="Teras">Teras</option>
-                                                      <option value="Elektif">Elektif</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>                                                                                             
-                                </div>                          
-                            </section>                  
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" name="btnTambah" onclick="return confirm('Do you wish to save the information?')" class="btn btn-primary"><?= $lang['BTN-SIMPAN']?></button> 
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang['BTN-BATAL']?></button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+            <div class="col-sm-6">
+              <input name="txtsesi" id="txtsesi" type="text" class="form-control form-control-sm" autocomplete="off" readonly>
+            </div>
+          </div>
 
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-KURSUS', 'Kursus')) ?>
+            </label>
+            <div class="col-sm-9">
+              <select class="form-select form-select-sm select2" name="selectkursus" id="selectkursus" required>
+                  <option value="" disabled selected>- <?= h(tr('SELECT-PILIH', 'Sila Pilih')) ?> -</option>
+                  <?php foreach ($data['list_subject_all'] as $row): ?>
+                  <option value="<?= $row['kodk'] ?>">
+                      <?= h($row['kodk']) ?> - <?= h($row['subjekbm']) ?>
+                  </option>
+                  <?php endforeach; ?>
+              </select>    
+            </div>
+          </div>
+
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-KATEGORI-KURSUS', 'Kategori Kursus')) ?>
+            </label>
+            <div class="col-sm-9">
+              <select class="form-select form-select-sm select2" name="selectKategoriKursus" id="selectKategoriKursus" required>
+                  <option value="0" disabled selected>- <?= h(tr('SELECT-PILIH', 'Sila Pilih')) ?> -</option>
+                  <option value="Teras">Teras</option>
+                  <option value="Elektif">Elektif</option>
+              </select>                               
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+            <?= h(tr('BTN-BATAL', 'Batal')) ?>
+          </button>
+          <button type="button" id="btnHantarKursus" class="btn btn-sm btn-primary">
+            <i class="ri-save-3-line me-1"></i>
+            <?= h(tr('BTN-SIMPAN', 'Simpan')) ?>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
