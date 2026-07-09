@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class KetuaProgram
+class KetuaJabatan
 {
     private PDO $pdoSPK;
     private PDO $pdoStudent;
@@ -35,19 +35,19 @@ class KetuaProgram
         }
     }
 
-    public function getKetuaProgramList(): array
+    public function getKetuaJabatanList(): array
     {            
         $sql = "SELECT * FROM tbl_m_user 
                 WHERE f_flag = 1 /* 1 = dibenarkan, 0 - disekat */
-                AND f_groupID = 28 /* 28 = Ketua Program */
+                AND f_groupID = 3 /* 3 = Ketua Jabatan */
                 ORDER BY f_stafID ASC";
         $stmt = $this->pdoSPK->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // simpan Ketua Program baru
-    public function addHeadProgrammeBaharu($formData): bool 
+    // simpan Ketua Jabatan baru
+    public function addHeadDeptBaharu($formData): bool 
     {
         try {         
             $nopekerja = trim((string)($formData['txtnostaf'] ?? ''));
@@ -58,9 +58,9 @@ class KetuaProgram
 
             $this->pdoSPK->beginTransaction();
 
-            $defaultGroupID = 28; // 28 = Ketua Program
-            $defaultGroupKod = 'ADM-KP';
-            $remarks = "Added/Updated via Tambah Ketua Program form (SPK)";
+            $defaultGroupID = 3; // 3 = Ketua Jabatan
+            $defaultGroupKod = 'ADM-KJ';
+            $remarks = "Added/Updated via Tambah Ketua Jabatan form (SPK)";
 
             $checkSql = "SELECT f_userID, f_flag, f_groupID FROM tbl_m_user WHERE f_stafID = :staff_id OR f_loginID = :login_id LIMIT 1";
             $checkStmt = $this->pdoSPK->prepare($checkSql);
@@ -81,7 +81,7 @@ class KetuaProgram
                         $updateStmt = $this->pdoSPK->prepare($updateSql);
                         $updateStmt->execute([
                             ':updateby' => $formData['created_by'],
-                            ':remarks'  => 'Akaun Ketua Program diaktifkan semula.',
+                            ':remarks'  => 'Akaun Ketua Jabatan diaktifkan semula.',
                             ':userID'   => $userID
                         ]);
 
@@ -95,7 +95,7 @@ class KetuaProgram
                             ':groupID'  => $defaultGroupID,
                             ':groupKod' => $defaultGroupKod,
                             ':updateby' => $formData['created_by'],
-                            ':remarks'  => 'Akaun diaktifkan semula dan ditukar kepada peranan Ketua Program.',
+                            ':remarks'  => 'Akaun diaktifkan semula dan ditukar kepada peranan Ketua Jabatan.',
                             ':userID'   => $userID
                         ]);
                     }
@@ -212,11 +212,11 @@ class KetuaProgram
         }        
     }
 
-    public function deleteDataHeadProgramme(array $data): bool 
+    public function deleteDataHeadDept(array $data): bool 
     {
         $stafID = $data['stafID'] ?? null;
         $updated_by = $data['updated_by'] ?? null;
-        $targetGroupID = 28; // Head of Programme
+        $targetGroupID = 3; // Head of Dept
 
         if (!$stafID) {
             return false;
@@ -234,14 +234,14 @@ class KetuaProgram
                 $userID = (int)$userMain['f_userID'];
                 $currentMainGroupID = (int)$userMain['f_groupID'];
 
-                // tbl_m_user (groupID = 28)
+                // tbl_m_user (groupID = 3)
                 if ($currentMainGroupID === $targetGroupID) {
 
                     $sqlUser = "UPDATE tbl_m_user 
                                 SET f_flag = 0,  
                                     f_updateby = :updatedBy, 
                                     f_updatedt = NOW(),
-                                    f_remarks = 'Akaun disekat kerana penamatan jawatan Ketua Program.'
+                                    f_remarks = 'Akaun disekat kerana penamatan jawatan Ketua Jabatan.'
                                 WHERE f_stafID = :stafID";
                                 
                     $stmtUser = $this->pdoSPK->prepare($sqlUser);
@@ -250,7 +250,7 @@ class KetuaProgram
                         ':stafID'    => $stafID
                     ]);
                 } 
-                // Ketua Program ada di tbl_ref_access - bukan main group ID
+                // Ketua Jabatan ada di tbl_ref_access - bukan main group ID
                 else {
                     // Tukar f_status = 0 (tidak aktif) pada tbl_ref_access untuk groupID = 3 sahaja
                     $sqlAccess = "UPDATE tbl_ref_access 

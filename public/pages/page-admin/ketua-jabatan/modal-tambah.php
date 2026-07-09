@@ -1,65 +1,77 @@
+<div class="modal fade modal-gradient" id="tambah" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-add-circle-line me-1"></i>
+          <?= h(tr('TTL-TAMBAH-PENYELARAS-JABATAN', 'Tambah Ketua Jabatan')) ?>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-<div id="tambah" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><?= $lang['TTL-TAMBAH-KETUA-PROGRAM']  ?></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+      <form autocomplete="off" method="POST">
+        <div class="modal-body">
+                    
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-NOSTAF','No Staf')) ?>
+            </label>
+            <div class="col-sm-9 mb-2 mb-sm-0">
+              <input name="txtnostaf" id="txtnostaf" type="text" class="form-control form-control-sm" autocomplete="off" readonly="">
+              <input name="txtnokp" id="txtnokp" type="hidden" class="form-control form-control-sm" autocomplete="off" readonly="">
+              <input name="txtkodjabatan" id="txtkodjabatan" type="hidden" class="form-control form-control-sm" autocomplete="off" readonly="">              
             </div>
-            <form autocomplete="off" action="sql_add_user.php" method="POST">
-                <div class="modal-body"><div class="row">
-                        <div class="col-lg-12 portlets">
-                            <section class="panel">
+          </div>
 
-                                <div class="panel-body">
-                                    <span class="arrow"></span>
-                                    <div class="col-xs-12 col-sm-12 col-md-12 co2l-lg-12 col-xl-12">	 
-                                        <input name="txtnokp" id="txtnokp" type="hidden" class="form-control" autocomplete="off" readonly="">
-                                        <input name="txtjabatansingkat" id="txtjabatansingkat" type="hidden" class="form-control" autocomplete="off" readonly="">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-NOSTAF'] ?></label>
-                                            <div class="col-sm-5">
-                                                <input name="txtnostaf" id="txtnostaf" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-NAMA'] ?></label>
-                                            <div class="col-sm-10">
-                                                <input name="txtnama" id="txtnama" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-JABATAN'] ?></label>
-                                            <div class="col-sm-10">
-                                                <input name="txtjabatan" id="txtjabatan" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-NOTELEFON'] ?></label>
-                                            <div class="col-sm-5">
-                                                <input name="txtnotel" id="txtnotel" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label"><?= $lang['LBL-EMEL'] ?> </label>
-                                            <div class="col-sm-5">
-                                                <input name="txtemel" id="txtemel" type="text" class="form-control" autocomplete="off" readonly="">
-                                            </div>
-                                        </div>
-                                    </div>                                                                                             
-                                </div>                          
-                            </section>                  
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" name="btnKemaskini" onclick="return confirm('Do you wish to save the information?')" class="btn btn-primary"><?= $lang['BTN-SIMPAN']?></button> 
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang['BTN-BATAL']?></button>
-                </div>
-            </form>
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-NAMA', 'Nama')) ?>
+            </label>
+            <div class="col-sm-9">
+              <input name="txtnama" id="txtnama" type="text" class="form-control form-control-sm" autocomplete="off" readonly="">    
+            </div>
+          </div>
+
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-JABATAN', 'Jabatan')) ?>
+            </label>
+            <div class="col-sm-9">
+              <input name="txtjabatan" id="txtjabatan" type="text" class="form-control form-control-sm" autocomplete="off" readonly="">                               
+            </div>
+          </div>
+
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-NOTELEFON', 'No Telefon')) ?>
+            </label>
+            <div class="col-sm-9">
+              <input name="txtnotel" id="txtnotel" type="text" class="form-control form-control-sm" autocomplete="off" readonly="">                               
+            </div>
+          </div>
+
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-semibold">
+              <?= h(tr('LBL-EMEL', 'Emel')) ?>
+            </label>
+            <div class="col-sm-9">
+              <input name="txtemel" id="txtemel" type="text" class="form-control form-control-sm" autocomplete="off" readonly="">                               
+            </div>
+          </div>
+
         </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+            <?= h(tr('BTN-BATAL', 'Batal')) ?>
+          </button>
+          <button type="button" id="btnTambahKetuaJabatan" class="btn btn-sm btn-primary">
+            <i class="ri-save-3-line me-1"></i>
+            <?= h(tr('BTN-SIMPAN', 'Simpan')) ?>
+          </button>
+        </div>
+      </form>
+
     </div>
+  </div>
 </div>

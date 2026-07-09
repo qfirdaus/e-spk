@@ -87,7 +87,7 @@
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
               <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#ketua-program-tab" role="tab">
-                  <i class="ri-calendar-todo-line me-1"></i> <?= h(tr('TTL-MAKLUMAT-KETUA-PROGRAM','Maklumat Kursus Universiti')) ?>
+                  <i class="ri-calendar-todo-line me-1"></i> <?= h(tr('TTL-MAKLUMAT-KETUA-PROGRAM','Maklumat Ketua Program')) ?>
                 </a>
               </li>             
             </ul>
