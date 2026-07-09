@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../../../controllers/PenilaianController.php';
+require_once __DIR__ . '/../../../controllers/KemahiranController.php';
 
-$controller = new PenilaianController();
+$controller = new KemahiranController();
 $data = $controller->getHalamanData();
 
 if ($controller->getErrorMessage()) {
@@ -11,23 +11,23 @@ if ($controller->getErrorMessage()) {
 ?>
 <div class="konvo-tab-card p-3 mb-4">
   <div class="icares-address-panel-header">
-    <h5 class="text-h5"><?= h(tr('PANEL-PENILAIAN','Senarai Penilaian')) ?></h5>
+    <h5 class="text-h5"><?= h(tr('PANEL-KEMAHIRAN','Senarai Kemahiran')) ?></h5>
 
     <div class="list-actions" style="float: right; margin-bottom:10px;">
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnTambah" id="btnTambah" 
                 data-bs-toggle="modal" data-bs-target="#tambah" 
                 data-bs-container="body"
-                title="<?= h(tr('TTP-TAMBAH-PENILAIAN', 'Tambah Penilaian')) ?>">
+                title="<?= h(tr('TTP-TAMBAH-KEMAHIRAN', 'Tambah Kemahiran')) ?>">
             <i class="ri-add-line"></i>
         </button>     
     </div>    
   </div>
   <div class="table-responsive dt-standard">
-    <table id="dataAssessmentDT" class="table table-bordered align-middle w-100">
+    <table id="dataSkillDT" class="table table-bordered align-middle w-100">
     <thead>
       <tr>
         <th class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
-        <th class="small w-30"><?= h(tr('COL-PENILAIAN', 'Penilaian')) ?></th>
+        <th class="small w-30"><?= h(tr('COL-KEMAHIRAN', 'Kemahiran')) ?></th>
         <th class="small w-15"><?= h(tr('COL-TARIKH-KEMASKINI', 'Tarikh Kemaskini')) ?></th>
         <th class="small w-20 text-center"></th>
       </tr>
@@ -35,9 +35,9 @@ if ($controller->getErrorMessage()) {
 
     <tbody>     
       <?php 
-        $list_dataAssessment= $data['list_assessment'] ?? [];
+        $list_dataSkill = $data['list_skill'] ?? [];
 
-        if (empty($list_dataAssessment)): 
+        if (empty($list_dataSkill)): 
       ?>
         <tr>
           <td colspan="4" class="text-center text-muted py-4">
@@ -46,17 +46,17 @@ if ($controller->getErrorMessage()) {
         </tr>
       <?php 
         else: 
-            foreach ($list_dataAssessment as $i => $row):  
+            foreach ($list_dataSkill as $i => $row):  
                 $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); 
 
-                $idPenilaian = $row['id_penilaian'] ?? '';
+                $idKemahiran = $row['id_kemahiran'] ?? '';
                 $tarikhkemaskini = date("d-M-Y", strtotime($row["created_date"]));
                 if ($row["updated_date"] != NULL)
                     $tarikhkemaskini = date("d-M-Y", strtotime($row["updated_date"]));                
       ?>
         <tr>
             <td class="col-bil text-center"><?= $i + 1 ?></td>         
-            <td><?= h($row['penilaian'] ?? '') ?></td>
+            <td><?= h($row['kemahiran'] ?? '') ?></td>
             <td><?= h($tarikhkemaskini ?? '') ?></td>   
             <td align="center">    
               <button type="button" 
@@ -64,8 +64,8 @@ if ($controller->getErrorMessage()) {
                       id="btnKemaskini" 
                       data-bs-toggle="modal" 
                       data-bs-target="#kemaskini" 
-                      data-idAssessment="<?= $idPenilaian ?>"   
-                      data-assessment="<?= $row['penilaian'] ?>"  
+                      data-idSkill="<?= $idKemahiran ?>"   
+                      data-skill="<?= $row['kemahiran'] ?>"  
                       title="<?= h($lang['TTP-KEMASKINI'] ?? 'Kemaskini') ?>">
                   <i class="ri-edit-line"></i>
               </button>
@@ -73,7 +73,7 @@ if ($controller->getErrorMessage()) {
               <button type="button" 
                       class="btn btn-sm btn-icon btn-outline-danger" 
                       id="btnHapus" 
-                      onclick="deleteFunc(<?= h($idPenilaian) ?>)"
+                      onclick="deleteFunc(<?= h($idKemahiran) ?>)"
                       title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">
                   <i class="ri-delete-bin-7-line"></i>
               </button>  

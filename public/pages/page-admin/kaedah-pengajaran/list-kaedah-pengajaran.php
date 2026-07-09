@@ -23,7 +23,7 @@ if ($controller->getErrorMessage()) {
     </div>    
   </div>
   <div class="table-responsive dt-standard">
-    <table id="dataLocDT" class="table table-bordered align-middle w-100">
+    <table id="dataTeachMethodDT" class="table table-bordered align-middle w-100">
     <thead>
       <tr>
         <th class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
