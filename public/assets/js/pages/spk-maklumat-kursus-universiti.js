@@ -35,23 +35,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function hantarBorangPenyelaras(elemenSelect) {
-    // Ambil form terdekat bagi select yang berubah ini
     var borang = elemenSelect.closest('form');
     if (borang) {
         borang.submit();
     }
 }
 
-// Fungsi 2: Dipicu apabila butang reset diklik
+//  reset 
 function resetPenyelaras(idKursus) {
-    // 1. Cari elemen select berdasarkan ID dinamik yang dihantar
     var $selectElement = $('#select_' + idKursus);
     
     if ($selectElement.length > 0) {
-        // 2. Set nilai kembali ke "0" dan paksa Select2 kemaskini paparan visual
         $selectElement.val('0').trigger('change');
         
-        // 3. Cari form dan hantar ke controller
         var borang = document.getElementById('form_' + idKursus);
         if (borang) {
             borang.submit();

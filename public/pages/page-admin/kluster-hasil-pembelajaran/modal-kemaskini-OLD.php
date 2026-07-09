@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" name="btnKemaskini" onclick="return confirm('Do you wish to save the information?')" class="btn btn-primary"><?= $lang['BTN-SIMPAN']?></button> 
+                    <button type="submit" name="btnKemaskiniLOC" onclick="return confirm('Do you wish to save the information?')" class="btn btn-primary"><?= $lang['BTN-SIMPAN']?></button> 
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang['BTN-BATAL']?></button>
                 </div>
             </form>

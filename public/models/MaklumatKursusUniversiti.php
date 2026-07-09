@@ -21,14 +21,6 @@ class MaklumatKursusUniversiti
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // public function getSesiList(string $kodTerm): array
-    // {
-    //     $sql = "SELECT DISTINCT(sesi2), f005term, semester FROM v005_spk WHERE $kodTerm ORDER BY sesi2 DESC";
-    //     $stmt = $this->pdoStudent->prepare($sql);
-    //     $stmt->execute();
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
-
     /** semakan kursus dan kemasukan */
     public function getKursusDitawarkan(string $sesiKursus, string $createdBy): array
     {
@@ -58,46 +50,10 @@ class MaklumatKursusUniversiti
         return $senaraiAll; 
     }
 
-    // public function getSenaraiKursusTelahDaftar(string $sesiKursus, string $programUniversiti): array
-    // {
-    //     $senaraiAkhir = [];
-
-    //     $sqlSPK = "SELECT DISTINCT kod_kursus, id_kursus, term_pengajian, kategori_kursus, penyelaras_kursus 
-    //                FROM spk_tkursus 
-    //                WHERE term_pengajian = :term 
-    //                AND program_universiti = :program 
-    //                ORDER BY kod_kursus";
-                   
-    //     $stmtSPK = $this->pdoSPK->prepare($sqlSPK);
-    //     $stmtSPK->execute([
-    //         ':term'    => $sesiKursus,
-    //         ':program' => $programUniversiti
-    //     ]);
-    //     $senaraiKursus = $stmtSPK->fetchAll(PDO::FETCH_ASSOC);
-
-    //     $sqlSybase = "SELECT subjekbm FROM v270offer_spk WHERE term = :term AND kodk = :kod";
-    //     $stmtSybase = $this->pdoStudent->prepare($sqlSybase);
-
-    //     foreach ($senaraiKursus as $row) {
-            
-    //         $stmtSybase->execute([
-    //             ':term' => $row["term_pengajian"],
-    //             ':kod'  => $row["kod_kursus"]
-    //         ]);
-            
-    //         $subjek = $stmtSybase->fetch(PDO::FETCH_ASSOC);
-    //         $row['subjekbm'] = $subjek ? trim($subjek['subjekbm']) : '';
-
-    //         $senaraiAkhir[] = $row;
-    //     }
-
-    //     return $senaraiAkhir;
-    // }    
     public function getSenaraiKursusTelahDaftar(string $sesiKursus, string $programUniversiti): array
     {
         $senaraiAkhir = [];
 
-        // 1. Ambil senarai asas kursus dari MySQL (pdoSPK)
         $sqlSPK = "SELECT DISTINCT id_kursus, kod_kursus, term_pengajian, kategori_kursus, penyelaras_kursus 
                    FROM spk_tkursus 
                    WHERE term_pengajian = :term 
@@ -111,40 +67,33 @@ class MaklumatKursusUniversiti
         ]);
         $senaraiKursus = $stmtSPK->fetchAll(PDO::FETCH_ASSOC);
 
-        // 2. Prepare Query Sybase (pdoStudent) - Untuk dapatkan Nama Penyelaras
         $sqlPenyelaras = "SELECT gelar_nama FROM stafdb.dbo.v630staf_service_skim_aktif WHERE nopekerja = :nopekerja";
         $stmtPenyelaras = $this->pdoStudent->prepare($sqlPenyelaras);
 
-        // 3. Prepare Query Sybase (pdoStudent) - Untuk dapatkan Senarai Pensyarah Dropdown
         $sqlPensyarah = "SELECT DISTINCT(nopekerja), gelar_nama 
                          FROM v270offer_spk a 
                          LEFT JOIN stafdb.dbo.v630staf_service_skim_aktif s ON a.stafno = CONVERT(varchar(10), s.idpekerja) 
                          WHERE kodk = :kod AND term = :term";
         $stmtPensyarah = $this->pdoStudent->prepare($sqlPensyarah);
 
-        // 4. Prepare Query Sybase (pdoStudent) - Untuk dapatkan Nama Subjek BM
         $sqlSubjek = "SELECT subjekbm FROM v270offer_spk WHERE term = :term AND kodk = :kod";
         $stmtSubjek = $this->pdoStudent->prepare($sqlSubjek);
 
-        // 5. Loop untuk penuhkan semua data dari Sybase bagi setiap baris kursus
         foreach ($senaraiKursus as $row) {
             
-            // A. Dapatkan Nama Penyelaras Semasa
             $row['penyelaras_nama'] = '';
             if (!empty($row['penyelaras_kursus'])) {
                 $stmtPenyelaras->execute([':nopekerja' => $row['penyelaras_kursus']]);
                 $pData = $stmtPenyelaras->fetch(PDO::FETCH_ASSOC);
                 $row['penyelaras_nama'] = $pData ? trim($pData['gelar_nama']) : '';
             }
-            
-            // B. Dapatkan Senarai Pensyarah (Dropdown)
+
             $stmtPensyarah->execute([
                 ':kod'  => $row['kod_kursus'], 
                 ':term' => $row['term_pengajian']
             ]);
             $row['senarai_pensyarah'] = $stmtPensyarah->fetchAll(PDO::FETCH_ASSOC);
 
-            // C. Dapatkan Nama Subjek BM
             $stmtSubjek->execute([
                 ':term' => $row["term_pengajian"],
                 ':kod'  => $row["kod_kursus"]
@@ -152,7 +101,6 @@ class MaklumatKursusUniversiti
             $subjek = $stmtSubjek->fetch(PDO::FETCH_ASSOC);
             $row['subjekbm'] = $subjek ? trim($subjek['subjekbm']) : '';
 
-            // Masukkan baris yang lengkap ke dalam array akhir
             $senaraiAkhir[] = $row;
         }
 
