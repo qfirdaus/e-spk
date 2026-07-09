@@ -1,317 +1,171 @@
 <?php
-include("../../includes/session.php");
-include("sql.php");
+  declare(strict_types=1);
+  const PROFILE_CONFIG = [
+  'LOGIN_ACTIVITY_LIMIT' => 30,
+  'AUDIT_EVENTS_LIMIT' => 30,
+  'DATATABLES_PAGE_LENGTH' => 10,
+  'DATATABLES_INIT_DELAY' => 300,
+  'TOAST_DURATION' => 1400,
+  'POLLING_INTERVAL' => 100,
+  'POLLING_MAX_ATTEMPTS' => 50,
+  'COPY_RATE_LIMIT' => 1000
+  ];
+
+  require_once __DIR__ . '/../../../includes/init.php';
+  require_login();
+  require_once __DIR__ . '/../../../includes/functions-page.php'; 
+
+  $NEED_DATERANGE  = true;
+  $NEED_VECTORMAP  = false;
+  $NEED_DATATABLES = true;
+  $NEED_SELECT2    = true;  
+
+  $PAGE_TITLE = tr('spk_title', 'SPK');
+  $pageHeading     = tr('TTL-MAKLUMAT-PENILAIAN', 'Penilaian');
+  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
+  $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
+  
+  include __DIR__ . '/../../../includes/header.php';
+  require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
+
+  // Check active session status
+  $profile_controller = new ProfileController();
+  $profile = $profile_controller->getCurrentUserProfile();
+  $profileView = $profile;
+  $loginActivity = $profile_controller->getLoginActivity();
+  $isActive = hasActiveSession($loginActivity);
+  
+  $errorMessage = "" ; //$peribadiController->getErrorMessage();
+  $istarPerakuanIdPrefix = 'istar-konvo';
+
+  //print_r($lookupWakil);
 ?>
-<!doctype html>
-<html class="no-js" lang="en">
-    <!-- HEAD -->
-    <?php include("../../includes/head.php"); ?>
 
-    <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+<body
+  data-topbar-color="<?= h($_SESSION['theme.topbar'] ?? 'light') ?>"
+  data-menu-color="<?= h($_SESSION['theme.sidebar'] ?? 'dark') ?>"
+  data-layout="vertical" data-sidebar-size="default" class="loading">
 
-        <div class="wrapper">
-            <!-- HEADER -->
-            <?php include("../../includes/header.php"); ?>
+  <div class="wrapper">
+    <?php include __DIR__ . '/../../../includes/topbar.php'; ?>
+    <?php include __DIR__ . '/../../../includes/sidebar.php'; ?>
 
-            <div class="page-wrap">
-                <div class="app-sidebar colored">
-                    <div class="sidebar-header">
-                        <a class="header-brand" href="index.html">
-                            <div class="logo-img">
-                                <img src="../src/img/brand-white.svg" class="header-brand-img" alt="lavalite"> 
-                            </div>
-                            <span class="text">ThemeKit</span>
-                        </a>
-                        <button type="button" class="nav-toggle"><i data-toggle="expanded" class="ik ik-toggle-right toggle-icon"></i></button>
-                        <button id="sidebarClose" class="nav-close"><i class="ik ik-x"></i></button>
-                    </div>
+    <div class="content-page">
+      <div class="content">
+        <div class="container-fluid">
 
-                    <!-- SIDEBAR -->
-                    <?php include("../../includes/sidebar.php"); ?>
+          <!-- Title + breadcrumb -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap">
+                <h4 class="page-title">
+                  <i class="ri-user-3-line me-1"></i>
+                  <?= h($pageHeading) ?>
+                </h4>
+                <div class="page-title-right">
+                  <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item">
+                      <a href="<?= base_url('pages/dashboard.php') ?>">
+                        <i class="ri-home-4-line align-middle me-1"></i>
+                        <?= h(tr('dashboard_breadcrumb','Papan Pemuka')) ?>
+                      </a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                      <?= h($pageHeading) ?>
+                    </li>
+                  </ol>
                 </div>
-                <div class="main-content">
-                    <div class="container-fluid">
-                        <div class="page-header">
-                            <div class="row align-items-end">
-                                <div class="col-lg-8">
-                                    <div class="page-header-title">
-                                        <i class="ik ik-settings bg-blue"></i>
-                                        <div class="d-inline">
-                                            <h5><?= $lang['TTL-PENETAPAN'] ?></h5>
-                                            <span><?= $lang['TTL-MAKLUMAT-PENILAIAN'] ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <nav class="breadcrumb-container" aria-label="breadcrumb">
-                                        <ol class="breadcrumb">
-                                            <!--<li class="breadcrumb-item">
-                                                <a href="../index.html"><i class="ik ik-home"></i></a>
-                                            </li>
-                                            <li class="breadcrumb-item">
-                                                <a href="#">Tables</a>
-                                            </li>
-                                            <li class="breadcrumb-item active" aria-current="page">Data Table</li>-->
-                                        </ol>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card" >
-                                    <div class="card-header d-block">
-                                        <h3><?= $lang['PANEL-PENILAIAN'] ?></h3>
-                                    </div>
-
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="list-actions" style="float: right; margin-bottom:10px;">
-                                                    <button class="button-round" type="button" name="btnTambah" id="btnTambah" data-toggle="modal" data-target="#tambah" 
-                                                            title="<?= $lang['TTP-TAMBAH-PENILAIAN'] ?>"><i class="ik ik-plus text-primary"></i></button>
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-body">
-
-                                                        <div class="dt-responsive">
-
-                                                            <table id="order-table"
-                                                                   class="table table-bordered nowrap table-hover" >
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th><?= $lang['COL-BIL'] ?></th>
-                                                                        <th><?= $lang['COL-PENILAIAN'] ?></th>
-                                                                        <th><?= $lang['COL-TARIKH-KEMASKINI'] ?></th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <?php
-                                                                    $i = 1;
-                                                                    while ($result = @sybase_fetch_array($sql_result)) {
-                                                                        $tarikhkemaskini = date("d-M-Y", strtotime($result["created_date"]));
-                                                                        if ($result["updated_date"] != NULL)
-                                                                            $tarikhkemaskini = date("d-M-Y", strtotime($result["updated_date"]));
-                                                                        ?>
-                                                                        <tr>
-                                                                            <td><?= $i ?></td>
-                                                                            <td><?= $result["penilaian"] ?></td>
-                                                                            <td><?= $tarikhkemaskini ?></td>
-                                                                            <td width="100px">
-                                                                    <center>
-                                                                        <div class="list-actions">
-                                                                            <form id="deleteForm<?= $i ?>" action="sql_delete_penilaian.php" method="POST">
-                                                                                <input type="hidden" name="txtidpenilaian" value="<?= $result["id_penilaian"]; ?>"> 
-                                                                            </form>
-
-                                                                            <button class="button-round" type="button" name="btnKemaskini" id="btnKemaskini" data-toggle="modal" data-target="#kemaskini" 
-                                                                                    data-idpenilaian="<?= $result['id_penilaian'] ?>"   
-                                                                                    data-penilaian="<?= $result['penilaian'] ?>"  
-                                                                                    title="<?= $lang['TTP-KEMASKINI'] ?>"><i class="ik ik-edit text-green"></i></button>
-                                                                            <button type="submit" class="button-round" onclick="deleteFunc(<?= $i ?>)" title="<?= $lang['TTP-HAPUS'] ?>"><i class="ik ik-trash-2 text-red"></i></button>
-                                                                        </div>
-                                                                    </center>
-                                                                    </td>
-
-                                                                    </tr>
-                                                                    <?php
-                                                                    $i++;
-                                                                }
-                                                                ?>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>         
-                                            <!-- end -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Language - Comma Decimal Place table end -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <aside class="right-sidebar">
-                    <div class="sidebar-chat" data-plugin="chat-sidebar">
-                        <div class="sidebar-chat-info">
-                            <h6>Chat List</h6>
-                            <form class="mr-t-10">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Search for friends ..."> 
-                                    <i class="ik ik-search"></i>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="chat-list">
-                            <div class="list-group row">
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Gene Newman">
-                                    <figure class="user--online">
-                                        <img src="../img/users/1.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Gene Newman</span>  <span class="username">@gene_newman</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Billy Black">
-                                    <figure class="user--online">
-                                        <img src="../img/users/2.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Billy Black</span>  <span class="username">@billyblack</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Herbert Diaz">
-                                    <figure class="user--online">
-                                        <img src="../img/users/3.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Herbert Diaz</span>  <span class="username">@herbert</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Sylvia Harvey">
-                                    <figure class="user--busy">
-                                        <img src="../img/users/4.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Sylvia Harvey</span>  <span class="username">@sylvia</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item active" data-chat-user="Marsha Hoffman">
-                                    <figure class="user--busy">
-                                        <img src="../img/users/5.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Marsha Hoffman</span>  <span class="username">@m_hoffman</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Mason Grant">
-                                    <figure class="user--offline">
-                                        <img src="../img/users/1.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Mason Grant</span>  <span class="username">@masongrant</span> </span>
-                                </a>
-                                <a href="javascript:void(0)" class="list-group-item" data-chat-user="Shelly Sullivan">
-                                    <figure class="user--offline">
-                                        <img src="../img/users/2.jpg" class="rounded-circle" alt="">
-                                    </figure><span><span class="name">Shelly Sullivan</span>  <span class="username">@shelly</span></span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                <div class="chat-panel" hidden>
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <a href="javascript:void(0);"><i class="ik ik-message-square text-success"></i></a>  
-                            <span class="user-name">John Doe</span> 
-                            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="card-body">
-                            <div class="widget-chat-activity flex-1">
-                                <div class="messages">
-                                    <div class="message media reply">
-                                        <figure class="user--online">
-                                            <a href="#">
-                                                <img src="../img/users/3.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>Epic Cheeseburgers come in all kind of styles.</p>
-                                        </div>
-                                    </div>
-                                    <div class="message media">
-                                        <figure class="user--online">
-                                            <a href="#">
-                                                <img src="../img/users/1.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>Cheeseburgers make your knees weak.</p>
-                                        </div>
-                                    </div>
-                                    <div class="message media reply">
-                                        <figure class="user--offline">
-                                            <a href="#">
-                                                <img src="../img/users/5.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>Cheeseburgers will never let you down.</p>
-                                            <p>They'll also never run around or desert you.</p>
-                                        </div>
-                                    </div>
-                                    <div class="message media">
-                                        <figure class="user--online">
-                                            <a href="#">
-                                                <img src="../img/users/1.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>A great cheeseburger is a gastronomical event.</p>
-                                        </div>
-                                    </div>
-                                    <div class="message media reply">
-                                        <figure class="user--busy">
-                                            <a href="#">
-                                                <img src="../img/users/5.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>There's a cheesy incarnation waiting for you no matter what you palete preferences are.</p>
-                                        </div>
-                                    </div>
-                                    <div class="message media">
-                                        <figure class="user--online">
-                                            <a href="#">
-                                                <img src="../img/users/1.jpg" class="rounded-circle" alt="">
-                                            </a>
-                                        </figure>
-                                        <div class="message-body media-body">
-                                            <p>If you are a vegan, we are sorry for you loss.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <form action="javascript:void(0)" class="card-footer" method="post">
-                            <div class="d-flex justify-content-end">
-                                <textarea class="border-0 flex-1" rows="1" placeholder="Type your message here"></textarea>
-                                <button class="btn btn-icon" type="submit"><i class="ik ik-arrow-right text-success"></i></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- MODAL -->
-                <?php
-                include("modal-tambah.php");
-                include("modal-kemaskini.php");
-                ?>
-
-                <!-- FOOTER -->
-                <?php include("../../includes/footer.php"); ?>
+              </div>
             </div>
+          </div>
+
+          <!-- Profile Card with Tabs -->
+          <div class="card border-0 shadow-sm profile-card">
+            <?php include __DIR__ . '/../../../includes/profile-card.php'; ?>
+
+            <!-- Tab Navigasi -->
+            <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#penilaian-tab" role="tab">
+                  <i class="ri-calendar-todo-line me-1"></i> <?= h(tr('TTL-MAKLUMAT-PENILAIAN','Penilaian')) ?>
+                </a>
+              </li>             
+            </ul>
+
+            <!-- Kandungan Tab -->
+            <div class="tab-content p-4">
+              <?php if ($errorMessage): ?>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                  <i class="ri-error-warning-line me-2"></i>
+                  <div>
+                    <?= h($errorMessage) ?>
+                  </div>
+                </div>
+              <?php endif; ?>
+              
+              <?php if ($stafID === '' && !$errorMessage): ?>
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                  <i class="ri-alert-line me-2"></i>
+                  <div>
+                    <?= h(tr(
+                      'profile_empty_notice',
+                      'Profil tidak dijumpai. Sesi login mungkin tamat atau rekod tiada.'
+                    )) ?>
+                  </div>
+                </div>
+              <?php endif; ?>
+        
+              <!-- Tab 1: Penilaian -->
+              <div class="tab-pane fade show active" id="penilaian-tab" role="tabpanel">
+                <?php include __DIR__ . '/list-penilaian.php'; ?>
+              </div>
+              
+            </div>
+          </div>    
+
         </div>
+      </div>
+      <?php include __DIR__ . '/../../../includes/footer.php'; ?>
+    </div>
+  </div>
 
-        <!-- SCRIPT -->
-        <?php include("../../includes/script.php"); ?>
-        <script src="../../js/datatables.js"></script>
-        <script src="../../plugins/sweetalert/dist/sweetalert.min.js"></script>
-        <script src="../../plugins/summernote/dist/summernote-bs4.min.js"></script>
-        <script src="../../dist/js/theme.min.js"></script>
-        <script src="../../js/layouts.js"></script>
-        <script>
-                                                                            function deleteFunc(id) {
-                                                                                if (confirm('Do you wish to delete the information?'))
-                                                                                    document.getElementById('deleteForm' + id).submit();
-                                                                                else
-                                                                                    return false;
-                                                                            }
+  <?php if (isset($_SESSION['flash_alert'])): ?>
+    <div id="flash-alert-data" 
+         data-icon="<?= h($_SESSION['flash_alert']['icon']) ?>"
+         data-title="<?= h($_SESSION['flash_alert']['title']) ?>"
+         data-message="<?= h($_SESSION['flash_alert']['message']) ?>">
+    </div>
+  <?php 
+      // alert tak berulang bila di-refresh
+      unset($_SESSION['flash_alert']); 
+      endif; 
+  ?> 
 
-                                                                            $(document).on("click", "#btnKemaskini", function () {
-                                                                                var idpenilaian = $(this).data('idpenilaian');
-                                                                                $("#kemaskini .modal-body #txtidpenilaian").val(idpenilaian);
+  <?php 
+    include __DIR__ . '/../../../includes/script.php'; 
+    include __DIR__ . '/../../../includes/script-pages.php';  
+    include __DIR__ . '/modal-tambah.php';
+    include __DIR__ . '/modal-kemaskini.php';
+  ?>
 
-                                                                                var penilaian = $(this).data('penilaian');
-                                                                                $("#kemaskini .modal-body #txtpenilaian").val(penilaian);
+  <script> 
+      const base_url = "<?= rtrim(base_url(), '/') . '/' ?>";
+      const msg_load = {
+        processing: <?= json_encode(tr('data_processing', 'Sedang diproses...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        loading: <?= json_encode(tr('data_loading', 'Sedang memuatkan...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
+        syncronizing: <?= json_encode(tr('data_synchronizing', 'Menyelaraskan data...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>
+      };        
+  </script> 
 
-                                                                            });
+  <?php if ($NEED_SELECT2): ?>
+    <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>?v=<?= time(); ?>"></script>
+  <?php endif; ?>
+  
+  <!-- <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script> -->
+  <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/spk-penilaian.js?v=' . time()) ?>"></script> 
+  <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
-
-
-
-        </script>
-    </body>
+  <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>
+</body>
 </html>
