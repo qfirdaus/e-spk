@@ -41,7 +41,7 @@ include("sql.php");
                                         <i class="ik ik-settings bg-blue"></i>
                                         <div class="d-inline">
                                             <h5><?= $lang['TTL-PENETAPAN'] ?></h5>
-                                            <span><?= $lang['TTL-MAKLUMAT-PENYELARAS-PROGRAM'] ?></span>
+                                            <span><?= $lang['TTL-MAKLUMAT-KETUA-PROGRAM'] ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -85,7 +85,7 @@ include("sql.php");
                             <div class="col-sm-12">
                                 <div class="card" >
                                     <div class="card-header d-block">
-                                        <h3><?= $lang['PANEL-SENARAI-PENYELARAS-PROGRAM'] ?></h3>
+                                        <h3><?= $lang['PANEL-SENARAI-KETUA-PROGRAM'] ?></h3>
                                     </div>
 
                                     <div class="card-body">

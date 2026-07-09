@@ -206,6 +206,7 @@ class MaklumatPLO
     public function deleteDataPlo(array $data): bool 
     {
         $idplo = $data['id_plo'] ?? null;
+        $status_PLO = 0; // delete
 
         if (!$idplo) {
             return false;
@@ -214,13 +215,9 @@ class MaklumatPLO
         try {
             $this->pdoSPK->beginTransaction();
 
-            $sql_delete_peo = "DELETE FROM spk_tpenetapan_peo_plo WHERE id_plo = :id_plo";
-            $stmt_peo = $this->pdoSPK->prepare($sql_delete_peo);
-            $stmt_peo->execute([':id_plo' => $idplo]);
-
-            $sql_delete_plo = "DELETE FROM spk_tplo WHERE id_plo = :id_plo";
+            $sql_delete_plo = "UPDATE spk_tplo SET status_aktif = :status_PLO WHERE id_plo = :id_plo";
             $stmt_plo = $this->pdoSPK->prepare($sql_delete_plo);
-            $result = $stmt_plo->execute([':id_plo' => $idplo]);
+            $result = $stmt_plo->execute(['status_PLO' => $status_PLO, ':id_plo' => $idplo]);
 
             if (!$result) {
                 $this->pdoSPK->rollBack();

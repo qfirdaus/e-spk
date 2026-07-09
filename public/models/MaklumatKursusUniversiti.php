@@ -67,12 +67,12 @@ class MaklumatKursusUniversiti
         ]);
         $senaraiKursus = $stmtSPK->fetchAll(PDO::FETCH_ASSOC);
 
-        $sqlPenyelaras = "SELECT gelar_nama FROM stafdb.dbo.v630staf_service_skim_aktif WHERE nopekerja = :nopekerja";
+        $sqlPenyelaras = "SELECT gelar_nama FROM ehrmdb.dbo.v630staf_service_skim_aktif WHERE nopekerja = :nopekerja";
         $stmtPenyelaras = $this->pdoStudent->prepare($sqlPenyelaras);
 
         $sqlPensyarah = "SELECT DISTINCT(nopekerja), gelar_nama 
                          FROM v270offer_spk a 
-                         LEFT JOIN stafdb.dbo.v630staf_service_skim_aktif s ON a.stafno = CONVERT(varchar(10), s.idpekerja) 
+                         LEFT JOIN ehrmdb.dbo.v630staf_service_skim_aktif s ON a.stafno = CONVERT(varchar(10), s.idpekerja) 
                          WHERE kodk = :kod AND term = :term";
         $stmtPensyarah = $this->pdoStudent->prepare($sqlPensyarah);
 
