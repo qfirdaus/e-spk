@@ -6,6 +6,18 @@ This changelog follows a release-style summary based on major project milestones
 
 ## [Unreleased]
 
+### Changed
+- Changed project documentation and directory references from the IQS Framework template to the e-SPK native WSL, Nginx, and PHP-FPM runtime.
+- Expanded `.gitignore` coverage for environment files, runtime data, uploads, IDE files, temporary files, and test artifacts.
+- Added a sanitized `.env.example` containing supported e-SPK environment keys without runtime credentials.
+- Changed the runtime environment label from e-HEPA to e-SPK.
+- Changed user-upload handling so generated data is not tracked by Git while security files remain trackable.
+
+### Removed
+- Removed obsolete npm metadata and the unmaintained Tailwind/PostCSS dependency definition while retaining the compiled stylesheet used by the application.
+- Removed an accidentally committed terminal output file from the repository root.
+- Removed the Dockerfile, Compose service, Apache/PHP container configuration, and development TLS key material.
+
 ## [1.8.4] - 2026-06-23
 
 ### Added

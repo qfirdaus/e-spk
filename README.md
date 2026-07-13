@@ -1,6 +1,6 @@
-# IQS-Framework
+# e-SPK
 
-IQS-Framework ialah platform pentadbiran dalaman berasaskan PHP untuk membina sistem organisasi yang memerlukan login berpusat, kawalan akses mengikut kumpulan, konfigurasi runtime, audit aktiviti, template emel, manual pengguna, dan sambungan pangkalan data yang boleh dikawal dari UI.
+e-SPK ialah aplikasi dalaman berasaskan PHP yang dibina di atas IQS Framework. Projek ini menggunakan fungsi teras seperti login berpusat, kawalan akses mengikut kumpulan, konfigurasi runtime, audit aktiviti, template emel, manual pengguna dan sambungan pangkalan data yang dikawal dari UI.
 
 README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 
@@ -14,7 +14,9 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 ## Runtime Baseline
 
 - PHP: `8.3.30`
-- Docker image: `php:8.3.30-apache`
+- Host environment: WSL 2 with Ubuntu 24.04
+- Web server: Nginx with PHP-FPM
+- Runtime model: native WSL; the Docker image, Compose service, Apache container configuration, and development TLS assets are no longer maintained in this repository
 - Main database: MySQL `8.x`
 - External database support: Sybase through ODBC/DBLIB, plus additional PDO connections configured from the system UI
 
@@ -77,7 +79,6 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Supports admin announcements, direct user notifications, role/group/audience notifications, event-based notifications, and workflow task notifications.
 - Notification publishing and workflow logic is handled by `NotificationPublisher.php`, `NotificationService.php`, `NotificationWorkflowService.php`, `NotificationAudienceResolver.php`, `NotificationAdminService.php`, and `NotificationTemplateService.php`.
 - AJAX endpoints include `notification-list.php`, `notification-read.php`, `notification-read-all.php`, `notification-action.php`, `notification-admin-publish.php`, and `notification-template-action.php`.
-- Developer guidance is documented in `docs/notification-developer-standard-2026-05-04.md` and `docs/notification-developer-examples-2026-05-03.md`.
 
 ### Profile
 
@@ -109,17 +110,15 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Provider integration is handled through `AiChatbotService.php`, `AiChatbotProviderRegistry.php`, and provider classes under `public/classes/AiChatbotProviders/`.
 - Runtime settings are managed from System Settings > AI Chatbot and stored in `tbl_m_config` under the `ai_chatbot` group.
 - The AI Chatbot settings UI is split into Overview, Provider, Limits, Character, and Storage subtabs.
-- Usage/session/message persistence is supported through `tbl_ai_chat_session`, `tbl_ai_chat_message`, and `tbl_ai_chat_usage` when the table script in `docs/ai-chatbot-tables-2026-06-11.sql` has been applied.
+- Usage/session/message persistence is supported through `tbl_ai_chat_session`, `tbl_ai_chat_message`, and `tbl_ai_chat_usage` when the corresponding database schema is installed.
 - Role-aware answers are guided by safe runtime context, active group context, visible module/menu context, permission-filtered retrieval policy, and governance classification metadata.
-- Optional curated FAQ/SOP/manual knowledge retrieval is supported through `tbl_ai_chat_knowledge` when `docs/ai-chatbot-knowledge-tables-2026-06-12.sql` has been applied.
+- Optional curated FAQ/SOP/manual knowledge retrieval is supported through `tbl_ai_chat_knowledge` when the corresponding database schema is installed.
 - Manual knowledge can be maintained through the Knowledge Manager with language, visibility, allowed groups, tags, source/version, review dates, status controls, AJAX save/edit/status/delete, SweetAlert feedback, and local loading states.
-- PDF-only knowledge source upload is supported when `docs/ai-chatbot-knowledge-pdf-schema-2026-06-13.sql` has been applied; uploaded text PDFs are extracted into draft chunks before activation.
+- PDF-only knowledge source upload is supported when its source and chunk tables are installed; uploaded text PDFs are extracted into draft chunks before activation.
 - Knowledge retrieval uses hybrid keyword-ranked matching across active manual items and active processed PDF chunks, while filtering by language, visibility, allowed group, and super-admin scope before content is sent to any AI provider.
 - The Review Dashboard uses `tbl_ai_chat_usage` metadata to highlight review queues, no-knowledge candidates, provider failures, outcome/category volume, and provider latency without requiring raw message content.
 - The widget presents answer text only; navigation/action suggestion links are not rendered in chatbot responses.
 - The chatbot does not execute model-generated SQL, does not expose unrestricted database records, and must ground system-specific answers in approved runtime, visible system, or curated knowledge context.
-- Implementation guidance is documented in `docs/ai-chatbot-core-blueprint-2026-06-11.md`, `docs/ai-chatbot-production-runbook-2026-06-11.md`, `docs/ai-chatbot-implementation-readiness-2026-06-13.md`, and `docs/db-inspection-guideline-2026-06-13.md`.
-- External provider/API failures are classified through the framework external-service failure pattern documented in `docs/external-service-failure-handling-2026-06-23.md`.
 
 ### System Cache Maintenance
 
@@ -167,7 +166,6 @@ Do not hardcode DSN, username, or password inside page/controller code.
 - Email template management page exists at `public/pages/template-emel.php`.
 - Template operations are handled by `EmailTemplateController.php`, `Mailer.php`, `EmailTemplate*.php`, and AJAX endpoints under `public/ajax/email-*` and `public/ajax/email-template-*`.
 - Supported UI operations include listing, preview/testing, creating, updating, duplicating, archiving/restoring, deleting, and seeding templates where available.
-- SMTP delivery failures are classified through the framework external-service failure pattern documented in `docs/external-service-failure-handling-2026-06-23.md`.
 
 ### Template Generator
 
@@ -212,14 +210,13 @@ Do not hardcode DSN, username, or password inside page/controller code.
 - Frontend assets include Bootstrap-style components, DataTables usage, SweetAlert workflows, Remix Icon icons, and page-specific JavaScript/CSS files.
 - Application modals are standardized to top-aligned Bootstrap dialogs unless a future page-specific exception is explicitly documented.
 - Global full-page loader is now reserved for sidebar navigation transitions, while in-page transactions rely on local loading states and silent background refreshes.
-- Tailwind/PostCSS tooling exists in `package.json` for frontend build support, although the main application is PHP-rendered.
+- The active compiled Tailwind stylesheet is committed at `public/assets/css/output.css`; this repository has no maintained npm build pipeline.
 
-### Update Distribution Tooling
+### Update Governance
 
-- `sync-updates.sh` distributes collected updates to the registered downstream project list, including `e-prestasi` and `upnm30`.
-- `sync-updates.sh` and `update-files.sh` support `.sync-update-ignore` so selected files can be excluded from `updates/` and project sync flows.
-- Core file protection docs and `tools/core-file-protection-audit.php` are included in framework update collection.
-- `public/lang/custom/*` remains protected from overwrite during update distribution.
+- Framework updates must be reviewed manually against e-SPK project files before they are applied.
+- Core file protection guidance and `tools/core-file-protection-audit.php` are retained for local validation.
+- Project-specific translations under `public/lang/custom/` must be preserved during framework updates.
 
 ## Current Page Inventory
 
@@ -271,7 +268,7 @@ Other controller files may exist for legacy or supporting flows, but the list ab
 
 ## Database Architecture
 
-IQS-Framework uses three database access patterns:
+e-SPK uses three database access patterns inherited from IQS Framework:
 
 1. Main MySQL application database
 
@@ -288,7 +285,7 @@ IQS-Framework uses three database access patterns:
 ## Directory Structure
 
 ```text
-iqs-framework/
+e-spk-uat/
 |-- public/
 |   |-- ajax/              # AJAX endpoints
 |   |-- assets/            # CSS, JS, images, vendor assets
@@ -298,13 +295,9 @@ iqs-framework/
 |   |-- includes/          # Bootstrap/init/shared includes
 |   |-- pages/             # Authenticated application pages
 |   |-- setting/           # Helpers, constants, language/config support
-|-- docker/                # Apache, SSL, and PHP runtime config
 |-- docs/                  # Project documentation assets
 |-- tools/                 # CLI maintenance tools
-|-- updates/               # Update/deployment support files
 |-- .env.example           # Example runtime environment
-|-- docker-compose.yml     # Docker runtime service
-|-- Dockerfile             # PHP Apache image
 |-- VERSION                # Application version
 |-- CHANGELOG.md           # Release notes
 |-- README.md              # This file
@@ -316,21 +309,23 @@ iqs-framework/
 
    Copy `.env.example` to `.env` and configure the MySQL and Sybase values required by your environment.
 
-2. Start with Docker.
+2. Install the required PHP runtime and extensions in WSL.
 
-   ```bash
-   docker compose up -d --build
-   ```
+   Use PHP-FPM with the extensions required by the configured MySQL, Sybase, image, archive, and cache integrations.
 
-3. Confirm Apache document root.
+3. Configure the Nginx virtual host.
 
-   Docker maps `./public` to `/var/www/html`, so application entry files are served from the `public` directory.
+   Set the document root to `/var/www/app/e-spk-uat/public`, route PHP requests to the installed PHP-FPM socket, disable directory listing, and deny access to hidden or sensitive files. Keep the Nginx configuration outside this repository.
 
-4. Confirm version visibility.
+4. Confirm filesystem permissions.
 
-   The container mounts `./VERSION` to `/var/www/VERSION` so the runtime version label can read the same release value.
+   The Nginx/PHP-FPM runtime user needs read access to the application and write access only to approved runtime paths such as `public/cache`, `public/log`, and upload directories.
 
-5. Confirm database setup.
+5. Confirm version visibility.
+
+   Ensure the application can read `VERSION` from the project root.
+
+6. Confirm database setup.
 
    Ensure the required application tables exist before login and administration testing. For additional database connections, ensure `tbl_m_db_connection` and `tbl_m_db_connection_env` exist in every deployment environment.
 
@@ -343,11 +338,9 @@ iqs-framework/
 - Use `Database::pdoSybaseStaff()` or `Database::pdoSybaseStudent()` for configured Sybase domains.
 - Use `Database::pdoAdditional('dbx_code')` for additional database connections created from System Settings.
 - Use `NotificationPublisher`, `NotificationWorkflowService`, or `NotificationTemplateService` for new notification flows instead of inserting notification rows directly from page code.
-- Follow `docs/notification-developer-standard-2026-05-04.md` when adding notifications to new modules so admin, event, and workflow notifications remain consistent across projects.
 - Configure sidebar modules, menus, menu access, and optional menu subgroups through `kumpulan-pengguna.php`; project programmers should not hardcode sidebar structure inside `public/includes/sidebar.php`.
-- Refer to `docs/sidebar-menu-subgroup-blueprint-2026-05-06.md` before enabling subgroup schema or adding grouped sidebar menus in a project deployment.
 - Treat files marked `IQS FRAMEWORK CORE FILE` as read-only in downstream project clones. Use generated/custom project files for project behavior changes.
-- Run `php tools/core-file-protection-audit.php --strict` before framework release or update collection.
+- Run `php tools/core-file-protection-audit.php` before a framework update and review project-specific files reported without core markers instead of overwriting them automatically.
 - Do not hardcode database DSN, username, or password in pages/controllers.
 - Keep access checks aligned with group, module, and menu governance.
 - Record sensitive administrative changes through the audit helper/logger pattern already used in the system.
@@ -365,7 +358,7 @@ iqs-framework/
 
 ## Removed or Undocumented Features
 
-This README intentionally excludes features that are not active page/module surfaces in the current IQS-Framework codebase. In particular, removed prototype pages, old project names, and previous domain-specific modules are not documented here unless they are reintroduced into the active application structure.
+This README documents the current e-SPK repository. Historical IQS Framework release details remain in `CHANGELOG.md`, while project-specific runtime and deployment guidance must use the e-SPK repository path.
 
 ## Maintainer
 
