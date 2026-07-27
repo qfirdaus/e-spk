@@ -164,7 +164,60 @@ class MaklumatPEOController
                 'message' => 'Ralat Sistem: ' . $e->getMessage()
             ];
         }         
-    }   
+    }
+
+    public function deletePEO($matrik, $formData) {
+        try {
+            $formData['deleted_by'] = $matrik;
+
+            $isSaved = $this->model->deleteDataPeo($formData);
+
+            if ($isSaved) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod berjaya dihapuskan'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengemaskini maklumat ke dalam pangkalan data.'
+                ];
+            }
+
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }         
+    }     
+
+    public function copyPEO($stafID, $formData)
+    {
+        try {
+            $formData['created_by'] = $stafID;
+
+            $isCopied = $this->model->salinPeoSesi($formData);
+
+            if ($isCopied) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Rekod PEO berjaya disalin ke sesi baharu.'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal menyalin maklumat PEO ke dalam pangkalan data.'
+                ];
+            }
+
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }        
+    }    
 
     public function getErrorMessage(): string
     {

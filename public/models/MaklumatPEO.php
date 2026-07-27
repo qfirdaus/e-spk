@@ -78,10 +78,17 @@ class MaklumatPEO
     //Retrieve PEO List
     public function getPeoList(string $sesi, string $kodProgram): array
     {
-        $sql = "SELECT * FROM spk_tpeo 
-                WHERE status_aktif = 1 
-                AND sesi = :sesi 
-                AND kod_program = :kod_program";
+        $sql = "SELECT 
+                p.*,
+                GROUP_CONCAT(st.kod_plo ORDER BY st.kod_plo SEPARATOR ', ') AS senarai_kod_plo,
+                GROUP_CONCAT(st.keterangan_bm ORDER BY st.kod_plo SEPARATOR ' | ') AS senarai_keterangan_plo
+            FROM spk_tpeo p
+            LEFT JOIN spk_tpenetapan_peo_plo stpp ON p.id_peo = stpp.id_peo
+            LEFT JOIN spk_tplo st ON stpp.id_plo = st.id_plo
+            WHERE p.status_aktif = 1 
+              AND p.sesi = :sesi 
+              AND p.kod_program = :kod_program
+            GROUP BY p.id_peo";
                 
         $stmt = $this->pdoSPK->prepare($sql);
         $stmt->execute([
@@ -89,7 +96,7 @@ class MaklumatPEO
             ':kod_program' => $kodProgram
         ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    }    
 
     public function addPeoBaharu(array $data): bool 
     {
@@ -136,11 +143,10 @@ class MaklumatPEO
 
     public function updateDataPeo(array $data): bool 
     {
-        $idpeo        = $data['txtidplotxtidpeo_edit'] ?? null;
-        $keteranganbm = $data['txtketeranganplo'] ?? null;
-        $kodmqf       = $data['selectkodmqf_edit'] ?? null;
+        $idpeo        = $data['txtidpeo_edit'] ?? null;
+        $keteranganbm = $data['txtketeranganpeo_edit'] ?? null;
+        $tarikhsenat  = $this->convertDateFormat($data['txttarikhsenat_edit'] ?? null);
         $updated_by   = $data['updated_by'] ?? null;
-        $chkpeo       = $data['chkpeo'] ?? [];        
 
         if (!$idpeo) {
             return false;
@@ -149,19 +155,19 @@ class MaklumatPEO
         try {
             $this->pdoSPK->beginTransaction();
 
-            $sql = "UPDATE spk_tplo 
+            $sql = "UPDATE spk_tpeo 
                     SET keterangan_bm = :keterangan_bm, 
-                        kod_mqf = :kod_mqf, 
+                        tarikh_senat = :tarikh_senat, 
                         updated_by = :updated_by, 
                         updated_date = NOW() 
-                    WHERE idpeo = :idpeo";
+                    WHERE id_peo = :idpeo";
                     
             $stmt = $this->pdoSPK->prepare($sql);
             $result = $stmt->execute([
                 ':keterangan_bm' => $keteranganbm,
-                ':kod_mqf'       => $kodmqf,
+                ':tarikh_senat'  => $tarikhsenat,
                 ':updated_by'    => $updated_by,
-                ':idpeo'        => $idpeo
+                ':idpeo'         => $idpeo
             ]);
 
             if (!$result) {
@@ -198,6 +204,45 @@ class MaklumatPEO
         }      
     }
 
+    public function deleteDataPeo(array $data): bool 
+    {
+        $idpeo = $data['id_peo'] ?? null;
+        $deleted_by   = $data['deleted_by'] ?? null;
+        $status_PEO = 0; // delete
+
+        if (!$idpeo) {
+            return false;
+        }
+
+        try {
+            $this->pdoSPK->beginTransaction();
+
+            $sql_delete_peo = "UPDATE spk_tpeo 
+                                SET status_aktif = :status_PEO, 
+                                deleted_by = :deleted_by, 
+                                deleted_date = NOW() 
+                                WHERE id_peo = :id_peo";
+            $stmt_plo = $this->pdoSPK->prepare($sql_delete_peo);
+            $result = $stmt_plo->execute(['status_PEO' => $status_PEO, 
+                                          'deleted_by' => $deleted_by,
+                                          ':id_peo' => $idpeo]);
+
+            if (!$result) {
+                $this->pdoSPK->rollBack();
+                return false;
+            }
+
+            $this->pdoSPK->commit();
+            return true;
+
+        } catch (Exception $e) {
+            if ($this->pdoSPK->inTransaction()) {
+                $this->pdoSPK->rollBack();
+            }
+            throw $e;
+        }      
+    } 
+
     private function convertDateFormat(?string $dateStr, string $inputFormat = 'd-m-Y', string $outputFormat = 'Y-m-d'): ?string
     {
         if (empty($dateStr) || empty(trim($dateStr))) {
@@ -211,5 +256,68 @@ class MaklumatPEO
         }
 
         return null;
-    }   
+    }
+    
+    public function salinPeoSesi(array $data): bool 
+    {
+        $tosesi        = $data["txtsesi"] ?? null;
+        $tosesiid      = $data["txtsesiid"] ?? null;
+        $toprogramid   = $data["txtprogramid"] ?? null;
+        $fromSesiId    = $data["selectSesiModal"] ?? null;
+        $fromprogramid = $data["selectProgramModal"] ?? null;
+        $createdBy     = $data["created_by"] ?? null;
+
+        if (!$tosesi || !$toprogramid) {
+            return false;
+        }
+
+        try {
+            $this->pdoSPK->beginTransaction();
+
+            $sqlSelect = "SELECT * FROM spk_tpeo 
+                          WHERE status_aktif = 1 
+                          AND sesi = :from_sesi 
+                          AND kod_program = :fromprogramid";
+            
+            $stmtSelect = $this->pdoSPK->prepare($sqlSelect);
+            $stmtSelect->execute([
+                ':from_sesi'   => $fromSesiId,
+                ':fromprogramid' => $fromprogramid
+            ]);
+            
+            $listPeo = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($listPeo)) {
+                $this->pdoSPK->rollBack();
+                return false; 
+            }
+
+            $sqlInsert = "INSERT INTO spk_tpeo (kod_peo, keterangan_bm, tarikh_senat, kod_sesi, sesi, kod_jabatan, kod_program, created_by, created_date) 
+                          VALUES (:kodpeo, :keterangan_bm, :tarikhsenat, :kod_sesi, :sesi, :kod_jabatan, :kod_program, :created_by, NOW())";
+            
+            $stmtInsert = $this->pdoSPK->prepare($sqlInsert);
+
+            foreach ($listPeo as $peo) {
+                $stmtInsert->execute([
+                    ':kodpeo'        => $peo['kod_peo'],
+                    ':keterangan_bm' => $peo['keterangan_bm'],
+                    ':tarikhsenat'   => $peo['tarikh_senat'],
+                    ':kod_sesi'      => $tosesiid,
+                    ':sesi'          => $tosesi,
+                    ':kod_jabatan'   => $peo['kod_jabatan'],
+                    ':kod_program'   => $toprogramid,
+                    ':created_by'    => $createdBy
+                ]);
+            }
+
+            $this->pdoSPK->commit();
+            return true;
+
+        } catch (Exception $e) {
+            if ($this->pdoSPK->inTransaction()) {
+                $this->pdoSPK->rollBack();
+            }
+            throw $e;
+        }
+    }    
 }

@@ -99,9 +99,10 @@ if ($controller->getErrorMessage()) {
 
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnSalin" id="btnSalin" 
                 data-bs-toggle="modal" data-bs-target="#salin" 
-                data-sesi="<?= h($sesiID) ?>"
+                data-sesiid="<?= h($sesiID) ?>"
+                data-sesi="<?= h($sesi2) ?>"
                 data-programid="<?= h($programID) ?>"
-                title="<?= h(tr('salin_plo', 'Salin PLO')) ?>">
+                title="<?= h(tr('salin_peo', 'Salin PEO')) ?>">
             <i class="ri-file-copy-2-line"></i>
         </button>
     </div>    
@@ -136,11 +137,6 @@ if ($controller->getErrorMessage()) {
             foreach ($list_dataPEO as $i => $row):  
                 $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); 
                 $idPEO = $row['id_peo'] ?? '';
-                
-                // Definisikan pembolehubah $isExpired yang tercicir sebelum ini
-                $today = date('Y-m-d');
-                $endDate = !empty($row['end_date']) ? date('Y-m-d', strtotime($row['end_date'])) : '';
-                $isExpired = ($endDate && $today > $endDate) ? 'disabled' : '';
       ?>
         <tr data-id="<?= $idPEO ?>" data-row='<?= $rowJson ?>'>
 
@@ -153,12 +149,7 @@ if ($controller->getErrorMessage()) {
             <td><?= h(date('d-m-Y', strtotime($row['tarikh_senat'])) ?? '') ?></td>
 
             <td>
-              <?= h($row['senarai_plo'] ?? '') ?>
-              <?php
-                //   $sql_plo = "select kod_plo, keterangan_bm from spk_tpenetapan_peo_plo stpp
-                // join spk_tplo st on stpp.id_plo = st.id_plo
-                // where stpp.id_peo = " . $result["id_peo"];
-              ?>
+              <?= h($row['senarai_kod_plo'] ?? '') ?>
             </td>
 
             <td align="center">    
