@@ -17,7 +17,6 @@ jQuery(function () {
             const sesi = button.getAttribute('data-sesi');
             const programId = button.getAttribute('data-programid');
             const program = button.getAttribute('data-program');
-            const ptj = button.getAttribute('data-ptj');
 
             const modal = jQuery(this);
 
@@ -25,7 +24,6 @@ jQuery(function () {
             modal.find('#txtsesi').val(sesi);
             modal.find('#txtprogramid').val(programId);
             modal.find('#txtprogram').val(program);
-            modal.find('#txtptj').val(ptj);
         });
     }
 
@@ -37,12 +35,14 @@ jQuery(function () {
             const sesiId = button.getAttribute('data-sesiid');
             const sesi = button.getAttribute('data-sesi');
             const programId = button.getAttribute('data-programid');
+            const program = button.getAttribute('data-program');
 
             const modal = jQuery(this);
 
             modal.find('#txtsesiid').val(sesiId);
             modal.find('#txtsesi').val(sesi);
             modal.find('#txtprogramid').val(programId);
+            modal.find('#txtprogram').val(program);
         });
     }
 
@@ -51,56 +51,76 @@ jQuery(function () {
     if (modalKemaskini) {
         modalKemaskini.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-
-            const idPeo = button.getAttribute('data-idpeo');
-            const sesiId = button.getAttribute('data-sesiid');
-            const sesi = button.getAttribute('data-sesi');
-            const programId = button.getAttribute('data-programid');
-            const program = button.getAttribute('data-program');
-            const kodPeo = button.getAttribute('data-kodpeo');
+            
+            const idPlo        = button.getAttribute('data-idplo');
+            const sesiId       = button.getAttribute('data-sesiid');
+            const sesi         = button.getAttribute('data-sesi');
+            const programId    = button.getAttribute('data-programid');
+            const program      = button.getAttribute('data-program');
+            const kodPlo       = button.getAttribute('data-kodplo');
             const keteranganBM = button.getAttribute('data-keteranganbm');
-            const tarikh_senat = button.getAttribute('data-tarikhsenat');
+            const kodMqf       = button.getAttribute('data-kodmqf');
+            const peoListStr   = button.getAttribute('data-peolist'); 
 
             const modal = jQuery(this);
             
-            modal.find('#txtidpeo_edit').val(idPeo); 
-            modal.find('#txtsesiid_edit').val(sesiId);
-            modal.find('#txtsesi_edit').val(sesi);
-            modal.find('#txtprogram_id_edit').val(programId);
-            modal.find('#txtprogram_edit').val(program);
-            modal.find('#txtkodpeo_edit').val(kodPeo);
-            modal.find('#txtketeranganpeo_edit').val(keteranganBM);
-            modal.find('#txttarikhsenat_edit').val(tarikh_senat);
+            // Populate inputs
+            modal.find('#txtidplo').val(idPlo); 
+            modal.find('#txtsesiid').val(sesiId);
+            modal.find('#txtsesi').val(sesi);
+            modal.find('#txtprogramid').val(programId); 
+            modal.find('#txtprogram').val(program);
+            modal.find('#txtkodplo').val(kodPlo);
+            modal.find('#txtketeranganplo').val(keteranganBM);
 
-            // Set nilai dropdown (Jika pakai Select2, tambah .trigger('change'))
-            // if (kodMqf) {
-            //     var cleanedValue = kodMqf.toString().trim();
-            //     var selectElement = document.getElementById('selectkodmqf_edit'); 
+            // Reset SEMUA checkbox PEO dalam modal kemaskini dulu
+            modal.find('.chk-peo-edit').prop('checked', false);
+
+            // Parse JSON array atau String id_peo
+            if (peoListStr) {
+                let peoList = [];
+                try {
+                    peoList = typeof peoListStr === 'string' ? JSON.parse(peoListStr) : peoListStr;
+                } catch (e) {
+                    peoList = [];
+                }
+
+                // Un-check & check berdasarkan peoList
+                if (Array.isArray(peoList)) {
+                    peoList.forEach(function (peoId) {
+                        modal.find('#edit_peo_' + peoId).prop('checked', true);
+                    });
+                }
+            }
+
+            if (kodMqf) {
+                var cleanedValue = kodMqf.toString().trim();
+                var selectElement = document.getElementById('selectkodmqf_edit'); 
                 
-            //     if (selectElement) {
-            //         selectElement.value = cleanedValue;                 
-            //         var textToDisplay = $(selectElement).find('option[value="' + cleanedValue + '"]').text().trim();
+                if (selectElement) {
+                    selectElement.value = cleanedValue;                 
+                    var textToDisplay = $(selectElement).find('option[value="' + cleanedValue + '"]').text().trim();
                     
-            //         if (textToDisplay) {
-            //             $(selectElement)
-            //                 .next('.select2-container')
-            //                 .find('.select2-selection__rendered')
-            //                 .text(textToDisplay);
+                    if (textToDisplay) {
+                        $(selectElement)
+                            .next('.select2-container')
+                            .find('.select2-selection__rendered')
+                            .text(textToDisplay);
                             
-            //             $(selectElement)
-            //                 .next('.select2-container')
-            //                 .find('.select2-selection__rendered')
-            //                 .attr('title', textToDisplay);
-            //         }
-            //         $(selectElement).trigger('change.select2'); 
-            //     }
-            // }
+                        $(selectElement)
+                            .next('.select2-container')
+                            .find('.select2-selection__rendered')
+                            .attr('title', textToDisplay);
+                    }
+                    $(selectElement).trigger('change.select2'); 
+                }
+            }            
         });
-    }
+    }    
 });
 
-function deleteFunc(idPEO) {
-    if (!idPEO) return;
+function deleteFunc(idPlo) {
+    if (!idPlo) return;
 
     Swal.fire({
         title: 'Adakah anda pasti?',
@@ -114,11 +134,11 @@ function deleteFunc(idPEO) {
     }).then((result) => {
         if (result.isConfirmed) {
             
-            const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-peo/delete-peo.php';
+            const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-plo-kp/delete-plo.php';
             
             const formData = new FormData();
             formData.append('btnHapus', '1');
-            formData.append('id_peo', idPEO);
+            formData.append('id_plo', idPlo);
 
             fetch(controllerUrl, {
                 method: 'POST',
@@ -154,10 +174,10 @@ function deleteFunc(idPEO) {
     });
 }
 
-// submit PEO baharu
-const btnHantarPeo = document.getElementById('btnHantarPeo');
-if (btnHantarPeo) {
-    btnHantarPeo.addEventListener('click', function(e) {
+// submit PLO baharu
+const btnHantarPlo = document.getElementById('btnHantarPlo');
+if (btnHantarPlo) {
+    btnHantarPlo.addEventListener('click', function(e) {
         const modalElement = document.getElementById('tambah');
         const form = modalElement.querySelector('form');
         
@@ -184,15 +204,15 @@ if (btnHantarPeo) {
                 hiddenInput.value = '1';
                 form.appendChild(hiddenInput);
 
-                submitPEO(form);
+                submitPLO(form);
             }
         });
     });
 }
 
-function submitPEO(formElement) {
+function submitPLO(formElement) {
     const formData = new FormData(formElement);
-    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-peo/submit-peo.php';
+    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-plo-kp/submit-plo.php';
 
     fetch(controllerUrl, {
         method: 'POST',
@@ -233,10 +253,10 @@ function submitPEO(formElement) {
     });
 } 
 
-// update PEO
-const btnKemaskiniPeo = document.getElementById('btnKemaskiniPeo');
-if (btnKemaskiniPeo) {
-    btnKemaskiniPeo.addEventListener('click', function(e) {
+// update PLO
+const btnKemaskiniPlo = document.getElementById('btnKemaskiniPlo');
+if (btnKemaskiniPlo) {
+    btnKemaskiniPlo.addEventListener('click', function(e) {
         const modalElement = document.getElementById('kemaskini');
         const form = modalElement.querySelector('form');
         
@@ -259,21 +279,19 @@ if (btnKemaskiniPeo) {
             if (result.isConfirmed) {
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
-                hiddenInput.name = 'btnKemaskiniPeo';
+                hiddenInput.name = 'btnKemaskiniPlo';
                 hiddenInput.value = '1';
                 form.appendChild(hiddenInput);
 
-                updatePEO(form);
+                updatePLO(form);
             }
         });
     });
 }
 
-function updatePEO(formElement) {
+function updatePLO(formElement) {
     const formData = new FormData(formElement);
-    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-peo/update-peo.php';
-    const modalElement = document.getElementById('kemaskini');
-    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);    
+    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-plo-kp/update-plo.php';
 
     fetch(controllerUrl, {
         method: 'POST',
@@ -282,6 +300,8 @@ function updatePEO(formElement) {
     .then(res => res.json())
     .then(res => {
         if (res.status === 'success') {
+            const modalElement = document.getElementById('kemaskini');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
             modalInstance.hide();
 
             //remove modal backdrop if it exists
@@ -296,11 +316,6 @@ function updatePEO(formElement) {
                 window.location.reload();
             });
         } else {
-            modalInstance.hide();
-
-            //remove modal backdrop if it exists
-            document.querySelector('.modal-backdrop')?.remove();
-
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal',
@@ -309,11 +324,6 @@ function updatePEO(formElement) {
         }
     })
     .catch(err => {
-        modalInstance.hide();
-
-        //remove modal backdrop if it exists
-        document.querySelector('.modal-backdrop')?.remove();
-
         Swal.fire({
             icon: 'error',
             title: 'Ralat',
@@ -322,10 +332,10 @@ function updatePEO(formElement) {
     });
 } 
 
-// copy PeO
-const btnSalinPeoSubmit = document.getElementById('btnSalinPeoSubmit');
-if (btnSalinPeoSubmit) {
-    btnSalinPeoSubmit.addEventListener('click', function(e) {
+// copy PLO
+const btnSalinPloSubmit = document.getElementById('btnSalinPloSubmit');
+if (btnSalinPloSubmit) {
+    btnSalinPloSubmit.addEventListener('click', function(e) {
         const modalElement = document.getElementById('salin');
         const form = modalElement.querySelector('form');
         
@@ -336,7 +346,7 @@ if (btnSalinPeoSubmit) {
 
         Swal.fire({
             title: 'Adakah anda pasti?',
-            text: "Anda mahu menyalin maklumat PEO sesi ini?",
+            text: "Anda mahu menyalin maklumat PLO sesi ini?",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -352,15 +362,15 @@ if (btnSalinPeoSubmit) {
                 hiddenInput.value = '1';
                 form.appendChild(hiddenInput);
 
-                copyPEO(form);
+                copyPLO(form);
             }
         });
     });
 }
 
-function copyPEO(formElement) {
+function copyPLO(formElement) {
     const formData = new FormData(formElement);
-    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-peo/copy-peo.php';
+    const controllerUrl = base_url + 'pages/page-ketua-program/maklumat-plo-kp/copy-plo.php';
 
     fetch(controllerUrl, {
         method: 'POST',

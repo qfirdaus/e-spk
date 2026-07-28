@@ -590,3 +590,24 @@ table.dataTable thead th {
 }
 
 /* #### Select2 #### */
+
+/* Tukar warna tajuk untuk SEMUA popover */
+/* Header Popover - Royal Blue Sepadan Badge */
+.popover-header {
+  background-color: #435ebe !important; /* Biru sepadan badge PEO1 */
+  color: #ffffff !important;             /* Teks Putih */
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #2d4396 !important; /* Garisan Biru Gelap */
+  padding: 8px 12px;
+}
+
+/* Body Popover - Biru Cair Soft & Fresh */
+.popover-body {
+  background-color: #f0f7ff !important; /* Soft Ice Blue (Biru cair lembut) */
+  color: #1e293b !important;             /* Teks Dark Slate (Sangat kontras & mudah dibaca) */
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 10px 12px;
+}

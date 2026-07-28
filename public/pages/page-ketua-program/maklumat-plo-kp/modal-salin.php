@@ -4,14 +4,14 @@
       <div class="modal-header">
         <h5 class="modal-title">
           <i class="ri-file-copy-line me-1"></i>
-          <?= h(tr('TTL-SALIN-PEO', $lang['TTL-SALIN-PEO'] ?? 'Salin PEO')) ?>
+          <?= h(tr('TTL-SALIN-PLO', $lang['TTL-SALIN-PLO'] ?? 'Salin PLO')) ?>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <form autocomplete="off" method="POST">
         <div class="modal-body">
-
+          
           <div class="mb-3 row align-items-center">
             <label class="col-sm-3 col-form-label fw-semibold">
               <?= h(tr('LBL-SESI-KEMASUKAN', $lang['LBL-SESI-KEMASUKAN'] ?? 'Sesi Kemasukan')) ?>
@@ -20,14 +20,14 @@
                 <input name="txtsesi" id="txtsesi" type="hidden" readonly>
                 <input name="txtsesiid" id="txtsesiid" type="hidden" readonly>
                 <input name="txtprogramid" id="txtprogramid" type="hidden" readonly>
-                <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectSesiModal" id="selectSesiModal">
+                <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectSesiPLOModal" id="selectSesiPLOModal">
                     <option value="" <?= (empty($_SESSION["sesi"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
                     <?php foreach ($data['list_sesi'] as $sesi): ?>
-                    <option value="<?= h($sesi['sesi2']) ?>" <?= ($sesi['sesi2'] === ($data['selected_term']['sesi2'] ?? '')) ? 'selected' : '' ?> > 
-                        <?= h($sesi['term']) ?> - <?= h($sesi['sesi2']) ?>
+                    <option value="<?= h($sesi['f005term']) ?>" <?= ($sesi['f005term'] === ($data['selected_term']['f005term'] ?? '')) ? 'selected' : '' ?> > 
+                        <?= h($sesi['f005term']) ?> - <?= h($sesi['semester']) ?>
                     </option>
                     <?php endforeach; ?>
-                </select>           
+                </select>                 
             </div>
           </div>
 
@@ -36,7 +36,7 @@
               <?= h(tr('LBL-PROGRAM', $lang['LBL-PROGRAM'] ?? 'Program')) ?>
             </label>
             <div class="col-sm-9">
-              <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectProgramModal" id="selectProgramModal">
+              <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectProgramPLOModal" id="selectProgramPLOModal">
                   <option value="" <?= (empty($_SESSION["program"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
                   <?php foreach ($data['list_program'] as $program): ?>
                   <option value="<?= h($program['id_program']) ?>"  <?= ($program['id_program'] === ($data['selected_program']['id_program'] ?? '')) ? 'selected' : '' ?> >
@@ -53,7 +53,7 @@
           <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
             <?= h(tr('BTN-BATAL', $lang['BTN-BATAL'] ?? 'Batal')) ?>
           </button>
-          <button type="button" id="btnSalinPeoSubmit" class="btn btn-sm btn-primary">
+          <button type="button" id="btnSalinPloSubmit" class="btn btn-sm btn-primary">
             <i class="ri-file-copy-line me-1"></i>
             <?= h(tr('BTN-SALIN', $lang['BTN-SALIN'] ?? 'Salin')) ?>
           </button>

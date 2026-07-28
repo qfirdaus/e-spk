@@ -84,7 +84,7 @@ class MaklumatPEO
                 GROUP_CONCAT(st.keterangan_bm ORDER BY st.kod_plo SEPARATOR ' | ') AS senarai_keterangan_plo
             FROM spk_tpeo p
             LEFT JOIN spk_tpenetapan_peo_plo stpp ON p.id_peo = stpp.id_peo
-            LEFT JOIN spk_tplo st ON stpp.id_plo = st.id_plo
+            LEFT JOIN spk_tplo st ON stpp.id_plo = st.id_plo AND st.status_aktif = 1
             WHERE p.status_aktif = 1 
               AND p.sesi = :sesi 
               AND p.kod_program = :kod_program

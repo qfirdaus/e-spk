@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../../../controllers/MaklumatPEOController.php';
+require_once __DIR__ . '/../../../controllers/MaklumatPLOKPController.php';
 
-$controller = new MaklumatPEOController();
+$controller = new MaklumatPLOKPController();
 $data = $controller->getHalamanData();
 
 if ($controller->getErrorMessage()) {
@@ -19,39 +19,39 @@ if ($controller->getErrorMessage()) {
         <div class="row">
           <div class="col-12">
             <div class="row">
-              <div class="col-md-8 gx-4">
+              <div class="col-md-6 gx-4">
 
                   <div class="mb-2 row align-items-center">
-                    <label class="col-sm-3 col-form-label text-nowrap"><?= h(tr('peringkat_pengajian','Peringkat Pengajian')) ?></label>
+                    <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('peringkat_pengajian','Peringkat Pengajian')) ?></label>
                     <div class="col-sm-8">
-                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectPengajian" id="selectPengajian">
-                          <option value="" <?= (($_SESSION["pengajian"] ?? '') === '') ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
-                          <option value="Asasi" <?= (($_SESSION["pengajian"] ?? '') === 'Asasi') ? 'selected' : '' ?>>ASASI</option>
-                          <option value="Diploma" <?= (($_SESSION["pengajian"] ?? '') === 'Diploma') ? 'selected' : '' ?>>DIPLOMA</option>
-                          <option value="Sarjana Muda" <?= (($_SESSION["pengajian"] ?? '') === 'Sarjana Muda') ? 'selected' : '' ?>>SARJANA MUDA</option>
+                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectPengajianPLO" id="selectPengajianPLO">
+                          <option value="" <?= (($_SESSION["pengajianplo"] ?? '') === '') ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
+                          <option value="Asasi" <?= (($_SESSION["pengajianplo"] ?? '') === 'Asasi') ? 'selected' : '' ?>>ASASI</option>
+                          <option value="Diploma" <?= (($_SESSION["pengajianplo"] ?? '') === 'Diploma') ? 'selected' : '' ?>>DIPLOMA</option>
+                          <option value="Sarjana Muda" <?= (($_SESSION["pengajianplo"] ?? '') === 'Sarjana Muda') ? 'selected' : '' ?>>SARJANA MUDA</option>
                       </select>                    
                     </div>                 
                   </div>   
 
                   <div class="mb-2 row align-items-center">
-                    <label class="col-sm-3 col-form-label text-nowrap"><?= h(tr('sesi_kemasukan','Sesi Kemasukan')) ?></label>
+                    <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('sesi_kemasukan','Sesi Kemasukan')) ?></label>
                     <div class="col-sm-8"> 
-                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectSesi" id="selectSesi">
-                          <option value="" <?= (empty($_SESSION["sesi"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
+                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectSesiPLO" id="selectSesiPLO">
+                          <option value="" <?= (empty($_SESSION["sesiplo"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
                           <?php foreach ($data['list_sesi'] as $sesi): ?>
-                          <option value="<?= h($sesi['sesi2']) ?>" <?= ($sesi['sesi2'] === ($data['selected_term']['sesi2'] ?? '')) ? 'selected' : '' ?> > 
-                              <?= h($sesi['term']) ?> - <?= h($sesi['sesi2']) ?>
+                          <option value="<?= h($sesi['f005term']) ?>" <?= ($sesi['f005term'] === ($data['selected_term']['f005term'] ?? '')) ? 'selected' : '' ?> >
+                              <?= h($sesi['f005term']) ?> - <?= h($sesi['semester']) ?>
                           </option>
                           <?php endforeach; ?>
                       </select>                      
                     </div>                 
-                  </div>      
+                  </div>                                      
 
                   <div class="mb-2 row align-items-center">
-                    <label class="col-sm-3 col-form-label text-nowrap"><?= h(tr('program','Program')) ?></label>
+                    <label class="col-sm-4 col-form-label text-nowrap"><?= h(tr('program','Program')) ?></label>
                     <div class="col-sm-8"> 
-                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectProgram" id="selectProgram">
-                          <option value="" <?= (empty($_SESSION["program"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
+                      <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectProgramPLO" id="selectProgramPLO">
+                          <option value="" <?= (empty($_SESSION["programplo"])) ? 'selected' : '' ?> disabled>- <?= h(tr('sila_pilih', 'Sila Pilih')) ?> -</option>
                           <?php foreach ($data['list_program'] as $program): ?>
                           <option value="<?= h($program['id_program']) ?>"  <?= ($program['id_program'] === ($data['selected_program']['id_program'] ?? '')) ? 'selected' : '' ?> >
                               <?= h($program['program']) ?>
@@ -59,7 +59,7 @@ if ($controller->getErrorMessage()) {
                           <?php endforeach; ?>
                       </select>                      
                     </div>                 
-                  </div>                                  
+                  </div> 
 
               </div>
             </div>
@@ -78,21 +78,19 @@ if ($controller->getErrorMessage()) {
             $selectedTerm = $data['selected_term'] ?? [];
             $selectedProgram = $data['selected_program'] ?? [];
 
-            $sesiID = $selectedTerm['term'] ?? '';
-            $sesi2 = $selectedTerm['sesi2'] ?? '';
+            $sesiID = $selectedTerm['f005term'] ?? '';
+            $semester = $selectedTerm['semester'] ?? '';
             $programID = $selectedProgram['id_program'] ?? '';
             $programNama = $selectedProgram['program'] ?? '';
-            $ptj = $data['kodJabatan_staf']; 
-         
         ?>
+
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnTambah" id="btnTambah" 
                 data-bs-toggle="modal" data-bs-target="#tambah" 
                 data-bs-container="body"
                 data-sesiid="<?= h($sesiID) ?>"
-                data-sesi="<?= h($sesi2) ?>"
+                data-sesi="<?= h($semester) ?>"
                 data-programid="<?= h($programID) ?>"
                 data-program="<?= h($programNama) ?>"
-                data-ptj="<?= h($ptj) ?>"
                 title="<?= h(tr('tambah_plo', 'Tambah PLO')) ?>">
             <i class="ri-add-line"></i>
         </button>
@@ -100,9 +98,10 @@ if ($controller->getErrorMessage()) {
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnSalin" id="btnSalin" 
                 data-bs-toggle="modal" data-bs-target="#salin" 
                 data-sesiid="<?= h($sesiID) ?>"
-                data-sesi="<?= h($sesi2) ?>"
+                data-sesi="<?= h($semester) ?>"
                 data-programid="<?= h($programID) ?>"
-                title="<?= h(tr('salin_peo', 'Salin PEO')) ?>">
+                data-program="<?= h($programNama) ?>"
+                title="<?= h(tr('salin_plo', 'Salin PLO')) ?>">
             <i class="ri-file-copy-2-line"></i>
         </button>
     </div>    
@@ -112,20 +111,21 @@ if ($controller->getErrorMessage()) {
     <thead>
       <tr>
         <th class="col-bil text-center">No</th>
-        <th class="small w-30"><?= h(tr('kod_peo', 'Kod PEO')) ?></th>
-        <th class="small w-15"><?= h(tr('keterangan_peo', 'Keterangan PEO')) ?></th>
-        <th class="small w-12"><?= h(tr('tarikh_senat', 'Tarikh Senat')) ?></th>
-        <th class="small w-12"><?= h(tr('senarai_plo', 'Senarai PLO')) ?></th>
-        <th class="small w-20 text-center"></th>
+        <th class="small w-30"><?= h(tr('kod_plo', 'Kod PLO')) ?></th>
+        <th class="small w-15"><?= h(tr('keterangan_plo', 'Keterangan PLO')) ?></th>
+        <th class="small w-12"><?= h(tr('kod_mqf', 'Kod MQF')) ?></th>
+        <th class="small w-12"><?= h(tr('senarai_peo', 'Senarai PEO')) ?></th>
+        <th class="small w-12"><?= h(tr('senarai_clo', 'Senarai CLO')) ?></th>
+        <th class="small w-20 text-center"><?= h(tr('tindakan', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
     <tbody>     
       <?php 
-        $list_dataPEO = $data['list_peo'] ?? [];
+        $list_dataPLO = $data['list_plo'] ?? [];
 
         // Semak jika array kosong
-        if (empty($list_dataPEO)): 
+        if (empty($list_dataPLO)): 
       ?>
         <tr>
           <td colspan="7" class="text-center text-muted py-4">
@@ -134,35 +134,42 @@ if ($controller->getErrorMessage()) {
         </tr>
       <?php 
         else: 
-            foreach ($list_dataPEO as $i => $row):  
+            foreach ($list_dataPLO as $i => $row):  
                 $rowJson = json_encode($row, JSON_HEX_APOS | JSON_HEX_QUOT); 
-                $idPEO = $row['id_peo'] ?? '';
+                $idPLO = $row['id_plo'] ?? '';
+                
+                // Definisikan pembolehubah $isExpired yang tercicir sebelum ini
+                $today = date('Y-m-d');
+                $endDate = !empty($row['end_date']) ? date('Y-m-d', strtotime($row['end_date'])) : '';
+                $isExpired = ($endDate && $today > $endDate) ? 'disabled' : '';
       ?>
-        <tr data-id="<?= $idPEO ?>" data-row='<?= $rowJson ?>'>
+        <tr data-id="<?= $idPLO ?>" data-row='<?= $rowJson ?>'>
 
             <td class="col-bil text-center"><?= $i + 1 ?></td>         
 
-            <td><?= h($row['kod_peo'] ?? '') ?></td>
+            <td><?= h($row['kod_plo'] ?? '') ?></td>
 
-            <td><?= h($row['keterangan_bm'] ?? '') ?></td>
+            <td><?= h($row['keterangan_bm'] ?? $row['keterangan'] ?? '') ?></td>
 
-            <td><?= h(date('d-m-Y', strtotime($row['tarikh_senat'])) ?? '') ?></td>
-            
+            <td><?= h($row['kod_mqf'] ?? '') ?></td>
+
             <td>
-                <?php if (!empty($row['senarai_kod_plo'])): ?>
+                <?php if (!empty($row['senarai_kod_peo'])): ?>
                     <span class="badge bg-primary cursor-pointer" 
                           data-bs-toggle="popover" 
                           data-bs-trigger="hover focus" 
                           data-bs-placement="top"
                           title="Keterangan PEO"
-                          data-bs-content="<?= h($row['senarai_keterangan_plo'] ?? '') ?>"
+                          data-bs-content="<?= h($row['senarai_keterangan_peo'] ?? '') ?>"
                           style="cursor: pointer;">
-                        <?= h($row['senarai_kod_plo']) ?>
+                        <?= h($row['senarai_kod_peo']) ?>
                     </span>
                 <?php else: ?>
                     <span class="text-muted">-</span>
                 <?php endif; ?>
             </td>
+
+            <td><?= h($row['senarai_clo'] ?? '') ?></td>
 
             <td align="center">    
               <button type="button" 
@@ -171,22 +178,22 @@ if ($controller->getErrorMessage()) {
                       data-bs-toggle="modal" 
                       data-bs-target="#kemaskini" 
                       data-sesiid="<?= h($sesiID) ?>"
-                      data-sesi="<?= h($sesi2) ?>"
+                      data-sesi="<?= h($semester) ?>"
                       data-programid="<?= h($programID) ?>"
                       data-program="<?= h($programNama) ?>"
-                      data-idpeo="<?= h($idPEO) ?>"
-                      data-kodpeo="<?= h($row["kod_peo"]) ?>"
+                      data-idplo="<?= h($idPLO) ?>"
+                      data-kodplo="<?= h($row["kod_plo"]) ?>"
                       data-keteranganbm="<?= h($row["keterangan_bm"]) ?>"
-                      data-tarikhsenat="<?= h(date('d-m-Y', strtotime($row['tarikh_senat']))) ?>"
+                      data-kodmqf="<?= h($row["kod_mqf"]) ?>"
+                      data-peolist="<?= htmlspecialchars(json_encode(!empty($row['senarai_id_peo']) ? array_map('trim', explode(',', $row['senarai_id_peo'])) : []), ENT_QUOTES, 'UTF-8') ?>"
                       title="<?= h($lang['TTP-KEMASKINI'] ?? 'Kemaskini') ?>">
-                  <i class="ri-edit-line"></i> 
-                   <!-- data-peolist='<?= json_encode($list_peo_checked ?? []) ?>' -->
+                  <i class="ri-edit-line"></i>
               </button>
 
               <button type="button" 
                       class="btn btn-sm btn-icon btn-outline-danger" 
                       id="btnHapus" 
-                      onclick="deleteFunc(<?= h($idPEO) ?>)" 
+                      onclick="deleteFunc(<?= h($idPLO) ?>)" 
                       title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">
                   <i class="ri-delete-bin-7-line"></i>
               </button>       
