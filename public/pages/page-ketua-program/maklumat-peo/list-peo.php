@@ -154,7 +154,7 @@ if ($controller->getErrorMessage()) {
                           data-bs-toggle="popover" 
                           data-bs-trigger="hover focus" 
                           data-bs-placement="top"
-                          title="Keterangan PEO"
+                          title="Keterangan PLO"
                           data-bs-content="<?= h($row['senarai_keterangan_plo'] ?? '') ?>"
                           style="cursor: pointer;">
                         <?= h($row['senarai_kod_plo']) ?>
