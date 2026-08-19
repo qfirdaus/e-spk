@@ -6,7 +6,7 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 
 ## Version
 
-- Current version: `1.9.1`
+- Current version: `1.9.6`
 - Release history: [CHANGELOG.md](./CHANGELOG.md)
 - Version file: [VERSION](./VERSION)
 - Runtime fallback: [public/configuration/settings.php](./public/configuration/settings.php)
@@ -20,13 +20,38 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Main database: MySQL `8.x`
 - External database support: Sybase through ODBC/DBLIB, plus additional PDO connections configured from the system UI
 
-## Version 1.9.1 Administration Experience
+## Version 1.9.6 OneID SSO Security and Reliability
 
-- Core administration pages now share a professional visual standard for page headers, themed KPI cards, panel spacing, DataTables, compact action controls, tabs, modals, empty states, and responsive layouts.
-- In-page operations use local button, panel, or table loading states instead of blocking the whole workspace with a global loader.
-- Staff and student access assignment retains remote Select2 search, correct type-specific placeholders, and protected AJAX lookup flows.
-- Profile, user/group governance, System Settings, template generation, cache maintenance, audit, access matrix, manuals, notifications, and email-template workflows include expanded Malay and English translations.
-- Administrative AJAX endpoints apply consistent authentication, authorization, CSRF, validation, safe error responses, and audit handling appropriate to each operation.
+- OneID callbacks now prioritize a newly returned token over stale browser credentials and convert invalid-token, invalid-site, malformed-response, unavailable-service, and invalid-identity outcomes into controlled local login feedback.
+- OneID API requests now enforce certificate and hostname verification with explicit connection and total timeouts.
+- The OneID browser cookie now contains only the opaque credential, uses a shorter lifetime, and applies `HttpOnly`, `SameSite=Lax`, and HTTPS-aware `Secure` protection.
+- SSO handoffs carry an expiry, one-time nonce, correlation ID, and explicit identity state; OneID staff, student, and hybrid identities are resolved from the canonical `u_category`, with a staff-first fallback for legacy packets that do not provide a category.
+- OneID events are logged with a correlation ID without recording raw tokens or the complete identity packet.
+- Dependency-free regression coverage verifies response classification, staff/student identifier handling, auto-reissue, timeout and TLS controls, callback precedence, and handoff requirements.
+
+## Version 1.9.5 Settings Synchronization and Account Recovery
+
+- System Settings AJAX saves now invalidate request-local configuration caches before returning authoritative values, preventing toggles and selectors from visually reverting until refresh.
+- General, Login Policy, Email, Theme, Language, Database, and AI Chatbot settings now keep their form state, runtime summaries, Select2 controls, and saved/dirty indicators synchronized with normalized server responses.
+- Sensitive SMTP passwords and AI provider API keys are excluded from settings-save responses.
+- Forgot Password now accepts Login ID, registered email, staff ID, or employee number, rejects ambiguous shared identifiers, and applies one centralized manual-login eligibility policy during both request and token consumption.
+- Manual Super Admin accounts retain controlled recovery during maintenance or a disabled category, while SSO-managed, disabled, deleted, unknown-category, and email-less accounts remain ineligible for local password reset.
+- Password reset requests now use layered session/IP/identifier throttling, avoid exposing identifiers in redirect URLs, retain the previous link until replacement email delivery succeeds, and complete password changes and token consumption transactionally.
+- Regression coverage verifies settings save synchronization, secret redaction, account-recovery policy combinations, and the absence of schema-changing SQL in this release.
+
+## Version 1.9.4 Administration Reliability and Performance
+
+- Theme configuration loaded during login now repairs incomplete browser session settings before `config.js` applies the layout.
+- User Management group loading now supports optional and legacy group schemas, avoids repeated metadata queries, and safely quotes SQL aliases across supported MySQL versions.
+- Notification Admin and Notification Templates now perform fewer database queries during the initial server-side DataTable load.
+- User Management asset versioning and Additional Database preview callbacks no longer emit the related PHP or Firefox console warnings.
+
+## Version 1.9.3 Notification and Administration UI Refinement
+
+- The personal Notifications page now uses high-contrast segmented filters with icons and inline counts, clearer unread emphasis, a professional responsive toolbar, and consistent IQS Framework theme variables.
+- Notification Admin publish confirmation now remains above its setup modal.
+- Notification Admin, Notification Templates, System Cache, Access Matrix, Developer Guide, and Manual Management now prioritize their main workflows without separate KPI card rows.
+- Developer Guide search now spans the full available content width.
 
 ## Actual System Features
 
@@ -38,6 +63,11 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Role switching for users with more than one available group context through `role-switch.php` and `role-switch-roles.php`.
 - Profile workspace with login activity, audit history, active session visibility, and session termination support.
 - Login policy configuration from System Settings, including manual login route control and SSO compatibility settings.
+- OneID SSO validates callback tokens through the configured identity provider, uses a five-minute one-time application handoff, and reports provider, token, site, response, identity, provisioning, policy, and lockout failures through controlled login feedback.
+- OneID transport enforces TLS verification and bounded request timeouts, while browser state is restricted to a short-lived protected opaque credential and application audit records exclude raw tokens.
+- Forgot Password supports Login ID, registered email, staff ID, and employee-number lookup for eligible manual accounts, with duplicate-identifier protection and generic public responses.
+- Password recovery reuses the active login policy: SSO-managed accounts remain with their identity provider, while manual Super Admin recovery remains available during maintenance and category shutdowns subject to active-account and registered-email checks.
+- Reset links are hashed, expiring, single-use, rate limited, preserved until replacement email delivery succeeds, and consumed transactionally with the local password update.
 
 ### Dashboard
 
@@ -73,7 +103,7 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Read-only access matrix page at `public/pages/access-matrix.php`.
 - Provides visibility of group, module, and menu access configuration.
 - Backed by `AccessController.php`.
-- Presents searchable access coverage with clearer summary cards, hierarchy context, filters, local states, and responsive table behavior.
+- Presents searchable access coverage with hierarchy context, filters, local states, and responsive table behavior.
 
 ### Audit Center
 
@@ -93,7 +123,7 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Supports admin announcements, direct user notifications, role/group/audience notifications, event-based notifications, and workflow task notifications.
 - Notification publishing and workflow logic is handled by `NotificationPublisher.php`, `NotificationService.php`, `NotificationWorkflowService.php`, `NotificationAudienceResolver.php`, `NotificationAdminService.php`, and `NotificationTemplateService.php`.
 - AJAX endpoints include `notification-list.php`, `notification-read.php`, `notification-read-all.php`, `notification-action.php`, `notification-admin-list.php`, `notification-admin-publish.php`, `notification-template-list.php`, and `notification-template-action.php`.
-- Notification list, publisher, and template workspaces use standardized KPI cards, tables, local loaders, professional modal tabs, preview states, and multilingual feedback.
+- Notification list, publisher, and template workspaces use clear filter controls, tables, local loaders, professional modal tabs, preview states, and multilingual feedback without separate KPI card rows.
 - Developer guidance is documented in `docs/notification-developer-standard-2026-05-04.md` and `docs/notification-developer-examples-2026-05-03.md`.
 
 ### Profile
@@ -118,6 +148,8 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 - Settings are handled by `TetapanSistemController.php`, `Config.php`, `SystemConfigConstants.php`, and page-specific JavaScript/CSS assets.
 - General > Limits includes the `View As Timeout (Minutes)` setting for the Super Admin impersonation workflow.
 - Settings sections use standardized navigation, cards, forms, validation feedback, and theme-aware responsive presentation.
+- AJAX save responses synchronize normalized form values and runtime summaries immediately without requiring a page refresh.
+- Request-local configuration caches are invalidated after saves, and SMTP passwords or AI provider API keys are not returned to the browser in save responses.
 
 ### AI Chatbot Core
 
@@ -145,9 +177,9 @@ README ini hanya mendokumenkan ciri yang wujud dalam kod semasa projek ini.
 
 - Admin-only system cache maintenance page exists at `public/pages/system-cache.php`.
 - Discovers standard project cache locations dynamically from `app/cache`, `public/cache`, and `storage/cache` when those folders exist.
-- Displays cache location count, file count, total size, OPcache status, APCu status, and per-location last modified date.
+- Displays discovered cache locations with file count, size, and per-location last modified date in the maintenance table.
 - Supports clearing selected cache locations or all discovered cache locations while preserving directory structure, `.gitkeep`, `.htaccess`, active sessions, and login tokens.
-- Cache clearing is handled through `public/ajax/system-cache-action.php`, uses CSRF validation and admin permission enforcement, resets OPcache/APCu where available, logs the operation through the central audit mechanism, and updates KPI/table state in place with a local operation loader.
+- Cache clearing is handled through `public/ajax/system-cache-action.php`, uses CSRF validation and admin permission enforcement, resets OPcache/APCu where available, logs the operation through the central audit mechanism, and updates table state in place with a local operation loader.
 
 ### Language Architecture
 
@@ -228,7 +260,7 @@ Operational references:
 - Developer guide page exists at `public/pages/developer-guide.php`.
 - Provides centralized, copyable sample code for core-safe module development, including page skeletons, AJAX/CSRF, database access, notifications, language keys, menu/access, audit, and email guidance.
 - Intended for programmers to consume framework APIs without modifying protected core files.
-- Uses categorized navigation, searchable guidance, copy feedback, consistent code panels, and responsive multilingual presentation.
+- Uses categorized navigation, a full-width search workspace, copy feedback, consistent code panels, and responsive multilingual presentation.
 
 ### Manual Management
 

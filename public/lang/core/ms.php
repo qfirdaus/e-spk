@@ -364,13 +364,13 @@
 'forgot_password_heading'
                            => 'Minta pautan reset kata laluan',
 'forgot_password_intro'
-                           => 'Masukkan Login ID atau emel berdaftar untuk akaun manual anda. Jika akaun itu layak, sistem akan menghantar pautan reset sekali guna ke alamat emel yang didaftarkan.',
+                           => 'Masukkan Login ID, emel berdaftar, ID staf atau nombor pekerja untuk akaun manual anda. Jika akaun itu layak, sistem akan menghantar pautan reset sekali guna ke alamat emel yang didaftarkan.',
 'forgot_password_login_id_label'
-                           => 'Login ID',
+                           => 'Pengenal Akaun',
 'forgot_password_login_id_placeholder'
-                           => 'Masukkan Login ID anda',
+                           => 'Login ID, emel, ID staf atau nombor pekerja',
 'forgot_password_login_id_hint'
-                           => 'Anda boleh gunakan Login ID sebenar atau emel berdaftar. Untuk pengguna umum, Login ID biasanya memang alamat emel.',
+                           => 'Gunakan salah satu pengenal yang tepat. Jika satu emel dikongsi oleh beberapa akaun, gunakan Login ID atau ID rasmi anda.',
 'forgot_password_submit_btn'
                            => 'Hantar Pautan Reset',
 'forgot_password_back_to_login'
@@ -481,6 +481,18 @@
                            => 'Perkhidmatan SSO Tidak Dapat Dicapai',
 'login_sso_service_unreachable_msg'
                            => 'Sistem tidak dapat berhubung dengan perkhidmatan Single Sign-On (SSO) buat masa ini. Sila cuba semula kemudian.',
+'login_sso_token_invalid_title'
+                           => 'Log Masuk OneID Tidak Sah',
+'login_sso_token_invalid_msg'
+                           => 'Log masuk OneID tidak dapat disahkan. Sila mulakan semula log masuk melalui OneID.',
+'login_sso_site_invalid_title'
+                           => 'Konfigurasi OneID Tidak Sah',
+'login_sso_site_invalid_msg'
+                           => 'Aplikasi ini tidak dikenali oleh perkhidmatan OneID. Sila hubungi pentadbir sistem.',
+'login_sso_response_invalid_title'
+                           => 'Respons OneID Tidak Sah',
+'login_sso_response_invalid_msg'
+                           => 'Respons daripada OneID tidak dapat diproses. Sila cuba semula kemudian.',
 
 // Akaun dikunci / dibuka
 'login_locked_title'       => 'Akaun Dikunci',
@@ -1422,12 +1434,6 @@
 'userGroup_non_json_response'       => 'Server tidak memulangkan JSON. Pratonton:',
 
 // =========================
-// Undo (Opsyenal)
- // =========================
-'userGroup_undo_btn'                => 'Batal',
-'userGroup_undo_title'              => 'Batal',
-'userGroup_undo_message'            => 'Menu "%s" telah dipadam.',
-// =========================
 // Carian & DataTables
 // =========================
 'userGroup_search_group_placeholder'=> 'Cari kumpulan...',
@@ -1975,6 +1981,20 @@
 'config_tab_db_additional_configured_driver' => 'Driver Ditetapkan',
 'config_tab_db_additional_database'      => 'Pangkalan Data',
 'config_tab_db_additional_ping'          => 'Ping',
+'config_tab_db_mysql_resolved_key'       => 'Kunci Diselesaikan',
+'config_tab_db_mysql_production_target'  => 'Sasaran Produksi',
+'config_tab_db_mysql_development_target' => 'Sasaran Pembangunan',
+'config_tab_db_mysql_diagnostic'         => 'Diagnostik',
+'config_tab_db_mysql_dedicated_env'      => 'Persekitaran khusus',
+'config_tab_db_mysql_fallback'           => 'Sandaran',
+'config_tab_db_mysql_same_target'        => 'Produksi dan pembangunan diselesaikan kepada sasaran yang sama.',
+'config_tab_db_mysql_different_target'   => 'Produksi dan pembangunan diselesaikan kepada sasaran yang berbeza.',
+'config_tab_db_additional_diagnostics_title' => 'Diagnostik Registry Baca Sahaja',
+'config_tab_db_additional_diagnostics_enabled' => '%s aktif',
+'config_tab_db_additional_diagnostics_active_rows' => '%s baris persekitaran aktif',
+'config_tab_db_additional_diagnostics_warning_count' => '%s amaran',
+'config_tab_db_additional_diagnostics_note' => 'Snapshot ini tidak membuka atau menguji sambungan langsung. Gunakan Uji Sambungan untuk mengesahkan rangkaian dan kelayakan sebenar.',
+'config_tab_db_additional_diagnostics_more_warnings' => '%s lagi amaran tidak dipaparkan.',
 
 'config_tab_db_simpan_tetapan_db'        => 'Simpan Tetapan Pangkalan Data',
 'config_tab_db_actions_note'             => 'Pastikan pilihan environment dan mode operasi diuji serta disahkan sebelum disimpan.',
@@ -2319,6 +2339,7 @@
 'globalLoader_submitting'        => 'Menghantar...',
 'globalLoader_navigation'        => 'Memuat halaman...',
 'globalLoader_logout'            => 'Log Keluar...',
+'globalLoader_wait'              => 'Sila tunggu sebentar',
 
 'config_js_confirm_emel'         => 'Anda pasti mahu simpan tetapan emel?',
 'config_js_confirm_general'      => 'Anda pasti mahu simpan tetapan umum?',
@@ -2353,6 +2374,17 @@
 'config_js_saving_changes'       => 'Sistem sedang menyimpan perubahan anda...',
 'config_js_invalid_input'        => 'Input tidak sah.',
 'config_js_field_fallback_label' => 'Ruangan',
+'config_js_save_feedback_idle_badge' => 'Belum simpan',
+'config_js_save_feedback_dirty_badge' => 'Perubahan',
+'config_js_save_feedback_saving_badge' => 'Menyimpan',
+'config_js_save_feedback_success_badge' => 'Disimpan',
+'config_js_save_feedback_warning_badge' => 'Amaran',
+'config_js_save_feedback_error_badge' => 'Ralat',
+'config_js_save_feedback_idle_text' => 'Belum ada perubahan baharu untuk disimpan.',
+'config_js_save_feedback_dirty_text' => 'Perubahan belum disimpan.',
+'config_js_save_feedback_success_text' => 'Perubahan terkini sudah disimpan.',
+'config_js_save_feedback_warning_text' => 'Tetapan disimpan tetapi ada amaran yang perlu disemak.',
+'config_js_save_feedback_saved_with_warning' => 'Tetapan disimpan dengan amaran.',
 'config_js_uji_emel_btn'         => 'Uji Sekarang',
 'config_js_uji_emel_btn_loading' => 'Menguji…',
 'config_js_uji_emel_btn_default' => 'Uji Sambungan Emel',
@@ -2632,12 +2664,6 @@
 /* =========================
  * Modal — Akses Kumpulan
  * ========================= */
-
-/* =========================
- * Undo (Padam Menu)
- * ========================= */
-'userGroup_undo_info'
-                                    => 'Fungsi batal memerlukan endpoint server-side. Sila hubungi admin.',
 
 /* =========================
  * SweetAlert — Padam

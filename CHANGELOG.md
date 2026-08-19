@@ -6,13 +6,129 @@ This changelog follows a release-style summary based on major project milestones
 
 ## [Unreleased]
 
+### Fixed
+- Fixed valid OneID hybrid identity packets being rejected as invalid whenever both `data3` and `data4` were populated; identity selection now follows OneID `u_category` (`2/3` staff via `data3`, `10/11/12` student or hybrid via `data4`) with the historical staff-first fallback for category-less legacy packets.
+- Fixed OneID generated or legacy application credential failures returned through `respond_description` being mislabeled as invalid tokens instead of site credential or site-access errors.
+
+## [1.9.6] - 2026-08-13
+
+### Added
+- Added dependency-free OneID SSO flow helpers for deterministic identity validation and API response classification.
+- Added localized Malay and English feedback for invalid OneID tokens, rejected site configuration, malformed provider responses, and unavailable SSO service conditions.
+- Added correlation IDs and structured OneID lifecycle logging without raw tokens or complete identity payloads.
+- Added OneID SSO regression coverage for staff and student identifiers, ambiguous or invalid identity packets, rejected tokens and sites, auto-reissue, malformed responses, callback precedence, TLS, timeouts, and handoff requirements.
+
 ### Changed
+- Changed project release metadata to version `1.9.6`.
+- Changed OneID callback processing so a fresh `new_sso_cre` token always takes precedence over an existing browser cookie.
+- Changed every OneID verification outcome to terminate through a successful handoff or controlled local failure instead of redirecting repeatedly, rendering a blank response, or printing the vendor `X` marker.
+- Changed OneID API calls to use a five-second connection timeout, a fifteen-second total timeout, certificate verification, and hostname verification.
+- Changed the OneID browser cookie to retain only the opaque credential for one hour with `HttpOnly`, `SameSite=Lax`, and HTTPS-aware `Secure` attributes.
+- Changed SSO handoffs to include an explicit expiry, correlation ID, identity validity state, and identity-conflict state in addition to the existing nonce and consumption marker.
+- Changed identity resolution to reject packets containing both a valid staff ID and a valid student matric identifier instead of silently preferring the staff identity.
+
+### Fixed
+- Fixed invalid existing and callback tokens being able to finish without a redirect or user-facing result.
+- Fixed incomplete auto-reissue responses displaying a raw `X` response.
+- Fixed stale OneID cookies taking precedence over a newly returned callback token.
+- Fixed unreachable, empty, malformed, or unsupported OneID API responses falling through generic vendor behavior without actionable local feedback.
+
+### Security
+- Enabled TLS peer and hostname verification for communication with the OneID API.
+- Removed the complete OneID identity packet from the browser cookie and reduced its lifetime from thirty days to one hour.
+- Prevented raw OneID credentials and complete provider packets from being written by the new SSO lifecycle audit logging.
+- Required SSO application handoffs to carry a valid correlation ID and rejected ambiguous staff/student identities.
+
+## [1.9.5] - 2026-08-11
+
+### Added
+- Added centralized password-reset eligibility evaluation shared by forgot-password requests and reset-token consumption, with explicit reason codes for disabled, deleted, unknown-category, maintenance-blocked, category-disabled, SSO-managed, policy-unavailable, ambiguous, and email-missing accounts.
+- Added forgot-password lookup by Login ID, registered email, staff ID, or employee number with deterministic match priority and duplicate-identifier rejection.
+- Added password-reset regression coverage for manual accounts, Super Admin maintenance/category recovery, SSO restrictions, disabled and unknown-category accounts, unavailable policy handling, safe token lifecycle behavior, and schema-change protection.
+- Added System Settings save-sync regression coverage for request-local cache invalidation, boolean normalization, AI Chatbot synchronization, dirty-state tracking, and secret redaction.
+
+### Changed
+- Changed project release metadata to version `1.9.5`.
+- Changed manual Super Admin password recovery to remain available during maintenance mode or a disabled login category while retaining active-account, known-category, registered-email, and manual-login requirements.
+- Changed password-reset eligibility to fail closed when authentication policy cannot be loaded and to reject unknown user categories instead of silently treating them as public users.
+- Changed forgot-password throttling to use hashed session, IP, and account-identifier scopes, with APCu-backed cross-session counters when APCu is available.
+- Changed replacement reset-token handling so existing usable links remain valid until the replacement email is delivered successfully.
+- Changed password reset completion to update the local password, consume the active token, and invalidate remaining tokens in one database transaction using the existing schema.
+- Changed Forgot Password guidance to document every supported account identifier and shared-email behavior.
+
+### Fixed
+- Fixed System Settings toggles and selectors visually reverting to pre-save values because AJAX responses reread stale request-local configuration overrides.
+- Fixed incomplete post-save synchronization for General and AI Chatbot forms, including normalized selector, checkbox, Select2, runtime-summary, and saved/dirty states.
+- Fixed string boolean values such as `"0"` being unsafe for direct JavaScript truthiness checks during Login Policy synchronization.
+- Fixed eligible reset requests invalidating a previous working link before confirming replacement email delivery.
+- Fixed duplicate email addresses potentially selecting the newest matching account instead of requiring an unambiguous identifier.
+- Fixed forgot-password redirects exposing submitted account identifiers in browser history, access logs, or referrer data.
+- Fixed password-update and reset-token consumption being separate operations that could leave partially completed recovery state.
+
+### Security
+- Excluded SMTP passwords and AI provider API keys from System Settings AJAX save responses.
+- Kept SSO-managed accounts, including Super Admin accounts, on Identity Provider recovery instead of writing local passwords.
+- Added granular security audit metadata for password-reset eligibility outcomes without exposing those internal reason codes in generic public responses.
+- Invalidated newly created reset tokens when email rendering or delivery fails while retaining the preceding valid token.
+
+## [1.9.4] - 2026-08-04
+
+### Changed
+- Reduced the initial Notification Admin and Notification Templates DataTable workload by removing unused summary queries, reusing the total count when no filters are active, and avoiding an unnecessary audience join during notification counts.
+- Changed group-table schema inspection to load available columns once per request with a safe fallback for legacy schemas.
+- Changed project release metadata to version `1.9.4`.
+
+### Fixed
+- Fixed `config.js` failing on login or dashboard load when an incomplete legacy `sessionStorage.__CONFIG__` value did not contain the required layout, navigation, menu, topbar, or sidenav structure.
+- Fixed User Management group-list requests returning HTTP 500 because the unquoted `mod` SQL alias conflicted with MySQL syntax.
+- Fixed User Management asset links emitting an undefined `$version` warning.
+- Fixed Firefox reporting unreachable JavaScript after return statements in the Additional Database inspect, schema-preview, and data-preview callbacks.
+
+## [1.9.3] - 2026-08-04
+
+### Changed
+- Redesigned the personal Notifications workspace with higher-contrast segmented filters, filter icons, inline counts, improved search and action styling, clearer unread emphasis, and responsive light/dark presentation.
+- Changed the Developer Guide search card to use the full available content width after removing its summary metrics.
+- Simplified Notification Admin, Notification Templates, System Cache, Access Matrix, Developer Guide, and Manual Management so their primary workflows follow the page hero without separate KPI card rows.
+- Changed project release metadata to version `1.9.3`.
+
+### Fixed
+- Fixed active notification filter labels becoming unreadable because the page stylesheet referenced Bootstrap `--bs-*` colour variables instead of the IQS Framework `--ct-*` theme variables.
+- Fixed the Notification Admin publish confirmation SweetAlert rendering behind the setup modal by assigning the alert container a higher stacking layer.
+
+### Removed
+- Removed KPI card markup and KPI-only server-side calculations or client-side update logic from Notification Admin, Notification Templates, System Cache, Access Matrix, Developer Guide, and Manual Management.
+
+## [1.9.2] - 2026-08-03
+
+### Added
+- Added reusable translated busy-button feedback with a spinner, action text, double-click protection, and state restoration for group, menu, module, and subgroup save operations.
+- Added authoritative access, user-count, and deletion-eligibility data to group create/update and permission-save responses for immediate in-place table updates.
+- Added a localized secondary status message and the system logo to the global transaction loader.
+
+### Changed
+- Redesigned the global transaction loader as a compact, responsive, logo-led status card with a restrained progress treatment, light/dark themes, and reduced-motion support.
+- Changed User Group table redraws to preserve colour, group-action, module-access, and menu-access column alignment after all in-place transactions.
+- Changed group action buttons to use deterministic flex spacing so server-rendered and dynamically inserted rows remain visually identical.
+- Changed group colour indicators from narrow vertical bars to clear square swatches aligned with category badges.
+- Changed the Menu, Module, and Group toolbar buttons to share the same neutral visual treatment.
+- Changed module modal initialization so create/edit modes and save-button states reset reliably whenever the modal is opened or closed.
 - Changed the documented runtime from Docker/Apache to WSL 2 Ubuntu with Nginx and PHP-FPM.
 - Updated database inspection guidance to use the native WSL PHP runtime.
 - Updated setup guidance to make the native WSL runtime the only maintained local deployment path.
 - Changed `sync-updates.sh` to report sync results in the terminal without initializing unused log files.
+- Changed project release metadata to version `1.9.2`.
+
+### Fixed
+- Fixed Group and Module delete requests failing CSRF validation when the web server normalized request-header casing.
+- Fixed the Group delete button remaining hidden after all module/menu access was removed until the page was manually refreshed.
+- Fixed newly created or refreshed group rows displaying misaligned module, menu, and edit action icons.
+- Fixed Group and Module save buttons remaining stuck on `Saving...` after asynchronous transactions or modal reuse.
+- Fixed Module create reopening in edit mode after a previous module edit.
+- Fixed menu deletion displaying a misleading second Undo message even though no restore feature exists.
 
 ### Removed
+- Removed the obsolete menu-delete Undo wrapper, styling, and Malay/English translation strings.
 - Removed the retired Dockerfile, Compose service, Apache/PHP container configuration, Docker ignore rules, and development TLS key material.
 - Removed unused `sync.log` and `conflict.log` initialization and references from the update sync workflow.
 

@@ -364,13 +364,13 @@
 'forgot_password_heading'
                            => 'Request a password reset link',
 'forgot_password_intro'
-                           => 'Enter the Login ID or registered email for your manual-login account. If the account is eligible, the system will send a one-time reset link to the registered email address.',
+                           => 'Enter the Login ID, registered email, staff ID, or employee number for your manual-login account. If the account is eligible, the system will send a one-time reset link to the registered email address.',
 'forgot_password_login_id_label'
-                           => 'Login ID',
+                           => 'Account Identifier',
 'forgot_password_login_id_placeholder'
-                           => 'Enter your Login ID',
+                           => 'Login ID, email, staff ID, or employee number',
 'forgot_password_login_id_hint'
-                           => 'You can use the actual Login ID or the registered email. For public users, the Login ID is usually the registered email address.',
+                           => 'Use one exact identifier. If an email is shared by multiple accounts, use your Login ID or official ID instead.',
 'forgot_password_submit_btn'
                            => 'Send Reset Link',
 'forgot_password_back_to_login'
@@ -481,6 +481,18 @@
                            => 'SSO Service Unreachable',
 'login_sso_service_unreachable_msg'
                            => 'The system could not reach the Single Sign-On (SSO) service at this time. Please try again later.',
+'login_sso_token_invalid_title'
+                           => 'Invalid OneID Login',
+'login_sso_token_invalid_msg'
+                           => 'The OneID login could not be verified. Please start the OneID login again.',
+'login_sso_site_invalid_title'
+                           => 'Invalid OneID Configuration',
+'login_sso_site_invalid_msg'
+                           => 'This application is not recognized by OneID. Please contact the system administrator.',
+'login_sso_response_invalid_title'
+                           => 'Invalid OneID Response',
+'login_sso_response_invalid_msg'
+                           => 'The response from OneID could not be processed. Please try again later.',
 
 // Akaun dikunci / dibuka
 'login_locked_title'       => 'Account Locked',
@@ -1422,15 +1434,6 @@
 'userGroup_non_json_response'       => 'Server did not return JSON. Preview:',
 
 // =========================
-// Undo (Opsyenal)
- // =========================
-'userGroup_undo_btn'                => 'Undo',
-'userGroup_undo_title'              => 'Undo',
-'userGroup_undo_message'            => 'Menu "%s" has been deleted.',
-'userGroup_undo_info'
-                                      => 'Undo requires a server-side endpoint. Please contact the administrator.',
-
-// =========================
 // Carian & DataTables
 // =========================
 'userGroup_search_group_placeholder'=> 'Search group...',
@@ -1982,6 +1985,20 @@
 'config_tab_db_additional_configured_driver' => 'Configured Driver',
 'config_tab_db_additional_database'      => 'Database',
 'config_tab_db_additional_ping'          => 'Ping',
+'config_tab_db_mysql_resolved_key'       => 'Resolved Key',
+'config_tab_db_mysql_production_target'  => 'Production Target',
+'config_tab_db_mysql_development_target' => 'Development Target',
+'config_tab_db_mysql_diagnostic'         => 'Diagnostic',
+'config_tab_db_mysql_dedicated_env'      => 'Dedicated environment',
+'config_tab_db_mysql_fallback'           => 'Fallback',
+'config_tab_db_mysql_same_target'        => 'Production and development resolve to the same target.',
+'config_tab_db_mysql_different_target'   => 'Production and development resolve to different targets.',
+'config_tab_db_additional_diagnostics_title' => 'Read-only Registry Diagnostics',
+'config_tab_db_additional_diagnostics_enabled' => '%s enabled',
+'config_tab_db_additional_diagnostics_active_rows' => '%s active environment rows',
+'config_tab_db_additional_diagnostics_warning_count' => '%s warning(s)',
+'config_tab_db_additional_diagnostics_note' => 'This snapshot does not open or test a live connection. Use Test Connection to verify the actual network and credentials.',
+'config_tab_db_additional_diagnostics_more_warnings' => '%s more warning(s) are not shown.',
 
 'config_tab_db_simpan_tetapan_db'        => 'Save Database Settings',
 'config_tab_db_actions_note'             => 'Ensure the selected environment and operational mode have been tested and verified before saving.',
@@ -2326,6 +2343,7 @@
 'globalLoader_submitting'        => 'Submitting...',
 'globalLoader_navigation'        => 'Loading page...',
 'globalLoader_logout'            => 'Logging out...',
+'globalLoader_wait'              => 'Please wait a moment',
 
 'config_js_confirm_emel'         => 'Are you sure you want to save email settings?',
 'config_js_confirm_general'      => 'Are you sure you want to save general settings?',
@@ -2360,6 +2378,17 @@
 'config_js_saving_changes'       => 'The system is saving your changes...',
 'config_js_invalid_input'        => 'Invalid input.',
 'config_js_field_fallback_label' => 'Field',
+'config_js_save_feedback_idle_badge' => 'Not saved',
+'config_js_save_feedback_dirty_badge' => 'Changed',
+'config_js_save_feedback_saving_badge' => 'Saving',
+'config_js_save_feedback_success_badge' => 'Saved',
+'config_js_save_feedback_warning_badge' => 'Warning',
+'config_js_save_feedback_error_badge' => 'Error',
+'config_js_save_feedback_idle_text' => 'No new changes to save.',
+'config_js_save_feedback_dirty_text' => 'Changes have not been saved.',
+'config_js_save_feedback_success_text' => 'The latest changes have been saved.',
+'config_js_save_feedback_warning_text' => 'Settings were saved, but there are warnings to review.',
+'config_js_save_feedback_saved_with_warning' => 'Settings saved with a warning.',
 'config_js_uji_emel_btn'         => 'Test Now',
 'config_js_uji_emel_btn_loading' => 'Testing…',
 'config_js_uji_emel_btn_default' => 'Test Email Connection',
