@@ -21,7 +21,7 @@
   $NEED_SELECT2    = true;  
 
   $PAGE_TITLE = tr('spk_title', 'SPK');
-  $pageHeading     = tr('maklumat_plo', 'Maklumat PLO');
+  $pageHeading     = tr('maklumat_kursus', 'Maklumat Kursus Program');
   $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
   $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
   
@@ -36,9 +36,7 @@
   $isActive = hasActiveSession($loginActivity);
   
   $errorMessage = "" ; //$peribadiController->getErrorMessage();
-  $istarPerakuanIdPrefix = 'istar-konvo';
 
-  //print_r($lookupWakil);
 ?>
 
 <body
@@ -86,8 +84,8 @@
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
               <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-kursus-program-tab" role="tab">
-                  <i class="ri-calendar-todo-line me-1"></i> <?= h(tr('tab_maklumat_kursus_program','Maklumat Kursus Program')) ?>
+                <a class="nav-link active" data-bs-toggle="tab" href="#maklumat-kursus-tab" role="tab">
+                  <i class="ri-calendar-todo-line me-1"></i> <?= h(tr('tab_maklumat_kursus','Maklumat Kursus')) ?>
                 </a>
               </li>             
             </ul>
@@ -115,9 +113,9 @@
                 </div>
               <?php endif; ?>
         
-              <!-- Tab 1: Maklumat Kursus Program -->
-              <div class="tab-pane fade show active" id="maklumat-kursus-program-tab" role="tabpanel">
-                <?php include __DIR__ . '/list-kursus-program.php'; ?>
+              <!-- Tab 1: Maklumat Kursus -->
+              <div class="tab-pane fade show active" id="maklumat-kursus-tab" role="tabpanel">
+                <?php include __DIR__ . '/list-kursus.php'; ?>
               </div>
               
             </div>
@@ -130,12 +128,10 @@
   </div>
 
   <?php 
+  
     include __DIR__ . '/../../../includes/script.php'; 
     include __DIR__ . '/../../../includes/script-pages.php';  
-    include __DIR__ . '/senarai-kod.php';
     include __DIR__ . '/modal-tambah.php';
-    include __DIR__ . '/modal-kemaskini.php';
-    include __DIR__ . '/modal-salin.php';
   ?>
 
   <script> 
@@ -150,10 +146,10 @@
   <?php if ($NEED_SELECT2): ?>
     <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>?v=<?= time(); ?>"></script>
   <?php endif; ?>
-  
+
   <!-- <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script> -->
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/spk-maklumat-kursus-program.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/spk-maklumat-kursus-kp.js?v=' . time()) ?>"></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

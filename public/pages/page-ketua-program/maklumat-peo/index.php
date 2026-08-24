@@ -35,8 +35,7 @@
   $loginActivity = $profile_controller->getLoginActivity();
   $isActive = hasActiveSession($loginActivity);
   
-  $errorMessage = "" ; //$peribadiController->getErrorMessage();
-  $istarPerakuanIdPrefix = 'istar-konvo';
+  $errorMessage = "" ; 
 ?>
 
 <body

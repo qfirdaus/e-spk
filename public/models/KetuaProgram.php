@@ -17,7 +17,6 @@ class KetuaProgram
     public function stafList($term) 
     {
         try {
-            // Guna query Sybase kau yang asal tadi
             $sql = "SELECT TOP 5 *, gelar_nama + ' ' + nama AS nama_staf FROM ehrmdb.dbo.v630staf_service_skim_aktif staf
                         WHERE LOWER(gelar_nama + ' ' + nama) LIKE LOWER(:term1)
                         OR LOWER(nopekerja) LIKE LOWER(:term2)";
@@ -140,7 +139,7 @@ class KetuaProgram
                     }
                 }
             } else {
-                // Akaun langsung tak wujud di tbl_m_user -> Jalankan pendaftaran penuh dari Sybase
+                // Akaun langsung tak wujud di tbl_m_user -> register dari Sybase
                 $sybaseSql = "SELECT nopekerja, idpekerja, gelar_nama, nama, nokp, email, handphone, telefon_pej,
                                      kdjwtsemasa, jawatansemasa, kdjenis, jenis, kdjbtnsemasa, 
                                      jabatansemasa, kumpjwt, kodstatus, status 
@@ -200,7 +199,6 @@ class KetuaProgram
                 ]);
             }
 
-            // Selesai semua proses tanpa ralat, sahkan transaksi
             $this->pdoSPK->commit();
             return true;
 
