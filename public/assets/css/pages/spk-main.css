@@ -618,3 +618,25 @@ table.dataTable thead th {
     font-size: 1rem;
     font-weight: 700;
 }
+
+.swal2-container {
+    z-index: 99999 !important;
+}
+
+
+.bg-lightcream {
+    background-color: #f5e7b3 !important; 
+    color: #664d03 !important;            
+    border: 1px solid #f5e7b3 !important; 
+}
+
+#dataKursusDT thead th {
+    font-size: 12px !important;
+    letter-spacing: 0.3px !important;
+    text-transform: uppercase; 
+    vertical-align: middle !important;
+}
+
+#dataKursusDT tbody td {
+    font-size: 12px !important;
+}
