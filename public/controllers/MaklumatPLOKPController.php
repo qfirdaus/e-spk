@@ -31,16 +31,11 @@ class MaklumatPLOKPController
         $this->pdoSPK = Database::pdoMysql();
         $this->pdoSPK->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Pasangkan pdoSPK dan pdoStudent ke dalam Model
         $this->model = new MaklumatPLOKP($this->pdoSPK, $this->pdoStudent, $this->pdoStaff);   
         
-        // Jalankan fungsi semakan POST secara automatik jika ada carian dibuat
         $this->handlePostRequest();
     }
 
-    /**
-     * Mengendalikan form submission (Carian/Search)
-     */
     private function handlePostRequest(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -69,9 +64,6 @@ class MaklumatPLOKPController
         $_SESSION["programplo"] = $_SESSION["programplo"] ?? '';
     }
 
-    /**
-     * Menjana kod penapisan berdasarkan Tahap Pengajian
-     */
     private function getKodTerm(): string
     {
         $pengajian = $_SESSION["pengajianplo"] ?? '';
@@ -85,9 +77,6 @@ class MaklumatPLOKPController
         return "1=1"; // Default jika tiada pilihan supaya sql tidak ralat
     }
 
-    /**
-     * Mengumpul semua data yang diperlukan oleh halaman utama (View)
-     */
     public function getHalamanData(): array
     {
         $programUniversiti = 'Universiti';
