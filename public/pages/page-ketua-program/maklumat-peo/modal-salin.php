@@ -11,7 +11,10 @@
 
       <form autocomplete="off" method="POST">
         <div class="modal-body">
-
+          <div class="alert alert-info border-0">
+              Sila pilih <strong>Sesi Kemasukan</strong> dan <strong>Program</strong> sumber untuk disalin ke dalam program semasa.
+          </div>
+          
           <div class="mb-3 row align-items-center">
             <label class="col-sm-3 col-form-label fw-semibold">
               <?= h(tr('LBL-SESI-KEMASUKAN', $lang['LBL-SESI-KEMASUKAN'] ?? 'Sesi Kemasukan')) ?>

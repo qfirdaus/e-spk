@@ -116,4 +116,242 @@ $(document).ready(function() {
             });
         });
     }   
+
+    // Update
+    $('#formKemaskiniSLT').on('submit', function(e) {
+        e.preventDefault(); 
+        
+        var formElement = this; 
+        
+        Swal.fire({
+            title: 'Kemaskini Maklumat?',
+            text: "Adakah anda pasti untuk mengemaskini maklumat SLT ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Kemaskini!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitKemaskiniSLT(formElement);
+            }
+        });
+    });
+
+    function submitKemaskiniSLT(formElement) {
+        const formData = new FormData(formElement);
+        
+        const controllerUrl = base_url + 'pages/page-penyelaras-kursus/masa-pembelajaran-pelajar/update-slt.php';
+
+        Swal.fire({
+            title: 'Mengemaskini...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch(controllerUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(async res => {
+            const rawText = await res.text();
+            try {
+                return JSON.parse(rawText);
+            } catch (e) {
+                console.error("Ralat JSON (Kemaskini):", rawText);
+                throw new Error("Invalid JSON format");
+            }
+        })
+        .then(res => {
+            if (res.status === 'success') {
+                const modalElement = document.getElementById('kemaskini');
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modalInstance.hide();
+                document.querySelector('.modal-backdrop')?.remove();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berjaya',
+                    text: res.message || 'Rekod berjaya dikemaskini',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: res.message || 'Gagal mengemaskini rekod'
+                });
+            }
+        })
+        .catch(err => {
+            if (err.message !== "Invalid JSON format") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ralat',
+                    text: 'Berlaku ralat pelayan (Server Error) semasa mengemaskini data.'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ralat Format',
+                    text: 'Sila semak Console untuk ralat pelayan sebenar.'
+                });
+            }
+        });
+    }  
+    
+    // Copy SLT
+    $('#formSalinSLT').on('submit', function(e) {
+        e.preventDefault(); 
+        
+        var formElement = this; 
+        
+        Swal.fire({
+            title: 'Salin Maklumat?',
+            text: "Maklumat SLT daripada kursus yang dipilih akan disalin ke kursus semasa. Anda pasti?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Salin!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitSalinSLT(formElement);
+            }
+        });
+    });
+
+    function submitSalinSLT(formElement) {
+        const formData = new FormData(formElement);
+        
+        const controllerUrl = base_url + 'pages/page-penyelaras-kursus/masa-pembelajaran-pelajar/copy-slt.php';
+
+        Swal.fire({
+            title: 'Menyalin Rekod...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch(controllerUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(async res => {
+            const rawText = await res.text();
+            try {
+                return JSON.parse(rawText);
+            } catch (e) {
+                console.error("Ralat JSON (Salin):", rawText);
+                throw new Error("Invalid JSON format");
+            }
+        })
+        .then(res => {
+            if (res.status === 'success') {
+                const modalElement = document.getElementById('salin');
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modalInstance.hide();
+                document.querySelector('.modal-backdrop')?.remove();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berjaya',
+                    text: res.message || 'Rekod berjaya disalin',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: res.message || 'Gagal menyalin rekod'
+                });
+            }
+        })
+        .catch(err => {
+            if (err.message !== "Invalid JSON format") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ralat',
+                    text: 'Berlaku ralat pelayan (Server Error) semasa menyalin data.'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ralat Format',
+                    text: 'Sila semak Console untuk ralat pelayan sebenar.'
+                });
+            }
+        });
+    }    
+
+    // Delete SLT
+    $(document).on('click', '.btnHapusSLT', function() {
+        var idslt = $(this).data('idslt');
+        
+        Swal.fire({
+            title: 'Hapus Maklumat?',
+            text: "Adakah anda pasti untuk menghapus maklumat SLT ini? Tindakan ini tidak boleh diundurkan.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33', // Merah untuk bahaya
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitHapusSLT(idslt);
+            }
+        });
+    });
+
+    function submitHapusSLT(idslt) {
+        const formData = new FormData();
+        formData.append('sltid', idslt); 
+        
+        const controllerUrl = base_url + 'pages/page-penyelaras-kursus/masa-pembelajaran-pelajar/delete-slt.php';
+
+        Swal.fire({
+            title: 'Menghapus...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch(controllerUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(async res => {
+            const rawText = await res.text();
+            try {
+                return JSON.parse(rawText);
+            } catch (e) {
+                console.error("Ralat JSON (Hapus):", rawText);
+                throw new Error("Invalid JSON format");
+            }
+        })
+        .then(res => {
+            if (res.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berjaya',
+                    text: res.message || 'Rekod berjaya dihapuskan',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire('Gagal', res.message || 'Gagal menghapuskan rekod', 'error');
+            }
+        })
+        .catch(err => {
+            if (err.message !== "Invalid JSON format") {
+                Swal.fire('Ralat', 'Berlaku ralat pelayan semasa menghapus data.', 'error');
+            }
+        });
+    }    
 });

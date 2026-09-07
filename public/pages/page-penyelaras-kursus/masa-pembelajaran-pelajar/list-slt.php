@@ -179,14 +179,10 @@ if (!empty($sesiTerpilih)) {
                                         <i class="ri-edit-box-line fs-5"></i>
                                     </button>
                                     
-                                    <!-- Hapus (Hantar POST terus ke page controller) -->
-                                    <form action="" method="POST" onsubmit="return confirm('Adakah anda pasti untuk menghapus maklumat ini?');" style="display:inline;">
-                                        <input type="hidden" name="action" value="hapus">
-                                        <input type="hidden" name="sltid" value="<?= h($slt["id_slt"]) ?>">
-                                        <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Hapus">
-                                            <i class="ri-delete-bin-line fs-5"></i>
-                                        </button>
-                                    </form>
+                                    <!-- Hapus -->
+                                    <button type="button" class="btn btn-sm btn-outline-danger border-0 p-1 btnHapusSLT" data-idslt="<?= h($slt["id_slt"]) ?>" title="Hapus">
+                                        <i class="ri-delete-bin-line fs-5"></i>
+                                    </button>
 
                                 </div>
                             </td>

@@ -144,5 +144,122 @@ class MaklumatSLTController {
         }
     }
 
+    public function updateSLT($userId, $input) {
+        try {
+            $lec = (float)($input['txtlecture'] ?? 0);
+            $tut = (float)($input['txttutorial'] ?? 0);
+            $prac = (float)($input['txtpractical'] ?? 0);
+            $oth = (float)($input['txtothers'] ?? 0);
+            $nfg = (float)($input['txtnf2f'] ?? 0);
+            $nfi = (float)($input['txtindependent'] ?? 0);
+
+            $data = [
+                ':content'  => $input['txtcontent'], 
+                ':idclo'    => $input['selectCLO'],
+                ':lec'      => $lec, 
+                ':tut'      => $tut, 
+                ':prac'     => $prac, 
+                ':oth'      => $oth, 
+                ':nfg'      => $nfg, 
+                ':nfi'      => $nfi,
+                ':slt'      => ($lec + $tut + $prac + $oth + $nfg + $nfi),
+                ':kursusid' => $input['txtkursusid'],
+                ':idslt'    => $input['txtidslt'],
+                ':updated_by' => $userId
+            ];
+
+            $success = $this->model->kemaskiniSLT($data);
+
+            if ($success) {
+                return [
+                    'status' => 'success', 
+                    'message' => 'Maklumat SLT berjaya dikemaskini!'
+                ];
+            } else {
+                return [
+                    'status' => 'error', 
+                    'message' => 'Tiada perubahan dilakukan atau gagal mengemaskini.'
+                ];
+            }
+            
+        } catch (Exception $e) {
+            return [
+                'status' => 'error', 
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }
+    } 
+    
+    public function copySLT($userId, $input) {
+        try {
+            $toCourseId = $input['txtcourseid'];
+            $fromCourseId = $input['selectKursusModal'];
+
+            if (empty($fromCourseId)) {
+                return [
+                    'status' => 'error', 
+                    'message' => 'Sila pilih kursus sumber untuk disalin.'
+                ];
+            }
+
+            $sltRecords = $this->model->getSLTList($fromCourseId, $input['selectSesiModal']);
+
+            if (empty($sltRecords)) {
+                return [
+                    'status' => 'error', 
+                    'message' => 'Tiada rekod SLT dijumpai pada kursus yang dipilih.'
+                ];
+            }
+
+            $insertedCount = 0;
+            foreach ($sltRecords as $row) {
+                $data = [
+                    ':content'  => $row['content_outline'],
+                    ':idclo'    => $row['id_clo'],
+                    ':lec'      => (float)$row['f2f_lecture'],
+                    ':tut'      => (float)$row['f2f_tutorial'],
+                    ':prac'     => (float)$row['f2f_practical'],
+                    ':oth'      => (float)$row['f2f_others'],
+                    ':nfg'      => (float)$row['nf2f_guided'],
+                    ':nfi'      => (float)$row['nf2f_independent'],
+                    ':slt'      => (float)$row['slt'],
+                    ':kursusid' => $toCourseId,
+                    ':created_by' => $userId
+                ];
+
+                // Guna semula fungsi tambahSLT yang kita dah ada!
+                $this->model->tambahSLT($data);
+                $insertedCount++;
+            }
+
+            return [
+                'status' => 'success', 
+                'message' => "$insertedCount rekod SLT berjaya disalin!"
+            ];
+            
+        } catch (Exception $e) {
+            return [
+                'status' => 'error', 
+                'message' => 'Ralat Sistem: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function deleteSLT($userId, $input) {
+        try {
+            $idslt = $input['sltid'];
+            $success = $this->model->hapusSLT($idslt, $userId);
+
+            if ($success) {
+                return ['status' => 'success', 'message' => 'Maklumat SLT berjaya dihapuskan!'];
+            } else {
+                return ['status' => 'error', 'message' => 'Gagal menghapuskan maklumat.'];
+            }
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => 'Ralat Sistem: ' . $e->getMessage()];
+        }
+    }
+
 }
+
 ?>
