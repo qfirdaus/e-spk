@@ -14,7 +14,7 @@ $(document).ready(function() {
         const formData = new FormData();
         formData.append('id_kursus', idKursus);
 
-        fetch(base_url + 'pages/page-ketua-program/laporan/get-detail.php', {
+        fetch(base_url + 'pages/page-ketua-program/laporan/senarai-kursus/get-detail.php', {
             method: 'POST',
             body: formData
         })

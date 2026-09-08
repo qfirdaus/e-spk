@@ -5,7 +5,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../../controllers/LaporanKursusKPController.php'; 
+require_once __DIR__ . '/../../../../controllers/LaporanKursusKPController.php'; 
 
 $id_kursus = $_POST['id_kursus'] ?? '';
 

@@ -116,8 +116,8 @@
         <?php endif; ?>
     </div>
 
-    <div class="table-responsive dt-standard">
-        <table id="order-table" class="table table-bordered table-hover align-middle w-100">
+    <div class="w-100 mt-3">
+        <table id="order-table" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th style="width: 10%" class="text-center"><?= h(tr('col_kod_clo', 'Kod CLO')) ?></th>

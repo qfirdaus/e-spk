@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../../controllers/LaporanKursusKPController.php';
+require_once __DIR__ . '/../../../../controllers/LaporanKursusKPController.php';
 
 $kursusId = isset($_GET['course']) ? (int)$_GET['course'] : 0;
 

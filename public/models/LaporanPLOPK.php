@@ -6,7 +6,6 @@ class LaporanPLOPK {
     private PDO $dbStudent;
     private PDO $dbStaff;
 
-    // Masukkan pdoStudent ke dalam constructor
     public function __construct(PDO $pdoSPK, PDO $pdoStudent, PDO $pdoStaff) {
         $this->dbSPK = $pdoSPK;
         $this->dbStudent = $pdoStudent;

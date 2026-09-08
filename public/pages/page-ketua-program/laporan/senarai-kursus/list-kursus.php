@@ -1,5 +1,5 @@
 <?php
-  require_once __DIR__ . '/../../../controllers/LaporanKursusKPController.php'; 
+  require_once __DIR__ . '/../../../../controllers/LaporanKursusKPController.php'; 
   $controller = new LaporanKursusKPController();
   $controller->handlePostRequest();
   $data = $controller->getHalamanData();
@@ -77,8 +77,8 @@
         <?php endif; ?>
     </div>
 
-    <div class="table-responsive dt-standard">
-        <table id="tableLaporanKursus" class="table table-bordered table-hover align-middle w-100">
+    <div class="w-100 mt-3">
+        <table id="tableLaporanKursus" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th style="width: 10%" class="text-center">Kod Kursus</th>

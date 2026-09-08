@@ -11,9 +11,9 @@
   'COPY_RATE_LIMIT' => 1000
   ];
 
-  require_once __DIR__ . '/../../../includes/init.php';
+  require_once __DIR__ . '/../../../../includes/init.php';
   require_login();
-  require_once __DIR__ . '/../../../includes/functions-page.php'; 
+  require_once __DIR__ . '/../../../../includes/functions-page.php'; 
 
   $NEED_DATERANGE  = true;
   $NEED_VECTORMAP  = false;
@@ -25,8 +25,8 @@
   $profileCardLabel = tr('profile_staf_label', 'Profil Staf');
   $copyIdLabel      = tr('profile_btn_copy_no_staf', 'Salin No. Staf');
   
-  include __DIR__ . '/../../../includes/header.php';
-  require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
+  include __DIR__ . '/../../../../includes/header.php';
+  require_once __DIR__ . '/../../../../controllers/ProfileController.php'; 
 
   // Check active session status
   $profile_controller = new ProfileController();
@@ -45,8 +45,8 @@
   data-layout="vertical" data-sidebar-size="default" class="loading">
 
   <div class="wrapper">
-    <?php include __DIR__ . '/../../../includes/topbar.php'; ?>
-    <?php include __DIR__ . '/../../../includes/sidebar.php'; ?>
+    <?php include __DIR__ . '/../../../../includes/topbar.php'; ?>
+    <?php include __DIR__ . '/../../../../includes/sidebar.php'; ?>
 
     <div class="content-page">
       <div class="content">
@@ -79,7 +79,7 @@
 
           <!-- Profile Card -->
           <div class="card border-0 shadow-sm profile-card">
-            <?php include __DIR__ . '/../../../includes/profile-card.php'; ?>
+            <?php include __DIR__ . '/../../../../includes/profile-card.php'; ?>
 
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
@@ -123,13 +123,13 @@
 
         </div>
       </div>
-      <?php include __DIR__ . '/../../../includes/footer.php'; ?>
+      <?php include __DIR__ . '/../../../../includes/footer.php'; ?>
     </div>
   </div>
 
   <?php 
-    include __DIR__ . '/../../../includes/script.php'; 
-    include __DIR__ . '/../../../includes/script-pages.php';  
+    include __DIR__ . '/../../../../includes/script.php'; 
+    include __DIR__ . '/../../../../includes/script-pages.php';  
     include __DIR__ . '/modal-perincian.php';
   ?>
 
