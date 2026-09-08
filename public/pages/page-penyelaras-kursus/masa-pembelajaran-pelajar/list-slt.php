@@ -149,7 +149,7 @@ if (!empty($sesiTerpilih)) {
                         <tr>
                             <td class="text-center fw-bold text-primary"><?=  $i++ ?></td>
                             <td><?= nl2br(h($slt["content_outline"] ?? '')) ?></td>
-                            <td class="text-center fw-bold text-dark"><?= h($slt["kod_clo"] ?? '') ?></td>
+                            <td class="text-center fw-bold text-primary"><?= h($slt["kod_clo"] ?? '') ?></td>
                             <td class="text-center"><?= (float)($slt["f2f_lecture"] ?? 0) ?></td>
                             <td class="text-center"><?= (float)($slt["f2f_tutorial"] ?? 0) ?></td>
                             <td class="text-center"><?= (float)($slt["f2f_practical"] ?? 0) ?></td>

@@ -21,9 +21,9 @@
   $NEED_SELECT2    = true;  
 
   $PAGE_TITLE       = tr('spk_title', 'SPK');
-  $pageHeading      = tr('senarai_plo', 'Senarai PLO'); 
-  $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
-  $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
+  $pageHeading      = tr('senarai_kursus', 'Senarai Kursus'); 
+  $profileCardLabel = tr('profile_staf_label', 'Profil Staf');
+  $copyIdLabel      = tr('profile_btn_copy_no_staf', 'Salin No. Staf');
   
   include __DIR__ . '/../../../includes/header.php';
   require_once __DIR__ . '/../../../controllers/ProfileController.php'; 
@@ -36,7 +36,7 @@
   $isActive           = hasActiveSession($loginActivity);
   
   $errorMessage = "" ; 
-  $istarPerakuanIdPrefix = 'konvo';
+  $istarPerakuanIdPrefix = 'spk';
 ?>
 
 <body
@@ -57,7 +57,7 @@
             <div class="col-12">
               <div class="page-title-box d-flex justify-content-between align-items-center flex-wrap">
                 <h4 class="page-title">
-                  <i class="ri-settings-line me-1"></i>
+                  <i class="ri-book-read-line me-1"></i>
                   <?= h($pageHeading) ?>
                 </h4>
                 <div class="page-title-right">
@@ -84,10 +84,10 @@
             <!-- Tab Navigasi -->
             <ul class="nav nav-tabs profile-tabs" role="tablist" aria-label="<?= h(tr('profile_tabs_label','Tab profil pengguna')) ?>">
               <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#senarai-plo-tab" role="tab">
-                  <i class="ri-book-read-line me-1"></i> <?= h(tr('tab_senarai_plo','Senarai PLO')) ?>
+                <a class="nav-link active" data-bs-toggle="tab" href="#senarai-kursus-tab" role="tab">
+                  <i class="ri-file-list-3-line me-1"></i> <?= h(tr('tab_senarai_kursus','Senarai Kursus')) ?>
                 </a>
-              </li>             
+              </li>            
             </ul>
 
             <!-- Kandungan Tab -->
@@ -113,9 +113,9 @@
                 </div>
               <?php endif; ?>
         
-              <!-- Tab 1: Senarai PLO -->
-              <div class="tab-pane fade show active" id="senarai-plo-tab" role="tabpanel">
-                <?php include __DIR__ . '/list-plo.php'; ?>
+              <!-- Tab 1: Senarai Kursus -->
+              <div class="tab-pane fade show active" id="senarai-kursus-tab" role="tabpanel">
+                <?php include __DIR__ . '/list-kursus.php'; ?>
               </div>
               
             </div>
@@ -130,6 +130,7 @@
   <?php 
     include __DIR__ . '/../../../includes/script.php'; 
     include __DIR__ . '/../../../includes/script-pages.php';  
+    include __DIR__ . '/modal-perincian.php';
   ?>
 
   <script> 
@@ -146,7 +147,7 @@
   <?php endif; ?>
   
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/spk-laporan-plo.js?v=' . time()) ?>"></script>  
+  <script src="<?= base_url('assets/js/pages/spk-laporan-kursus-kp.js?v=' . time()) ?>"></script>  
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

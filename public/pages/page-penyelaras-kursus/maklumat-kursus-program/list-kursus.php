@@ -210,8 +210,8 @@ if (!empty($sesiTerpilih)) {
                                         <i class="ri-edit-box-line fs-5"></i>
                                     </button>
                                     
-                                    <a href="generate-excel.php?course=<?= h($kursus["id_kursus"]) ?>" class="btn btn-sm btn-outline-primary" title="Muat Turun Excel">
-                                        <i class="ri-download-2-line fs-5"></i>
+                                    <a href="generate-excel.php?course=<?= h($kursus["id_kursus"]) ?>" class="btn btn-sm btn-outline-success" title="Muat Turun Table 4 (Excel)">
+                                        <i class="ri-file-excel-2-line"></i>
                                     </a>
                                 </div>
                             </td>

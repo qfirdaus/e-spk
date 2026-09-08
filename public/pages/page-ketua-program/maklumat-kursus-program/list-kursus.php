@@ -130,7 +130,7 @@ $programNama = $selectedProgram['program'] ?? '';
                                 <i class="ri-close-circle-fill text-danger fs-4" title="Belum Lengkap"></i>
                             <?php endif; ?>
                         </td>        
-                        <td class="fw-semibold"><?= h($row['kod_kursus']) ?></td>
+                        <td class="fw-semibold text-primary"><?= h($row['kod_kursus']) ?></td>
                         <td><?= h($row['subjekbm']) ?></td>
                         
                         <!-- Dropdown Kategori -->
