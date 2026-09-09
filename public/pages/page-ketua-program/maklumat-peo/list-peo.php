@@ -117,16 +117,16 @@ if ($controller->getErrorMessage()): ?>
     </div>
 
     <!-- Table Section -->
-    <div class="table-responsive dt-standard">
-        <table id="dataPLODT" class="table table-bordered align-middle w-100 table-hover">
+    <div class="w-100 mt-3">
+        <table id="dataPLODT" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th class="text-center" style="width: 5%;">No</th>
-                    <th class="small" style="width: 15%;"><?= h(tr('kod_peo', 'Kod PEO')) ?></th>
+                    <th class="small" style="width: 10%;"><?= h(tr('kod_peo', 'Kod PEO')) ?></th>
                     <th class="small" style="width: 35%;"><?= h(tr('keterangan_peo', 'Keterangan PEO')) ?></th>
-                    <th class="small" style="width: 15%;"><?= h(tr('tarikh_senat', 'Tarikh Senat')) ?></th>
+                    <th class="small text-center" style="width: 10%;"><?= h(tr('tarikh_senat', 'Tarikh Senat')) ?></th>
                     <th class="small" style="width: 15%;"><?= h(tr('senarai_plo', 'Senarai PLO')) ?></th>
-                    <th class="small text-center" style="width: 15%;"><?= h(tr('tindakan', 'Tindakan')) ?></th>
+                    <th class="small text-center" style="width: 10%;"><?= h(tr('tindakan', 'Tindakan')) ?></th>
                 </tr>
             </thead>
             <tbody>     
@@ -148,9 +148,9 @@ if ($controller->getErrorMessage()): ?>
                 ?>
                     <tr data-id="<?= h($idPEO) ?>" data-row='<?= $rowJson ?>'>
                         <td class="text-center"><?= $i + 1 ?></td>        
-                        <td class="fw-semibold"><?= h($row['kod_peo'] ?? '') ?></td>
+                        <td class="fw-semibold text-primary"><?= h($row['kod_peo'] ?? '') ?></td>
                         <td><?= h($row['keterangan_bm'] ?? '') ?></td>
-                        <td><?= h($tarikhSenat) ?></td>
+                        <td class="text-center"><?= h($tarikhSenat) ?></td>
                         <td>
                             <?php if (!empty($row['senarai_kod_plo'])): ?>
                                 <span class="badge bg-primary cursor-pointer" 
@@ -167,7 +167,7 @@ if ($controller->getErrorMessage()): ?>
                         </td>
                         <td class="text-center">    
                             <button type="button" 
-                                    class="btn btn-sm btn-icon btn-outline-success me-1" 
+                                    class="btn btn-sm btn-link text-primary p-0" 
                                     id="btnKemaskini" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#kemaskini" 
@@ -184,7 +184,7 @@ if ($controller->getErrorMessage()): ?>
                             </button>
 
                             <button type="button" 
-                                    class="btn btn-sm btn-icon btn-outline-danger" 
+                                    class="btn btn-sm btn-link text-danger p-0"
                                     id="btnHapus" 
                                     onclick="deleteFunc(<?= h($idPEO) ?>)" 
                                     title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">

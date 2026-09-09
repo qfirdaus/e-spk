@@ -20,8 +20,8 @@
   $NEED_DATATABLES = true;
   $NEED_SELECT2    = true;  
 
-  $PAGE_TITLE = tr('spk_title', 'SPK');
-  $pageHeading     = tr('maklumat_plo', 'Maklumat PLO');
+  $PAGE_TITLE       = tr('spk_title', 'SPK');
+  $pageHeading      = tr('maklumat_plo', 'Maklumat PLO');
   $profileCardLabel = tr('profile_student_label', 'Profil Pelajar');
   $copyIdLabel      = tr('profile_btn_copy_no_matrik', 'Salin No. Matrik');
   
@@ -30,13 +30,13 @@
 
   // Check active session status
   $profile_controller = new ProfileController();
-  $profile = $profile_controller->getCurrentUserProfile();
-  $profileView = $profile;
-  $loginActivity = $profile_controller->getLoginActivity();
-  $isActive = hasActiveSession($loginActivity);
+  $profile            = $profile_controller->getCurrentUserProfile();
+  $profileView        = $profile;
+  $loginActivity      = $profile_controller->getLoginActivity();
+  $isActive           = hasActiveSession($loginActivity);
   
-  $errorMessage = "" ; //$peribadiController->getErrorMessage();
-  $istarPerakuanIdPrefix = 'istar-konvo';
+  $errorMessage = "" ; 
+  $istarPerakuanIdPrefix = 'spk';
 
   //print_r($lookupWakil);
 ?>
@@ -144,16 +144,16 @@
         processing: <?= json_encode(tr('data_processing', 'Sedang diproses...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
         loading: <?= json_encode(tr('data_loading', 'Sedang memuatkan...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
         syncronizing: <?= json_encode(tr('data_synchronizing', 'Menyelaraskan data...'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>
-      };        
+      };     
   </script> 
 
   <?php if ($NEED_SELECT2): ?>
     <script src="<?= base_url('assets/vendor/select2/js/select2.min.js') ?>?v=<?= time(); ?>"></script>
   <?php endif; ?>
-  
+
   <!-- <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script> -->
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/spk-maklumat-plo.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/spk-maklumat-plo.js?v=' . time()) ?>" defer></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

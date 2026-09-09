@@ -4,6 +4,10 @@ $(document).ready(function() {
         responsive: false, 
         scrollX: false,     
         autoWidth: false,
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+        },
+        pageLength: 10,
         columnDefs: [
             { orderable: false, targets: [8, 9] } 
         ]

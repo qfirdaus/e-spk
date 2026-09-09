@@ -4,7 +4,12 @@ jQuery(document).ready(function ($) {
         if (typeof $.fn.DataTable !== 'undefined') {
             $('#dataKursusDT').DataTable({
                 responsive: false, 
-                scrollX: true,
+                scrollX: false,     
+                autoWidth: false,
+                ordering: false,   
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+                },
                 pageLength: 10
             });
         } else {
@@ -12,17 +17,17 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    $('.select2').each(function () {
-        var $this = $(this);
-        var $parentModal = $this.closest('.modal');
+    // $('.select2').each(function () {
+    //     var $this = $(this);
+    //     var $parentModal = $this.closest('.modal');
 
-        $this.select2({
-            placeholder: "- Sila Pilih -",
-            allowClear: false,
-            width: '100%',
-            dropdownParent: $parentModal.length ? $parentModal : null
-        });
-    });
+    //     $this.select2({
+    //         placeholder: "- Sila Pilih -",
+    //         allowClear: false,
+    //         width: '100%',
+    //         dropdownParent: $parentModal.length ? $parentModal : null
+    //     });
+    // });
 
     // Modal tambah - button + clicked
     const modalTambah = document.getElementById('tambah');

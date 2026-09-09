@@ -162,7 +162,7 @@ if (!empty($sesiTerpilih)) {
                                 <div class="d-flex justify-content-center gap-1">
                                     
                                     <!-- Kemaskini -->
-                                    <button class="btn btn-sm btn-icon btn-outline-success me-1 btnKemaskiniModal"  type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
+                                    <button class="btn btn-sm btn-link text-primary p-0 btnKemaskiniModal"  type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
                                             data-idslt="<?= h($slt["id_slt"]) ?>"
                                             data-kursusid="<?= h($kursusTerpilih) ?>"
                                             data-sesi="<?= h($semester) ?>"
@@ -176,11 +176,11 @@ if (!empty($sesiTerpilih)) {
                                             data-nf2f="<?= h($slt["nf2f_guided"]) ?>"
                                             data-independent="<?= h($slt["nf2f_independent"]) ?>"
                                             title="Kemaskini">
-                                        <i class="ri-edit-box-line fs-5"></i>
+                                        <i class="ri-edit-2-line"></i>
                                     </button>
                                     
                                     <!-- Hapus -->
-                                    <button type="button" class="btn btn-sm btn-outline-danger border-0 p-1 btnHapusSLT" data-idslt="<?= h($slt["id_slt"]) ?>" title="Hapus">
+                                    <button type="button" class="btn btn-sm btn-link text-danger p-0 btnHapusSLT" data-idslt="<?= h($slt["id_slt"]) ?>" title="Hapus">
                                         <i class="ri-delete-bin-line fs-5"></i>
                                     </button>
 

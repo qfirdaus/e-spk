@@ -247,6 +247,24 @@ class MaklumatCLO
                 }
             }
 
+            $this->pdoSPK->prepare("DELETE FROM spk_tpenetapan_clo_penilaian WHERE id_clo = :id_clo")->execute([':id_clo' => $cloID]);
+            if (!empty($penilaian)) {
+                $sqlNilai = "INSERT INTO spk_tpenetapan_clo_penilaian (id_penilaian, id_clo, created_by, created_date) VALUES (:id_nilai, :id_clo, :created_by, NOW())";
+                $stmtNilai = $this->pdoSPK->prepare($sqlNilai);
+                foreach ($penilaian as $id_nilai) {
+                    $stmtNilai->execute([':id_nilai' => $id_nilai, ':id_clo' => $cloID, ':created_by' => $stafID]);
+                }
+            }
+
+            $this->pdoSPK->prepare("DELETE FROM spk_tpenetapan_clo_kpengajaran WHERE id_clo = :id_clo")->execute([':id_clo' => $cloID]);
+            if (!empty($kaedah)) {
+                $sqlKaedah = "INSERT INTO spk_tpenetapan_clo_kpengajaran (id_kaedah_pengajaran, id_clo, created_by, created_date) VALUES (:id_kaedah, :id_clo, :created_by, NOW())";
+                $stmtKaedah = $this->pdoSPK->prepare($sqlKaedah);
+                foreach ($kaedah as $id_kaedah) {
+                    $stmtKaedah->execute([':id_kaedah' => $id_kaedah, ':id_clo' => $cloID, ':created_by' => $stafID]);
+                }
+            }
+
             $this->pdoSPK->commit();
             return true;
         } catch (\Exception $e) {

@@ -10,26 +10,30 @@ if ($controller->getErrorMessage()) {
 
 ?>
 <div class="konvo-tab-card p-3 mb-4">
-  <div class="icares-address-panel-header">
-    <h5 class="text-h5"><?= h(tr('PANEL-SENARAI-LOC','Senarai Kluster Hasil Pembelajaran')) ?></h5>
-
-    <div class="list-actions" style="float: right; margin-bottom:10px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="icares-address-panel-header">
+        <h5 class="text-h5 fw-bold text-primary m-0">
+          <?= h(tr('PANEL-SENARAI-LOC','Senarai Kluster Hasil Pembelajaran')) ?>
+        </h5>
+    </div>
+    <div class="d-flex gap-2">
         <button class="btn btn-sm btn-outline-info rounded-3" type="button" name="btnTambah" id="btnTambah" 
                 data-bs-toggle="modal" data-bs-target="#tambah" 
                 data-bs-container="body"
                 title="<?= h(tr('TTP-TAMBAH-LOC', 'Tambah Kluster Hasil Pembelajaran')) ?>">
-            <i class="ri-add-line"></i>
+            <i class="ri-add-line"></i> <?= h(tr('tambah', 'Tambah')) ?>
         </button>     
     </div>    
   </div>
-  <div class="table-responsive dt-standard">
-    <table id="dataLocDT" class="table table-bordered align-middle w-100">
+
+  <div class="w-100 mt-3">
+    <table id="dataLocDT" class="table table-sm table-bordered align-middle table-hover w-100">
     <thead>
       <tr>
-        <th class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
-        <th class="small w-30"><?= h(tr('COL-LOC', 'Kluster Hasil Pembelajaran')) ?></th>
-        <th class="small w-15"><?= h(tr('COL-TARIKH-KEMASKINI', 'Tarikh Kemaskini')) ?></th>
-        <th class="small w-20 text-center"></th>
+        <th width="5%" class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
+        <th class="small"><?= h(tr('COL-LOC', 'Kluster Hasil Pembelajaran')) ?></th>
+        <th width="10%" class="small text-center"><?= h(tr('COL-TARIKH-KEMASKINI', 'Tarikh Kemaskini')) ?></th>
+        <th width="10%" class="small text-center"><?= h(tr('COL-ACTIONS', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
@@ -56,11 +60,11 @@ if ($controller->getErrorMessage()) {
       ?>
         <tr>
             <td class="col-bil text-center"><?= $i + 1 ?></td>         
-            <td><?= h($row['loc'] ?? '') ?></td>
-            <td><?= h($tarikhkemaskini ?? '') ?></td>   
+            <td class="fw-bold text-primary"><?= h($row['loc'] ?? '') ?></td>
+            <td class="text-center"><?= h($tarikhkemaskini ?? '') ?></td>   
             <td align="center">    
               <button type="button" 
-                      class="btn btn-sm btn-icon btn-outline-success me-1" 
+                      class="btn btn-sm btn-link text-primary p-0" 
                       id="btnKemaskini" 
                       data-bs-toggle="modal" 
                       data-bs-target="#kemaskini" 
@@ -71,7 +75,7 @@ if ($controller->getErrorMessage()) {
               </button>
 
               <button type="button" 
-                      class="btn btn-sm btn-icon btn-outline-danger" 
+                      class="btn btn-sm btn-link text-danger p-0" 
                       id="btnHapus" 
                       onclick="deleteFunc(<?= h($idLoc) ?>)"
                       title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">
@@ -101,7 +105,6 @@ if ($controller->getErrorMessage()) {
     });
 </script>
 <?php 
-    // PENTING: Hapuskan session selepas digunakan supaya alert tak keluar lagi bila page di-refresh
     unset($_SESSION['flash_alert']); 
 endif; 
 ?>

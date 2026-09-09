@@ -151,7 +151,7 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     <!-- Kemaskini -->
-                                    <button class="btn btn-sm btn-outline-success btnKemaskiniModal" type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
+                                    <button class="btn btn-sm btn-link text-primary p-0 btnKemaskiniModal" type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
                                             data-idclo="<?= h((string)$clo["id_clo"]) ?>"
                                             data-kodclo="<?= h($clo["kod_clo"]) ?>"
                                             data-keteranganbm="<?= h($clo["keterangan_bm"]) ?>"
@@ -163,7 +163,7 @@
                                     </button>
                                     
                                     <!-- Hapus -->
-                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-clo" 
+                                    <button type="button" class="btn btn-sm btn-link text-danger p-0 btn-delete-clo" 
                                             data-idclo="<?= h((string)$clo["id_clo"]) ?>" 
                                             title="<?= h(tr('ttp_hapus', 'Hapus Maklumat')) ?>">
                                         <i class="ri-delete-bin-line"></i>

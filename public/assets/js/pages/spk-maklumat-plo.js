@@ -7,6 +7,26 @@ function jsSwalText(key, fallback) {
     return fallback;
 }
 
+jQuery(document).ready(function ($) {
+
+    if ($('#dataPLODT').length > 0) {
+        if (typeof $.fn.DataTable !== 'undefined') {
+            $('#dataPLODT').DataTable({
+                responsive: false, 
+                scrollX: false,     
+                autoWidth: false,
+                ordering: false,   
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+                },
+                pageLength: 10
+            });
+        } else {
+            console.error("AMARAN: Library DataTables tidak dijumpai. Pastikan jquery.dataTables.min.js dimuatkan.");
+        }
+    }
+});
+
 jQuery(function () {
     // modal tambah - button + clicked
     const modalTambah = document.getElementById('tambah');

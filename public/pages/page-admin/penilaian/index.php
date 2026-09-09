@@ -163,7 +163,7 @@
   
   <!-- <script src="<?= base_url('pages/iStar/permohonan/konvo/helpers/TranslationHelper.php?v=' . time()) ?>"></script> -->
   <script src="<?= base_url('assets/js/pages/pages-main.js?v=' . time()) ?>"></script> 
-  <script src="<?= base_url('assets/js/pages/spk-penilaian.js?v=' . time()) ?>"></script> 
+  <script src="<?= base_url('assets/js/pages/spk-penilaian.js?v=' . time()) ?>" defer></script> 
   <link rel="stylesheet" href="<?= base_url('assets/css/pages/spk-main.css') ?>">
 
   <div class="toast-lite" aria-live="polite" aria-atomic="true"></div>

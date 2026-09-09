@@ -1,12 +1,17 @@
 $(document).ready(function() {
-    $('#dataKursusDT').DataTable({
-        responsive: false, 
-        scrollX: false,    
-        autoWidth: false,
-        columnDefs: [
-            { orderable: false, targets: [1, 3, 4, 5, 6, 7, 8] } 
-        ]
-    });
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $('#dataKursusDT').DataTable({
+            responsive: false, 
+            scrollX: false,     
+            autoWidth: false,  
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+            },
+            columnDefs: [
+                { orderable: false, targets: [1, 3, 4, 5, 6, 7, 8] } 
+            ]            
+        });
+    }    
 });
 
 document.addEventListener('DOMContentLoaded', function () {    

@@ -196,7 +196,7 @@ if (!empty($sesiTerpilih)) {
                             <!-- Tindakan -->
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <button class="btn btn-sm btn-outline-success btnKemaskiniModal" type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
+                                    <button class="btn btn-sm btn-link text-primary p-0 btnKemaskiniModal" type="button" data-bs-toggle="modal" data-bs-target="#kemaskini" 
                                             data-semester="<?= h($semester) ?>"
                                             data-kursusid="<?= h($kursus["id_kursus"]) ?>"                                     
                                             data-kursus="<?= h($kursus["subjekbm"]) ?>"
@@ -207,10 +207,10 @@ if (!empty($sesiTerpilih)) {
                                             data-req="<?= h($kursus["special_requirement"]) ?>"
                                             data-other="<?= h($kursus["other_information"]) ?>"
                                             title="Kemaskini Maklumat">
-                                        <i class="ri-edit-box-line fs-5"></i>
+                                        <i class="ri-edit-2-line"></i>
                                     </button>
                                     
-                                    <a href="generate-excel.php?course=<?= h($kursus["id_kursus"]) ?>" class="btn btn-sm btn-outline-success" title="Muat Turun Table 4 (Excel)">
+                                    <a href="generate-excel.php?course=<?= h($kursus["id_kursus"]) ?>" class="btn btn-sm btn-link text-success p-0" title="Muat Turun Table 4 (Excel)">
                                         <i class="ri-file-excel-2-line"></i>
                                     </a>
                                 </div>

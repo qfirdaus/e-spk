@@ -96,8 +96,8 @@ $programNama = $selectedProgram['program'] ?? '';
     </div>
 
     <!-- Table Section -->
-    <div class="table-responsive dt-standard">
-        <table id="dataKursusDT" class="table table-bordered align-middle w-100 table-hover">
+    <div class="w-100 mt-3">
+        <table id="dataKursusDT" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th class="text-center" style="width: 5%;">Status</th>

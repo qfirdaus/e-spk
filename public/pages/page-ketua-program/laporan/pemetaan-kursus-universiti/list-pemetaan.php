@@ -68,7 +68,7 @@
                             Hasil Pembelajaran Program (PLO)
                         </th>
                     <?php else: ?>
-                        <th class="bg-primary-subtle fw-bold border-bottom-0">PLO</th>
+                        <th class="bg-primary-subtle cfw-bold border-bottom-0">PLO</th>
                     <?php endif; ?>
                 </tr>
                 <tr>

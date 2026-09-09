@@ -75,7 +75,6 @@ if ($controller->getErrorMessage()): ?>
 
     <hr class="my-4 text-muted">
 
-    <!-- Header & Action Buttons -->
     <?php 
         $selectedTerm    = $data['selected_term'] ?? [];
         $selectedProgram = $data['selected_program'] ?? [];
@@ -115,9 +114,8 @@ if ($controller->getErrorMessage()): ?>
         </div>     
     </div>
 
-    <!-- Table Section -->
-    <div class="table-responsive dt-standard">
-        <table id="dataPLODT" class="table table-bordered align-middle w-100 table-hover">
+    <div class="w-100 mt-3">
+        <table id="dataPLODT" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th class="text-center" style="width: 5%;">No</th>
@@ -169,7 +167,7 @@ if ($controller->getErrorMessage()): ?>
                         <td><?= h($row['senarai_clo'] ?? '-') ?></td>
                         <td class="text-center">    
                             <button type="button" 
-                                    class="btn btn-sm btn-icon btn-outline-success me-1" 
+                                    class="btn btn-sm btn-link text-primary p-0" 
                                     id="btnKemaskini" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#kemaskini" 
@@ -187,7 +185,7 @@ if ($controller->getErrorMessage()): ?>
                             </button>
 
                             <button type="button" 
-                                    class="btn btn-sm btn-icon btn-outline-danger" 
+                                    class="btn btn-sm btn-link text-danger p-0" 
                                     id="btnHapus" 
                                     onclick="deleteFunc(<?= h($idPLO) ?>)" 
                                     title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">

@@ -137,10 +137,16 @@ jQuery(document).ready(function ($) {
     });    
 
     // Update CLO
-    $('#btnSimpanKemaskini').on('click', function (e) {
+    $(document).on('click', '#btnSimpanKemaskini', function (e) {
         e.preventDefault(); 
         
         var form = document.getElementById('formKemaskiniCLO');
+        
+        if (!form) {
+            console.error("RALAT: Borang dengan ID 'formKemaskiniCLO' tidak dijumpai!");
+            Swal.fire('Ralat Sistem', 'Sila semak semula ID `<form>` di dalam fail HTML anda. Ia mesti formKemaskiniCLO', 'error');
+            return;
+        }
         
         if (!form.checkValidity()) {
             form.reportValidity();
@@ -168,9 +174,15 @@ jQuery(document).ready(function ($) {
                 })
                 .then(res => res.json())
                 .then(res => {
-                    $('#kemaskini').modal('hide');
+                    var modalElement = document.getElementById('kemaskini');
+                    var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                    
                     $('.modal-backdrop').remove(); 
                     $('body').removeClass('modal-open').css('padding-right', '');
+                    $('body').css('overflow', 'auto');
                     
                     setTimeout(() => {
                         if (res.status === 'success') {
@@ -187,10 +199,15 @@ jQuery(document).ready(function ($) {
                     }, 300);
                 })
                 .catch(err => {
+                    console.error(err); 
                     
-                    $('#kemaskini').modal('hide');
+                    var modalElement = document.getElementById('kemaskini');
+                    var modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) modalInstance.hide();
+                    
                     $('.modal-backdrop').remove();
                     $('body').removeClass('modal-open').css('padding-right', '');
+                    $('body').css('overflow', 'auto');
                     
                     setTimeout(() => {
                         Swal.fire('Ralat', 'Berlaku ralat pelayan (Server Error).', 'error');
@@ -210,7 +227,7 @@ jQuery(document).ready(function ($) {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            cancelButtonColor: '#secondary',
+            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Ya, Hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {

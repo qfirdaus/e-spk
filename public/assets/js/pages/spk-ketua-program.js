@@ -1,6 +1,23 @@
 $(document).ready(function () {
+
+    if ($('#dataKetuaProgramDT').length > 0) {
+        if (typeof $.fn.DataTable !== 'undefined') {
+            $('#dataKetuaProgramDT').DataTable({
+                responsive: false, 
+                scrollX: false,     
+                autoWidth: false,
+                ordering: false,   
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+                },
+                pageLength: 10
+            });
+        } else {
+            console.error("AMARAN: Library DataTables tidak dijumpai. Pastikan jquery.dataTables.min.js dimuatkan.");
+        }
+    }
+
     $('.search-box input[type="text"]').on("keyup input", function () {
-        /* Get input value on change */
         var inputVal = $(this).val();
         var resultDropdown = $(this).siblings(".search_result");
         if (inputVal.length) {

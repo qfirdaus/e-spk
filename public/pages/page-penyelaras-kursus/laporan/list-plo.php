@@ -82,8 +82,8 @@
         </div>   
     </div>
 
-    <div class="table-responsive dt-standard">
-        <table id="tableLaporanPLO" class="table table-bordered table-hover align-middle w-100">
+    <div class="w-100 mt-3">
+        <table id="tableLaporanPLO" class="table table-sm table-bordered align-middle table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th style="width: 15%" class="text-center"><?= h(tr('col_kod_plo', 'Kod PLO')) ?></th>
@@ -108,7 +108,7 @@
                         <tr>
                             <td class="text-center fw-bold text-primary"><?= h($plo["kod_plo"]) ?></td>
                             <td><?= h($plo["keterangan_bm"]) ?></td>
-                            
+
                             <td>
                                 <?php if (!empty($plo['senarai_peo'])): ?>
                                     <?php 

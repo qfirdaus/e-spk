@@ -43,7 +43,7 @@
 
                 <!-- Sesi Kemasukan -->
                 <div class="row align-items-center mb-2">
-                    <label class="col-sm-4 col-form-label fw-semibold">Sesi Kemasukan</label>
+                    <label class="col-sm-4 col-form-label fw-semibold">Sesi </label>
                     <div class="col-sm-8">                    
                         <select class="form-select form-select-sm select2" onchange="this.form.submit()" name="selectSesi">
                             <option value="" <?= empty($data['sesi']) ? 'selected' : '' ?> disabled>- Sila Pilih -</option>
@@ -120,7 +120,7 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     <!-- Lihat Detail -->
-                                    <button class="btn btn-sm btn-outline-warning btnLihatPerincian" type="button" 
+                                    <button class="btn btn-sm btn-link text-warning p-0 btnLihatPerincian" type="button" 
                                             data-bs-toggle="modal" 
                                             data-bs-target="#modalPerincian"
                                             data-idkursus="<?= h((string)$kursus["id_kursus"]) ?>"
@@ -130,7 +130,8 @@
                                     </button>
 
                                     <!-- Download -->
-                                    <a href="generate-excel.php?course=<?= h((string)$kursus["id_kursus"]) ?>" class="btn btn-sm btn-outline-success" title="Muat Turun Table 4 (Excel)">
+                                    <a href="generate-excel.php?course=<?= h((string)$kursus["id_kursus"]) ?>" 
+                                        class="btn btn-sm btn-link text-success p-0" title="Muat Turun Table 4 (Excel)">
                                         <i class="ri-file-excel-2-line"></i>
                                     </a>
                                 </div>

@@ -12,7 +12,7 @@ $stafID = $_SESSION['id_staf'] ?? $_SESSION['f_stafID'] ?? '';
 
 $controller = new MaklumatCLOController();
 
-$action = $_POST['action'] ?? 'update'; // Semak jika ada flag 'delete'
+$action = $_POST['action'] ?? 'update'; 
 
 if ($action === 'delete') {
     $idClo = (int)($_POST['id_clo'] ?? 0);

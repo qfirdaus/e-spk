@@ -7,6 +7,19 @@ function jsSwalText(key, fallback) {
     return fallback;
 }
 
+$(document).ready(function() {
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $('#dataPLODT').DataTable({
+            responsive: false, 
+            scrollX: false,     
+            autoWidth: false,  
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ms.json"
+            }          
+        });
+    }    
+});
+
 jQuery(function () {
     // modal tambah - button + clicked
     const modalTambah = document.getElementById('tambah');

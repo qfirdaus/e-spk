@@ -9,50 +9,51 @@ if ($controller->getErrorMessage()) {
 }
 
 ?>
-<div class="icares-address-content">
-    <div class="tab-pane show active">
-      <div class="icares-address-panel-header">
-        <h5><?= h(tr('carian', 'Carian')) ?></h5>
-      </div>
-
-      <form id="form-maklumat-plo" method="POST" action="">
-        <div class="row">
-          <div class="col-12">
-            <div class="row">
-              <div class="col-md-12 gx-4">
-                
-                  <div class="mb-2 row align-items-center">
-                    <label class="col-sm-2 col-form-label text-nowrap"><?= h(tr('staf','Staf')) ?></label>
-                    <div class="col-sm-8 search-box">
-                      <input type="text" class="form-control" id="txtstaf" placeholder="No.Staf / Nama">
-                      <div class="search_result" style="background-color: white"></div>                  
-                    </div>                 
-                  </div>                                      
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-</div> 
-<br><br>
-<div class="konvo-tab-card p-3 mb-4">
-  <div class="icares-address-panel-header">
-    <h5 class="text-h5"><?= h(tr('PANEL-SENARAI-KETUA-Jabatan','Senarai Ketua Jabatan')) ?></h5>   
+<div class="card border border-light-subtle shadow-none p-4 mb-4 rounded-3 bg-white">
+  <div class="icares-address-panel-header mb-3">
+      <h5 class="text-h5 fw-bold text-primary"><?= h(tr('carian', 'Carian')) ?></h5>
   </div>
-  <div class="table-responsive dt-standard">
-    <table id="dataKetuaJabatanDT" class="table table-bordered align-middle w-100">
+
+  <form id="form-maklumat-plo" method="POST" action="">
+    <div class="row gx-4 gy-2">
+        <div class="col-md-8 col-lg-8">
+        
+          <div class="row align-items-center mb-3">
+            <label class="col-sm-2 col-form-label text-nowrap">
+              <?= h(tr('staf','Staf')) ?>
+            </label>
+            <div class="col-sm-8 search-box">
+              <input type="text" class="form-control" id="txtstaf" placeholder="Sila masukkan No.Staf / Nama">
+              <div class="search_result" style="background-color: white"></div>                  
+            </div>                 
+          </div>                                      
+
+      </div>
+    </div>
+  </form>
+
+  <hr class="my-4 text-muted">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="icares-address-panel-header">
+        <h5 class="text-h5 fw-bold text-primary m-0">
+          <?= h(tr('PANEL-SENARAI-KETUA-JABATAN','Senarai Ketua Jabatan')) ?>
+        </h5>
+    </div>
+  </div>
+
+  <div class="w-100 mt-3">
+    <table id="dataKetuaJabatanDT" class="table table-sm table-bordered align-middle table-hover w-100">
     <thead>
       <tr>
-        <th class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
-        <th class="small w-30"><?= h(tr('COL-NO-STAF', 'No Staf')) ?></th>
-        <th class="small w-15"><?= h(tr('COL-NAMA-STAF', 'Nama')) ?></th>
-        <th class="small w-12"><?= h(tr('COL-JABATAN', 'Jabatan')) ?></th>
-        <!-- <th class="small w-12"><?= h(tr('COL-TELEFON-PEJ', 'Telefon Pejabat')) ?></th> -->
-        <th class="small w-12"><?= h(tr('COL-NO-TELEFON', 'No. Telefon')) ?></th>
-        <th class="small w-12"><?= h(tr('COL-EMEL', 'EMEL')) ?></th>
-        <th class="small w-12"><?= h(tr('COL-TINDAKAN', 'Tindakan')) ?></th>
+        <th width="5%" class="col-bil text-center"><?= h(tr('COL-BIL', 'No')) ?></th>
+        <th width="15%" class="small"><?= h(tr('COL-NO-STAF', 'No Staf')) ?></th>
+        <th width="25%" class="small"><?= h(tr('COL-NAMA-STAF', 'Nama')) ?></th>
+        <th width="20%" class="small"><?= h(tr('COL-JABATAN', 'Jabatan')) ?></th>
+        <!-- <th class="small "><?= h(tr('COL-TELEFON-PEJ', 'Telefon Pejabat')) ?></th> -->
+        <th width="10%" class="small text-center"><?= h(tr('COL-NO-TELEFON', 'No. Telefon')) ?></th>
+        <th width="20%" class="small"><?= h(tr('COL-EMEL', 'EMEL')) ?></th>
+        <th width="10%" class="small text-center"><?= h(tr('COL-TINDAKAN', 'Tindakan')) ?></th>
       </tr>
     </thead>
 
@@ -75,15 +76,15 @@ if ($controller->getErrorMessage()) {
       ?>
         <tr>
             <td class="col-bil text-center"><?= $i + 1 ?></td>         
-            <td><?= h($row['f_stafID'] ?? '') ?></td>
+            <td class="fw-bold text-primary"><?= h($row['f_stafID'] ?? '') ?></td>
             <td><?= h($row['f_nama'] ?? '') ?></td>
             <td><?= h($row['f_namajabatan'] ?? '') ?></td>
             <!-- <td><?= h($row['f_telefon_pej'] ?? '') ?></td> -->
-            <td><?= h($row['f_handphone'] ?? '') ?></td>
+            <td class="text-center"><?= h($row['f_handphone'] ?? '') ?></td>
             <td><?= h($row['f_email'] ?? '') ?></td>
-            <td>
+            <td class="text-center">
               <button type="button" 
-                      class="btn btn-sm btn-icon btn-outline-danger" 
+                      class="btn btn-sm btn-link text-danger p-0" 
                       id="btnHapus" 
                       onclick="deleteFunc('<?= h($row['f_stafID']) ?>')"
                       title="<?= h($lang['TTP-HAPUS'] ?? 'Hapus') ?>">
@@ -98,6 +99,7 @@ if ($controller->getErrorMessage()) {
     </tbody>
     </table>
   </div>
+
 </div>
 
 <?php if (isset($_SESSION['flash_alert'])): ?>
@@ -113,7 +115,6 @@ if ($controller->getErrorMessage()) {
     });
 </script>
 <?php 
-    // PENTING: Hapuskan session selepas digunakan supaya alert tak keluar lagi bila page di-refresh
     unset($_SESSION['flash_alert']); 
 endif; 
 ?>
